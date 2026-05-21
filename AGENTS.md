@@ -74,3 +74,7 @@ Use lowercase imperative messages under 72 characters (e.g. `fix auth redirect o
 - Deploy: `npx wrangler deploy` (requires Cloudflare account + `wrangler` auth)
 
 For full setup details see @README.md.
+
+## Lessons learned
+
+See: `context/foundation/lessons.md`
