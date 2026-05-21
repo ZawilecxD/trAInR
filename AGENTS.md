@@ -9,14 +9,17 @@ trAInR is an Astro 6 SSR application with React 19 islands, Tailwind CSS 4, Supa
 - Do not concatenate Tailwind class strings manually; always use `cn()` from `@/lib/utils`.
 - Every new Supabase table must have RLS enabled with granular per-operation, per-role policies.
 - API route files must export `const prerender = false`.
+- Supabase migrations use naming format `YYYYMMDDHHmmss_short_description.sql`.
+- Extract React hooks to `src/components/hooks/`.
 
 ## Build, Test, and Development Commands
 
 - `npm run dev` — local dev server (Cloudflare workerd runtime)
-- `npm run build` — production build
+- `npm run build` — production build (SSR via `@astrojs/cloudflare`)
+- `npm run preview` — preview production build
 - `npm run lint` — ESLint with type-checked rules (CI gate)
 - `npm run lint:fix` — auto-fix lint issues
-- `npm run format` — Prettier (astro + tailwindcss plugins)
+- `npm run format` — Prettier (prettier-plugin-astro + prettier-plugin-tailwindcss)
 
 Pre-commit hook (husky + lint-staged) runs `eslint --fix` on `*.{ts,tsx,astro}` and `prettier --write` on `*.{json,css,md}` automatically.
 
@@ -37,13 +40,22 @@ supabase/migrations/  # SQL migrations (YYYYMMDDHHmmss_description.sql)
 
 Path alias: `@/*` → `./src/*`.
 
+## Architecture
+
+Full SSR (`output: "server"` in astro.config.mjs). Auth uses `@supabase/ssr` with cookie-based sessions:
+
+- `src/lib/supabase.ts` — SSR client; secrets via `astro:env/server` (declared in astro.config.mjs `env.schema`).
+- `src/middleware.ts` — resolves user, attaches to `context.locals.user`, redirects unauthenticated users per `PROTECTED_ROUTES`.
+- Endpoints: `src/pages/api/auth/{signin,signup,signout}.ts`
+- Pages: `src/pages/auth/{signin,signup,confirm-email}.astro`
+
 ## Coding Conventions
 
-- Astro components for static content/layout; React only when interactivity is needed.
-- shadcn/ui components: install via `npx shadcn@latest add [name]`, live in `src/components/ui/`.
-- API routes: uppercase `GET`/`POST` exports, validate input with zod.
-- Services and helpers in `src/lib/` (or `src/lib/services/` for business logic).
-- TypeScript strict mode (extends `astro/tsconfigs/strict`).
+- Astro for static content/layout; React only for interactivity.
+- shadcn/ui: `npx shadcn@latest add [name]`, lives in `src/components/ui/`.
+- API routes: uppercase `GET`/`POST` exports, validate with zod.
+- Services in `src/lib/` (or `src/lib/services/`). Shared types in `src/types.ts`.
+- TypeScript strict mode (`astro/tsconfigs/strict`).
 
 ## CI Gate
 
@@ -51,13 +63,14 @@ GitHub Actions (`.github/workflows/ci.yml`) runs `npm run lint` then `npm run bu
 
 ## Commit Conventions
 
-Use short, lowercase, descriptive messages (observed style: `npm audit fix`, `project structure generated`). No enforced prefix schema yet — keep messages concise and meaningful.
+Use lowercase imperative messages under 72 characters (e.g. `fix auth redirect on signout`, `add RLS policy for profiles table`). No enforced prefix schema yet.
 
 ## Environment
 
 - Node.js v22.14.0 (see `.nvmrc`)
 - Copy `.env.example` to `.env` (Node) or `.dev.vars` (Cloudflare local dev)
 - Local Supabase: `npx supabase start` (requires Docker)
-- Deploy: `npx wrangler deploy`
+- Cloudflare local dev: secrets go in `.dev.vars` (gitignored)
+- Deploy: `npx wrangler deploy` (requires Cloudflare account + `wrangler` auth)
 
-For full setup details see @README.md. For architecture depth see @CLAUDE.md.
+For full setup details see @README.md.
