@@ -1,135 +1,130 @@
 ---
 project: trAInR
-researched_at: 2026-05-21
+researched_at: 2026-05-22
 recommended_platform: Vercel
-runner_up: Cloudflare Workers + Pages
+runner_up: Cloudflare Workers
 context_type: mvp
 tech_stack:
   language: TypeScript
-  framework: Astro 6 SSR
-  runtime: Node.js (Vercel serverless) — migrating from Cloudflare workerd
+  framework: Astro 6
+  runtime: Node.js (Vercel serverless) — migrating from workerd
 ---
 
 ## Recommendation
 
 **Deploy on Vercel.**
 
-Vercel scored 5/5 on all platform criteria (CLI-first, managed/serverless, agent-readable docs, stable deploy API, MCP integration) and offers a generous free tier (1M serverless invocations/month) that comfortably covers MVP traffic. The deciding factor over the current Cloudflare setup was the Node.js runtime: it eliminates the `workerd` V8 isolate's API surface gaps (`fs`, `child_process`, `net` unavailable), removes the 10 MB compressed bundle ceiling that Astro 6 + React 19 + shadcn/ui could approach as features grow, and provides a familiar debugging model with richer error surfaces. The tradeoff is an adapter swap (`@astrojs/cloudflare` → `@astrojs/vercel`) estimated at half a day — a meaningful but bounded cost on the 3-week timeline.
+Vercel scores a perfect 5/5 on the agent-friendly platform criteria (CLI-first, managed/serverless, agent-readable docs, stable deploy API, MCP integration) and offers a generous Hobby free tier ($0 at 10k–100k req/mo). While the project is currently wired for Cloudflare Workers via `@astrojs/cloudflare`, the anti-bias cross-check on Cloudflare surfaced meaningful workerd runtime risks — the 10ms free-tier CPU cap, ecosystem gaps from non-Node APIs, and a class of "works in miniflare but not in production" bugs that are expensive to debug on a 3-week solo timeline. Vercel's full Node.js runtime eliminates these risks, its automatic PR preview deploys boost iteration speed (the DX priority from the interview), and the adapter swap to `@astrojs/vercel` is a scoped half-day task.
 
 ## Platform Comparison
 
-| Platform | CLI-first | Managed / Serverless | Agent-readable docs | Stable deploy API | MCP / Integration | Total |
+| Platform | CLI-first | Managed/Serverless | Agent-readable docs | Stable deploy API | MCP / Integration | Total |
 |---|---|---|---|---|---|---|
-| **Cloudflare** | Pass | Pass | Pass | Pass | Pass | **5/5** |
-| **Vercel** | Pass | Pass | Pass | Pass | Pass | **5/5** |
-| **Render** | Pass | Pass | Pass | Pass | Pass | **5/5** |
-| **Netlify** | Partial | Pass | Pass | Pass | Pass | **4.5/5** |
-| **Railway** | Partial | Partial | Pass | Pass | Pass | **4/5** |
-| **Fly.io** | Pass | Partial | Partial | Pass | Pass | **4/5** |
-
-### Cost at MVP Scale (10k–100k requests/month)
-
-| Platform | Monthly cost |
-|---|---|
-| Cloudflare | $0 (100k req/day free) |
-| Vercel | $0 (1M invocations/mo free) |
-| Netlify | $0 (~1.5M req capacity, credit-shared with bandwidth) |
-| Railway | $5/mo minimum |
-| Render | $7/mo for always-on (free tier sleeps) |
-| Fly.io | $3–15/mo (no free tier) |
+| **Vercel** | Pass | Pass | Pass | Pass | Pass | **5 Pass** |
+| **Cloudflare** | Pass | Pass | Pass | Pass | Pass | **5 Pass** |
+| **Netlify** | Partial | Pass | Pass | Partial | Pass | **3P / 2Pt** |
+| **Railway** | Partial | Partial | Pass | Partial | Pass | **2P / 3Pt** |
+| **Render** | Partial | Partial | Pass | Partial | Pass | **2P / 3Pt** |
+| **Fly.io** | Partial | Partial | Partial | Partial | Partial | **0P / 5Pt** |
 
 ### Shortlisted Platforms
 
 #### 1. Vercel (Recommended)
 
-Vercel provides a fully managed serverless platform with a first-class Astro 6 adapter (`@astrojs/vercel`, GA, maintained by the Astro team). The Node.js 24 runtime means full npm compatibility — no polyfill gaps, no bundle size ceilings beyond Vercel's generous 250 MB uncompressed function limit. The free Hobby tier includes 1M serverless invocations/month, 100 GB bandwidth, and unlimited preview deployments. CLI tooling (`vercel deploy`, `vercel rollback`, `vercel logs`) covers the full deploy lifecycle. Official MCP server integration works with Cursor. The key weakness is zero WebSocket support (not relevant for MVP since Supabase Realtime handles client subscriptions), and some open Astro 6 adapter bugs around edge middleware body loss and hybrid chunk hash mismatches. Vercel Postgres/KV were sunset in June 2025, but this is irrelevant since trAInR uses Supabase externally.
+Vercel matches Cloudflare on all five criteria and runs a full Node.js runtime — no workerd ecosystem gaps, no virtual filesystem, no CPU-time billing surprises. The `@astrojs/vercel` adapter is GA with Astro 6 peer support, automatic PR preview deploys are zero-config, and the Hobby tier includes 1M function invocations, 100 GB bandwidth, and 4 CPU-hours per month at $0. The Vercel MCP server is GA and supports Cursor. The migration cost (adapter swap, env audit, CI update) is real but scoped: ~half a day.
 
-#### 2. Cloudflare Workers + Pages (Runner-up)
+#### 2. Cloudflare Workers (Runner-up)
 
-Cloudflare was the original deployment target and the project is already fully configured with `@astrojs/cloudflare` v13.5.0 and wrangler v4.90.0. It scores 5/5 on criteria, has the most generous free tier (100k requests/day, not month), and delivers the fastest cold starts (~12ms p50 vs. 200-500ms on Vercel). The V8 isolate model is exceptionally lightweight. However, the `workerd` runtime's Node.js API gaps (no `fs`, `child_process`, `net`; partial `crypto`), the 10 MB compressed bundle ceiling, and the need for Durable Objects to handle any server-mediated realtime were the deciding factors against it. These constraints are manageable at MVP scale but become progressively more limiting as the feature set grows.
+Cloudflare scored identically on paper and has the massive advantage of zero migration cost — the project is already configured for it. It was the initial top pick. However, the anti-bias cross-check surfaced compounding risks: the free-tier 10ms CPU cap will likely force a $5/mo upgrade before real users arrive; workerd runtime differences create a class of production-only bugs; the 3 MB free-tier bundle limit is tight for a growing app; and preview deploy setup requires manual CI work. For a solo developer prioritizing DX on a tight timeline, these friction points add up. Cloudflare remains an excellent fallback if Vercel's Hobby limits prove too restrictive.
 
-#### 3. Render
+#### 3. Netlify
 
-Render is a full-featured PaaS that scores 5/5 on criteria and offers native WebSocket support, co-located Postgres, and a comprehensive MCP server. It requires the `@astrojs/node` adapter and a $7/mo Starter plan for always-on service (free tier sleeps after 15 minutes with ~1 minute cold starts). Its strength is operational simplicity for a Node.js app — familiar deployment model, persistent filesystem available, and built-in rollback across 5-30 retained builds. The cost and the adapter swap make it a viable but slightly less attractive alternative to Vercel for this project.
+Netlify offers solid serverless Node.js SSR via `@astrojs/netlify` v7 and has a strong MCP integration (GA). However, it loses points on two criteria: no CLI rollback command (dashboard or API only) and the credit-based pricing model can pause sites on limit exhaustion. The free tier (300 credits/mo) is likely sufficient for MVP traffic but less transparent than Vercel's clear invocation/bandwidth limits. The adapter swap cost is comparable to Vercel's.
 
 ## Anti-Bias Cross-Check: Vercel
 
 ### Devil's Advocate — Weaknesses
 
-1. **Adapter swap cost on a 3-week timeline.** Migrating from `@astrojs/cloudflare` to `@astrojs/vercel` requires removing wrangler, `.dev.vars`, and the cloudflare adapter; installing the vercel adapter; reconfiguring `astro.config.mjs`; auditing env var access patterns (`astro:env/server` → Vercel's env system); and updating the CI workflow. Estimated: half-day to full day.
+1. **Adapter swap is real migration work on a 3-week timeline.** Replacing `@astrojs/cloudflare` with `@astrojs/vercel`, removing wrangler and `.dev.vars`, auditing `astro:env/server` secrets for Vercel's env model, updating CI, and configuring Supabase redirect URLs for `*.vercel.app` preview deploys — conservatively half a day, but scope creep from runtime differences could stretch it.
 
-2. **Open Astro 6 adapter bugs.** Active issues include edge middleware body loss, hybrid chunk hash mismatches, and over-bundled functions in `@astrojs/vercel`. These could surface during development and cost debugging time.
+2. **Hobby plan has hard limits, not pay-as-you-go.** Exceeding 100 GB bandwidth, 1M function invocations, or 4 CPU-hours pauses the project entirely — no graceful degradation. A bot scraping the site or a viral moment could take the app offline.
 
-3. **Zero WebSocket support with no roadmap.** If the app ever needs server-initiated push beyond what Supabase Realtime provides, Vercel offers no path forward.
+3. **Serverless cold starts on SSR pages.** After idle periods, the first request to each route pays a 200-500ms cold-start penalty. For gym-time workout logging, this is noticeable on the first page load.
 
-4. **Serverless function cold starts (200-500ms).** Notably slower than Cloudflare's ~12ms. For a gym app where clients pull up sessions mid-workout, the first request latency after idle is noticeable.
+4. **Vercel Postgres and KV are sunset.** Co-located data services require Marketplace integrations (Neon, Upstash). Not a problem while using Supabase externally, but limits future flexibility within the Vercel ecosystem.
 
-5. **Vendor lock-in via proprietary features.** Vercel's image optimization, ISR, and edge middleware are platform-specific. Adopting them makes future migration harder.
+5. **No WebSockets.** Vercel Functions cannot accept WebSocket upgrades. Real-time features would require an external service (Supabase Realtime covers some cases).
 
 ### Pre-Mortem — How This Could Fail
 
-The team spent two evenings swapping from `@astrojs/cloudflare` to `@astrojs/vercel`. The migration seemed clean — build passed, deploy succeeded, auth worked. But two weeks in, they discovered that the Supabase SSR cookie middleware behaved differently under Vercel's serverless model: the `getUser()` call in Astro middleware was occasionally returning `null` for authenticated users because Vercel's function cold starts weren't preserving the cookie jar across the middleware-to-page handoff. The fix was a workaround in the middleware, but it cost a full evening of debugging. Then the plan-creation form started hitting Vercel's 10-second serverless function timeout on slower Supabase queries during peak hours. The Astro 6 adapter's edge middleware body loss bug surfaced when a trainer tried to submit a plan with 20+ exercises — the request body was silently truncated. The trainer lost their work. By month 3, the free tier's 1M invocations were still plenty, but the team had burned 4 of their 15 available after-hours evenings on platform issues that wouldn't have existed on Cloudflare, where the project was already configured and running.
+The team swapped from Cloudflare to Vercel in week one, spending a full day on the adapter migration instead of the planned half-day — the `astro:env/server` module worked differently under Node.js, and three environment variables needed restructuring. Preview deploys worked beautifully from day one, boosting DX. But by week two, the Hobby plan's 4 CPU-hour limit became a concern: every SSR render consumed active CPU time, and automated Lighthouse CI checks in GitHub Actions were burning through the allowance. The team disabled preview-deploy CI to conserve hours. In month two, a fitness influencer shared a trainer's invite link on social media; 5,000 visitors hit the app in 2 hours. The function invocation count spiked and the project was paused for 6 hours until the billing period reset. The trainer lost credibility with their clients who couldn't log workouts. The team realized they needed Pro ($20/mo) for overage billing instead of hard pauses — a reasonable cost, but one they hadn't budgeted for.
 
 ### Unknown Unknowns
 
-- **`@astrojs/vercel` is maintained by the Astro team, not Vercel.** Bug-fix velocity depends on Astro maintainer bandwidth, not Vercel's engineering resources. Vercel prioritizes their own Next.js integration.
-- **Vercel's free tier has a "fair use" policy.** While 1M invocations/month is generous, Vercel reserves the right to throttle or suspend hobby projects under sustained load. The boundary isn't precisely defined.
-- **Environment variable behavior differences.** The current setup uses `astro:env/server` with secrets declared in `astro.config.mjs`. On Vercel, runtime env vars work via `process.env`, but build-time vs. runtime distinction differs from Cloudflare's model. Every env var import needs auditing.
-- **Vercel function regions default to `iad1` (US East).** If users are in Europe, you'll need to explicitly configure the function region — a one-line config that's easy to miss, and latency to Supabase compounds if it's in a different region.
-- **Preview deployments and Supabase auth callbacks.** Each Vercel preview deploy gets a unique URL. Supabase OAuth redirect URLs need to be updated or wildcarded for preview deploys, or auth will break on every PR preview.
+- **Fluid Compute (GA, default since Apr 2025) changes function concurrency semantics.** Functions can handle multiple requests on a single instance, meaning shared state bugs (global variables, in-memory caches) can leak between requests if code isn't purely stateless.
+
+- **`vercel rollback` on Hobby only reverts to the immediately previous deploy.** If a bad deploy goes unnoticed for two deploys, rollback to the known-good version requires redeploying from a specific git commit.
+
+- **Vercel's build cache can mask dependency issues.** Builds relying on cached `node_modules` may fail on clean rebuild if dependencies have been yanked or updated with breaking changes.
+
+- **Supabase OAuth redirect URLs need per-preview configuration.** Each PR gets a unique `*.vercel.app` URL. A wildcard redirect pattern in Supabase (e.g., `https://*-your-project.vercel.app/api/auth/callback`) or a custom preview domain is needed.
+
+- **300-second function duration limit has edge cases.** If an SSR page makes multiple sequential Supabase calls (e.g., trainer dashboard aggregating 20 clients), slow responses can chain into a timeout — surfacing as a generic 504 to the user.
 
 ## Operational Story
 
-- **Preview deploys**: Every push to a non-production branch gets an automatic preview URL (e.g., `trainr-git-feature-x-username.vercel.app`). Protected by default on Pro plan; Hobby plan preview URLs are public. Fork PRs do not get preview deploys unless explicitly enabled.
-- **Secrets**: Environment variables are set in the Vercel dashboard (Project Settings → Environment Variables) with per-environment scoping (Production / Preview / Development). Secrets are encrypted at rest. For local dev, `vercel env pull` writes a `.env.local` file. GitHub Secrets are separate (for CI); Vercel-specific secrets live in Vercel's vault.
-- **Rollback**: `vercel rollback` (CLI) or one-click in dashboard. Restores the previous deployment's code and serverless functions. Typical time-to-revert: < 30 seconds. Database migrations are NOT rolled back automatically — Supabase migrations are managed separately.
-- **Approval**: Publishing to production is automatic on merge to `master` (can be gated by requiring manual promotion in dashboard). Rotating secrets requires dashboard access. An agent can deploy and tail logs unattended; destructive env var changes require human confirmation.
-- **Logs**: `vercel logs <deployment-url> --follow` for real-time function logs. `vercel inspect <deployment-url>` for build logs. Vercel MCP server provides read-only log access from Cursor.
+- **Preview deploys**: Every PR push generates a unique preview URL automatically (`<branch>-<project>.vercel.app`). Preview deploys are zero-config with Vercel's GitHub integration. Protection via Vercel Authentication is available on Pro.
+- **Secrets**: Environment variables are managed in Vercel Dashboard → Settings → Environment Variables, scoped per environment (Production / Preview / Development). `vercel env pull` syncs to local `.env`. Rotation: update in dashboard → redeploy. Secrets are encrypted at rest; team members with project access can read values.
+- **Rollback**: `vercel rollback` from CLI reverts to the previous deploy (Hobby: one version back only). Typical time-to-revert: <30 seconds. Database migrations do not roll back automatically — Supabase migrations need manual revert if schema changes accompanied the deploy.
+- **Approval**: Human required for: promoting to Pro plan, adding team members, deleting project, rotating integration tokens. Agent may perform unattended: deploy, rollback (one version), env var reads, log tailing.
+- **Logs**: `vercel logs --follow` tails runtime logs. `vercel logs --deployment <url>` reads logs for a specific deploy. Build logs visible via `vercel inspect <url>`. Vercel MCP server provides structured log access from Cursor.
 
 ## Risk Register
 
 | Risk | Source | Likelihood | Impact | Mitigation |
 |---|---|---|---|---|
-| Adapter swap takes longer than half a day | Devil's advocate | M | M | Time-box to 4 hours; if blocked, fall back to Cloudflare (already configured) |
-| Open Astro 6 adapter bugs (body loss, hash mismatch) | Devil's advocate / Research | M | H | Pin adapter version; avoid edge middleware for form submissions; test plan-creation flow with large payloads |
-| Serverless function cold starts (200-500ms) | Devil's advocate | H | L | Acceptable for MVP; monitor p99 latency; upgrade to Pro for faster cold starts if needed |
-| Supabase SSR cookie issues under serverless model | Pre-mortem | L | H | Test auth flow thoroughly post-migration; ensure middleware calls `supabase.auth.getUser()` on every request per Supabase SSR docs |
-| 10s function timeout on slow Supabase queries | Pre-mortem | L | M | Add Supabase query timeouts; paginate large data fetches; monitor function duration |
-| Preview deploy breaks Supabase OAuth callbacks | Unknown unknowns | M | M | Add wildcard redirect URL in Supabase dashboard for `*.vercel.app`; or use a stable preview domain |
-| Function region defaults to US East, users in Europe | Unknown unknowns | M | L | Set `regions: ['cdg1']` (Paris) or nearest region in `vercel.json` |
-| Vercel fair-use throttling on Hobby tier | Unknown unknowns | L | M | Monitor invocation count; upgrade to Pro ($20/mo) if approaching sustained load |
-| Env var access pattern changes break auth | Unknown unknowns | M | H | Audit every `import` from `astro:env/server`; test all auth endpoints post-migration |
+| Adapter migration takes >1 day | Devil's advocate | M | M | Time-box to 4 hours; if blocked, fall back to Cloudflare (zero migration) |
+| Hobby plan hard-pause on traffic spike | Devil's advocate / Pre-mortem | L | H | Monitor usage in Vercel dashboard; upgrade to Pro ($20/mo) before public launch if traction signals appear |
+| Cold-start latency on workout logging pages | Devil's advocate | M | L | Fluid Compute reduces cold starts; critical paths can use ISR or edge middleware for warm routing |
+| `astro:env/server` requires restructuring for Vercel | Pre-mortem | M | M | Audit env access pattern during migration; test all auth flows in preview deploy before merging |
+| Supabase OAuth breaks on preview deploys | Unknown unknowns | H | M | Configure wildcard redirect URL in Supabase auth settings during migration |
+| Shared state leak via Fluid Compute concurrency | Unknown unknowns | L | M | Ensure all SSR handlers are stateless; avoid module-level mutable variables |
+| Vercel rollback limited to one version on Hobby | Unknown unknowns | L | L | Use git-based revert (`git revert` + push) as primary rollback; CLI rollback as quick escape |
+| Build cache masks broken dependencies | Unknown unknowns | L | M | Run periodic clean builds in CI (`vercel build --no-cache`) on release branches |
+| Function timeout on heavy dashboard aggregation | Unknown unknowns | L | M | Paginate Supabase queries; add request-level timeouts; consider edge caching for dashboard data |
 
 ## Getting Started
 
-1. **Remove Cloudflare dependencies:**
+1. **Install the Vercel CLI and link the project:**
+   ```bash
+   npm i -g vercel
+   vercel link
+   ```
+
+2. **Swap the Astro adapter:**
    ```bash
    npm uninstall @astrojs/cloudflare wrangler
-   rm -f wrangler.jsonc .dev.vars
+   npx astro add vercel
    ```
+   In `astro.config.mjs`, replace the Cloudflare adapter import with `@astrojs/vercel` — the `npx astro add` command handles this automatically for Astro 6.
 
-2. **Install Vercel adapter:**
+3. **Migrate environment variables:**
+   - Remove `.dev.vars` references and `wrangler.jsonc`
+   - Audit `astro:env/server` — Vercel uses `process.env` under Node.js; the Astro env schema in `astro.config.mjs` still works but secrets must be added to Vercel Dashboard → Settings → Environment Variables
+   - Run `vercel env pull` to sync production env vars to local `.env`
+
+4. **Configure Supabase redirect URLs:**
+   Add a wildcard redirect URL in Supabase Dashboard → Auth → URL Configuration for preview deploys (e.g., `https://*-trainr.vercel.app/api/auth/callback`)
+
+5. **Deploy and verify:**
    ```bash
-   npm install @astrojs/vercel
+   vercel deploy          # preview deploy — test auth flows
+   vercel deploy --prod   # production deploy
    ```
-
-3. **Update `astro.config.mjs`:**
-   Replace `import cloudflare from "@astrojs/cloudflare"` with `import vercel from "@astrojs/vercel"` and set `adapter: vercel()`. Keep `output: "server"`. Audit `env.schema` — Vercel exposes runtime env vars via `process.env`; confirm `astro:env/server` still resolves correctly or switch to `process.env.SUPABASE_URL` / `process.env.SUPABASE_KEY`.
-
-4. **Link to Vercel and deploy:**
-   ```bash
-   npx vercel link
-   npx vercel env add SUPABASE_URL
-   npx vercel env add SUPABASE_KEY
-   npx vercel deploy --prod
-   ```
-
-5. **Update CI workflow (`.github/workflows/ci.yml`):**
-   The existing CI runs `npm run lint` then `npm run build`. The build step should work with the new adapter. If deploying via Vercel's GitHub integration (recommended), remove any wrangler deploy steps and let Vercel auto-deploy on push to `master`.
 
 ## Out of Scope
 
 The following were not evaluated in this research:
 - Docker image configuration
-- CI/CD pipeline setup (beyond noting the CI gate change)
+- CI/CD pipeline setup (GitHub Actions workflow updates for Vercel)
 - Production-scale architecture (multi-region, HA, DR)
