@@ -1,10 +1,10 @@
 # Repository Guidelines
 
-trAInR is an Astro 6 SSR application with React 19 islands, Tailwind CSS 4, Supabase auth, and shadcn/ui components, deployed to Cloudflare Workers via `@astrojs/cloudflare`.
+trAInR is an Astro 6 SSR application with React 19 islands, Tailwind CSS 4, Supabase auth, and shadcn/ui components, deployed to Vercel via `@astrojs/vercel`.
 
 ## Hard Rules
 
-- Never commit `.env` or `.dev.vars` — secrets go in those files locally, in Cloudflare dashboard or GitHub repository secrets for prod/CI.
+- Never commit `.env` or Vercel secrets — secrets go in `.env` locally, in Vercel Dashboard (Environment Variables) or GitHub repository secrets for prod/CI.
 - Never use Next.js directives (`"use client"`, `"use server"`) — this is Astro, not Next.
 - Do not concatenate Tailwind class strings manually; always use `cn()` from `@/lib/utils`.
 - Every new Supabase table must have RLS enabled with granular per-operation, per-role policies.
@@ -14,8 +14,8 @@ trAInR is an Astro 6 SSR application with React 19 islands, Tailwind CSS 4, Supa
 
 ## Build, Test, and Development Commands
 
-- `npm run dev` — local dev server (Cloudflare workerd runtime)
-- `npm run build` — production build (SSR via `@astrojs/cloudflare`)
+- `npm run dev` — local dev server (Node.js, standard Vite)
+- `npm run build` — production build (SSR via `@astrojs/vercel`, outputs to `.vercel/output/`)
 - `npm run preview` — preview production build
 - `npm run lint` — ESLint with type-checked rules (CI gate)
 - `npm run lint:fix` — auto-fix lint issues
@@ -59,7 +59,7 @@ Full SSR (`output: "server"` in astro.config.mjs). Auth uses `@supabase/ssr` wit
 
 ## CI Gate
 
-GitHub Actions (`.github/workflows/ci.yml`) runs `npm run lint` then `npm run build` on every push/PR to `master`. Both must pass. Requires `SUPABASE_URL` and `SUPABASE_KEY` as repository secrets.
+GitHub Actions (`.github/workflows/ci.yml`) runs `npm run lint` then `npm run build` on every push/PR to `master`. Both must pass. On success, deploys to Vercel: preview deploy on PRs, production deploy on master push. Requires `SUPABASE_URL`, `SUPABASE_KEY`, `VERCEL_TOKEN`, `VERCEL_ORG_ID`, and `VERCEL_PROJECT_ID` as repository secrets.
 
 ## Commit Conventions
 
@@ -68,10 +68,9 @@ Use lowercase imperative messages under 72 characters (e.g. `fix auth redirect o
 ## Environment
 
 - Node.js v22.14.0 (see `.nvmrc`)
-- Copy `.env.example` to `.env` (Node) or `.dev.vars` (Cloudflare local dev)
+- Copy `.env.example` to `.env` for local development
 - Local Supabase: `npx supabase start` (requires Docker)
-- Cloudflare local dev: secrets go in `.dev.vars` (gitignored)
-- Deploy: `npx wrangler deploy` (requires Cloudflare account + `wrangler` auth)
+- Deploy: `npx vercel deploy --prod` (requires Vercel account + `vercel login`)
 
 For full setup details see @README.md.
 

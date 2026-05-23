@@ -154,10 +154,11 @@ dist/
 pnpm-debug.log*
 # environment variables
 .env.production
-# cloudflare
-.dev.vars
-.wrangler/
+# vercel
+.vercel/
 # macOS-specific files
 .DS_Store
 # jetbrains setting folder
 .idea/
+.env*
+.vercel
