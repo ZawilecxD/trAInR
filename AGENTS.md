@@ -74,6 +74,12 @@ Use lowercase imperative messages under 72 characters (e.g. `fix auth redirect o
 
 For full setup details see @README.md.
 
+## Developer Tools
+
+- **GitHub MCP**: Cursor agents can interact with GitHub (issues, PRs, repos, code search, CI) via the GitHub-hosted remote MCP server. Setup: `docs/github-mcp-setup.md`. Config lives at `.cursor/mcp.json` (local, gitignored — never commit).
+- Token env var: `GITHUB_PERSONAL_ACCESS_TOKEN` — export in shell profile, never commit.
+- Skill for common trAInR workflows: `.cursor/skills/github-mcp/SKILL.md`.
+
 ## Lessons learned
 
 See: `context/foundation/lessons.md`
