@@ -149,6 +149,8 @@ vite.config.ts.timestamp-*
 
 # Cursor -- local MCP config (contains real PAT after setup)
 .cursor/mcp.json
+# Cursor -- hook runtime state (PR ↔ Linear sync pending)
+.cursor/hooks/state/
 # from 10x-astro-starter
 # build output
 dist/

@@ -5,6 +5,28 @@
       {
         "command": "node .cursor/hooks/save-plan.cjs"
       }
+    ],
+    "postToolUse": [
+      {
+        "command": "node .cursor/hooks/pr-linear-sync.cjs",
+        "matcher": "Shell"
+      },
+      {
+        "command": "node .cursor/hooks/pr-linear-sync.cjs",
+        "matcher": "MCP:.*create_pull_request"
+      }
+    ],
+    "beforeMCPExecution": [
+      {
+        "command": "node .cursor/hooks/pr-linear-sync.cjs",
+        "matcher": "MCP:.*save_issue"
+      }
+    ],
+    "afterMCPExecution": [
+      {
+        "command": "node .cursor/hooks/pr-linear-sync.cjs",
+        "matcher": "MCP:.*save_issue"
+      }
     ]
   }
 }
