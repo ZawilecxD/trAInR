@@ -1,0 +1,40 @@
+{
+  "version": 1,
+  "hooks": {
+    "afterAgentResponse": [
+      {
+        "command": "node .cursor/hooks/save-plan.cjs"
+      }
+    ],
+    "postToolUse": [
+      {
+        "command": "node .cursor/hooks/pr-linear-sync.cjs",
+        "matcher": "Shell"
+      },
+      {
+        "command": "node .cursor/hooks/pr-linear-sync.cjs",
+        "matcher": "MCP:.*create_pull_request"
+      }
+    ],
+    "beforeMCPExecution": [
+      {
+        "command": "node .cursor/hooks/pr-linear-sync.cjs",
+        "matcher": "MCP:.*save_issue"
+      },
+      {
+        "command": "node .cursor/hooks/pr-linear-sync.cjs",
+        "matcher": "MCP:.*save_comment"
+      }
+    ],
+    "afterMCPExecution": [
+      {
+        "command": "node .cursor/hooks/pr-linear-sync.cjs",
+        "matcher": "MCP:.*save_issue"
+      },
+      {
+        "command": "node .cursor/hooks/pr-linear-sync.cjs",
+        "matcher": "MCP:.*save_comment"
+      }
+    ]
+  }
+}
