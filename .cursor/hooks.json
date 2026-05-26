@@ -20,12 +20,20 @@
       {
         "command": "node .cursor/hooks/pr-linear-sync.cjs",
         "matcher": "MCP:.*save_issue"
+      },
+      {
+        "command": "node .cursor/hooks/pr-linear-sync.cjs",
+        "matcher": "MCP:.*save_comment"
       }
     ],
     "afterMCPExecution": [
       {
         "command": "node .cursor/hooks/pr-linear-sync.cjs",
         "matcher": "MCP:.*save_issue"
+      },
+      {
+        "command": "node .cursor/hooks/pr-linear-sync.cjs",
+        "matcher": "MCP:.*save_comment"
       }
     ]
   }

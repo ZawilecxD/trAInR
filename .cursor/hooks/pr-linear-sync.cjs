@@ -4,8 +4,8 @@
  * PR → Linear sync hook (trAInR)
  *
  * postToolUse: detect gh pr create / GitHub MCP create_pull_request → main|master
- * beforeMCPExecution: require user approval before Linear save_issue while sync pending
- * afterMCPExecution: clear pending state after successful save_issue
+ * beforeMCPExecution: require user approval before Linear save_issue / save_comment while sync pending
+ * afterMCPExecution: clear pending state after successful save_issue and save_comment
  */
 
 const { execSync } = require("child_process");
@@ -42,6 +42,10 @@ function isPrCreateTool(toolName) {
 
 function isLinearSaveIssue(toolName) {
   return /save_issue/i.test(toolName || "");
+}
+
+function isLinearSaveComment(toolName) {
+  return /save_comment/i.test(toolName || "");
 }
 
 function targetsMainBranch(base) {
@@ -122,12 +126,23 @@ function writePendingState(payload) {
 
 function truncatedPayload(payload) {
   return {
-    createdAt: new Date().toISOString(),
+    createdAt: payload.createdAt || new Date().toISOString(),
     prUrl: payload.prUrl,
     branch: payload.branch,
     candidates: payload.candidates,
     command: payload.command,
+    issueSynced: payload.issueSynced === true,
+    commentSynced: payload.commentSynced === true,
   };
+}
+
+function buildPrCommentBody(prUrl) {
+  const url = prUrl || "<PR URL>";
+  return `**GitHub PR:** ${url}
+
+## Test plan
+- [ ] CI passes (lint + build)
+- [ ] Manual smoke test on preview deploy`;
 }
 
 function readPendingState() {
@@ -209,13 +224,18 @@ Follow \`${LINEAR_SKILL}\`. Use Linear MCP (\`server: user-Linear\`).
 
 1. Search for the related Linear issue (team ZAW, project trAInR MVP) using hints, branch name, and commit messages.
 2. **Ask the user to confirm the correct issue** before any update. Show identifier, title, and current status.
-3. Only after explicit user confirmation, update via \`save_issue\`:
+3. Only after explicit user confirmation, update via \`save_issue\` on that issue:
    - \`links: [{ url: "${info.prUrl || "<PR URL>"}", title: "GitHub PR" }]\`
    - \`state\` → **In Review** (use \`list_issue_statuses\` if the exact name differs)
-   - \`save_comment\` with a brief test-plan checklist
-4. If no confident match exists, ask the user for the issue ID — do not guess.
+4. On the **same** confirmed issue, call \`save_comment\` (separate tool call):
+   - \`issueId\`: the confirmed issue id or identifier (e.g. ZAW-9)
+   - \`body\`: use this markdown exactly (real newlines, not \\\\n):
 
-Cursor will prompt for approval before Linear \`save_issue\` runs while this PR sync is pending.`;
+${buildPrCommentBody(info.prUrl)}
+
+5. If no confident match exists, ask the user for the issue ID — do not guess.
+
+Cursor will prompt for approval before Linear \`save_issue\` and \`save_comment\` run while this PR sync is pending.`;
 }
 
 function handlePostToolUse(data) {
@@ -238,44 +258,82 @@ function handlePostToolUse(data) {
 }
 
 function handleBeforeMcpExecution(data) {
-  if (!isLinearSaveIssue(data.tool_name)) return;
-
   const pending = readPendingState();
   if (!pending) return;
 
   const toolInput = parseJson(data.tool_input, data.tool_input || {});
-  const issueId = toolInput.id || toolInput.identifier || null;
-
-  // Creating a new issue (no id) is unrelated to PR sync gating.
-  if (!issueId) return;
-
-  const issueLabel = String(issueId);
   const prLabel = pending.prUrl || "the new PR";
 
-  process.stdout.write(
-    JSON.stringify({
-      permission: "ask",
-      user_message: `Approve updating Linear issue ${issueLabel} for PR sync? This should link ${prLabel} and move the issue to In Review. Reject if the agent picked the wrong issue.`,
-      agent_message: `PR-linear-sync hook: user must confirm this is the correct Linear issue before save_issue runs. Present issue ${issueLabel}, PR ${prLabel}, and intended status change (In Review + PR link). Wait for user approval or pick a different issue.`,
-    }),
+  if (isLinearSaveIssue(data.tool_name)) {
+    const issueId = toolInput.id || toolInput.identifier || null;
+
+    // Creating a new issue (no id) is unrelated to PR sync gating.
+    if (!issueId) return;
+
+    const issueLabel = String(issueId);
+
+    process.stdout.write(
+      JSON.stringify({
+        permission: "ask",
+        user_message: `Approve updating Linear issue ${issueLabel} for PR sync? This should link ${prLabel} and move the issue to In Review. Reject if the agent picked the wrong issue.`,
+        agent_message: `PR-linear-sync hook: user must confirm this is the correct Linear issue before save_issue runs. Present issue ${issueLabel}, PR ${prLabel}, and intended status change (In Review + PR link). Wait for user approval or pick a different issue.`,
+      }),
+    );
+    return;
+  }
+
+  if (isLinearSaveComment(data.tool_name)) {
+    // Updates to existing comments are unrelated to PR sync.
+    if (toolInput.id) return;
+
+    const issueId = toolInput.issueId || toolInput.issue_id || null;
+    const issueLabel = issueId ? String(issueId) : "the target issue";
+
+    process.stdout.write(
+      JSON.stringify({
+        permission: "ask",
+        user_message: `Approve posting a PR link comment on Linear ${issueLabel}? Comment should include ${prLabel}. Reject if the agent picked the wrong issue.`,
+        agent_message: `PR-linear-sync hook: user must confirm save_comment targets the correct issue (${issueLabel}) before posting PR link ${prLabel}. Use the PR comment body from hook context.`,
+      }),
+    );
+  }
+}
+
+function mcpExecutionFailed(result) {
+  return (
+    result?.error ||
+    result?.isError === true ||
+    (typeof result?.success === "boolean" && !result.success)
   );
 }
 
-function handleAfterMcpExecution(data) {
-  if (!isLinearSaveIssue(data.tool_name)) return;
+function markSyncProgress(field) {
+  const pending = readPendingState();
+  if (!pending) return;
 
+  const updated = { ...pending, [field]: true };
+  if (updated.issueSynced && updated.commentSynced) {
+    clearPendingState();
+  } else {
+    writePendingState(updated);
+  }
+}
+
+function handleAfterMcpExecution(data) {
   const pending = readPendingState();
   if (!pending) return;
 
   const result = parseJson(data.result_json, data.result_json || {});
-  const failed =
-    result?.error ||
-    result?.isError === true ||
-    (typeof result?.success === "boolean" && !result.success);
+  if (mcpExecutionFailed(result)) return;
 
-  if (failed) return;
+  if (isLinearSaveIssue(data.tool_name)) {
+    markSyncProgress("issueSynced");
+    return;
+  }
 
-  clearPendingState();
+  if (isLinearSaveComment(data.tool_name)) {
+    markSyncProgress("commentSynced");
+  }
 }
 
 async function main() {
