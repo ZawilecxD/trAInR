@@ -1,7 +1,5 @@
 # trAInR
 
-![](./public/template.png)
-
 A modern fitness coaching app built with Astro SSR, React islands, Supabase auth, and Vercel deployment.
 
 ## Tech Stack
