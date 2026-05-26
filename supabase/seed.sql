@@ -1,0 +1,1 @@
+-- Reference data seeds (muscle_groups, etc.) are added in later F-01 migrations.
