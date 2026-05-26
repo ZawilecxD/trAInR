@@ -435,13 +435,13 @@ Wire TypeScript types and middleware; add route guards; fix API route exports; u
 
 #### Automated
 
-- [x] 2.1 `npx supabase db reset` applies migrations and seed
-- [x] 2.2 `muscle_groups` count > 0 after reset
+- [x] 2.1 `npx supabase db reset` applies migrations and seed — d298941
+- [x] 2.2 `muscle_groups` count > 0 after reset — d298941
 
 #### Manual
 
-- [x] 2.3 Trainer A cannot read Trainer B exercises
-- [x] 2.4 `invite_links` not readable unauthenticated
+- [x] 2.3 Trainer A cannot read Trainer B exercises — d298941
+- [x] 2.4 `invite_links` not readable unauthenticated — d298941
 
 ### Phase 3: Templates & client plans
 
