@@ -423,13 +423,13 @@ Wire TypeScript types and middleware; add route guards; fix API route exports; u
 
 #### Automated
 
-- [x] 1.1 `npx supabase db reset` completes without error
-- [x] 1.2 `npm run lint` passes
+- [x] 1.1 `npx supabase db reset` completes without error — 3773005
+- [x] 1.2 `npm run lint` passes — 3773005
 
 #### Manual
 
-- [x] 1.3 Signup creates `profiles` row with `role = trainer`
-- [x] 1.4 Direct `profiles` INSERT as authenticated user is denied
+- [x] 1.3 Signup creates `profiles` row with `role = trainer` — 3773005
+- [x] 1.4 Direct `profiles` INSERT as authenticated user is denied — 3773005
 
 ### Phase 2: Onboarding & exercise library
 
