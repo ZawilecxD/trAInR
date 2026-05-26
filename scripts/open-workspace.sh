@@ -6,6 +6,7 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT"
 
 DEV_URL="http://localhost:4321"
+GITHUB_URL="https://github.com/ZawilecxD/trAInR"
 LINEAR_URL="https://linear.app/zawilecxd/project/trainr-mvp-5d6b10ab8d1e/issues"
 SUPABASE_URL="https://supabase.com/dashboard/project/ywcshfujgapoptdkdqtj"
 VERCEL_URL="https://vercel.com/zawilecxd1/tr-a-in-r"
@@ -22,6 +23,7 @@ open_url() {
 }
 
 echo "Opening project dashboards..."
+open_url "$GITHUB_URL"
 open_url "$LINEAR_URL"
 open_url "$SUPABASE_URL"
 open_url "$VERCEL_URL"
