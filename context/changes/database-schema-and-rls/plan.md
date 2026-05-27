@@ -447,12 +447,12 @@ Wire TypeScript types and middleware; add route guards; fix API route exports; u
 
 #### Automated
 
-- [x] 3.1 `npx supabase db reset` succeeds
-- [x] 3.2 Duplicate active `client_plans` for same client fails
+- [x] 3.1 `npx supabase db reset` succeeds — 9df05a0
+- [x] 3.2 Duplicate active `client_plans` for same client fails — 9df05a0
 
 #### Manual
 
-- [x] 3.3 Client cannot read another client's plan
+- [x] 3.3 Client cannot read another client's plan — 9df05a0
 
 ### Phase 4: Sessions, logging & comments
 

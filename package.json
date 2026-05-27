@@ -10,7 +10,7 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "format": "prettier --write .",
-    "open-workspace": "bash scripts/open-workspace.sh"
+    "local-workspace": "bash scripts/local-workspace"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.8",

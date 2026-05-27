@@ -63,13 +63,13 @@ The app runs at [http://localhost:4321](http://localhost:4321).
 To start the dev server, open the local app, and open Linear, Supabase, and Vercel in your browser:
 
 ```bash
-npm run open-workspace
+npm run local-workspace
 ```
 
 ## Available Scripts
 
 - `npm run dev` — Start development server (default: http://localhost:4321)
-- `npm run open-workspace` — Start dev server and open local app + project dashboards
+- `npm run local-workspace` — Start dev server and open local app + project dashboards
 - `npm run build` — Build for production (SSR output for Vercel)
 - `npm run preview` — Preview production build locally
 - `npm run lint` — Run ESLint with type-checked rules

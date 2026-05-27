@@ -8,7 +8,7 @@ cd "$ROOT"
 DEV_URL="http://localhost:4321"
 GITHUB_URL="https://github.com/ZawilecxD/trAInR"
 LINEAR_URL="https://linear.app/zawilecxd/project/trainr-mvp-5d6b10ab8d1e/issues"
-SUPABASE_URL="https://supabase.com/dashboard/project/ywcshfujgapoptdkdqtj"
+SUPABASE_URL="http://localhost:54323"
 VERCEL_URL="https://vercel.com/zawilecxd1/tr-a-in-r"
 
 open_url() {
@@ -21,6 +21,9 @@ open_url() {
     echo "Open in your browser: $url"
   fi
 }
+
+echo "Starting local Supabase stack..."
+npx supabase start
 
 echo "Opening project dashboards..."
 open_url "$GITHUB_URL"
