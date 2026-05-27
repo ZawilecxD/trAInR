@@ -115,5 +115,6 @@ Reply with a short summary:
 ## Related
 
 - Planning and issue CRUD: [linear-mcp](../linear-mcp/SKILL.md)
+- Ongoing plan/implement comments: [linear-sync](../linear-sync/SKILL.md) (when `change.md` has `linear_issue`)
 - PRs and CI after implementation: [github-mcp](../github-mcp/SKILL.md)
 - PR merge hook may sync Linear on PR create: `.cursor/hooks/pr-linear-sync.cjs`

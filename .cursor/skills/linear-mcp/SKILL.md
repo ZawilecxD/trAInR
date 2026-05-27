@@ -40,7 +40,7 @@ Align Linear work with repo artifacts:
 | Repo source | Linear usage |
 |---|---|
 | `context/foundation/roadmap.md` slices (`F-01`, `S-01`, …) | One issue per slice; title includes Change ID |
-| `context/changes/<change-id>/` plans | Link in issue `links` or description |
+| `context/changes/<change-id>/` plans | Link in issue `links` or description; optional `linear_issue: ZAW-N` on `change.md` drives [linear-sync](../linear-sync/SKILL.md) |
 | GitHub PRs (`ZawilecxD/trAInR`) | Add PR URL via `links: [{ url, title }]` on the issue |
 | Commit style (AGENTS.md) | Lowercase imperative titles when creating issues from code work |
 
