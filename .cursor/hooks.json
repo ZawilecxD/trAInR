@@ -1,11 +1,6 @@
 {
   "version": 1,
   "hooks": {
-    "afterAgentResponse": [
-      {
-        "command": "node .cursor/hooks/save-plan.cjs"
-      }
-    ],
     "postToolUse": [
       {
         "command": "node .cursor/hooks/pr-linear-sync.cjs",
