@@ -3,7 +3,7 @@ change_id: database-schema-and-rls
 title: F-01 database schema, RLS, and role-aware middleware
 status: implementing
 created: 2026-05-26
-updated: 2026-05-27
+updated: 2026-05-28
 archived_at: null
 ---
 

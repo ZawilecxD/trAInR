@@ -458,13 +458,13 @@ Wire TypeScript types and middleware; add route guards; fix API route exports; u
 
 #### Automated
 
-- [x] 4.1 `npx supabase db reset` succeeds
-- [x] 4.2 All 13 MVP tables have RLS enabled
+- [x] 4.1 `npx supabase db reset` succeeds — 6800439
+- [x] 4.2 All 13 MVP tables have RLS enabled — 6800439
 
 #### Manual
 
-- [x] 4.3 Client session isolation verified
-- [x] 4.4 Trainer only sees assigned client sessions
+- [x] 4.3 Client session isolation verified — 6800439
+- [x] 4.4 Trainer only sees assigned client sessions — 6800439
 
 ### Phase 5: App layer, docs & remote apply
 
