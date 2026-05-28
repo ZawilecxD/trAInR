@@ -4,6 +4,7 @@
  * PR → Linear sync hook (trAInR)
  *
  * postToolUse: detect gh pr create / GitHub MCP create_pull_request → main|master
+ * postToolUse: detect gh pr merge / GitHub MCP merge_pull_request → main|master
  * beforeMCPExecution: require user approval before Linear save_issue / save_comment while sync pending
  * afterMCPExecution: clear pending state after successful save_issue and save_comment
  */
@@ -38,6 +39,10 @@ function parseJson(value, fallback = null) {
 
 function isPrCreateTool(toolName) {
   return /\bgh\s+pr\s+create\b/.test(toolName) || /create_pull_request/i.test(toolName);
+}
+
+function isPrMergeTool(toolName) {
+  return /\bgh\s+pr\s+merge\b/.test(toolName) || /merge_pull_request/i.test(toolName);
 }
 
 function isLinearSaveIssue(toolName) {
@@ -145,6 +150,31 @@ function buildPrCommentBody(prUrl) {
 - [ ] Manual smoke test on preview deploy`;
 }
 
+function buildMergeAdditionalContext(info) {
+  const hints =
+    info.candidates.length > 0 ? info.candidates.join(", ") : "none — use merged PR context";
+  const phaseIssues = info.phaseIssues?.length ? info.phaseIssues.join(", ") : "(none mapped)";
+
+  return `[pr-linear-sync hook]
+
+A pull request targeting main/master was just merged.
+
+PR: ${info.prUrl || "(locate from gh output)"}
+Branch: ${info.branch || "(unknown)"}
+Search hints: ${hints}
+Mapped phase issues: ${phaseIssues}
+
+## Required follow-up
+
+Follow \`${LINEAR_SKILL}\`. Use Linear MCP (\`server: user-Linear\`).
+
+1. Resolve the parent issue for this merged PR and ask the user to confirm it.
+2. Confirm each mapped phase child issue is Done (if not, move to Done-like state).
+3. Move the parent issue to **Done** (use \`list_issue_statuses\` if exact name differs).
+4. Post a completion comment on the parent issue with merged PR link and note that all phases are complete.
+5. If issue resolution is ambiguous, ask the user for explicit identifier and stop guessing.`;
+}
+
 function readPendingState() {
   try {
     return parseJson(fs.readFileSync(PENDING_PATH, "utf8"));
@@ -206,6 +236,70 @@ function detectMcpPrCreate(data) {
   };
 }
 
+function detectShellPrMerge(data) {
+  const command = data.tool_input?.command || "";
+  if (!/\bgh\s+pr\s+merge\b/.test(command)) return null;
+
+  const base = extractBaseFromGhCommand(command);
+  if (!targetsMainBranch(base)) return null;
+
+  const toolOutput = parseJson(data.tool_output, {});
+  const exitCode = toolOutput.exitCode ?? toolOutput.exit_code;
+  if (exitCode != null && exitCode !== 0) return null;
+
+  const stdout = toolOutput.stdout || toolOutput.output || "";
+  const combined = `${stdout}\n${command}`;
+  const branch = getCurrentBranch(data.cwd);
+  const candidates = gatherCandidates(branch, command, combined);
+  const phaseIssues = [];
+  for (const item of candidates) {
+    if (item.startsWith("change-id:")) {
+      const changeId = item.slice(10);
+      const changePath = path.join(process.cwd(), "context", "changes", changeId, "change.md");
+      try {
+        const content = fs.readFileSync(changePath, "utf8");
+        for (const match of content.matchAll(/\b(ZAW-\d+)\b/gi)) {
+          const key = match[1].toUpperCase();
+          if (!phaseIssues.includes(key)) phaseIssues.push(key);
+        }
+      } catch {
+        // best-effort
+      }
+    }
+  }
+
+  return {
+    prUrl: extractPrUrl(combined),
+    branch,
+    command,
+    candidates,
+    phaseIssues,
+  };
+}
+
+function detectMcpPrMerge(data) {
+  const toolName = data.tool_name || "";
+  if (!/merge_pull_request/i.test(toolName)) return null;
+
+  const toolInput = parseJson(data.tool_input, data.tool_input || {});
+  const base = toolInput.base || toolInput.baseRefName || toolInput.base_ref || null;
+  if (!targetsMainBranch(base)) return null;
+
+  const result = parseJson(data.tool_output, data.tool_output || "");
+  const combined = `${JSON.stringify(result)}\n${JSON.stringify(toolInput)}`;
+  return {
+    prUrl: extractPrUrl(combined),
+    branch: toolInput.head || toolInput.headRefName || getCurrentBranch(data.cwd),
+    command: JSON.stringify(toolInput),
+    candidates: gatherCandidates(
+      toolInput.head || toolInput.headRefName || getCurrentBranch(data.cwd),
+      combined,
+      combined,
+    ),
+    phaseIssues: [],
+  };
+}
+
 function buildAdditionalContext(info) {
   const hints =
     info.candidates.length > 0 ? info.candidates.join(", ") : "none — use branch name and commits";
@@ -243,11 +337,23 @@ function handlePostToolUse(data) {
 
   if (data.tool_name === "Shell") {
     info = detectShellPrCreate(data);
+    if (!info) info = detectShellPrMerge(data);
   } else if (isPrCreateTool(data.tool_name || "")) {
     info = detectMcpPrCreate(data);
+  } else if (isPrMergeTool(data.tool_name || "")) {
+    info = detectMcpPrMerge(data);
   }
 
   if (!info) return;
+
+  if (isPrMergeTool(data.tool_name || "") || /\bgh\s+pr\s+merge\b/.test(data.tool_input?.command || "")) {
+    process.stdout.write(
+      JSON.stringify({
+        additional_context: buildMergeAdditionalContext(info),
+      }),
+    );
+    return;
+  }
 
   writePendingState(info);
   process.stdout.write(
