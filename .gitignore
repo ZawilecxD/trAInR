@@ -142,11 +142,6 @@ vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 .vite/
 
-# Cursor -- 10x artifacts (local only, never push to remote)
-.cursor/.10x*
-.cursor/rules/10x*
-.cursor/skills/10x*
-
 # Cursor -- local MCP config (contains real PAT after setup)
 .cursor/mcp.json
 # Cursor -- hook runtime state (PR ↔ Linear sync pending)

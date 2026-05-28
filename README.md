@@ -205,6 +205,10 @@ Repository secrets: `SUPABASE_URL`, `SUPABASE_KEY`, `VERCEL_TOKEN`, `VERCEL_ORG_
 
 GitHub Actions runs `npm run lint` and `npm run build` on every push and PR to `master`. On success, Vercel preview (PR) or production (`master`) deploy runs automatically when secrets are configured.
 
+## Workflow Docs
+
+- [Linear implementation workflow](docs/linear-implementation-workflow.md) — how to run `/10x-plan` + `/10x-implement` with automatic Linear sync (phases, reviews, PR transitions).
+
 ## License
 
 MIT

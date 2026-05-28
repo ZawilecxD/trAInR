@@ -9,7 +9,7 @@ description: >-
 
 # Linear sync (trAInR ↔ Linear)
 
-Keep a **single Linear issue** aligned with `context/changes/<change-id>/` during planning and implementation. Uses Linear MCP (`user-Linear`) — see [linear-mcp](../linear-mcp/SKILL.md) for tool schemas, auth, and markdown rules.
+Keep a parent Linear issue plus optional per-phase child issues aligned with `context/changes/<change-id>/` during planning and implementation. Uses Linear MCP (`user-Linear`) — see [linear-mcp](../linear-mcp/SKILL.md) for tool schemas, auth, and markdown rules.
 
 **Do not** guess issue IDs from change-id or branch name alone. **Do not** run unless an issue is explicitly linked (see [Resolve issue](#resolve-issue)).
 
@@ -30,6 +30,21 @@ linear_issue: ZAW-42   # optional
 If none apply: **skip** Linear sync; one line to the user: “No `linear_issue` in change.md — add `linear_issue: ZAW-N` or pass the issue id to link Linear.”
 
 After resolving, `get_issue` once and cache identifier, title, and current `state` for the session.
+
+## Phase issue mapping (`change.md`)
+
+`change.md` may contain:
+
+```yaml
+linear_issue: ZAW-123
+phase_issues:
+  "1": ZAW-124
+  "2": ZAW-125
+```
+
+- Keys are stringified phase numbers (`"1"`, `"2"`, ...).
+- Values are Linear identifiers for child issues.
+- Parent skills own writing this mapping; this skill only reads and uses it.
 
 ## User confirmation (first write per session)
 
@@ -54,7 +69,10 @@ Every sync comment **must** start with a level-2 heading used as a dedup key:
 | `plan-drafted` | `plan.md` first written / materially finalized (`change.md` → `planned`) |
 | `implement-started` | `/10x-implement` entry (`change.md` → `implementing`) |
 | `phase-<N>-complete` | After phase N commit SHA written to `plan.md` Progress |
+| `phase-<N>-reviewed` | Optional `/10x-impl-review` run for phase N returned results |
+| `decision-log` | Any mid-implementation adaptation, scope change, or non-trivial decision |
 | `implemented` | After final epilogue (`change.md` → `implemented`) |
+| `implementation-reviewed` | Optional final `/10x-impl-review` run for whole change returned results |
 
 Before `save_comment`, call `list_comments` on the issue. If a comment body already contains `## trAInR — <event-key>`, **skip** posting (success).
 
@@ -66,8 +84,11 @@ Use **literal newlines** in comment bodies — never `\n` escapes.
 |-------|---------------------------|
 | `plan-drafted` | **None** (comment only) |
 | `implement-started` | → **In Progress** only if current state is backlog/todo-like (not In Progress, In Review, Done, Canceled). Use `list_issue_statuses` for the exact name. |
-| `phase-*-complete` | **None** (comment only) |
-| `implemented` | **None** by default (comment only). Suggest Done in comment text; user or PR flow moves to In Review/Done. |
+| `phase-*-complete` | Parent: **None** (comment only). Child phase issue: if `phase_issues["N"]` exists, move child to **Done** (or closest done-like state from `list_issue_statuses`). |
+| `phase-*-reviewed` | **None** (comment only). Target issue: mapped phase child issue if present, else parent issue. |
+| `decision-log` | **None** (comment only) |
+| `implemented` | **None** (comment only). PR create flow moves parent to In Review; PR merge follow-up moves parent (and any remaining phase children) to Done. |
+| `implementation-reviewed` | **None** (comment only on parent issue). |
 
 Never move **backward** (e.g. In Review → In Progress).
 
@@ -107,6 +128,12 @@ Implementation started in repo.
 
 **Trigger:** After phase-end commit ritual step 9 (SHA written to Progress for phase N).
 
+**Required sequence (no opt-out when linked):**
+
+1. Parent skill completes phase commit and passes `SHA`.
+2. This skill posts parent milestone comment (`phase-<N>-complete`).
+3. This skill closes mapped child issue `phase_issues["N"]` (if present).
+
 **Comment body template** — include phase title from plan, short SHA, and optional summary of what landed:
 
 ```markdown
@@ -117,6 +144,70 @@ Implementation started in repo.
 **Commit:** `<short-sha>`
 
 Phase automated (+ manual) verification complete in repo.
+```
+
+**Child phase issue close:**
+
+- Read `phase_issues` from `change.md`.
+- If mapping contains key `"<N>"`, call `save_issue` on that child issue and set state to a done-like status for that issue's team.
+- If mapping is missing for this phase, keep parent comment sync and warn in one sentence.
+
+### `decision-log`
+
+**Trigger:** Parent skill detected a plan/reality mismatch and the user selected adaptation that changes scope/behavior/approach.
+
+```markdown
+## trAInR — decision-log
+
+**Change:** `<change-id>`
+**Phase:** `<N or n/a>`
+
+**Expected:** <what plan expected>
+**Found:** <what was discovered>
+**Decision:** <what was chosen>
+**Impact:** <scope/timeline/risk impact>
+```
+
+### `phase-<N>-reviewed`
+
+**Trigger:** Parent skill asked whether to run `/10x-impl-review` for phase N and user chose **Yes**.
+
+**Target issue rule:**
+
+1. If `phase_issues["N"]` exists, post to that child issue.
+2. Otherwise, post to parent `linear_issue`.
+
+```markdown
+## trAInR — phase-<N>-reviewed
+
+**Change:** `<change-id>`
+**Phase:** N — <phase title>
+**Review command:** `/10x-impl-review @context/changes/<change-id>/plan.md phase N`
+
+**Findings summary:**
+- <top issue or "no blocking issues found">
+- <second key finding if present>
+
+**Action:** <fixes applied or follow-up decision>
+```
+
+### `implementation-reviewed`
+
+**Trigger:** Parent skill asked whether to run final `/10x-impl-review <change-id>` and user chose **Yes**.
+
+**Target issue:** parent `linear_issue`.
+
+```markdown
+## trAInR — implementation-reviewed
+
+**Change:** `<change-id>`
+**Review command:** `/10x-impl-review <change-id>`
+
+**Findings summary:**
+- <top cross-phase finding or "no blocking issues found">
+- <second key finding if present>
+
+**Action:** <fixes applied or follow-up decision>
 ```
 
 ### `implemented`
@@ -148,8 +239,8 @@ Use the exact identifier from frontmatter. Do not invent IDs from change-id.
 |--------------|------|
 | [linear-mcp](../linear-mcp/SKILL.md) | MCP tool reference |
 | [start-linear-issue](../start-linear-issue/SKILL.md) | Explicit branch + In Progress (user-invoked only) |
-| `.cursor/hooks/pr-linear-sync.cjs` | PR → In Review + PR comment |
-| Planning / implement | Parent skills call this at milestones (optional `linear_issue`) |
+| `.cursor/hooks/pr-linear-sync.cjs` | PR create → In Review + PR comment; PR merge follow-up can finalize Done transitions |
+| Planning / implement | Parent skills call this at milestones (`linear_issue`; `phase_issues` optional but recommended) |
 
 ## Troubleshooting
 
