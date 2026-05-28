@@ -93,7 +93,7 @@ npm run local-workspace
 
 ## Supabase Configuration
 
-This project uses [Supabase](https://supabase.com/) for authentication. Environment variables are declared via Astro's `astro:env` schema and are treated as **server-only secrets** — they are never exposed to the client.
+This project uses [Supabase](https://supabase.com/) for authentication and the app data layer. Environment variables are declared via Astro's `astro:env` schema and are treated as **server-only secrets** — they are never exposed to the client.
 
 ### First-time setup (local, no cloud project needed)
 
@@ -124,15 +124,20 @@ SUPABASE_URL=http://127.0.0.1:54321
 SUPABASE_KEY=<anon key from CLI output>
 ```
 
-5. To stop the stack when done:
+5. Apply migrations + seed:
+
+```bash
+npx supabase db reset
+```
+
+6. To stop the stack when done:
 
 ```bash
 npx supabase stop
 ```
 
 The local Studio UI is available at `http://localhost:54323`.
-
-No database tables or migrations are required — this project uses Supabase Auth's built-in `auth.users` table only.
+This repository includes app schema migrations under `supabase/migrations/` and lookup seed data in `supabase/seed.sql`.
 
 ### Using a cloud Supabase project instead
 
@@ -172,7 +177,7 @@ Users can then sign in immediately after sign-up without clicking a confirmation
 | `/auth/confirm-email` | Post-signup "check your inbox" page                                     |
 | `/dashboard`          | Example protected page (redirects to `/auth/signin` if unauthenticated) |
 
-Route protection is handled in `src/middleware.ts`. Add paths to the `PROTECTED_ROUTES` array there to require authentication.
+Route protection and role guards are handled in `src/middleware.ts` (`/dashboard`, `/trainer/*`, `/client/*`).
 
 ## Deployment
 

@@ -1,13 +1,14 @@
 # Supabase setup (trAInR)
 
-Reference for configuring and using Supabase in this project. Supabase provides **authentication only** — no custom database tables or migrations are required for the starter auth flow.
+Reference for configuring and using Supabase in this project. Supabase provides authentication plus the trAInR app schema (13 MVP tables with RLS) managed through SQL migrations.
 
 ## What Supabase does here
 
 - Email/password sign-up and sign-in
 - Cookie-based sessions via `@supabase/ssr` (SSR-safe, server-only)
-- Route protection in middleware (`/dashboard` by default)
-- Built-in `auth.users` table (managed by Supabase; no app migrations)
+- Route protection in middleware (`/dashboard`, `/trainer/*`, `/client/*`)
+- Profile role lookup in middleware (`context.locals.role`)
+- Built-in `auth.users` plus app tables in `public` managed by migrations
 
 Auth is **disabled gracefully** when env vars are missing: API routes redirect with an error, and `context.locals.user` is `null`.
 
@@ -74,7 +75,23 @@ Requires [Docker](https://www.docker.com/) and ~7 GB RAM.
 
 5. Optional: open local Studio at `http://localhost:54323`
 
-6. Stop when done:
+6. Apply schema + seed after start:
+
+   ```bash
+   npx supabase db reset
+   ```
+
+   This applies migrations in timestamp order:
+
+   - `20260526120000_enums_profiles_helpers.sql`
+   - `20260526120100_trainer_onboarding.sql`
+   - `20260526120200_exercise_library.sql`
+   - `20260526120300_templates_and_plans.sql`
+   - `20260526120400_sessions_logging_comments.sql`
+
+   And seeds lookup data from `supabase/seed.sql`.
+
+7. Stop when done:
 
    ```bash
    npx supabase stop
@@ -133,9 +150,23 @@ npx supabase link --project-ref <project-ref>
 
 `<project-ref>` is the subdomain in your project URL.
 
-### 6. No migrations required
+### 6. Apply migrations to hosted project (manual)
 
-There are no files in `supabase/migrations/` for this starter. Auth uses Supabase’s built-in `auth.users` only — skip `db push` until you add custom tables.
+After local verification, push the same migrations to your linked hosted project:
+
+```bash
+npx supabase login
+npx supabase link --project-ref <project-ref>
+npx supabase db push
+```
+
+Recommended checklist:
+
+1. Run `npx supabase db reset` locally and confirm expected schema.
+2. Ensure `.env` points to hosted credentials before app verification.
+3. Run `npx supabase db push` once per reviewed migration set.
+4. Verify in Studio that all 13 MVP tables exist with RLS enabled.
+5. Spot-check auth/signup creates `profiles` rows with role.
 
 ---
 
@@ -148,7 +179,7 @@ There are no files in `supabase/migrations/` for this starter. Auth uses Supabas
 | `/auth/confirm-email` | Post-signup “check your inbox” page |
 | `/dashboard` | Example protected page (redirects to sign-in if unauthenticated) |
 
-Add paths to `PROTECTED_ROUTES` in `src/middleware.ts` to require authentication elsewhere.
+`src/middleware.ts` protects `/dashboard`, and enforces role prefixes on `/trainer/*` and `/client/*`.
 
 ## API endpoints
 
@@ -170,7 +201,16 @@ All API route files must export `const prerender = false` when added (project co
 
 2. Visit `/auth/signup`, create a user, then `/auth/signin` and `/dashboard`.
 
-3. Confirm the user appears under **Authentication** → **Users** in the Supabase dashboard (hosted) or local Studio.
+3. Confirm the user appears under **Authentication** → **Users** and has a matching row in `public.profiles`.
+
+4. Confirm schema + RLS in SQL editor:
+
+   ```sql
+   select tablename
+   from pg_tables
+   where schemaname = 'public'
+   order by tablename;
+   ```
 
 ## Local vs hosted quick reference
 
@@ -196,5 +236,7 @@ All API route files must export `const prerender = false` when added (project co
 
 - `README.md` — high-level Supabase section (note: README still mentions Cloudflare/`.dev.vars`; this project deploys to **Vercel** and uses **`.env`**)
 - `AGENTS.md` — agent rules (RLS required for new tables, migration naming, SSR auth pattern)
+- `docs/ERD.md` — schema source of truth
+- `context/changes/database-schema-and-rls/` — implementation plan and rollout notes
 - [Supabase Auth docs](https://supabase.com/docs/guides/auth)
 - [Supabase CLI local development](https://supabase.com/docs/guides/local-development)
