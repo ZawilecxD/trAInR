@@ -1,7 +1,7 @@
 ---
 change_id: database-schema-and-rls
 title: F-01 database schema, RLS, and role-aware middleware
-status: implementing
+status: implemented
 linear_issue: ZAW-5
 created: 2026-05-26
 updated: 2026-05-28

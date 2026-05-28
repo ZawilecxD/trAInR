@@ -470,11 +470,11 @@ Wire TypeScript types and middleware; add route guards; fix API route exports; u
 
 #### Automated
 
-- [x] 5.1 `npm run lint` passes
-- [x] 5.2 `npm run build` passes
-- [x] 5.3 `npx supabase db reset` still passes
+- [x] 5.1 `npm run lint` passes — f2e386e
+- [x] 5.2 `npm run build` passes — f2e386e
+- [x] 5.3 `npx supabase db reset` still passes — f2e386e
 
 #### Manual
 
-- [x] 5.4 Middleware role and route guards behave correctly
-- [x] 5.5 Hosted `supabase db push` applied and verified in Studio
+- [x] 5.4 Middleware role and route guards behave correctly — f2e386e
+- [x] 5.5 Hosted `supabase db push` applied and verified in Studio — f2e386e
