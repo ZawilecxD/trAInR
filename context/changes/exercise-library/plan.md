@@ -330,11 +330,11 @@ Close the slice with security/regression checks, ensure RLS behavior remains int
 
 #### Automated
 
-- [ ] 3.1 `npm run lint` and `npm run build` both pass on final branch state
-- [ ] 3.2 API and UI tests for exercise flows pass in CI-equivalent local run
+- [x] 3.1 `npm run lint` and `npm run build` both pass on final branch state
+- [x] 3.2 API and UI tests for exercise flows pass in CI-equivalent local run
 
 #### Manual
 
-- [ ] 3.3 SQL ownership verification script confirms trainer A cannot read/update trainer B exercises
-- [ ] 3.4 End-to-end trainer flow (`create -> filter -> edit -> archive`) passes on local reset
-- [ ] 3.5 No regression in auth middleware behavior for `/trainer` protected routes
+- [x] 3.3 SQL ownership verification script confirms trainer A cannot read/update trainer B exercises
+- [x] 3.4 End-to-end trainer flow (`create -> filter -> edit -> archive`) passes on local reset
+- [x] 3.5 No regression in auth middleware behavior for `/trainer` protected routes

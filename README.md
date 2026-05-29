@@ -179,6 +179,25 @@ Users can then sign in immediately after sign-up without clicking a confirmation
 
 Route protection and role guards are handled in `src/middleware.ts` (`/dashboard`, `/trainer/*`, `/client/*`).
 
+### Trainer exercise library (S-01)
+
+Trainer-only routes (requires sign-in with `role: trainer` in profile):
+
+| Route                      | Description                                              |
+| -------------------------- | -------------------------------------------------------- |
+| `/trainer/exercises`       | Browse, filter, and search the exercise library          |
+| `/trainer/exercises/new`   | Create a new exercise                                    |
+| `/trainer/exercises/[id]`  | Edit or archive an existing exercise                     |
+
+Entry point: **Exercises** link in the top navigation (visible when signed in as a trainer).
+
+**Local verification**
+
+1. Reset local DB: `npx supabase db reset`
+2. Start app: `npm run dev`
+3. Sign up two trainer accounts (`role: trainer` in signup metadata) and exercise CRUD/filter flows
+4. RLS ownership isolation: paste `context/changes/exercise-library/verification.sql` into Supabase Studio SQL Editor — every check row should show `PASS` (script rolls back automatically)
+
 ## Deployment
 
 This project deploys to [Vercel](https://vercel.com/zawilecxd1/tr-a-in-r) using the `@astrojs/vercel` adapter (`output: "server"` in `astro.config.mjs`).

@@ -19,3 +19,10 @@ Planning assumptions from skipped questions:
 - filter logic: AND across active filter groups
 - muscle filter: multi-select
 - search: include case-insensitive name search
+
+## Delivered behavior (implementation)
+
+- API: `GET/POST /api/exercises`, `GET/PATCH /api/exercises/[id]` with zod validation and trainer-only guards
+- UI: list with type + multi-select muscle + name search filters; create/edit forms with shared `ExerciseForm`; archive with confirmation
+- Navigation: `/trainer/exercises` linked from topbar for trainer role
+- RLS verification: `context/changes/exercise-library/verification.sql` (copy-paste Studio script, rolls back)
