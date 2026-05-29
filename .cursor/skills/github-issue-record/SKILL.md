@@ -114,6 +114,8 @@ Derive **title** from Summary: lowercase imperative, ≤ 72 chars, matching comm
 
 **Labels**: always include `bug`. Add others only when clearly applicable (`enhancement`, etc.).
 
+Avoid raw HTML tags like `<select>` in the GitHub body — GitHub strips them. Use plain words ("select element", "select dropdown").
+
 Show the user a preview (title + body + labels) and ask:
 
 - **Create** — call GitHub MCP, then save local report
@@ -136,6 +138,18 @@ issue_write {
 ```
 
 On success, read the returned issue number. If the call fails (permissions, label missing), report the error and **STOP** without writing local files.
+
+## Screenshots
+
+When the user attaches an image or asks to include a screenshot:
+
+1. Copy the image to `context/foundation/issues/assets/<slug>.png` (or `.jpg`).
+2. Embed in the local report: `![description](./assets/<slug>.png)`.
+3. Add `## Screenshot` to the GitHub issue body: `See comment below — <one-line description>.`
+4. After create, call `add_issue_comment` on the new issue with a text description of the screenshot and the local asset path.
+5. If repo contents push is available (PAT with `contents: write`), push the asset to `context/foundation/issues/assets/` on `master` and embed `![…](https://raw.githubusercontent.com/ZawilecxD/trAInR/master/context/foundation/issues/assets/<file>)` in the comment instead.
+
+GitHub's issue API does not accept binary uploads directly — inline images on GitHub require a hosted URL or manual drag-drop onto the issue.
 
 ## Local report format
 
