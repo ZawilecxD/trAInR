@@ -44,7 +44,6 @@ Split the raw argument string on the first run of whitespace:
   3. If the result contains `/`, take the last non-empty path segment (`context/changes/feature-x` → `feature-x`).
   4. The result is `<change-id>`.
 - **Everything after the first token** = freeform intent. May be empty. May be a sentence or a paragraph. **Do not** treat it as a literal title to insert verbatim.
-- **Linear issue token (optional):** If any token matches `ZAW-\d+` (case-insensitive), normalize to uppercase (e.g. `ZAW-42`) and store as `linear_issue` in frontmatter. Remove that token from the intent string used for title/notes.
 
 Examples:
 
@@ -54,7 +53,6 @@ Examples:
 | `oauth-login add Google sign-in for faster onboarding` | `oauth-login` | `add Google sign-in for faster onboarding` |
 | `@context/changes/oauth-login/` | `oauth-login` | (empty) |
 | `@context/changes/oauth-login/ revisit the token-refresh edge case` | `oauth-login` | `revisit the token-refresh edge case` |
-| `oauth-login ZAW-12 add Google sign-in` | `oauth-login` | `add Google sign-in` (`linear_issue: ZAW-12`) |
 | `My Feature add OAuth` | `My Feature` (will fail kebab-case check) | `add OAuth` |
 
 ## Validation
@@ -88,7 +86,6 @@ status: new
 created: <YYYY-MM-DD>
 updated: <YYYY-MM-DD>
 archived_at: null
-linear_issue: <ZAW-N>   # omit this line entirely if no Linear issue token was parsed
 ---
 
 ## Notes
@@ -96,11 +93,9 @@ linear_issue: <ZAW-N>   # omit this line entirely if no Linear issue token was p
 <notes-body>
 ```
 
-If no Linear token was parsed, omit the `linear_issue` line (do not set `null`).
-
 `<YYYY-MM-DD>` is today's date (use `date +%Y-%m-%d`).
 
-See `docs/reference/change-md.md` for the full schema reference (allowed status values, `linear_issue`, transitions, what is intentionally NOT in `change.md`).
+See `docs/reference/change-md.md` for the full schema reference (allowed status values, transitions, what is intentionally NOT in `change.md`).
 
 ## Next-step suggestion
 
