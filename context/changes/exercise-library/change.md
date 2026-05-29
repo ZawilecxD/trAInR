@@ -1,0 +1,21 @@
+---
+change_id: exercise-library
+title: S-01 exercise library CRUD and filtering
+status: implementing
+linear_issue: ZAW-6
+phase_issues:
+  "1": ZAW-26
+  "2": ZAW-24
+  "3": ZAW-25
+created: 2026-05-28
+updated: 2026-05-29
+archived_at: null
+---
+
+## Notes
+
+S-01 from `context/foundation/roadmap.md`.
+Planning assumptions from skipped questions:
+- filter logic: AND across active filter groups
+- muscle filter: multi-select
+- search: include case-insensitive name search
