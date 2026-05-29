@@ -44,25 +44,15 @@ async function replaceMuscleGroups(
   exerciseId: string,
   muscleGroups: ExerciseMuscleGroupRow[],
 ): Promise<{ error: string | null }> {
-  const { error: deleteError } = await supabase.from("exercise_muscle_groups").delete().eq("exercise_id", exerciseId);
-
-  if (deleteError) {
-    return { error: deleteError.message };
-  }
-
-  if (muscleGroups.length === 0) {
-    return { error: null };
-  }
-
-  const { error: insertError } = await supabase.from("exercise_muscle_groups").insert(
-    muscleGroups.map((group) => ({
-      exercise_id: exerciseId,
+  const { error } = await supabase.rpc("replace_exercise_muscle_groups", {
+    p_exercise_id: exerciseId,
+    p_muscle_groups: muscleGroups.map((group) => ({
       muscle_group_id: group.muscle_group_id,
       role: group.role,
     })),
-  );
+  });
 
-  return { error: insertError?.message ?? null };
+  return { error: error?.message ?? null };
 }
 
 export async function listExercises(

@@ -34,6 +34,19 @@ interface ApiValidationIssue {
   message: string;
 }
 
+interface ApiErrorPayload {
+  error?: string;
+  details?: { issues?: ApiValidationIssue[]; message?: string };
+}
+
+async function safeJsonParse(response: Response): Promise<ApiErrorPayload> {
+  try {
+    return (await response.json()) as ApiErrorPayload;
+  } catch {
+    return {};
+  }
+}
+
 const inputClass =
   "w-full rounded-lg border border-white/20 bg-white/10 px-3 py-2 text-sm text-white placeholder-white/40 focus:ring-2 focus:ring-purple-400 focus:outline-none";
 
@@ -113,10 +126,7 @@ export default function ExerciseForm({ mode, muscleGroups, exerciseId, initialEx
         });
 
         if (!response.ok) {
-          const payload = (await response.json()) as {
-            error?: string;
-            details?: { issues?: ApiValidationIssue[]; message?: string };
-          };
+          const payload = await safeJsonParse(response);
 
           if (payload.error === "validation_error" && payload.details?.issues) {
             setErrors(mapApiIssues(payload.details.issues));
@@ -155,10 +165,7 @@ export default function ExerciseForm({ mode, muscleGroups, exerciseId, initialEx
       });
 
       if (!response.ok) {
-        const payload = (await response.json()) as {
-          error?: string;
-          details?: { issues?: ApiValidationIssue[]; message?: string };
-        };
+        const payload = await safeJsonParse(response);
 
         if (payload.error === "validation_error" && payload.details?.issues) {
           setErrors(mapApiIssues(payload.details.issues));
@@ -192,7 +199,7 @@ export default function ExerciseForm({ mode, muscleGroups, exerciseId, initialEx
       });
 
       if (!response.ok) {
-        const payload = (await response.json()) as { details?: { message?: string } };
+        const payload = await safeJsonParse(response);
         setErrors({ form: payload.details?.message ?? "Failed to archive exercise." });
         return;
       }
