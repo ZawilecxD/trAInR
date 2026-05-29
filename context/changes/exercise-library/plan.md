@@ -314,17 +314,17 @@ Close the slice with security/regression checks, ensure RLS behavior remains int
 
 #### Automated
 
-- [x] 2.1 `npm run lint` passes for new trainer exercise pages/components
-- [x] 2.2 `npm run build` passes with new trainer exercise routes
-- [x] 2.3 Component/unit tests pass for form validation and filter state serialization
+- [x] 2.1 `npm run lint` passes for new trainer exercise pages/components — d923ae7
+- [x] 2.2 `npm run build` passes with new trainer exercise routes — d923ae7
+- [x] 2.3 Component/unit tests pass for form validation and filter state serialization — d923ae7
 
 #### Manual
 
-- [x] 2.4 Trainer can create an exercise from UI and see it in list immediately
-- [x] 2.5 Trainer can open edit page, change fields, and persist updates
-- [x] 2.6 Trainer can archive an exercise from edit/list flow with confirmation
-- [x] 2.7 Filter combinations produce expected result sets (type + muscles + search)
-- [x] 2.8 Empty-state and no-match UX are clear and non-blocking
+- [x] 2.4 Trainer can create an exercise from UI and see it in list immediately — d923ae7
+- [x] 2.5 Trainer can open edit page, change fields, and persist updates — d923ae7
+- [x] 2.6 Trainer can archive an exercise from edit/list flow with confirmation — d923ae7
+- [x] 2.7 Filter combinations produce expected result sets (type + muscles + search) — d923ae7
+- [x] 2.8 Empty-state and no-match UX are clear and non-blocking — d923ae7
 
 ### Phase 3: Hardening, RLS verification, and docs
 

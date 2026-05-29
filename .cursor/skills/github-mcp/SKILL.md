@@ -23,6 +23,7 @@ Always pass `owner=ZawilecxD` and `repo=trAInR` to every MCP tool call.
 - Title: lowercase imperative, matching commit conventions (e.g. `add RLS policy for plans table`)
 - Apply labels when available (`bug`, `enhancement`, etc.)
 - Link to relevant files or routes in the body when helpful
+- To save a structured local triage report for an existing issue, use [github-issue-record](../github-issue-record/SKILL.md) (`/github-issue-record <#>`)
 
 ## Pull requests
 
