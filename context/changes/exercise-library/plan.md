@@ -294,37 +294,37 @@ Close the slice with security/regression checks, ensure RLS behavior remains int
 
 #### Automated
 
-- [x] 1.1 `npm run lint` passes after API and schema additions
-- [x] 1.2 `npm run build` passes after API and schema additions
-- [x] 1.3 `npm run test` is available and passes for exercise API contract tests
-- [x] 1.4 API route type-checking succeeds with strict TS settings
-- [x] 1.5 API tests pass: valid create
-- [x] 1.6 API tests pass: invalid payload rejection
-- [x] 1.7 API tests pass: filter query behavior
-- [x] 1.8 API tests pass: invalid UUID handling
+- [x] 1.1 `npm run lint` passes after API and schema additions — f501c0c
+- [x] 1.2 `npm run build` passes after API and schema additions — f501c0c
+- [x] 1.3 `npm run test` is available and passes for exercise API contract tests — f501c0c
+- [x] 1.4 API route type-checking succeeds with strict TS settings — f501c0c
+- [x] 1.5 API tests pass: valid create — f501c0c
+- [x] 1.6 API tests pass: invalid payload rejection — f501c0c
+- [x] 1.7 API tests pass: filter query behavior — f501c0c
+- [x] 1.8 API tests pass: invalid UUID handling — f501c0c
 
 #### Manual
 
-- [x] 1.9 Authenticated trainer can create an exercise via API payload
-- [x] 1.10 Authenticated trainer can update and archive their own exercise
-- [x] 1.11 Invalid payloads return clear 400 responses with validation context
-- [x] 1.12 Non-trainer access returns 403 and unauthenticated access returns 401
+- [x] 1.9 Authenticated trainer can create an exercise via API payload — f501c0c
+- [x] 1.10 Authenticated trainer can update and archive their own exercise — f501c0c
+- [x] 1.11 Invalid payloads return clear 400 responses with validation context — f501c0c
+- [x] 1.12 Non-trainer access returns 403 and unauthenticated access returns 401 — f501c0c
 
 ### Phase 2: Trainer exercise library UI
 
 #### Automated
 
-- [ ] 2.1 `npm run lint` passes for new trainer exercise pages/components
-- [ ] 2.2 `npm run build` passes with new trainer exercise routes
-- [ ] 2.3 Component/unit tests pass for form validation and filter state serialization
+- [x] 2.1 `npm run lint` passes for new trainer exercise pages/components
+- [x] 2.2 `npm run build` passes with new trainer exercise routes
+- [x] 2.3 Component/unit tests pass for form validation and filter state serialization
 
 #### Manual
 
-- [ ] 2.4 Trainer can create an exercise from UI and see it in list immediately
-- [ ] 2.5 Trainer can open edit page, change fields, and persist updates
-- [ ] 2.6 Trainer can archive an exercise from edit/list flow with confirmation
-- [ ] 2.7 Filter combinations produce expected result sets (type + muscles + search)
-- [ ] 2.8 Empty-state and no-match UX are clear and non-blocking
+- [x] 2.4 Trainer can create an exercise from UI and see it in list immediately
+- [x] 2.5 Trainer can open edit page, change fields, and persist updates
+- [x] 2.6 Trainer can archive an exercise from edit/list flow with confirmation
+- [x] 2.7 Filter combinations produce expected result sets (type + muscles + search)
+- [x] 2.8 Empty-state and no-match UX are clear and non-blocking
 
 ### Phase 3: Hardening, RLS verification, and docs
 
