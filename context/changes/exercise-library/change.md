@@ -1,7 +1,7 @@
 ---
 change_id: exercise-library
 title: S-01 exercise library CRUD and filtering
-status: implementing
+status: implemented
 linear_issue: ZAW-6
 phase_issues:
   "1": ZAW-26
