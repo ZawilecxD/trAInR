@@ -192,28 +192,11 @@ After implementing a phase:
 
   12. **Linear sync (required, per phase):** If `linear_issue` is set in `change.md`, always follow [linear-sync/SKILL.md](../linear-sync/SKILL.md) event **`phase-<N>-complete`** (use phase number/title and `SHA` from step 8). This posts the parent comment and closes the mapped phase child issue when `phase_issues["N"]` exists.
 
-- **Optional phase review (YES/NO):** After phase completion and required `phase-<N>-complete` sync, ask:
-
-  Ask the user: "Run `/10x-impl-review` for Phase [N]?" with options:
-  - "Yes (Recommended)" (description: "Run `/10x-impl-review @context/changes/<change-id>/plan.md phase [N]`, then post a Linear review summary comment.")
-  - "No" (description: "Skip phase review and continue workflow.")
-
-  If user chooses **Yes**:
-  1. Run `/10x-impl-review @context/changes/<change-id>/plan.md phase [N]`.
-  2. Summarize findings into a short bullet list.
-  3. If `linear_issue` is set, follow [linear-sync/SKILL.md](../linear-sync/SKILL.md) event **`phase-<N>-reviewed`**.
-     - Target issue: `phase_issues["N"]` if present; otherwise parent `linear_issue`.
-
-  If user chooses **No**, continue directly to next-phase decision.
-
-- **Next phase decision**: If there is a next phase, help the user decide whether to continue or start fresh.
+- **Next phase decision**: If there is a next phase, help the user decide whether to continue or start fresh. Do **not** offer per-phase `/10x-impl-review` here — whole-change review runs once after all phases, before PR creation.
 
   Ask the user: "Phase [N] complete. How to proceed?" with options:
   - "Continue to Phase [N+1]" (description: "Stay in this context and proceed to the next phase.")
   - "Clear context first" (description: "Copy resume command to clipboard. Start fresh for Phase [N+1].")
-  - "Review this phase first" (description: "Run /10x-impl-review to verify implementation against the plan before proceeding.")
-
-  **If user chooses to review**: Run `/10x-impl-review @[path-to-plan] phase [N]` to review the just-completed phase. After the review completes, if `linear_issue` is set, post a summary via `phase-<N>-reviewed` (targeting phase child issue when mapped). Then re-present the continue/clear decision (without the review option this time).
 
   **If user chooses to continue**: Proceed directly to the next phase — read the plan section for the next phase, set the task to `in_progress`, and implement. No need to re-read the entire plan or already-loaded files.
 
@@ -279,18 +262,7 @@ When every `- [ ]` in the entire `## Progress` section is now `- [x]`:
    4. Commit via heredoc per the global protocol (`Co-Authored-By: Claude Opus 4.7 (1M context) <noreply@anthropic.com>` trailer; never `--no-verify` / `--amend`).
    5. Do NOT write the epilogue's own SHA back into the plan — its only job is to land the trailing edits cleanly.
   6. **Linear sync (required):** If `linear_issue` is set, always follow [linear-sync/SKILL.md](../linear-sync/SKILL.md) event **`implemented`**.
-  7. **PR handoff:** If `linear_issue` is set and no PR exists yet for the branch, ask the user to create one now (or create it if explicitly requested). The PR hook (`.cursor/hooks/pr-linear-sync.cjs`) will handle In Review sync; merge flow should finalize Done.
-
-### "Where am I?" — derived, not stored
-
-Parse the `## Progress` section. The first `- [ ]` line is the next step. The current phase is the `### Phase N:` heading immediately above it. Completion is `count([x]) / count([ ] + [x])`. No JSON, no markers, no sidecar — just the Progress section.
-
-## Plan Completion
-
-When ALL phases are implemented and verified (every Progress checkbox is `[x]`):
-
-1. Confirm `change.md.status` is now `implemented`.
-2. Present completion summary, then offer a final review and PR handoff reminder:
+  7. **Completion summary.** Present:
 
 ```
 All phases implemented! 🎉
@@ -300,14 +272,25 @@ Summary:
 - Files changed: [list key files]
 ```
 
-Ask the user:
-"Plan complete. Would you like a final implementation review?" with options:
-  - "Run full review (/10x-impl-review)" (description: "Comprehensive review of all phases against the plan. Catches cross-phase issues.")
-  - "Skip review — I'm satisfied" (description: "No review needed. Mark the plan as done.")
+  8. **Implementation review (before PR):** Ask the user once for the **whole change** — not per phase:
 
-If user chooses review:
-1. Run `/10x-impl-review <change-id>` (no phase number = full plan review).
-2. If `linear_issue` is set, follow [linear-sync/SKILL.md](../linear-sync/SKILL.md) event **`implementation-reviewed`** and post summary comment on the parent issue.
+  "All phases complete. Run `/10x-impl-review` before opening a PR?" with options:
+  - "Yes (Recommended)" (description: "Review all phases against the plan. Sync summary to Linear parent issue.")
+  - "No — open PR" (description: "Skip review and proceed to PR creation.")
+
+  If user chooses **Yes**:
+  1. Run `/10x-impl-review <change-id>` (no phase number = full plan review).
+  2. Summarize findings into a short bullet list.
+  3. If `linear_issue` is set, follow [linear-sync/SKILL.md](../linear-sync/SKILL.md) event **`implementation-reviewed`** on the parent issue.
+  4. If review surfaced blocking fixes, address them (commit as needed) before step 9.
+
+  If user chooses **No**, proceed directly to step 9.
+
+  9. **PR handoff:** If no PR exists yet for the branch, ask the user to create one now (or create it if explicitly requested). The PR hook (`.cursor/hooks/pr-linear-sync.cjs`) will handle In Review sync when `linear_issue` is set; merge flow should finalize Done.
+
+### "Where am I?" — derived, not stored
+
+Parse the `## Progress` section. The first `- [ ]` line is the next step. The current phase is the `### Phase N:` heading immediately above it. Completion is `count([x]) / count([ ] + [x])`. No JSON, no markers, no sidecar — just the Progress section.
 
 ## If You Get Stuck
 

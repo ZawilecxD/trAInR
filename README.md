@@ -207,7 +207,7 @@ GitHub Actions runs `npm run lint` and `npm run build` on every push and PR to `
 
 ## Workflow Docs
 
-- [Linear implementation workflow](docs/linear-implementation-workflow.md) — how to run `/10x-plan` + `/10x-implement` with automatic Linear sync (phases, reviews, PR transitions).
+- [Linear implementation workflow](docs/linear-implementation-workflow.md) — how to run `/10x-plan` + `/10x-implement` with automatic Linear sync (phases, pre-PR review, PR transitions).
 
 ## License
 
