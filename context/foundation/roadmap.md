@@ -3,7 +3,7 @@ project: "trAInR"
 version: 1
 status: draft
 created: 2026-05-25
-updated: 2026-05-25
+updated: 2026-05-30
 prd_version: 1
 main_goal: speed
 top_blocker: time
@@ -30,7 +30,7 @@ Independent personal trainers lose coaching time to admin — hunting across spr
 | ID | Change ID | Outcome (user can …) | Prerequisites | PRD refs | Status |
 |---|---|---|---|---|---|
 | F-01 | database-schema-and-rls | (foundation) Supabase schema with RLS and role-aware middleware landed | — | NFR privacy, NFR data integrity, Access Control | ready |
-| S-01 | exercise-library | create, edit, and browse/filter exercises | F-01 | FR-007, FR-008, FR-009 | proposed |
+| S-01 | exercise-library | create, edit, and browse/filter exercises | F-01 | FR-007, FR-008, FR-009 | done |
 | S-02 | session-templates | create and edit reusable session templates from exercises | F-01, S-01 | FR-010, FR-011 | proposed |
 | S-03 | client-onboarding | register via invite link and be auto-assigned to trainer | F-01 | FR-001, FR-002, FR-003, FR-004, FR-005 | proposed |
 | S-04 | plan-assignment | place a session on a specific day of a client's calendar | S-02, S-03 | FR-012, US-01 | proposed |
@@ -93,7 +93,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Blockers:** —
 - **Unknowns:** —
 - **Risk:** Over-engineering the exercise model (too many fields, too much validation) when a simple form is enough for MVP. Keep it lean.
-- **Status:** proposed
+- **Status:** done
 
 ### S-02: Session templates
 
@@ -244,8 +244,8 @@ Foundations below assume these are present and do NOT re-scaffold them.
 | Roadmap ID | Change ID | Suggested issue title | Ready for `/10x-plan` | Notes |
 |---|---|---|---|---|
 | F-01 | database-schema-and-rls | Create Supabase schema with RLS policies and role-aware middleware | yes | Run `/10x-plan database-schema-and-rls` |
-| S-01 | exercise-library | Build exercise library CRUD (create, edit, browse/filter) | no | Needs F-01 |
-| S-02 | session-templates | Build session template builder with phase structure | no | Needs S-01 |
+| S-01 | exercise-library | Build exercise library CRUD (create, edit, browse/filter) | — | done |
+| S-02 | session-templates | Build session template builder with phase structure | no | Needs F-01 |
 | S-03 | client-onboarding | Implement invite-link client registration and auto-assignment | no | Needs F-01 |
 | S-04 | plan-assignment | Build plan assignment: place session on client calendar | no | Needs S-02 + S-03 |
 | S-05 | client-calendar | Build client calendar view (month/week + status colors) | no | Needs S-04 |
@@ -280,4 +280,6 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Pre-populated exercise database** — Why parked: PRD §Non-Goals #14. Trainers build from scratch.
 
 ## Done
+
+- **S-01: trainer can create exercises (name, type, muscle groups, notes, optional video/photo link), edit them, and browse/filter by type and muscle group** — Done 2026-05-29. Lesson: —.
 

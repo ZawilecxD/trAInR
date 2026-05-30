@@ -37,8 +37,7 @@ When given a plan path:
 - Read all files mentioned in the plan (referenced research, frame, source files in the same change folder)
 - **Read files fully** - never use limit/offset parameters, you need complete context
 - Think deeply about how the pieces fit together
-- **Update `change.md`**: on entry, set `status: implementing` (only if currently in `{planned, plan_reviewed}`) and `updated: <today>`. If the user message includes `ZAW-\d+` and `change.md` has no `linear_issue`, add `linear_issue: <ZAW-N>` to frontmatter.
-- **Linear sync (required when linked):** After updating `change.md` on entry, if `linear_issue` is set, always follow [linear-sync/SKILL.md](../linear-sync/SKILL.md) event **`implement-started`**. Do not ask opt-out prompts.
+- **Update `change.md`**: on entry, set `status: implementing` (only if currently in `{planned, plan_reviewed}`) and `updated: <today>`.
 - Count total phases (from `## Phase N:` headers) and create one TaskCreate entry per phase (these appear in the user's status bar):
   - For each phase, create a task with `subject: "Phase N: [Phase Name]"` and `activeForm: "Implementing Phase N"`
   - Set the current phase to `in_progress` via TaskUpdate before starting work
@@ -76,8 +75,6 @@ If you encounter a mismatch:
   - "Skip this part" (description: "Move on to the next section/phase. This change isn't needed.")
   - "Stop and re-plan" (description: "This mismatch is too significant. We need to update the plan first.")
 
-- If the user picks **Adapt and continue**, post a required Linear decision note via [linear-sync/SKILL.md](../linear-sync/SKILL.md) event **`decision-log`** when `linear_issue` is set.
-
 ## Tracking files touched during a phase
 
 The phase-end commit ritual (see "Verification Approach" below) stages files from a **touched-file set** that you maintain in working memory throughout each phase. This set is the canonical input to `git add` — never fall back to `git status` heuristics for staging decisions.
@@ -97,7 +94,6 @@ Before proposing any phase-end or epilogue commit message, scan the conversation
 - If one or more references are present, include them in the commit message body under a `Refs:` line, preserving the exact identifiers/URLs the user provided where possible.
 - If multiple references apply, list them comma-separated on one `Refs:` line.
 - Do not invent or infer tracking references from the change-id, branch name, or filenames. Only use references visible in the current conversation context or explicitly provided by the user.
-- **Exception:** if `change.md` frontmatter contains `linear_issue: ZAW-N`, always include `Refs: ZAW-N` on phase-end and epilogue commits (exact identifier from frontmatter).
 - Apply the same `Refs:` line to every phase-end commit and to the epilogue commit, unless the user narrows a reference to a specific phase.
 
 ## Verification Approach
@@ -190,22 +186,6 @@ After implementing a phase:
 
   11. **Reset the touched-file set.** Clear it before starting the next phase. The ritual is self-contained per phase.
 
-  12. **Linear sync (required, per phase):** If `linear_issue` is set in `change.md`, always follow [linear-sync/SKILL.md](../linear-sync/SKILL.md) event **`phase-<N>-complete`** (use phase number/title and `SHA` from step 8). This posts the parent comment and closes the mapped phase child issue when `phase_issues["N"]` exists.
-
-- **Optional phase review (YES/NO):** After phase completion and required `phase-<N>-complete` sync, ask:
-
-  Ask the user: "Run `/10x-impl-review` for Phase [N]?" with options:
-  - "Yes (Recommended)" (description: "Run `/10x-impl-review @context/changes/<change-id>/plan.md phase [N]`, then post a Linear review summary comment.")
-  - "No" (description: "Skip phase review and continue workflow.")
-
-  If user chooses **Yes**:
-  1. Run `/10x-impl-review @context/changes/<change-id>/plan.md phase [N]`.
-  2. Summarize findings into a short bullet list.
-  3. If `linear_issue` is set, follow [linear-sync/SKILL.md](../linear-sync/SKILL.md) event **`phase-<N>-reviewed`**.
-     - Target issue: `phase_issues["N"]` if present; otherwise parent `linear_issue`.
-
-  If user chooses **No**, continue directly to next-phase decision.
-
 - **Next phase decision**: If there is a next phase, help the user decide whether to continue or start fresh.
 
   Ask the user: "Phase [N] complete. How to proceed?" with options:
@@ -213,7 +193,7 @@ After implementing a phase:
   - "Clear context first" (description: "Copy resume command to clipboard. Start fresh for Phase [N+1].")
   - "Review this phase first" (description: "Run /10x-impl-review to verify implementation against the plan before proceeding.")
 
-  **If user chooses to review**: Run `/10x-impl-review @[path-to-plan] phase [N]` to review the just-completed phase. After the review completes, if `linear_issue` is set, post a summary via `phase-<N>-reviewed` (targeting phase child issue when mapped). Then re-present the continue/clear decision (without the review option this time).
+  **If user chooses to review**: Run `/10x-impl-review @[path-to-plan] phase [N]` to review the just-completed phase. After the review completes, re-present the continue/clear decision (without the review option this time).
 
   **If user chooses to continue**: Proceed directly to the next phase — read the plan section for the next phase, set the task to `in_progress`, and implement. No need to re-read the entire plan or already-loaded files.
 
@@ -278,8 +258,6 @@ When every `- [ ]` in the entire `## Progress` section is now `- [x]`:
    3. Propose subject `chore(<change-id>): close out plan (epilogue)` with a short body noting the plan's final SHA write-back + change.md → implemented, plus the `Refs:` line from "Tracking issue/task references for commits" when applicable. Ask the user to approve as proposed / edit subject / override entirely (same options as the phase ritual).
    4. Commit via heredoc per the global protocol (`Co-Authored-By: Claude Opus 4.7 (1M context) <noreply@anthropic.com>` trailer; never `--no-verify` / `--amend`).
    5. Do NOT write the epilogue's own SHA back into the plan — its only job is to land the trailing edits cleanly.
-  6. **Linear sync (required):** If `linear_issue` is set, always follow [linear-sync/SKILL.md](../linear-sync/SKILL.md) event **`implemented`**.
-  7. **PR handoff:** If `linear_issue` is set and no PR exists yet for the branch, ask the user to create one now (or create it if explicitly requested). The PR hook (`.cursor/hooks/pr-linear-sync.cjs`) will handle In Review sync; merge flow should finalize Done.
 
 ### "Where am I?" — derived, not stored
 
@@ -290,7 +268,7 @@ Parse the `## Progress` section. The first `- [ ]` line is the next step. The cu
 When ALL phases are implemented and verified (every Progress checkbox is `[x]`):
 
 1. Confirm `change.md.status` is now `implemented`.
-2. Present completion summary, then offer a final review and PR handoff reminder:
+2. Present completion summary, then offer a final review:
 
 ```
 All phases implemented! 🎉
@@ -305,9 +283,7 @@ Ask the user:
   - "Run full review (/10x-impl-review)" (description: "Comprehensive review of all phases against the plan. Catches cross-phase issues.")
   - "Skip review — I'm satisfied" (description: "No review needed. Mark the plan as done.")
 
-If user chooses review:
-1. Run `/10x-impl-review <change-id>` (no phase number = full plan review).
-2. If `linear_issue` is set, follow [linear-sync/SKILL.md](../linear-sync/SKILL.md) event **`implementation-reviewed`** and post summary comment on the parent issue.
+If user chooses review → run `/10x-impl-review <change-id>` (no phase number = full plan review).
 
 ## If You Get Stuck
 
