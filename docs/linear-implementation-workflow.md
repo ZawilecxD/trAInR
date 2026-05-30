@@ -1,6 +1,6 @@
 # Linear Implementation Workflow
 
-This workflow keeps roadmap implementation synchronized with Linear across planning, phases, reviews, and PR delivery.
+This workflow keeps roadmap implementation synchronized with Linear across planning, phases, review, and PR delivery.
 
 ## What You Do
 
@@ -22,11 +22,15 @@ start-linear-issue ZAW-123
 /10x-implement <change-id> phase 1
 ```
 
-4. When asked for phase review, answer **Yes** or **No**:
-   - **Yes** -> run `/10x-impl-review` for that phase and sync review summary to Linear.
-   - **No** -> continue to next phase.
+4. When a phase completes, choose how to proceed:
+   - **Continue to next phase** — stay in context and keep implementing.
+   - **Clear context first** — copy the resume command and start fresh for the next phase.
 
-5. After all phases, create and merge PR.
+5. After all phases, run implementation review (recommended), then create and merge the PR:
+   - When asked, answer **Yes** or **No** to `/10x-impl-review` for the **whole change** (all phases).
+   - **Yes** → review runs against the full plan; summary syncs to the parent Linear issue.
+   - **No** → skip review and proceed to PR creation.
+   - Open the PR only after this review step (run or skip).
 
 ## What Happens Automatically
 
@@ -50,9 +54,8 @@ phase_issues:
     3. close mapped phase child issue.
   - If implementation adapts from plan, a `decision-log` comment is posted.
 
-- Optional review sync:
-  - phase review summary is posted to the mapped phase issue (fallback: parent issue),
-  - final implementation review summary is posted to the parent issue.
+- After all phases (before PR):
+  - optional whole-change review summary is posted to the parent issue when `/10x-impl-review` runs.
 
 - PR lifecycle:
   - PR create flow syncs parent issue to **In Review**.
@@ -62,3 +65,4 @@ phase_issues:
 
 - If `linear_issue` is missing in `change.md`, Linear sync steps are skipped.
 - `phase_issues` is optional but recommended for per-phase ownership and tracking.
+- Per-phase `/10x-impl-review` is not part of this workflow — review once for the full change, immediately before opening a PR.

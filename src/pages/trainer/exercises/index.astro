@@ -1,0 +1,163 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import ExerciseFilters from "@/components/exercises/ExerciseFilters";
+import Topbar from "@/components/Topbar.astro";
+import { searchParamsToFilters } from "@/lib/exercises/filter-url";
+import { EXERCISE_METRIC_LABELS, EXERCISE_TYPE_LABELS } from "@/lib/exercises/labels";
+import { parseListExercisesQuery } from "@/lib/exercises/schemas";
+import { listExercises } from "@/lib/exercises/service";
+import { createClient } from "@/lib/supabase";
+import type { MuscleGroup } from "@/types";
+
+const supabase = createClient(Astro.request.headers, Astro.cookies);
+
+const parsedQuery = supabase ? parseListExercisesQuery(Astro.url.searchParams) : null;
+const filters = parsedQuery?.success ? parsedQuery.data : {};
+
+let exerciseRows: Awaited<ReturnType<typeof listExercises>>["data"] = [];
+let muscleGroupRows: MuscleGroup[] = [];
+let loadError: string | null = null;
+
+if (!supabase) {
+  loadError = "Exercise library is unavailable. Check Supabase configuration.";
+} else {
+  const [{ data: exercises, error: listError }, { data: muscleGroups, error: muscleError }] = await Promise.all([
+    listExercises(supabase, filters),
+    supabase.from("muscle_groups").select("id, name, region").order("name"),
+  ]);
+
+  exerciseRows = exercises ?? [];
+  muscleGroupRows = muscleGroups ?? [];
+  loadError = listError ?? muscleError?.message ?? null;
+}
+
+const muscleGroupNameById = new Map(muscleGroupRows.map((group) => [group.id, group.name]));
+const initialFilters = searchParamsToFilters(Astro.url.searchParams);
+
+const successParam = Astro.url.searchParams.get("success");
+const created = Astro.url.searchParams.get("created") === "1";
+const updated = Astro.url.searchParams.get("updated") === "1";
+const archived = Astro.url.searchParams.get("archived") === "1";
+
+const flashMessage = created
+  ? "Exercise created successfully."
+  : updated
+    ? "Exercise updated successfully."
+    : archived
+      ? "Exercise archived."
+      : successParam;
+
+const hasActiveFilters =
+  initialFilters.type !== undefined || initialFilters.q !== undefined || initialFilters.muscleGroupIds.length > 0;
+---
+
+<Layout title="Exercise library">
+  <div class="bg-cosmic min-h-screen p-4 md:p-8">
+    <Topbar />
+    <div class="mx-auto max-w-6xl space-y-6">
+      <div class="flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <h1 class="bg-gradient-to-r from-blue-200 to-purple-200 bg-clip-text text-3xl font-bold text-transparent">
+            Exercise library
+          </h1>
+          <p class="mt-1 text-sm text-blue-100/70">Create, edit, and filter your trainer exercise catalog.</p>
+        </div>
+        <a
+          href="/trainer/exercises/new"
+          class="rounded-lg bg-purple-500 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-purple-500/90"
+        >
+          New exercise
+        </a>
+      </div>
+
+      {
+        flashMessage ? (
+          <div class="rounded-lg border border-green-400/30 bg-green-500/10 px-4 py-3 text-sm text-green-100">
+            {flashMessage}
+          </div>
+        ) : null
+      }
+
+      {
+        loadError ? (
+          <div class="rounded-lg border border-red-400/30 bg-red-500/10 px-4 py-3 text-sm text-red-100">
+            Failed to load exercises: {loadError}
+          </div>
+        ) : null
+      }
+
+      {
+        !loadError ? (
+          <>
+            <ExerciseFilters client:load muscleGroups={muscleGroupRows} initialFilters={initialFilters} />
+
+            {exerciseRows.length === 0 ? (
+              <div class="rounded-2xl border border-white/10 bg-white/5 p-8 text-center text-blue-100/80">
+                {hasActiveFilters ? (
+                  <>
+                    <p class="text-lg font-medium text-white">No exercises match your filters</p>
+                    <p class="mt-2 text-sm">Try clearing filters or adjusting your search.</p>
+                  </>
+                ) : (
+                  <>
+                    <p class="text-lg font-medium text-white">No exercises yet</p>
+                    <p class="mt-2 text-sm">Create your first exercise to start building your library.</p>
+                    <a
+                      href="/trainer/exercises/new"
+                      class="mt-4 inline-block rounded-lg border border-white/20 px-4 py-2 text-sm transition-colors hover:bg-white/10"
+                    >
+                      Create exercise
+                    </a>
+                  </>
+                )}
+              </div>
+            ) : (
+              <div class="overflow-hidden rounded-2xl border border-white/10 bg-white/5">
+                <div class="overflow-x-auto">
+                  <table class="min-w-full text-left text-sm text-blue-100/90">
+                    <thead class="border-b border-white/10 bg-white/5 text-xs tracking-wide text-blue-100/60 uppercase">
+                      <tr>
+                        <th class="px-4 py-3">Name</th>
+                        <th class="px-4 py-3">Type</th>
+                        <th class="px-4 py-3">Metric</th>
+                        <th class="px-4 py-3">Muscle groups</th>
+                        <th class="px-4 py-3">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {exerciseRows.map((exercise) => (
+                        <tr class="border-b border-white/5 last:border-b-0">
+                          <td class="px-4 py-3 font-medium text-white">{exercise.name}</td>
+                          <td class="px-4 py-3">{EXERCISE_TYPE_LABELS[exercise.exercise_type]}</td>
+                          <td class="px-4 py-3">{EXERCISE_METRIC_LABELS[exercise.default_metric]}</td>
+                          <td class="px-4 py-3">
+                            {exercise.muscle_groups.length > 0
+                              ? exercise.muscle_groups
+                                  .map((group) => {
+                                    const name = muscleGroupNameById.get(group.muscle_group_id) ?? "Unknown";
+                                    return `${name} (${group.role})`;
+                                  })
+                                  .join(", ")
+                              : "—"}
+                          </td>
+                          <td class="px-4 py-3">
+                            <a
+                              href={`/trainer/exercises/${exercise.id}`}
+                              class="rounded-md border border-white/20 px-3 py-1 text-xs transition-colors hover:bg-white/10"
+                            >
+                              Edit
+                            </a>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
+          </>
+        ) : null
+      }
+    </div>
+  </div>
+</Layout>

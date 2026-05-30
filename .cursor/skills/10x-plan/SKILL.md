@@ -379,18 +379,6 @@ After structure approval:
    - Otherwise derive a kebab-case `<change-id>` from the topic and create the folder + `change.md` (mirroring `/10x-new` semantics) before writing.
    - Refuse if the resolved path starts with `context/archive/` — print: "This change is archived. Open a new change with `/10x-new` instead." and STOP.
    - Update `change.md`: set `status: planned` and `updated: <today>`.
-   - If the user message includes `ZAW-\d+` and `change.md` has no `linear_issue`, add `linear_issue: <ZAW-N>` to frontmatter.
-   - If `linear_issue` is set in `change.md` (or was just added), the plan flow is **Linear-integrated by default**:
-     1. Parse `## Phase N:` headings from the written `plan.md`.
-     2. For each phase, create one child issue under the parent (`save_issue` with `parentId` set to the parent issue id). Recommended title: `<change-id> p<N>: <phase name>`.
-     3. Persist mapping in `change.md` frontmatter as:
-        ```yaml
-        phase_issues:
-          "1": ZAW-201
-          "2": ZAW-202
-        ```
-     4. Follow [linear-sync/SKILL.md](../linear-sync/SKILL.md) event **`plan-drafted`**.
-   - If child issue creation partially fails, keep successful mappings, warn with exact missing phases, and stop for user decision before finishing.
 2. **Use this template structure** (Phase blocks contain plain bullets — `- ` not `- [ ]` — and a single canonical `## Progress` section at the bottom owns the checkbox state, see `references/progress-format.md` for the contract):
 
 ````markdown
