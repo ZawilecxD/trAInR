@@ -79,6 +79,7 @@ For full setup details see @README.md.
 - **GitHub MCP**: Cursor agents can interact with GitHub (issues, PRs, repos, code search, CI) via the GitHub-hosted remote MCP server. Setup: `docs/github-mcp-setup.md`. Config lives at `.cursor/mcp.json` (local, gitignored — never commit).
 - Token env var: `GITHUB_PERSONAL_ACCESS_TOKEN` — export in shell profile, never commit.
 - Skill for common trAInR workflows: `.cursor/skills/github-mcp/SKILL.md`.
+- **Exa MCP**: Cursor agents can search the web and fetch pages via Exa's hosted MCP server (OAuth on first connect; optional `EXA_API_KEY` for rate limits). Setup: `docs/exa-mcp-setup.md`. Skill: `.cursor/skills/exa-mcp/SKILL.md`.
 - **Linear MCP**: Cursor agents can manage issues, projects, cycles, and docs via the Linear plugin (`plugins.linear` in `.cursor/settings.json`). OAuth through the plugin — no repo token. Skills: `.cursor/skills/linear-mcp/SKILL.md`, `.cursor/skills/linear-sync/SKILL.md` (plan/implement milestones when `linear_issue` is set on `change.md`), `.cursor/skills/start-linear-issue/SKILL.md` (branch + In Progress when starting an issue — user-invoked only).
 
 ## Lessons learned
