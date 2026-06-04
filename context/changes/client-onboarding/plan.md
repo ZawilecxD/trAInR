@@ -528,15 +528,15 @@ Update the signin flow to redirect users to role-appropriate pages and create a 
 
 #### Automated
 
-- [ ] 3.1 Build succeeds: `npm run build`
-- [ ] 3.2 Lint passes: `npm run lint`
+- [x] 3.1 Build succeeds: `npm run build`
+- [x] 3.2 Lint passes: `npm run lint`
 
 #### Manual
 
-- [ ] 3.3 Valid token shows client signup with trainer name; invalid/expired/used shows error
-- [ ] 3.4 Client registration creates profile with `role: client` and `trainer_clients` row
-- [ ] 3.5 Token marked as used; second use rejected
-- [ ] 3.6 Trainer signup (no token) still works unchanged
+- [x] 3.3 Valid token shows client signup with trainer name; invalid/expired/used shows error
+- [x] 3.4 Client registration creates profile with `role: client` and `trainer_clients` row
+- [x] 3.5 Token marked as used; second use rejected
+- [x] 3.6 Trainer signup (no token) still works unchanged
 
 ### Phase 4: Role-Based Post-Login Routing
 
