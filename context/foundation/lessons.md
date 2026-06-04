@@ -15,3 +15,10 @@
 - **Problem**: A SHA can exist locally while `plan.md` progress, `linear_issue` linkage, or the cited hash are still uncommitted or unpushed — the external comment then disagrees with what anyone sees on the remote branch and looks fabricated even when the commit was real.
 - **Rule**: Finish the phase-end commit (code + `change.md` + plan checkboxes), push the branch, run `git rev-parse --short HEAD` on the commit that contains the phase work, then write that SHA into Progress and external sync; never post a phase-complete SHA to Linear before push, and amend or follow up if the phase commit was incomplete when first cited.
 - **Applies to**: implement, linear-sync
+
+## Add navigation when shipping new routes
+
+- **Context**: New Astro pages/routes
+- **Problem**: New pages are created but are not reachable from the UI, so functionality is not exercised end-to-end from the UI even though it should be.
+- **Rule**: When adding a new user-facing route, add at least one discoverable navigation entry. Keep navigation links style consistent — always use a visible top navigation bar showing the currently logged-in user, available paths, and the active path highlighted with CSS.
+- **Applies to**: plan, implement
