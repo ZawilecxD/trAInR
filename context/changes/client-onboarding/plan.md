@@ -500,15 +500,15 @@ Update the signin flow to redirect users to role-appropriate pages and create a 
 
 #### Automated
 
-- [x] 1.1 Migration applies cleanly: `npx supabase db reset`
-- [x] 1.2 Lint passes: `npm run lint`
-- [x] 1.3 Build succeeds: `npm run build`
+- [x] 1.1 Migration applies cleanly: `npx supabase db reset` — e7ab4a0
+- [x] 1.2 Lint passes: `npm run lint` — e7ab4a0
+- [x] 1.3 Build succeeds: `npm run build` — e7ab4a0
 
 #### Manual
 
-- [x] 1.4 `validate_invite_token` returns correct data for valid/invalid/expired/used tokens
-- [x] 1.5 `complete_client_invite` atomically marks used + creates trainer_clients; second call raises exception
-- [x] 1.6 Profile cross-visibility: trainer sees client profile, client sees trainer profile, neither sees unrelated users
+- [x] 1.4 `validate_invite_token` returns correct data for valid/invalid/expired/used tokens — e7ab4a0
+- [x] 1.5 `complete_client_invite` atomically marks used + creates trainer_clients; second call raises exception — e7ab4a0
+- [x] 1.6 Profile cross-visibility: trainer sees client profile, client sees trainer profile, neither sees unrelated users — e7ab4a0
 
 ### Phase 2: Invite Generation — Trainer Clients Page
 
