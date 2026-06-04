@@ -37,6 +37,12 @@ export interface InviteValidation {
   trainer_display_name: string | null;
 }
 
+/** Response shape from `get_my_assigned_trainer` RPC (S-03). */
+export interface AssignedTrainer {
+  trainer_id: string;
+  display_name: string;
+}
+
 export type ExerciseType = "strength" | "cardio" | "flexibility" | "other";
 export type ExerciseMetric = "reps_weight" | "time" | "distance";
 

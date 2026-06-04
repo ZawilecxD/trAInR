@@ -528,26 +528,26 @@ Update the signin flow to redirect users to role-appropriate pages and create a 
 
 #### Automated
 
-- [x] 3.1 Build succeeds: `npm run build`
-- [x] 3.2 Lint passes: `npm run lint`
+- [x] 3.1 Build succeeds: `npm run build` — 6c9ce53
+- [x] 3.2 Lint passes: `npm run lint` — 6c9ce53
 
 #### Manual
 
-- [x] 3.3 Valid token shows client signup with trainer name; invalid/expired/used shows error
-- [x] 3.4 Client registration creates profile with `role: client` and `trainer_clients` row
-- [x] 3.5 Token marked as used; second use rejected
-- [x] 3.6 Trainer signup (no token) still works unchanged
+- [x] 3.3 Valid token shows client signup with trainer name; invalid/expired/used shows error — 6c9ce53
+- [x] 3.4 Client registration creates profile with `role: client` and `trainer_clients` row — 6c9ce53
+- [x] 3.5 Token marked as used; second use rejected — 6c9ce53
+- [x] 3.6 Trainer signup (no token) still works unchanged — 6c9ce53
 
 ### Phase 4: Role-Based Post-Login Routing
 
 #### Automated
 
-- [ ] 4.1 Build succeeds: `npm run build`
-- [ ] 4.2 Lint passes: `npm run lint`
+- [x] 4.1 Build succeeds: `npm run build`
+- [x] 4.2 Lint passes: `npm run lint`
 
 #### Manual
 
-- [ ] 4.3 Trainer sign-in → `/trainer/clients`; client sign-in → `/client/dashboard`
-- [ ] 4.4 Client dashboard shows welcome with trainer name
-- [ ] 4.5 `/dashboard` redirects to role-specific page
-- [ ] 4.6 Role isolation enforced (middleware redirects wrong-role access)
+- [x] 4.3 Trainer sign-in → `/trainer/dashboard`; client sign-in → `/client/dashboard`
+- [x] 4.4 Client dashboard shows welcome with trainer name
+- [x] 4.5 `/dashboard` redirects to role-specific page
+- [x] 4.6 Role isolation enforced (middleware redirects wrong-role access)

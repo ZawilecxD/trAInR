@@ -24,11 +24,11 @@ function navLinkClass(href: string): string {
 }
 
 const trainerNav: NavItem[] = [
-  { href: "/dashboard", label: "Dashboard" },
+  { href: "/trainer/dashboard", label: "Dashboard" },
   { href: "/trainer/clients", label: "Clients" },
 ];
 
-const clientNav: NavItem[] = [{ href: "/dashboard", label: "Dashboard" }];
+const clientNav: NavItem[] = [{ href: "/client/dashboard", label: "Dashboard" }];
 
 let navItems: NavItem[] = [];
 if (user) {
@@ -41,7 +41,14 @@ if (user) {
   }
 }
 
-const homeHref = user ? "/dashboard" : "/";
+const homeHref =
+  user && role === "trainer"
+    ? "/trainer/dashboard"
+    : user && role === "client"
+      ? "/client/dashboard"
+      : user
+        ? "/dashboard"
+        : "/";
 ---
 
 <header

@@ -1,7 +1,13 @@
 ---
 import Layout from "@/layouts/Layout.astro";
 
-const { user } = Astro.locals;
+const { user, role } = Astro.locals;
+
+const roleDashboard = role === "trainer" ? "/trainer/dashboard" : role === "client" ? "/client/dashboard" : null;
+
+if (roleDashboard) {
+  return Astro.redirect(roleDashboard);
+}
 ---
 
 <Layout title="Dashboard">

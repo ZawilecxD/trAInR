@@ -1,0 +1,56 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import { createClient } from "@/lib/supabase";
+import type { AssignedTrainer, Profile } from "@/types";
+
+const userId = Astro.locals.user?.id;
+const supabase = createClient(Astro.request.headers, Astro.cookies);
+
+let trainerName: string | null = null;
+
+if (supabase && userId) {
+  const trainerResult = await supabase.rpc("get_my_assigned_trainer");
+
+  if (!trainerResult.error && trainerResult.data !== null) {
+    trainerName = (trainerResult.data as AssignedTrainer).display_name;
+  } else if (trainerResult.error?.code === "PGRST202") {
+    const assignmentResult = await supabase
+      .from("trainer_clients")
+      .select("trainer_id, trainer:profiles!trainer_id(display_name)")
+      .eq("client_id", userId)
+      .eq("status", "active")
+      .order("assigned_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    if (!assignmentResult.error && assignmentResult.data) {
+      const trainer = assignmentResult.data.trainer as Pick<Profile, "display_name"> | null;
+      trainerName = trainer?.display_name ?? null;
+    }
+  }
+}
+---
+
+<Layout title="Dashboard">
+  <div class="bg-cosmic flex min-h-screen items-center justify-center p-4">
+    <div
+      class="w-full max-w-md rounded-2xl border border-white/10 bg-white/10 p-8 text-center text-white backdrop-blur-xl"
+    >
+      <h1 class="mb-4 bg-gradient-to-r from-blue-200 to-purple-200 bg-clip-text text-3xl font-bold text-transparent">
+        Welcome
+      </h1>
+      {
+        trainerName ? (
+          <p class="text-blue-100/80">
+            You're training with <span class="font-semibold text-white">{trainerName}</span>
+          </p>
+        ) : (
+          <p class="text-blue-100/80">Your trainer will assign your first plan soon.</p>
+        )
+      }
+      <p class="mt-4 text-sm text-blue-100/50">
+        Workout plans and your training calendar will appear here in a future update.
+      </p>
+    </div>
+  </div>
+</Layout>
