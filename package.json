@@ -10,7 +10,8 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "format": "prettier --write .",
-    "local-workspace": "bash scripts/local-workspace"
+    "local-workspace": "bash scripts/local-workspace",
+    "verify:client-onboarding-p1": "docker exec -i supabase_db_10x-astro-starter psql -U postgres -d postgres -v ON_ERROR_STOP=1 -f - < scripts/verify-client-onboarding-phase1.sql"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.8",

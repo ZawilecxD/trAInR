@@ -30,6 +30,13 @@ export interface InviteLink {
   created_at: string;
 }
 
+/** Response shape from `validate_invite_token` RPC (S-03). */
+export interface InviteValidation {
+  valid: boolean;
+  trainer_id: string | null;
+  trainer_display_name: string | null;
+}
+
 export type ExerciseType = "strength" | "cardio" | "flexibility" | "other";
 export type ExerciseMetric = "reps_weight" | "time" | "distance";
 
