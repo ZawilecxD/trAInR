@@ -69,10 +69,9 @@ Every sync comment **must** start with a level-2 heading used as a dedup key:
 | `plan-drafted` | `plan.md` first written / materially finalized (`change.md` → `planned`) |
 | `implement-started` | `/10x-implement` entry (`change.md` → `implementing`) |
 | `phase-<N>-complete` | After phase N commit SHA written to `plan.md` Progress |
-| `phase-<N>-reviewed` | Optional `/10x-impl-review` run for phase N returned results |
 | `decision-log` | Any mid-implementation adaptation, scope change, or non-trivial decision |
 | `implemented` | After final epilogue (`change.md` → `implemented`) |
-| `implementation-reviewed` | Optional final `/10x-impl-review` run for whole change returned results |
+| `implementation-reviewed` | Optional whole-change `/10x-impl-review` before PR returned results |
 
 Before `save_comment`, call `list_comments` on the issue. If a comment body already contains `## trAInR — <event-key>`, **skip** posting (success).
 
@@ -85,10 +84,9 @@ Use **literal newlines** in comment bodies — never `\n` escapes.
 | `plan-drafted` | **None** (comment only) |
 | `implement-started` | → **In Progress** only if current state is backlog/todo-like (not In Progress, In Review, Done, Canceled). Use `list_issue_statuses` for the exact name. |
 | `phase-*-complete` | Parent: **None** (comment only). Child phase issue: if `phase_issues["N"]` exists, move child to **Done** (or closest done-like state from `list_issue_statuses`). |
-| `phase-*-reviewed` | **None** (comment only). Target issue: mapped phase child issue if present, else parent issue. |
 | `decision-log` | **None** (comment only) |
 | `implemented` | **None** (comment only). PR create flow moves parent to In Review; PR merge follow-up moves parent (and any remaining phase children) to Done. |
-| `implementation-reviewed` | **None** (comment only on parent issue). |
+| `implementation-reviewed` | **None** (comment only on parent issue). Posted after whole-change review, before PR creation. |
 
 Never move **backward** (e.g. In Review → In Progress).
 
@@ -168,32 +166,9 @@ Phase automated (+ manual) verification complete in repo.
 **Impact:** <scope/timeline/risk impact>
 ```
 
-### `phase-<N>-reviewed`
-
-**Trigger:** Parent skill asked whether to run `/10x-impl-review` for phase N and user chose **Yes**.
-
-**Target issue rule:**
-
-1. If `phase_issues["N"]` exists, post to that child issue.
-2. Otherwise, post to parent `linear_issue`.
-
-```markdown
-## trAInR — phase-<N>-reviewed
-
-**Change:** `<change-id>`
-**Phase:** N — <phase title>
-**Review command:** `/10x-impl-review @context/changes/<change-id>/plan.md phase N`
-
-**Findings summary:**
-- <top issue or "no blocking issues found">
-- <second key finding if present>
-
-**Action:** <fixes applied or follow-up decision>
-```
-
 ### `implementation-reviewed`
 
-**Trigger:** Parent skill asked whether to run final `/10x-impl-review <change-id>` and user chose **Yes**.
+**Trigger:** Parent skill offered whole-change `/10x-impl-review` before PR creation and user chose **Yes**.
 
 **Target issue:** parent `linear_issue`.
 
@@ -220,7 +195,7 @@ Phase automated (+ manual) verification complete in repo.
 **Change:** `<change-id>`
 **Plan:** `context/changes/<change-id>/plan.md` (all Progress items complete)
 
-All plan phases implemented in repo. Open a PR to finish delivery; PR hook may move this issue to In Review.
+All plan phases implemented in repo. Run `/10x-impl-review` if not done yet, then open a PR; PR hook may move this issue to In Review.
 ```
 
 ## Commit `Refs:` line
