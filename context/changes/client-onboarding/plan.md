@@ -514,15 +514,15 @@ Update the signin flow to redirect users to role-appropriate pages and create a 
 
 #### Automated
 
-- [ ] 2.1 Build succeeds: `npm run build`
-- [ ] 2.2 Lint passes: `npm run lint`
+- [x] 2.1 Build succeeds: `npm run build`
+- [x] 2.2 Lint passes: `npm run lint`
 
 #### Manual
 
-- [ ] 2.3 Trainer navigates to `/trainer/clients` and generates invite link
-- [ ] 2.4 Copy button copies URL to clipboard with toast feedback
-- [ ] 2.5 Invite list shows correct status (active/used/expired)
-- [ ] 2.6 Non-trainer/unauthenticated access redirected correctly
+- [x] 2.3 Trainer navigates to `/trainer/clients` and generates invite link
+- [x] 2.4 Copy button copies URL to clipboard with toast feedback
+- [x] 2.5 Invite list shows correct status (active/used/expired)
+- [x] 2.6 Non-trainer/unauthenticated access redirected correctly
 
 ### Phase 3: Client Signup via Token
 

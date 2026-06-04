@@ -1,0 +1,74 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import InviteClientPanel from "@/components/trainer/InviteClientPanel";
+import { createClient } from "@/lib/supabase";
+import type { InviteLink, Profile, TrainerClient } from "@/types";
+
+const userId = Astro.locals.user?.id;
+const supabase = createClient(Astro.request.headers, Astro.cookies);
+const origin = Astro.url.origin;
+
+let invites: InviteLink[] = [];
+let assignments: TrainerClient[] = [];
+
+if (supabase && userId) {
+  const invitesResult = await supabase
+    .from("invite_links")
+    .select("*")
+    .eq("trainer_id", userId)
+    .order("created_at", { ascending: false });
+
+  if (!invitesResult.error) {
+    invites = invitesResult.data as InviteLink[];
+  }
+
+  const clientsResult = await supabase
+    .from("trainer_clients")
+    .select("*")
+    .eq("trainer_id", userId)
+    .eq("status", "active")
+    .order("assigned_at", { ascending: false });
+
+  if (!clientsResult.error) {
+    assignments = clientsResult.data as TrainerClient[];
+  }
+}
+
+const clientIds = assignments.map((row) => row.client_id);
+let profileById: Record<string, Pick<Profile, "display_name">> = {};
+
+if (supabase && clientIds.length > 0) {
+  const profilesResult = await supabase.from("profiles").select("id, display_name").in("id", clientIds);
+
+  if (!profilesResult.error) {
+    const profiles = profilesResult.data as Pick<Profile, "id" | "display_name">[];
+    for (const profile of profiles) {
+      profileById[profile.id] = { display_name: profile.display_name };
+    }
+  }
+}
+
+type ClientWithProfile = TrainerClient & {
+  client: Pick<Profile, "display_name">;
+};
+
+const clients: ClientWithProfile[] = assignments.map((row) => ({
+  ...row,
+  client: profileById[row.client_id] ?? { display_name: "Unknown client" },
+}));
+---
+
+<Layout title="Clients">
+  <div class="bg-cosmic flex min-h-screen justify-center p-4">
+    <div class="w-full max-w-2xl rounded-2xl border border-white/10 bg-white/10 p-8 text-white backdrop-blur-xl">
+      <div class="mb-8">
+        <h1 class="bg-gradient-to-r from-blue-200 to-purple-200 bg-clip-text text-2xl font-bold text-transparent">
+          Clients
+        </h1>
+        <p class="mt-1 text-sm text-blue-100/70">Manage invites and view assigned clients.</p>
+      </div>
+
+      <InviteClientPanel invites={invites} clients={clients} origin={origin} client:load />
+    </div>
+  </div>
+</Layout>
