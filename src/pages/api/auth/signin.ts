@@ -12,11 +12,23 @@ export const POST: APIRoute = async (context) => {
   if (!supabase) {
     return context.redirect(`/auth/signin?error=${encodeURIComponent("Supabase is not configured")}`);
   }
-  const { error } = await supabase.auth.signInWithPassword({ email, password });
+  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
 
   if (error) {
     return context.redirect(`/auth/signin?error=${encodeURIComponent(error.message)}`);
   }
 
-  return context.redirect("/");
+  const userId = data.user.id;
+  if (userId) {
+    const { data: profile } = await supabase.from("profiles").select("role").eq("id", userId).maybeSingle();
+
+    if (profile?.role === "trainer") {
+      return context.redirect("/trainer/dashboard");
+    }
+    if (profile?.role === "client") {
+      return context.redirect("/client/dashboard");
+    }
+  }
+
+  return context.redirect("/dashboard");
 };

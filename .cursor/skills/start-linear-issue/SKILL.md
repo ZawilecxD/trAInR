@@ -54,19 +54,23 @@ If `current_branch` is not `master` or `main`:
 
 1. Read `mcps/user-Linear/tools/get_issue.json`, then `CallMcpTool` → `get_issue` with `id: "<IDENTIFIER>"` (e.g. `ZAW-5`).
 2. If not found, report and stop.
-3. Note `title`, `team`, and any **git branch name** field Linear returns (use it when present).
+3. Note `title`, `team`, and Linear’s `gitBranchName` field (for slug hints only — do **not** use it verbatim; see Step 4).
 
 If you need the exact **In Progress** state name, read `list_issue_statuses.json` and call `list_issue_statuses` with the issue's team. Pick the status whose name matches "In Progress" (case-insensitive). If none match, list candidates and ask the user.
 
 ## Step 4 — Choose branch name
 
-Priority:
+**trAInR convention:** short, flat branch names — no `username/` prefix, no `feat/` unless the user asks.
 
-1. Linear-provided git branch name from `get_issue`, if present.
-2. Otherwise: `<identifier-lowercase>` (e.g. `zaw-5`).
-3. If that name already exists locally, tell the user and ask: checkout existing branch, or use a suffix (e.g. `zaw-5-2`).
+Derive the branch name in this order:
 
-Do not add `feat/` unless the user requests a prefix.
+1. **From Linear `gitBranchName` (strip workspace prefix):** If the value contains `/`, use only the segment **after the last `/`** (e.g. `zawilinskimateusz/zaw-8-client-onboarding-…` → `zaw-8-client-onboarding-…`). If there is no `/` and the name already starts with `<identifier-lowercase>-`, use it as-is.
+2. **From issue title:** `<identifier-lowercase>-<kebab-slug>` where the slug is the title lowercased, non-alphanumeric runs replaced with `-`, trimmed (e.g. `ZAW-8` + `client-onboarding: invite-link…` → `zaw-8-client-onboarding-invite-link-registration-and-auto-assignment`). Truncate only if git rejects the name (>200 chars); prefer keeping the full slug otherwise.
+3. **Fallback:** `<identifier-lowercase>` only (e.g. `zaw-5`) when the title is empty or slug generation fails.
+
+**Never** create a branch like `zawilinskimateusz/zaw-8-…` or any `owner/issue-slug` form from Linear defaults.
+
+If the chosen name already exists locally, tell the user and ask: checkout existing branch, or use a suffix (e.g. `zaw-8-2`).
 
 ## Step 5 — Create and checkout branch
 
@@ -105,12 +109,16 @@ Reply with a short summary:
 
 **User:** "Let's start working on ZAW-5"
 
-1. On `master`, clean tree → `get_issue` ZAW-5 → `git checkout -b zaw-5` → `save_issue` state In Progress.
+1. On `master`, clean tree → `get_issue` ZAW-5 → branch `zaw-5-<title-slug>` (or `zaw-5` if title slug unavailable) → `save_issue` state In Progress.
+
+**User:** "start issue ZAW-8" (Linear `gitBranchName` = `zawilinskimateusz/zaw-8-client-onboarding-invite-link-registration-and-auto`)
+
+1. Strip prefix → `zaw-8-client-onboarding-invite-link-registration-and-auto` → `git checkout -b` that name (not the `zawilinskimateusz/…` form).
 
 **User:** on `feat/old-work`, "start issue ZAW-9"
 
 1. Warn: new branch will branch from `feat/old-work`, not `master`.
-2. User says continue → `git checkout -b zaw-9` from current HEAD → update Linear.
+2. User says continue → `git checkout -b zaw-9-<title-slug>` from current HEAD → update Linear.
 
 ## Related
 

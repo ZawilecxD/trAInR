@@ -1,44 +1,121 @@
 ---
-const { user, role } = Astro.locals;
+import { cn } from "@/lib/utils";
 
-const navLinkClass = "text-purple-300 transition-colors hover:text-purple-100 hover:underline";
+const { user, role } = Astro.locals;
+const pathname = Astro.url.pathname;
+
+interface NavItem {
+  href: string;
+  label: string;
+}
+
+function isActive(href: string): boolean {
+  if (href === "/dashboard") {
+    return pathname === "/dashboard";
+  }
+  return pathname === href || pathname.startsWith(`${href}/`);
+}
+
+function navLinkClass(href: string): string {
+  return cn(
+    "rounded-md px-3 py-1.5 text-sm transition-colors",
+    isActive(href) ? "bg-white/15 font-semibold text-white" : "text-blue-100/70 hover:bg-white/10 hover:text-white",
+  );
+}
+
+const trainerNav: NavItem[] = [
+  { href: "/trainer/dashboard", label: "Dashboard" },
+  { href: "/trainer/clients", label: "Clients" },
+];
+
+const clientNav: NavItem[] = [{ href: "/client/dashboard", label: "Dashboard" }];
+
+let navItems: NavItem[] = [];
+if (user) {
+  if (role === "trainer") {
+    navItems = trainerNav;
+  } else if (role === "client") {
+    navItems = clientNav;
+  } else {
+    navItems = [{ href: "/dashboard", label: "Dashboard" }];
+  }
+}
+
+const homeHref =
+  user && role === "trainer"
+    ? "/trainer/dashboard"
+    : user && role === "client"
+      ? "/client/dashboard"
+      : user
+        ? "/dashboard"
+        : "/";
 ---
 
-<div
-  class="mb-4 flex items-center justify-between rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm text-white/80"
+<header
+  class="sticky top-0 z-50 border-b border-white/10 bg-slate-950/85 backdrop-blur-md"
+  aria-label="Main navigation"
 >
-  {
-    user ? (
-      <>
-        <span class="text-blue-100/70">{user.email}</span>
-        <div class="flex items-center gap-3">
-          <a href="/dashboard" class:list={navLinkClass}>
-            Dashboard
-          </a>
-          {role === "trainer" ? (
-            <a href="/trainer/exercises" class:list={navLinkClass}>
-              Exercise library
+  <div class="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 px-4 py-3 sm:px-6">
+    <div class="flex min-w-0 flex-1 items-center gap-4 sm:gap-6">
+      <a
+        href={homeHref}
+        class="shrink-0 bg-gradient-to-r from-blue-200 to-purple-200 bg-clip-text text-sm font-bold tracking-wide text-transparent sm:text-base"
+      >
+        trAInR
+      </a>
+
+      {
+        navItems.length > 0 ? (
+          <nav class="flex flex-wrap items-center gap-1" aria-label="App">
+            {navItems.map((item) => (
+              <a
+                href={item.href}
+                class:list={navLinkClass(item.href)}
+                aria-current={isActive(item.href) ? "page" : undefined}
+              >
+                {item.label}
+              </a>
+            ))}
+          </nav>
+        ) : null
+      }
+    </div>
+
+    <div class="flex shrink-0 items-center gap-3 text-sm">
+      {
+        user ? (
+          <>
+            <span class="max-w-[12rem] truncate text-blue-100/70 sm:max-w-xs" title={user.email}>
+              {user.email}
+            </span>
+            <form method="POST" action="/api/auth/signout">
+              <button
+                type="submit"
+                class="rounded-md px-3 py-1.5 text-blue-100/70 transition-colors hover:bg-white/10 hover:text-white"
+              >
+                Sign out
+              </button>
+            </form>
+          </>
+        ) : (
+          <>
+            <a href="/auth/signin" class:list={navLinkClass("/auth/signin")}>
+              Sign in
             </a>
-          ) : null}
-          <form method="POST" action="/api/auth/signout">
-            <button type="submit" class:list={navLinkClass}>
-              Sign out
-            </button>
-          </form>
-        </div>
-      </>
-    ) : (
-      <>
-        <span class="text-blue-100/70">Not signed in</span>
-        <div class="flex gap-3">
-          <a href="/auth/signin" class:list={navLinkClass}>
-            Sign in
-          </a>
-          <a href="/auth/signup" class:list={navLinkClass}>
-            Sign up
-          </a>
-        </div>
-      </>
-    )
-  }
-</div>
+            <a
+              href="/auth/signup"
+              class:list={cn(
+                "rounded-md px-3 py-1.5 text-sm font-medium transition-colors",
+                isActive("/auth/signup")
+                  ? "bg-white/15 text-white"
+                  : "border border-white/20 bg-white/10 text-white hover:bg-white/20",
+              )}
+            >
+              Sign up
+            </a>
+          </>
+        )
+      }
+    </div>
+  </div>
+</header>

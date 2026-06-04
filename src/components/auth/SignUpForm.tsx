@@ -9,9 +9,12 @@ const MIN_PASSWORD_LENGTH = 6;
 
 interface Props {
   serverError?: string | null;
+  token?: string;
+  trainerName?: string;
 }
 
-export default function SignUpForm({ serverError }: Props) {
+export default function SignUpForm({ serverError, token, trainerName }: Props) {
+  const isClientInvite = Boolean(token);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -64,6 +67,10 @@ export default function SignUpForm({ serverError }: Props) {
 
   return (
     <form method="POST" action="/api/auth/signup" className="space-y-4" onSubmit={handleSubmit} noValidate>
+      {isClientInvite ? <input type="hidden" name="token" value={token} /> : null}
+
+      {isClientInvite && trainerName ? <p className="sr-only">Invited by {trainerName}</p> : null}
+
       <FormField
         id="email"
         type="email"
@@ -126,8 +133,11 @@ export default function SignUpForm({ serverError }: Props) {
 
       <ServerError message={serverError} />
 
-      <SubmitButton pendingText="Creating account..." icon={<UserPlus className="size-4" />}>
-        Create account
+      <SubmitButton
+        pendingText={isClientInvite ? "Joining…" : "Creating account..."}
+        icon={<UserPlus className="size-4" />}
+      >
+        {isClientInvite ? "Join as client" : "Create account"}
       </SubmitButton>
     </form>
   );
