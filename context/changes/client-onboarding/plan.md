@@ -542,12 +542,12 @@ Update the signin flow to redirect users to role-appropriate pages and create a 
 
 #### Automated
 
-- [x] 4.1 Build succeeds: `npm run build`
-- [x] 4.2 Lint passes: `npm run lint`
+- [x] 4.1 Build succeeds: `npm run build` — 8650a28
+- [x] 4.2 Lint passes: `npm run lint` — 8650a28
 
 #### Manual
 
-- [x] 4.3 Trainer sign-in → `/trainer/dashboard`; client sign-in → `/client/dashboard`
-- [x] 4.4 Client dashboard shows welcome with trainer name
-- [x] 4.5 `/dashboard` redirects to role-specific page
-- [x] 4.6 Role isolation enforced (middleware redirects wrong-role access)
+- [x] 4.3 Trainer sign-in → `/trainer/dashboard`; client sign-in → `/client/dashboard` — 8650a28
+- [x] 4.4 Client dashboard shows welcome with trainer name — 8650a28
+- [x] 4.5 `/dashboard` redirects to role-specific page — 8650a28
+- [x] 4.6 Role isolation enforced (middleware redirects wrong-role access) — 8650a28

@@ -2,7 +2,7 @@
 id: client-onboarding
 title: Client onboarding via invite link
 linear_issue: ZAW-8
-status: implementing
+status: implemented
 created: 2026-05-30
 updated: 2026-06-04
 roadmap_ref: S-03
