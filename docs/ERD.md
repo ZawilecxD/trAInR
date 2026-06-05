@@ -87,12 +87,17 @@ erDiagram
         uuid exercise_id FK
         text phase
         integer sort_order
-        integer prescribed_sets
+        text notes
+    }
+
+    template_exercise_sets {
+        uuid id PK
+        uuid template_exercise_id FK
+        integer set_number
         integer prescribed_reps
         integer prescribed_duration_seconds
         decimal prescribed_load_kg
         integer rest_after_seconds
-        text notes
     }
 
     client_plans {
@@ -167,6 +172,7 @@ erDiagram
 
     session_templates ||--o{ template_exercises : "contains"
     exercises ||--o{ template_exercises : "prescribed in"
+    template_exercises ||--o{ template_exercise_sets : "prescribed via"
 
     client_plans ||--o{ workout_sessions : "contains"
     session_templates |o--o{ workout_sessions : "source for"
@@ -285,12 +291,19 @@ interface TemplateExercise {
   exercise_id: string;                    // FK → exercises
   phase: ExercisePhase;
   sort_order: number;
-  prescribed_sets: number;
+  notes: string | null;
+  sets: TemplateExerciseSet[];
+}
+
+// template_exercise_sets — per-round prescription for a template exercise
+interface TemplateExerciseSet {
+  id: string;
+  template_exercise_id: string;           // FK → template_exercises
+  set_number: number;                     // 1-based
   prescribed_reps: number | null;         // null if timed
   prescribed_duration_seconds: number | null; // null if reps-based
   prescribed_load_kg: number | null;      // null = unspecified, 0 = bodyweight, neg = assisted
   rest_after_seconds: number | null;      // data field; rest timer UI is post-MVP
-  notes: string | null;
 }
 ```
 

@@ -86,18 +86,24 @@ export interface SessionTemplate {
   updated_at: string;
 }
 
+export interface TemplateExerciseSet {
+  id: string;
+  template_exercise_id: string;
+  set_number: number;
+  prescribed_reps: number | null;
+  prescribed_duration_seconds: number | null;
+  prescribed_load_kg: number | null;
+  rest_after_seconds: number | null;
+}
+
 export interface TemplateExercise {
   id: string;
   template_id: string;
   exercise_id: string;
   phase: ExercisePhase;
   sort_order: number;
-  prescribed_sets: number;
-  prescribed_reps: number | null;
-  prescribed_duration_seconds: number | null;
-  prescribed_load_kg: number | null;
-  rest_after_seconds: number | null;
   notes: string | null;
+  sets: TemplateExerciseSet[];
 }
 
 export type ClientPlanStatus = "active" | "completed" | "archived";
