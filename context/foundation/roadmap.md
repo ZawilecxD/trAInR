@@ -3,7 +3,7 @@ project: "trAInR"
 version: 1
 status: draft
 created: 2026-05-25
-updated: 2026-05-30
+updated: 2026-06-05
 prd_version: 1
 main_goal: speed
 top_blocker: time
@@ -43,6 +43,7 @@ Independent personal trainers lose coaching time to admin — hunting across spr
 | S-11 | client-removal | remove or reject a wrongly-assigned client | S-03 | FR-006 | proposed |
 | S-12 | exercise-statistics | view per-exercise history, estimated 1RM, and volume/tonnage | S-06 | FR-024, FR-025, FR-026 | proposed |
 | S-13 | data-edit-window | edit logged data for 24 hours, then sealed | S-06 | FR-022 | proposed |
+| S-14 | exercises-separate-rounds | prescribe each exercise round separately (reps, load, rest per round) | S-02 | FR-010, FR-011 | proposed |
 
 ## Streams
 
@@ -52,7 +53,7 @@ Navigation aid — groups items that share a Prerequisites chain. Canonical orde
 |---|---|---|---|
 | A | Trainer authoring → north star | `F-01` → `S-01` → `S-02` → `S-04` → `S-06` → `S-07` | Critical path: every link is on the shortest route to validating the async training loop. |
 | B | Client onboarding & calendar | `S-03` → `S-05` | Joins Stream A at `S-04` (S-03 is a prerequisite for S-04); `S-05` branches off `S-04` parallel with `S-06`. |
-| C | Enhancement & polish | `S-08` / `S-09` / `S-10` / `S-11` / `S-12` / `S-13` | Tier 2+3 items; sequence after core loop completes or when capacity opens. |
+| C | Enhancement & polish | `S-08` / `S-09` / `S-10` / `S-11` / `S-12` / `S-13` / `S-14` | Tier 2+3 items; sequence after core loop completes or when capacity opens. `S-14` extends session template prescription (after S-02). |
 
 ## Baseline
 
@@ -239,6 +240,18 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Risk:** 24-hour window enforcement needs careful timezone handling; for MVP, use UTC and document the behavior.
 - **Status:** proposed
 
+### S-14: Per-round exercise prescription
+
+- **Outcome:** trainer can add an exercise to a session template and configure each round separately — e.g. round 1: 10 reps × 50 kg + 2 min rest, round 2: 8 × 60 kg + 2 min rest, round 3: 6 × 70 kg + 3 min rest — instead of a single uniform prescription for all sets
+- **Change ID:** exercises-separate-rounds
+- **PRD refs:** FR-010, FR-011
+- **Prerequisites:** S-02
+- **Parallel with:** S-03, S-04 (once S-02 is done)
+- **Blockers:** —
+- **Unknowns:** Whether per-round rows live on template exercises only or also on assigned session exercises (likely both for plan personalization); metric variants (time/distance) per round
+- **Risk:** Data model shift from flat `prescribed_*` fields to round rows cascades to S-04 (assignment), S-06 (guided logging), and S-07 (trainer readout); plan should define migration/backfill for templates created with uniform prescriptions
+- **Status:** proposed
+
 ## Backlog Handoff
 
 | Roadmap ID | Change ID | Suggested issue title | Ready for `/10x-plan` | Notes |
@@ -257,6 +270,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 | S-11 | client-removal | Implement trainer can remove/reject client | no | Needs S-03 |
 | S-12 | exercise-statistics | Build per-exercise history with 1RM and volume stats | no | Needs S-06 |
 | S-13 | data-edit-window | Implement 24h edit window then seal logged data | no | Needs S-06 |
+| S-14 | exercises-separate-rounds | Per-round prescription (reps, load, rest) in session templates | no | Needs S-02 |
 
 ## Open Roadmap Questions
 
