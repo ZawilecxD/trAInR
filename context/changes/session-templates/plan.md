@@ -320,10 +320,10 @@ No new migration required. All schema (`session_templates`, `template_exercises`
 
 #### Automated
 
-- [x] 1.1 `npm run lint` passes after API and schema additions
-- [x] 1.2 `npm run build` passes
-- [x] 1.3 `npm run test` passes including new schema unit tests
-- [x] 1.4 TypeScript strict-mode passes on all new files
+- [x] 1.1 `npm run lint` passes after API and schema additions — 2dc7e8e
+- [x] 1.2 `npm run build` passes — 2dc7e8e
+- [x] 1.3 `npm run test` passes including new schema unit tests — 2dc7e8e
+- [x] 1.4 TypeScript strict-mode passes on all new files — 2dc7e8e
 
 #### Manual
 
