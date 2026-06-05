@@ -1,7 +1,7 @@
 ---
 change_id: session-templates
 title: Session template builder with phases
-status: implementing
+status: implemented
 created: 2026-06-05
 updated: 2026-06-05
 archived_at: null
