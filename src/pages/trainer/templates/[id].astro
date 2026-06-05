@@ -1,0 +1,100 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import TemplateForm from "@/components/session-templates/TemplateForm";
+import { listExercises } from "@/lib/exercises/service";
+import { getTemplate } from "@/lib/session-templates/service";
+import { templateIdParamSchema } from "@/lib/session-templates/schemas";
+import { createClient } from "@/lib/supabase";
+
+const userId = Astro.locals.user?.id;
+const rawId = Astro.params.id;
+const parsedId = templateIdParamSchema.safeParse(rawId);
+const supabase = createClient(Astro.request.headers, Astro.cookies);
+
+let loadError: string | null = null;
+let notFound = false;
+let template: Awaited<ReturnType<typeof getTemplate>>["data"] = null;
+let availableExercises: Awaited<ReturnType<typeof listExercises>>["data"] = [];
+
+if (!parsedId.success) {
+  notFound = true;
+} else if (!supabase) {
+  loadError = "Templates are unavailable. Check Supabase configuration.";
+} else {
+  const [{ data: templateData, error: templateError }, { data: exercises, error: exercisesError }] = await Promise.all([
+    getTemplate(supabase, parsedId.data),
+    listExercises(supabase, {}),
+  ]);
+
+  template = templateData;
+  availableExercises = exercises ?? [];
+  loadError = templateError ?? exercisesError;
+
+  if (!template || (userId && template.trainer_id !== userId)) {
+    notFound = true;
+  }
+}
+
+const updated = Astro.url.searchParams.get("updated") === "1";
+---
+
+<Layout title={template ? `Edit ${template.name}` : "Template not found"}>
+  <div class="bg-cosmic min-h-screen p-4 md:p-8">
+    <div class="mx-auto max-w-4xl space-y-6">
+      <div>
+        <a href="/trainer/templates" class="text-sm text-blue-100/70 transition-colors hover:text-white">
+          ← Back to templates
+        </a>
+        <h1 class="mt-3 bg-gradient-to-r from-blue-200 to-purple-200 bg-clip-text text-3xl font-bold text-transparent">
+          {notFound ? "Template not found" : "Edit template"}
+        </h1>
+        {
+          template ? (
+            <p class="mt-1 text-sm text-blue-100/70">Update {template.name} or delete it from your library.</p>
+          ) : null
+        }
+      </div>
+
+      {
+        updated ? (
+          <div class="rounded-lg border border-green-400/30 bg-green-500/10 px-4 py-3 text-sm text-green-100">
+            Template updated successfully.
+          </div>
+        ) : null
+      }
+
+      {
+        notFound ? (
+          <div class="rounded-2xl border border-white/10 bg-white/5 p-8 text-center text-blue-100/80">
+            <p class="text-lg font-medium text-white">This template could not be found</p>
+            <p class="mt-2 text-sm">It may have been deleted or the link is invalid.</p>
+            <a
+              href="/trainer/templates"
+              class="mt-4 inline-block rounded-lg border border-white/20 px-4 py-2 text-sm transition-colors hover:bg-white/10"
+            >
+              Back to templates
+            </a>
+          </div>
+        ) : loadError ? (
+          <div class="rounded-lg border border-red-400/30 bg-red-500/10 px-4 py-3 text-sm text-red-100">
+            Failed to load template: {loadError}
+          </div>
+        ) : template ? (
+          <div class="rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-xl">
+            <TemplateForm
+              client:load
+              mode="edit"
+              templateId={template.id}
+              availableExercises={availableExercises}
+              initialTemplate={{
+                name: template.name,
+                description: template.description,
+                exercises: template.exercises,
+              }}
+            />
+          </div>
+        ) : null
+      }
+    </div>
+  </div>
+</Layout>

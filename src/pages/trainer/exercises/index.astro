@@ -1,7 +1,6 @@
 ---
 import Layout from "@/layouts/Layout.astro";
 import ExerciseFilters from "@/components/exercises/ExerciseFilters";
-import Topbar from "@/components/Topbar.astro";
 import { searchParamsToFilters } from "@/lib/exercises/filter-url";
 import { EXERCISE_METRIC_LABELS, EXERCISE_TYPE_LABELS } from "@/lib/exercises/labels";
 import { parseListExercisesQuery } from "@/lib/exercises/schemas";
@@ -53,7 +52,6 @@ const hasActiveFilters =
 
 <Layout title="Exercise library">
   <div class="bg-cosmic min-h-screen p-4 md:p-8">
-    <Topbar />
     <div class="mx-auto max-w-6xl space-y-6">
       <div class="flex flex-wrap items-center justify-between gap-4">
         <div>
