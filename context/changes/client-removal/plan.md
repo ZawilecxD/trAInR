@@ -255,24 +255,24 @@ Expose removal via `DELETE /api/trainer-clients/[id]` and add confirmed remove a
 #### Automated
 
 - [x] 1.1 Migration applies cleanly: `npx supabase db reset`
-- [x] 1.2 Lint passes: `npm run lint`
+- [x] 1.2 Lint passes: `npm run lint` — 6923636
 - [x] 1.3 Build succeeds: `npm run build`
 
 #### Manual
 
-- [x] 1.4 `remove_trainer_client` soft-removes assignment and archives active plans
-- [x] 1.5 Double-remove raises exception; trainer active SELECT returns no row; client retains plan history
-- [x] 1.6 Trainer cannot SELECT archived plans or sessions for removed client after RLS tightening
+- [x] 1.4 `remove_trainer_client` soft-removes assignment and archives active plans — 6923636
+- [x] 1.5 Double-remove raises exception; trainer active SELECT returns no row; client retains plan history — 6923636
+- [x] 1.6 Trainer cannot SELECT archived plans or sessions for removed client after RLS tightening — 6923636
 
 ### Phase 2: API and Clients Page UI
 
 #### Automated
 
-- [ ] 2.1 Lint passes: `npm run lint`
-- [ ] 2.2 Build succeeds: `npm run build`
+- [x] 2.1 Lint passes: `npm run lint`
+- [x] 2.2 Build succeeds: `npm run build`
 
 #### Manual
 
-- [ ] 2.3 Remove button + confirmation dialog on `/trainer/clients`
-- [ ] 2.4 Confirm removes client from list; refresh persists; client dashboard shows no trainer
-- [ ] 2.5 Auth errors and invite flow regressions verified
+- [x] 2.3 Remove button + confirmation dialog on `/trainer/clients`
+- [x] 2.4 Confirm removes client from list; refresh persists; client dashboard shows no trainer
+- [x] 2.5 Auth errors and invite flow regressions verified
