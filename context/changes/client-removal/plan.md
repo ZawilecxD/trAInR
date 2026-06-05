@@ -268,11 +268,11 @@ Expose removal via `DELETE /api/trainer-clients/[id]` and add confirmed remove a
 
 #### Automated
 
-- [x] 2.1 Lint passes: `npm run lint`
-- [x] 2.2 Build succeeds: `npm run build`
+- [x] 2.1 Lint passes: `npm run lint` — b214bc1
+- [x] 2.2 Build succeeds: `npm run build` — b214bc1
 
 #### Manual
 
-- [x] 2.3 Remove button + confirmation dialog on `/trainer/clients`
-- [x] 2.4 Confirm removes client from list; refresh persists; client dashboard shows no trainer
-- [x] 2.5 Auth errors and invite flow regressions verified
+- [x] 2.3 Remove button + confirmation dialog on `/trainer/clients` — b214bc1
+- [x] 2.4 Confirm removes client from list; refresh persists; client dashboard shows no trainer — b214bc1
+- [x] 2.5 Auth errors and invite flow regressions verified — b214bc1
