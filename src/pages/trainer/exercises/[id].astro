@@ -1,7 +1,6 @@
 ---
 import Layout from "@/layouts/Layout.astro";
 import ExerciseForm from "@/components/exercises/ExerciseForm";
-import Topbar from "@/components/Topbar.astro";
 import { exerciseIdParamSchema } from "@/lib/exercises/schemas";
 import { getExercise, type ExerciseWithMuscleGroups } from "@/lib/exercises/service";
 import { createClient } from "@/lib/supabase";
@@ -35,7 +34,6 @@ if (!parsedId.success) {
 
 <Layout title={exercise ? `Edit ${exercise.name}` : "Exercise not found"}>
   <div class="bg-cosmic min-h-screen p-4 md:p-8">
-    <Topbar />
     <div class="mx-auto max-w-3xl space-y-6">
       <div>
         <a href="/trainer/exercises" class="text-sm text-blue-100/70 transition-colors hover:text-white">

@@ -18,9 +18,14 @@ const { user } = Astro.locals;
       <p class="mt-4 text-sm text-blue-100/50">
         Your trainer dashboard will grow with client plans, sessions, and analytics in future updates.
       </p>
-      <p class="mt-6 text-sm text-blue-100/60">
-        <a href="/trainer/clients" class="text-purple-300 hover:underline"> Manage clients and invites </a>
-      </p>
+      <div class="mt-6 space-y-2 text-sm text-blue-100/60">
+        <p>
+          <a href="/trainer/clients" class="text-purple-300 hover:underline"> Manage clients and invites </a>
+        </p>
+        <p>
+          <a href="/trainer/templates" class="text-purple-300 hover:underline"> Build session templates </a>
+        </p>
+      </div>
     </div>
   </div>
 </Layout>

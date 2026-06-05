@@ -327,26 +327,26 @@ No new migration required. All schema (`session_templates`, `template_exercises`
 
 #### Manual
 
-- [ ] 1.5 Authenticated trainer can POST a template with exercises and receive 201
-- [ ] 1.6 PATCH with new exercises list replaces old exercises correctly
-- [ ] 1.7 DELETE removes template and template_exercises; GET returns 404
-- [ ] 1.8 Non-trainer access returns 403; unauthenticated returns 401
-- [ ] 1.9 Trainer B cannot read or modify trainer A's templates (RLS)
+- [x] 1.5 Authenticated trainer can POST a template with exercises and receive 201
+- [x] 1.6 PATCH with new exercises list replaces old exercises correctly
+- [x] 1.7 DELETE removes template and template_exercises; GET returns 404
+- [x] 1.8 Non-trainer access returns 403; unauthenticated returns 401
+- [x] 1.9 Trainer B cannot read or modify trainer A's templates (RLS)
 
 ### Phase 2: Template UI, navigation, and hardening
 
 #### Automated
 
-- [ ] 2.1 `npm run lint` passes for all new pages, components, form-validation module, and Topbar change
-- [ ] 2.2 `npm run build` passes with new trainer template routes
-- [ ] 2.3 `npm run test` passes (Phase 1 schema tests still green; new form-validation unit tests pass)
+- [x] 2.1 `npm run lint` passes for all new pages, components, form-validation module, and Topbar change
+- [x] 2.2 `npm run build` passes with new trainer template routes
+- [x] 2.3 `npm run test` passes (Phase 1 schema tests still green; new form-validation unit tests pass)
 
 #### Manual
 
-- [ ] 2.4 "Templates" appears in Topbar trainer nav with correct active highlighting
-- [ ] 2.5 Trainer dashboard shows Templates entry/card
-- [ ] 2.6 Trainer creates a template with exercises in all three phases and sees it in list
-- [ ] 2.7 Trainer edits template: add exercise, reorder, toggle reps/duration, save — changes persist on reload
-- [ ] 2.8 Trainer deletes a template with confirmation; template disappears from list
-- [ ] 2.9 Form error states render correctly (name required; invalid fields highlight)
-- [ ] 2.10 RLS verification SQL confirms trainer B isolation
+- [x] 2.4 "Templates" appears in Topbar trainer nav with correct active highlighting
+- [x] 2.5 Trainer dashboard shows Templates entry/card
+- [x] 2.6 Trainer creates a template with exercises in all three phases and sees it in list
+- [x] 2.7 Trainer edits template: add exercise, reorder, toggle reps/duration, save — changes persist on reload
+- [x] 2.8 Trainer deletes a template with confirmation; template disappears from list
+- [x] 2.9 Form error states render correctly (name required; invalid fields highlight)
+- [x] 2.10 RLS verification SQL confirms trainer B isolation
