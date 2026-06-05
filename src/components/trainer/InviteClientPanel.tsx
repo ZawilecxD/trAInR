@@ -1,6 +1,17 @@
 import { useState } from "react";
-import { Copy, Link2, Users } from "lucide-react";
+import { Copy, Link2, Trash2, Users } from "lucide-react";
 import { toast } from "sonner";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -65,10 +76,12 @@ function formatDate(iso: string | null): string {
   });
 }
 
-export default function InviteClientPanel({ invites: initialInvites, clients, origin }: Props) {
+export default function InviteClientPanel({ invites: initialInvites, clients: initialClients, origin }: Props) {
   const [invites, setInvites] = useState(initialInvites);
+  const [clients, setClients] = useState(initialClients);
   const [latestUrl, setLatestUrl] = useState<string | null>(null);
   const [generating, setGenerating] = useState(false);
+  const [removingId, setRemovingId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   async function handleGenerate() {
@@ -103,6 +116,27 @@ export default function InviteClientPanel({ invites: initialInvites, clients, or
       toast.success("Invite link copied to clipboard");
     } catch {
       toast.error("Could not copy to clipboard");
+    }
+  }
+
+  async function handleRemove(assignmentId: string, displayName: string) {
+    setRemovingId(assignmentId);
+
+    try {
+      const response = await fetch(`/api/trainer-clients/${assignmentId}`, { method: "DELETE" });
+      const body = (await response.json()) as { ok?: boolean; error?: string };
+
+      if (!response.ok) {
+        toast.error(body.error ?? "Failed to remove client");
+        return;
+      }
+
+      setClients((prev) => prev.filter((row) => row.id !== assignmentId));
+      toast.success(`${displayName} removed from your client list`);
+    } catch {
+      toast.error("Failed to remove client");
+    } finally {
+      setRemovingId(null);
     }
   }
 
@@ -203,8 +237,48 @@ export default function InviteClientPanel({ invites: initialInvites, clients, or
         ) : (
           <ul className="space-y-2">
             {clients.map((row) => (
-              <li key={row.id} className="rounded-lg border border-white/10 bg-white/5 px-4 py-3 text-sm text-white">
-                {row.client.display_name}
+              <li
+                key={row.id}
+                className="flex items-center justify-between gap-3 rounded-lg border border-white/10 bg-white/5 px-4 py-3 text-sm text-white"
+              >
+                <span>{row.client.display_name}</span>
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      disabled={removingId === row.id}
+                      className="text-red-300 hover:bg-red-500/10 hover:text-red-200"
+                    >
+                      <Trash2 className="size-3.5" />
+                      Remove
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent className="border-white/10 bg-slate-900 text-white">
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Remove client?</AlertDialogTitle>
+                      <AlertDialogDescription className="text-blue-100/70">
+                        {row.client.display_name} will be removed from your client list. Their workout history is
+                        retained; you will no longer see them or their plans.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel className="border-white/20 bg-white/10 text-white hover:bg-white/20">
+                        Cancel
+                      </AlertDialogCancel>
+                      <AlertDialogAction
+                        className="bg-destructive hover:bg-destructive/90 text-white"
+                        disabled={removingId === row.id}
+                        onClick={() => {
+                          void handleRemove(row.id, row.client.display_name);
+                        }}
+                      >
+                        {removingId === row.id ? "Removing…" : "Remove client"}
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
               </li>
             ))}
           </ul>
