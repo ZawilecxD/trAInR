@@ -66,8 +66,10 @@ export function exerciseToFormEntry(
 }
 
 export function templateExerciseToFormEntry(row: TemplateExerciseWithName): TemplateExerciseFormEntry {
-  const hasReps = row.prescribed_reps !== null;
-  const hasDuration = row.prescribed_duration_seconds !== null;
+  const sortedSets = [...row.sets].sort((a, b) => a.set_number - b.set_number);
+  const firstSet = sortedSets.at(0);
+  const hasReps = sortedSets.some((set) => set.prescribed_reps !== null);
+  const hasDuration = sortedSets.some((set) => set.prescribed_duration_seconds !== null);
   const metricMode: MetricMode =
     hasDuration && !hasReps
       ? "duration"
@@ -80,12 +82,12 @@ export function templateExerciseToFormEntry(row: TemplateExerciseWithName): Temp
     exerciseName: row.exercise_name,
     exerciseDefaultMetric: row.exercise_default_metric,
     phase: row.phase,
-    prescribedSets: row.prescribed_sets,
+    prescribedSets: Math.max(sortedSets.length, 1),
     metricMode,
-    prescribedReps: row.prescribed_reps,
-    prescribedDuration: row.prescribed_duration_seconds,
-    prescribedLoadKg: row.prescribed_load_kg,
-    restAfterSeconds: row.rest_after_seconds,
+    prescribedReps: firstSet ? firstSet.prescribed_reps : null,
+    prescribedDuration: firstSet ? firstSet.prescribed_duration_seconds : null,
+    prescribedLoadKg: firstSet ? firstSet.prescribed_load_kg : null,
+    restAfterSeconds: firstSet ? firstSet.rest_after_seconds : null,
     notes: row.notes ?? "",
   };
 }
@@ -102,15 +104,18 @@ export function templateExercisesToPhaseEntries(exercises: TemplateExerciseWithN
 }
 
 export function exerciseEntryToPayload(entry: TemplateExerciseFormEntry, sortOrder: number): TemplateExerciseInput {
-  return {
-    exercise_id: entry.exerciseId,
-    phase: entry.phase,
-    sort_order: sortOrder,
-    prescribed_sets: entry.prescribedSets,
+  const round = {
     prescribed_reps: entry.metricMode === "reps" ? entry.prescribedReps : null,
     prescribed_duration_seconds: entry.metricMode === "duration" ? entry.prescribedDuration : null,
     prescribed_load_kg: entry.prescribedLoadKg,
     rest_after_seconds: entry.restAfterSeconds,
+  };
+
+  return {
+    exercise_id: entry.exerciseId,
+    phase: entry.phase,
+    sort_order: sortOrder,
+    sets: Array.from({ length: entry.prescribedSets }, () => ({ ...round })),
     notes: entry.notes.trim().length > 0 ? entry.notes.trim() : null,
   };
 }

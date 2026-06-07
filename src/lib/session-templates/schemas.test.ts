@@ -7,24 +7,36 @@ import {
 
 const validExerciseId = "a1000001-0000-4000-8000-000000000001";
 
-const validExercise = {
-  exercise_id: validExerciseId,
-  phase: "warm_up" as const,
-  sort_order: 0,
-  prescribed_sets: 3,
+const validRound = {
   prescribed_reps: 10,
   prescribed_duration_seconds: null,
   prescribed_load_kg: null,
   rest_after_seconds: 60,
+};
+
+const validExercise = {
+  exercise_id: validExerciseId,
+  phase: "warm_up" as const,
+  sort_order: 0,
+  sets: [validRound],
   notes: null,
 };
 
 describe("createTemplateBodySchema", () => {
-  it("accepts a valid create payload with exercises", () => {
+  it("accepts a valid create payload with multi-round exercise", () => {
     const parsed = createTemplateBodySchema.safeParse({
       name: "Full Body Workout",
       description: "A comprehensive full body session",
-      exercises: [validExercise],
+      exercises: [
+        {
+          ...validExercise,
+          sets: [
+            { ...validRound, prescribed_reps: 10, prescribed_load_kg: 50, rest_after_seconds: 120 },
+            { ...validRound, prescribed_reps: 8, prescribed_load_kg: 60, rest_after_seconds: 120 },
+            { ...validRound, prescribed_reps: 6, prescribed_load_kg: 70, rest_after_seconds: 180 },
+          ],
+        },
+      ],
     });
 
     expect(parsed.success).toBe(true);
@@ -83,28 +95,59 @@ describe("createTemplateBodySchema", () => {
     expect(parsed.success).toBe(true);
   });
 
-  it("rejects prescribed_sets = 0", () => {
+  it("rejects empty sets array", () => {
     const parsed = createTemplateBodySchema.safeParse({
       name: "Test",
-      exercises: [{ ...validExercise, prescribed_sets: 0 }],
+      exercises: [{ ...validExercise, sets: [] }],
     });
 
     expect(parsed.success).toBe(false);
   });
 
-  it("accepts both prescribed_reps and prescribed_duration_seconds as null", () => {
+  it("rejects round with both prescribed_reps and prescribed_duration_seconds null", () => {
     const parsed = createTemplateBodySchema.safeParse({
       name: "Test",
-      exercises: [{ ...validExercise, prescribed_reps: null, prescribed_duration_seconds: null }],
+      exercises: [
+        {
+          ...validExercise,
+          sets: [
+            {
+              prescribed_reps: null,
+              prescribed_duration_seconds: null,
+              prescribed_load_kg: null,
+              rest_after_seconds: null,
+            },
+          ],
+        },
+      ],
     });
 
-    expect(parsed.success).toBe(true);
+    expect(parsed.success).toBe(false);
+  });
+
+  it("rejects more than 20 rounds", () => {
+    const parsed = createTemplateBodySchema.safeParse({
+      name: "Test",
+      exercises: [
+        {
+          ...validExercise,
+          sets: Array.from({ length: 21 }, () => validRound),
+        },
+      ],
+    });
+
+    expect(parsed.success).toBe(false);
   });
 
   it("rejects prescribed_load_kg = 0", () => {
     const parsed = createTemplateBodySchema.safeParse({
       name: "Test",
-      exercises: [{ ...validExercise, prescribed_load_kg: 0 }],
+      exercises: [
+        {
+          ...validExercise,
+          sets: [{ ...validRound, prescribed_load_kg: 0 }],
+        },
+      ],
     });
 
     expect(parsed.success).toBe(false);
@@ -113,7 +156,12 @@ describe("createTemplateBodySchema", () => {
   it("accepts prescribed_load_kg > 0", () => {
     const parsed = createTemplateBodySchema.safeParse({
       name: "Test",
-      exercises: [{ ...validExercise, prescribed_load_kg: 20.5 }],
+      exercises: [
+        {
+          ...validExercise,
+          sets: [{ ...validRound, prescribed_load_kg: 20.5 }],
+        },
+      ],
     });
 
     expect(parsed.success).toBe(true);

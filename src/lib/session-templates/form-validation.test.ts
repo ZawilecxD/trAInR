@@ -41,18 +41,33 @@ describe("defaultMetricMode", () => {
 });
 
 describe("exerciseEntryToPayload", () => {
-  it("maps reps mode with null duration", () => {
+  it("maps reps mode with null duration into identical rounds", () => {
     const payload = exerciseEntryToPayload(makeEntry({ metricMode: "reps", prescribedReps: 12 }), 2);
 
     expect(payload).toEqual({
       exercise_id: exerciseId,
       phase: "main",
       sort_order: 2,
-      prescribed_sets: 3,
-      prescribed_reps: 12,
-      prescribed_duration_seconds: null,
-      prescribed_load_kg: null,
-      rest_after_seconds: null,
+      sets: [
+        {
+          prescribed_reps: 12,
+          prescribed_duration_seconds: null,
+          prescribed_load_kg: null,
+          rest_after_seconds: null,
+        },
+        {
+          prescribed_reps: 12,
+          prescribed_duration_seconds: null,
+          prescribed_load_kg: null,
+          rest_after_seconds: null,
+        },
+        {
+          prescribed_reps: 12,
+          prescribed_duration_seconds: null,
+          prescribed_load_kg: null,
+          rest_after_seconds: null,
+        },
+      ],
       notes: null,
     });
   });
@@ -70,10 +85,11 @@ describe("exerciseEntryToPayload", () => {
       0,
     );
 
-    expect(payload.prescribed_reps).toBeNull();
-    expect(payload.prescribed_duration_seconds).toBe(45);
-    expect(payload.prescribed_load_kg).toBe(20);
-    expect(payload.rest_after_seconds).toBe(60);
+    expect(payload.sets).toHaveLength(3);
+    expect(payload.sets[0]?.prescribed_reps).toBeNull();
+    expect(payload.sets[0]?.prescribed_duration_seconds).toBe(45);
+    expect(payload.sets[0]?.prescribed_load_kg).toBe(20);
+    expect(payload.sets[0]?.rest_after_seconds).toBe(60);
     expect(payload.notes).toBe("hold steady");
   });
 });

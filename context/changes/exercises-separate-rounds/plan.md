@@ -291,27 +291,27 @@ Round counts are tiny (≤20 per exercise, a handful of exercises per template).
 
 #### Automated
 
-- [x] 1.1 Migration applies cleanly: `npx supabase db reset`
+- [x] 1.1 Migration applies cleanly: `npx supabase db reset` — e0895e4
 - [ ] 1.2 Type checking passes: `npm run lint`
-- [x] 1.3 Build passes: `npm run build`
+- [x] 1.3 Build passes: `npm run build` — e0895e4
 
 #### Manual
 
-- [x] 1.4 Backfill produced one round row per original set with matching reps/load/rest (verified via migrate-onto-populated-DB recipe)
-- [x] 1.5 Flat prescription columns removed from `template_exercises`
-- [x] 1.6 `docs/ERD.md` updated to new schema (template_exercise_sets entity + relationship)
+- [x] 1.4 Backfill produced one round row per original set with matching reps/load/rest (verified via migrate-onto-populated-DB recipe) — e0895e4
+- [x] 1.5 Flat prescription columns removed from `template_exercises` — e0895e4
+- [x] 1.6 `docs/ERD.md` updated to new schema (template_exercise_sets entity + relationship) — e0895e4
 
 ### Phase 2: API contracts — schema, service, routes, tests
 
 #### Automated
 
-- [ ] 2.1 Schema unit tests pass: `npm run test`
-- [ ] 2.2 Lint/typecheck passes: `npm run lint`
-- [ ] 2.3 Build passes: `npm run build`
+- [x] 2.1 Schema unit tests pass: `npm run test`
+- [x] 2.2 Lint/typecheck passes: `npm run lint`
+- [x] 2.3 Build passes: `npm run build`
 
 #### Manual
 
-- [ ] 2.4 POST/PATCH + GET-by-id round-trip returns rounds in order
+- [x] 2.4 POST/PATCH + GET-by-id round-trip returns rounds in order
 
 ### Phase 3: Per-round editor UI, form-validation, and RLS verification
 
