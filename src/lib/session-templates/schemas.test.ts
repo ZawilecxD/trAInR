@@ -139,13 +139,27 @@ describe("createTemplateBodySchema", () => {
     expect(parsed.success).toBe(false);
   });
 
-  it("rejects prescribed_load_kg = 0", () => {
+  it("accepts prescribed_load_kg = 0 (bodyweight)", () => {
     const parsed = createTemplateBodySchema.safeParse({
       name: "Test",
       exercises: [
         {
           ...validExercise,
           sets: [{ ...validRound, prescribed_load_kg: 0 }],
+        },
+      ],
+    });
+
+    expect(parsed.success).toBe(true);
+  });
+
+  it("rejects prescribed_load_kg < 0", () => {
+    const parsed = createTemplateBodySchema.safeParse({
+      name: "Test",
+      exercises: [
+        {
+          ...validExercise,
+          sets: [{ ...validRound, prescribed_load_kg: -5 }],
         },
       ],
     });

@@ -17,7 +17,7 @@ export const templateExerciseSetInputSchema = z
   .object({
     prescribed_reps: z.number().int().min(1, "prescribed_reps must be ≥ 1").nullable(),
     prescribed_duration_seconds: z.number().int().min(1, "prescribed_duration_seconds must be ≥ 1").nullable(),
-    prescribed_load_kg: z.number().gt(0, "prescribed_load_kg must be > 0").nullable(),
+    prescribed_load_kg: z.number().min(0, "prescribed_load_kg must be ≥ 0").nullable(),
     rest_after_seconds: z.number().int().min(0, "rest_after_seconds must be ≥ 0").nullable(),
   })
   .refine((set) => set.prescribed_reps !== null || set.prescribed_duration_seconds !== null, {

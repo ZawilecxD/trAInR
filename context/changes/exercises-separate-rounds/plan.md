@@ -200,7 +200,7 @@ Grow `TemplateForm` from single-value inputs to a per-round editor, update the f
 
 **Intent**: Replace the single Sets/Reps/Duration/Load/Rest input grid with a per-round table; add round add/duplicate/remove controls.
 
-**Contract**: Per exercise row: keep name header, reorder/remove exercise buttons, the Reps|Duration metric toggle (now applies to all rounds), and Notes. Below, render `entry.rounds` as numbered rows (Round 1, 2, …), each with reps-or-duration / load / rest inputs and a per-round remove button; footer has "Add round" and "Duplicate last round" buttons. Wire to the new form-validation helpers. Preserve existing styling (`inputClass`, phase sections, submit/cancel/delete). Validation error mapping (`mapApiIssues`) should surface round-level issues to `errors.form`.
+**Contract**: Per exercise row: keep name header, reorder/remove exercise buttons, the Reps|Duration metric toggle (now applies to all rounds), and Notes. Below, render `entry.rounds` as numbered rows (Round 1, 2, …), each with reps-or-duration / load / rest inputs and a per-round remove button; footer has "Add round" (calls `addRound()` — duplicates last round when one exists, otherwise seeds default; subsumes the originally planned separate "Duplicate last round" control per impl-review 2026-06-07). Wire to the new form-validation helpers. Preserve existing styling (`inputClass`, phase sections, submit/cancel/delete). Validation error mapping (`mapApiIssues`) should surface round-level issues to `errors.form`.
 
 #### 3. Edit page hydration
 

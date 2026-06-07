@@ -1,7 +1,7 @@
 ---
 change_id: exercises-separate-rounds
 title: Per-round exercise prescription (load, reps, rest)
-status: implemented
+status: impl_reviewed
 linear_issue: ZAW-31
 created: 2026-06-05
 updated: 2026-06-07

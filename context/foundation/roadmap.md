@@ -31,8 +31,8 @@ Independent personal trainers lose coaching time to admin — hunting across spr
 |---|---|---|---|---|---|
 | F-01 | database-schema-and-rls | (foundation) Supabase schema with RLS and role-aware middleware landed | — | NFR privacy, NFR data integrity, Access Control | done |
 | S-01 | exercise-library | create, edit, and browse/filter exercises | F-01 | FR-007, FR-008, FR-009 | done |
-| S-02 | session-templates | create and edit reusable session templates from exercises | F-01, S-01 | FR-010, FR-011 | proposed |
-| S-03 | client-onboarding | register via invite link and be auto-assigned to trainer | F-01 | FR-001, FR-002, FR-003, FR-004, FR-005 | proposed |
+| S-02 | session-templates | create and edit reusable session templates from exercises | F-01, S-01 | FR-010, FR-011 | done |
+| S-03 | client-onboarding | register via invite link and be auto-assigned to trainer | F-01 | FR-001, FR-002, FR-003, FR-004, FR-005 | done |
 | S-04 | plan-assignment | place a session on a specific day of a client's calendar | S-02, S-03 | FR-012, US-01 | proposed |
 | S-05 | client-calendar | view assigned sessions in month/week view with status colors | S-04 | FR-013, FR-014 | proposed |
 | S-06 | guided-workout-logging | open a session, step through exercises, log sets, see previous hints | S-04 | FR-015, FR-016, FR-017, FR-019, FR-020, US-01 | proposed |
@@ -40,7 +40,7 @@ Independent personal trainers lose coaching time to admin — hunting across spr
 | S-08 | session-completion-marking | manually mark a session as finished or finished partially | S-06 | FR-021 | proposed |
 | S-09 | session-comments | comment on a session (bidirectional) | S-04 | FR-023 | proposed |
 | S-10 | warmup-working-flag | flag each logged set as warm-up or working | S-06 | FR-018 | proposed |
-| S-11 | client-removal | remove or reject a wrongly-assigned client | S-03 | FR-006 | proposed |
+| S-11 | client-removal | remove or reject a wrongly-assigned client | S-03 | FR-006 | done |
 | S-12 | exercise-statistics | view per-exercise history, estimated 1RM, and volume/tonnage | S-06 | FR-024, FR-025, FR-026 | proposed |
 | S-13 | data-edit-window | edit logged data for 24 hours, then sealed | S-06 | FR-022 | proposed |
 | S-14 | exercises-separate-rounds | prescribe each exercise round separately (reps, load, rest per round) | S-02 | FR-010, FR-011 | proposed |
@@ -106,7 +106,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Blockers:** —
 - **Unknowns:** —
 - **Risk:** Phase structure (warm-up/main/cooldown with ordered exercises) is the most complex data model in the product; template editing needs careful UX to avoid becoming tedious.
-- **Status:** proposed
+- **Status:** done
 
 ### S-03: Client onboarding
 
@@ -118,7 +118,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Blockers:** —
 - **Unknowns:** —
 - **Risk:** Invite link security (expiry, single-use) not fully specified in PRD; existing auth covers trainer registration (FR-001/FR-002) so delta work is the invite flow only.
-- **Status:** proposed
+- **Status:** done
 
 ### S-04: Plan assignment
 
@@ -214,7 +214,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Blockers:** —
 - **Unknowns:** —
 - **Risk:** Soft-delete of trainer-client relationship (retain all client data, hide from trainer view). Future: configurable retention period and optional "browse old clients" feature.
-- **Status:** proposed
+- **Status:** done
 
 ### S-12: Exercise statistics
 
@@ -297,4 +297,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 
 - **F-01: (foundation) All Supabase tables per the ERD are created with row-level security policies enforcing cross-tenant isolation; middleware exposes the user's role (`trainer` | `client`) on `context.locals`.** — Archived 2026-06-07 → `context/archive/2026-05-26-database-schema-and-rls/`. Lesson: —.
 - **S-01: trainer can create exercises (name, type, muscle groups, notes, optional video/photo link), edit them, and browse/filter by type and muscle group** — Archived 2026-06-07 → `context/archive/2026-05-28-exercise-library/`. Lesson: —.
+- **S-03: trainer generates an invite link, client registers through it (email+password or Google), is auto-assigned to that trainer, and can log in/out** — Archived 2026-06-07 → `context/archive/2026-05-30-client-onboarding/`. Lesson: —.
+- **S-02: trainer can create a reusable session template organized into phases (warm-up/main/cooldown) with prescribed sets/reps/load and rest time per exercise, and edit existing templates** — Archived 2026-06-07 → `context/archive/2026-06-05-session-templates/`. Lesson: —.
+- **S-11: trainer can remove or reject a wrongly-assigned client** — Archived 2026-06-07 → `context/archive/2026-06-05-client-removal/`. Lesson: —.
 

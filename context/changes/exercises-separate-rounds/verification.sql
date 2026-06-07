@@ -279,6 +279,43 @@ select
 from public.template_exercise_sets
 where template_exercise_id = 'a4000001-0000-4000-8000-000000000001';
 
+select set_config('request.jwt.claim.sub', 'e1000001-0000-4000-8000-000000000002', true);
+select set_config('request.jwt.claim.role', 'authenticated', true);
+set local role authenticated;
+
+do $block$
+begin
+  insert into public.template_exercise_sets (
+    template_exercise_id,
+    set_number,
+    prescribed_reps,
+    prescribed_load_kg,
+    rest_after_seconds
+  )
+  values (
+    'a4000001-0000-4000-8000-000000000001',
+    99,
+    5,
+    25,
+    60
+  );
+  raise exception 'FAIL: trainer B insert into trainer A round was not blocked by RLS';
+exception
+  when insufficient_privilege then
+    null;
+end;
+$block$;
+
+reset role;
+
+select
+  'trainer_b_insert_a_round_blocked' as check_name,
+  count(*) as observed,
+  3::bigint as expected,
+  case when count(*) = 3 then 'PASS' else 'FAIL' end as status
+from public.template_exercise_sets
+where template_exercise_id = 'a4000001-0000-4000-8000-000000000001';
+
 -- ---------------------------------------------------------------------------
 -- 5. Trainer A can delete own round; cascade removes sets when exercise deleted
 -- ---------------------------------------------------------------------------
