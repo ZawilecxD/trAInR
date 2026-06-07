@@ -29,7 +29,7 @@ Independent personal trainers lose coaching time to admin — hunting across spr
 
 | ID | Change ID | Outcome (user can …) | Prerequisites | PRD refs | Status |
 |---|---|---|---|---|---|
-| F-01 | database-schema-and-rls | (foundation) Supabase schema with RLS and role-aware middleware landed | — | NFR privacy, NFR data integrity, Access Control | ready |
+| F-01 | database-schema-and-rls | (foundation) Supabase schema with RLS and role-aware middleware landed | — | NFR privacy, NFR data integrity, Access Control | done |
 | S-01 | exercise-library | create, edit, and browse/filter exercises | F-01 | FR-007, FR-008, FR-009 | done |
 | S-02 | session-templates | create and edit reusable session templates from exercises | F-01, S-01 | FR-010, FR-011 | proposed |
 | S-03 | client-onboarding | register via invite link and be auto-assigned to trainer | F-01 | FR-001, FR-002, FR-003, FR-004, FR-005 | proposed |
@@ -80,7 +80,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Blockers:** —
 - **Unknowns:** —
 - **Risk:** Schema decisions lock in early; changing table shapes later cascades through all slices. Mitigated by following the reviewed ERD in `docs/ERD.md`.
-- **Status:** ready
+- **Status:** done
 
 ## Slices
 
@@ -295,5 +295,6 @@ Foundations below assume these are present and do NOT re-scaffold them.
 
 ## Done
 
+- **F-01: (foundation) All Supabase tables per the ERD are created with row-level security policies enforcing cross-tenant isolation; middleware exposes the user's role (`trainer` | `client`) on `context.locals`.** — Archived 2026-06-07 → `context/archive/2026-05-26-database-schema-and-rls/`. Lesson: —.
 - **S-01: trainer can create exercises (name, type, muscle groups, notes, optional video/photo link), edit them, and browse/filter by type and muscle group** — Archived 2026-06-07 → `context/archive/2026-05-28-exercise-library/`. Lesson: —.
 
