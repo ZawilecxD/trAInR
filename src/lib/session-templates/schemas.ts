@@ -13,15 +13,22 @@ export const exerciseMetricSchema = z.enum(["reps_weight", "time", "distance"] s
   ...ExerciseMetric[],
 ]);
 
+export const templateExerciseSetInputSchema = z
+  .object({
+    prescribed_reps: z.number().int().min(1, "prescribed_reps must be ≥ 1").nullable(),
+    prescribed_duration_seconds: z.number().int().min(1, "prescribed_duration_seconds must be ≥ 1").nullable(),
+    prescribed_load_kg: z.number().min(0, "prescribed_load_kg must be ≥ 0").nullable(),
+    rest_after_seconds: z.number().int().min(0, "rest_after_seconds must be ≥ 0").nullable(),
+  })
+  .refine((set) => set.prescribed_reps !== null || set.prescribed_duration_seconds !== null, {
+    message: "each round needs reps or duration",
+  });
+
 export const templateExerciseInputSchema = z.object({
   exercise_id: uuidSchema,
   phase: exercisePhaseSchema,
   sort_order: z.number().int().min(0, "sort_order must be ≥ 0"),
-  prescribed_sets: z.number().int().min(1, "prescribed_sets must be ≥ 1"),
-  prescribed_reps: z.number().int().min(1, "prescribed_reps must be ≥ 1").nullable(),
-  prescribed_duration_seconds: z.number().int().min(1, "prescribed_duration_seconds must be ≥ 1").nullable(),
-  prescribed_load_kg: z.number().gt(0, "prescribed_load_kg must be > 0").nullable(),
-  rest_after_seconds: z.number().int().min(0, "rest_after_seconds must be ≥ 0").nullable(),
+  sets: z.array(templateExerciseSetInputSchema).min(1, "at least one round").max(20, "too many rounds"),
   notes: z.string().nullable(),
 });
 
@@ -44,6 +51,7 @@ export const templateIdParamSchema = uuidSchema;
 export type CreateTemplateBody = z.infer<typeof createTemplateBodySchema>;
 export type UpdateTemplateBody = z.infer<typeof updateTemplateBodySchema>;
 export type TemplateExerciseInput = z.infer<typeof templateExerciseInputSchema>;
+export type TemplateExerciseSetInput = z.infer<typeof templateExerciseSetInputSchema>;
 
 export function formatZodIssues(issues: z.core.$ZodIssue[]): {
   path: string;

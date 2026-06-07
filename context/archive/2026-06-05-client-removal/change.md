@@ -1,10 +1,10 @@
 ---
 change_id: client-removal
 title: Client removal
-status: implemented
+status: archived
 created: 2026-06-05
-updated: 2026-06-05
-archived_at: null
+updated: 2026-06-07
+archived_at: 2026-06-07T05:42:14Z
 linear_issue: ZAW-16
 phase_issues:
   "1": ZAW-28

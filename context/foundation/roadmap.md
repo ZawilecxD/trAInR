@@ -3,7 +3,7 @@ project: "trAInR"
 version: 1
 status: draft
 created: 2026-05-25
-updated: 2026-06-05
+updated: 2026-06-07
 prd_version: 1
 main_goal: speed
 top_blocker: time
@@ -29,10 +29,10 @@ Independent personal trainers lose coaching time to admin — hunting across spr
 
 | ID | Change ID | Outcome (user can …) | Prerequisites | PRD refs | Status |
 |---|---|---|---|---|---|
-| F-01 | database-schema-and-rls | (foundation) Supabase schema with RLS and role-aware middleware landed | — | NFR privacy, NFR data integrity, Access Control | ready |
+| F-01 | database-schema-and-rls | (foundation) Supabase schema with RLS and role-aware middleware landed | — | NFR privacy, NFR data integrity, Access Control | done |
 | S-01 | exercise-library | create, edit, and browse/filter exercises | F-01 | FR-007, FR-008, FR-009 | done |
-| S-02 | session-templates | create and edit reusable session templates from exercises | F-01, S-01 | FR-010, FR-011 | proposed |
-| S-03 | client-onboarding | register via invite link and be auto-assigned to trainer | F-01 | FR-001, FR-002, FR-003, FR-004, FR-005 | proposed |
+| S-02 | session-templates | create and edit reusable session templates from exercises | F-01, S-01 | FR-010, FR-011 | done |
+| S-03 | client-onboarding | register via invite link and be auto-assigned to trainer | F-01 | FR-001, FR-002, FR-003, FR-004, FR-005 | done |
 | S-04 | plan-assignment | place a session on a specific day of a client's calendar | S-02, S-03 | FR-012, US-01 | proposed |
 | S-05 | client-calendar | view assigned sessions in month/week view with status colors | S-04 | FR-013, FR-014 | proposed |
 | S-06 | guided-workout-logging | open a session, step through exercises, log sets, see previous hints | S-04 | FR-015, FR-016, FR-017, FR-019, FR-020, US-01 | proposed |
@@ -40,7 +40,7 @@ Independent personal trainers lose coaching time to admin — hunting across spr
 | S-08 | session-completion-marking | manually mark a session as finished or finished partially | S-06 | FR-021 | proposed |
 | S-09 | session-comments | comment on a session (bidirectional) | S-04 | FR-023 | proposed |
 | S-10 | warmup-working-flag | flag each logged set as warm-up or working | S-06 | FR-018 | proposed |
-| S-11 | client-removal | remove or reject a wrongly-assigned client | S-03 | FR-006 | proposed |
+| S-11 | client-removal | remove or reject a wrongly-assigned client | S-03 | FR-006 | done |
 | S-12 | exercise-statistics | view per-exercise history, estimated 1RM, and volume/tonnage | S-06 | FR-024, FR-025, FR-026 | proposed |
 | S-13 | data-edit-window | edit logged data for 24 hours, then sealed | S-06 | FR-022 | proposed |
 | S-14 | exercises-separate-rounds | prescribe each exercise round separately (reps, load, rest per round) | S-02 | FR-010, FR-011 | proposed |
@@ -80,7 +80,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Blockers:** —
 - **Unknowns:** —
 - **Risk:** Schema decisions lock in early; changing table shapes later cascades through all slices. Mitigated by following the reviewed ERD in `docs/ERD.md`.
-- **Status:** ready
+- **Status:** done
 
 ## Slices
 
@@ -106,7 +106,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Blockers:** —
 - **Unknowns:** —
 - **Risk:** Phase structure (warm-up/main/cooldown with ordered exercises) is the most complex data model in the product; template editing needs careful UX to avoid becoming tedious.
-- **Status:** proposed
+- **Status:** done
 
 ### S-03: Client onboarding
 
@@ -118,7 +118,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Blockers:** —
 - **Unknowns:** —
 - **Risk:** Invite link security (expiry, single-use) not fully specified in PRD; existing auth covers trainer registration (FR-001/FR-002) so delta work is the invite flow only.
-- **Status:** proposed
+- **Status:** done
 
 ### S-04: Plan assignment
 
@@ -128,8 +128,8 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Prerequisites:** S-02, S-03
 - **Parallel with:** —
 - **Blockers:** —
-- **Unknowns:** —
-- **Risk:** Session personalization (move/remove/edit exercises per client) adds complexity beyond basic template instantiation; keep the first version simple (clone + edit).
+- **Unknowns:** Assigned sessions inherit S-14 per-round prescription: `session_exercises` must gain a `session_exercise_sets` child table (mirror of `template_exercise_sets`), snapshot-copied from the template at session creation; `docs/ERD.md` still shows flat `session_exercises` and must be updated in this slice.
+- **Risk:** Session personalization (move/remove/edit exercises per client) adds complexity beyond basic template instantiation; keep the first version simple (clone + edit). S-14 left template-only gaps to resolve here: align load validation with ERD (`0` = bodyweight, negative = assisted — template schema currently rejects negative), add DB `check` that each prescription round has reps or duration on both `template_exercise_sets` (hardening) and new `session_exercise_sets`.
 - **Status:** proposed
 
 ### S-05: Client calendar view
@@ -214,7 +214,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Blockers:** —
 - **Unknowns:** —
 - **Risk:** Soft-delete of trainer-client relationship (retain all client data, hide from trainer view). Future: configurable retention period and optional "browse old clients" feature.
-- **Status:** proposed
+- **Status:** done
 
 ### S-12: Exercise statistics
 
@@ -248,7 +248,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Prerequisites:** S-02
 - **Parallel with:** S-03, S-04 (once S-02 is done)
 - **Blockers:** —
-- **Unknowns:** Whether per-round rows live on template exercises only or also on assigned session exercises (likely both for plan personalization); metric variants (time/distance) per round
+- **Unknowns:** ~~Whether per-round rows live on template exercises only or also on assigned session exercises~~ — **Resolved:** both; session mirror deferred to S-04 (`session_exercise_sets`). Metric variants (time/distance) per round remain per-exercise (S-14).
 - **Risk:** Data model shift from flat `prescribed_*` fields to round rows cascades to S-04 (assignment), S-06 (guided logging), and S-07 (trainer readout); plan should define migration/backfill for templates created with uniform prescriptions
 - **Status:** proposed
 
@@ -260,7 +260,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 | S-01 | exercise-library | Build exercise library CRUD (create, edit, browse/filter) | — | done |
 | S-02 | session-templates | Build session template builder with phase structure | no | Needs F-01 |
 | S-03 | client-onboarding | Implement invite-link client registration and auto-assignment | no | Needs F-01 |
-| S-04 | plan-assignment | Build plan assignment: place session on client calendar | no | Needs S-02 + S-03 |
+| S-04 | plan-assignment | Build plan assignment: place session on client calendar | no | Needs S-02 + S-03; must include `session_exercise_sets` mirror (S-14 follow-up), load semantics, and DB prescription checks |
 | S-05 | client-calendar | Build client calendar view (month/week + status colors) | no | Needs S-04 |
 | S-06 | guided-workout-logging | Build guided workout view with set-by-set logging | no | Needs S-04 |
 | S-07 | trainer-dashboard | Build trainer dashboard with client overview and session detail | no | Needs S-04 + S-06 |
@@ -295,5 +295,9 @@ Foundations below assume these are present and do NOT re-scaffold them.
 
 ## Done
 
-- **S-01: trainer can create exercises (name, type, muscle groups, notes, optional video/photo link), edit them, and browse/filter by type and muscle group** — Done 2026-05-29. Lesson: —.
+- **F-01: (foundation) All Supabase tables per the ERD are created with row-level security policies enforcing cross-tenant isolation; middleware exposes the user's role (`trainer` | `client`) on `context.locals`.** — Archived 2026-06-07 → `context/archive/2026-05-26-database-schema-and-rls/`. Lesson: —.
+- **S-01: trainer can create exercises (name, type, muscle groups, notes, optional video/photo link), edit them, and browse/filter by type and muscle group** — Archived 2026-06-07 → `context/archive/2026-05-28-exercise-library/`. Lesson: —.
+- **S-03: trainer generates an invite link, client registers through it (email+password or Google), is auto-assigned to that trainer, and can log in/out** — Archived 2026-06-07 → `context/archive/2026-05-30-client-onboarding/`. Lesson: —.
+- **S-02: trainer can create a reusable session template organized into phases (warm-up/main/cooldown) with prescribed sets/reps/load and rest time per exercise, and edit existing templates** — Archived 2026-06-07 → `context/archive/2026-06-05-session-templates/`. Lesson: —.
+- **S-11: trainer can remove or reject a wrongly-assigned client** — Archived 2026-06-07 → `context/archive/2026-06-05-client-removal/`. Lesson: —.
 

@@ -1,6 +1,6 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { CreateTemplateBody, TemplateExerciseInput, UpdateTemplateBody } from "@/lib/session-templates/schemas";
-import type { ExerciseMetric, SessionTemplate, TemplateExercise } from "@/types";
+import type { ExerciseMetric, ExercisePhase, SessionTemplate, TemplateExercise, TemplateExerciseSet } from "@/types";
 
 export type TemplateExerciseWithName = TemplateExercise & {
   exercise_name: string;
@@ -11,9 +11,18 @@ export type TemplateWithExercises = SessionTemplate & {
   exercises: TemplateExerciseWithName[];
 };
 
-type TemplateExerciseJoinRow = Omit<TemplateExercise, never> & {
+type TemplateExerciseSetRow = TemplateExerciseSet;
+
+interface TemplateExerciseJoinRow {
+  id: string;
+  template_id: string;
+  exercise_id: string;
+  phase: ExercisePhase;
+  sort_order: number;
+  notes: string | null;
   exercises: { name: string; default_metric: ExerciseMetric } | null;
-};
+  template_exercise_sets: TemplateExerciseSetRow[];
+}
 
 type TemplateWithJoinedExercises = SessionTemplate & { template_exercises: TemplateExerciseJoinRow[] };
 
@@ -25,22 +34,75 @@ function parseTemplateWithJoin(raw: unknown): TemplateWithJoinedExercises {
   return raw as TemplateWithJoinedExercises;
 }
 
+function mapTemplateExerciseSetRow(row: TemplateExerciseSetRow): TemplateExerciseSet {
+  return {
+    id: row.id,
+    template_exercise_id: row.template_exercise_id,
+    set_number: row.set_number,
+    prescribed_reps: row.prescribed_reps,
+    prescribed_duration_seconds: row.prescribed_duration_seconds,
+    prescribed_load_kg: row.prescribed_load_kg,
+    rest_after_seconds: row.rest_after_seconds,
+  };
+}
+
 function mapTemplateExerciseRow(row: TemplateExerciseJoinRow): TemplateExerciseWithName {
+  const sets = row.template_exercise_sets.map(mapTemplateExerciseSetRow).sort((a, b) => a.set_number - b.set_number);
+
   return {
     id: row.id,
     template_id: row.template_id,
     exercise_id: row.exercise_id,
     phase: row.phase,
     sort_order: row.sort_order,
-    prescribed_sets: row.prescribed_sets,
-    prescribed_reps: row.prescribed_reps,
-    prescribed_duration_seconds: row.prescribed_duration_seconds,
-    prescribed_load_kg: row.prescribed_load_kg,
-    rest_after_seconds: row.rest_after_seconds,
     notes: row.notes,
+    sets,
     exercise_name: row.exercises?.name ?? "",
     exercise_default_metric: row.exercises?.default_metric ?? "reps_weight",
   };
+}
+
+async function insertTemplateExercises(
+  supabase: SupabaseClient,
+  templateId: string,
+  exercises: TemplateExerciseInput[],
+): Promise<{ error: string | null }> {
+  for (const exercise of exercises) {
+    const insertResult = await supabase
+      .from("template_exercises")
+      .insert({
+        template_id: templateId,
+        exercise_id: exercise.exercise_id,
+        phase: exercise.phase,
+        sort_order: exercise.sort_order,
+        notes: exercise.notes ?? null,
+      })
+      .select("id")
+      .single();
+
+    if (insertResult.error) {
+      return { error: insertResult.error.message };
+    }
+
+    const templateExerciseId = insertResult.data.id as string;
+
+    const setRows = exercise.sets.map((set, index) => ({
+      template_exercise_id: templateExerciseId,
+      set_number: index + 1,
+      prescribed_reps: set.prescribed_reps ?? null,
+      prescribed_duration_seconds: set.prescribed_duration_seconds ?? null,
+      prescribed_load_kg: set.prescribed_load_kg ?? null,
+      rest_after_seconds: set.rest_after_seconds ?? null,
+    }));
+
+    const { error: setsError } = await supabase.from("template_exercise_sets").insert(setRows);
+
+    if (setsError) {
+      return { error: setsError.message };
+    }
+  }
+
+  return { error: null };
 }
 
 export async function listTemplates(
@@ -66,7 +128,7 @@ export async function getTemplate(
 ): Promise<{ data: TemplateWithExercises | null; error: string | null }> {
   const getResult = await supabase
     .from("session_templates")
-    .select("*, template_exercises(*, exercises(name, default_metric))")
+    .select("*, template_exercises(*, exercises(name, default_metric), template_exercise_sets(*))")
     .eq("id", templateId)
     .maybeSingle();
 
@@ -115,24 +177,11 @@ export async function createTemplate(
   const template = parseSessionTemplate(createResult.data);
 
   if (body.exercises.length > 0) {
-    const exerciseRows = body.exercises.map((ex: TemplateExerciseInput) => ({
-      template_id: template.id,
-      exercise_id: ex.exercise_id,
-      phase: ex.phase,
-      sort_order: ex.sort_order,
-      prescribed_sets: ex.prescribed_sets,
-      prescribed_reps: ex.prescribed_reps ?? null,
-      prescribed_duration_seconds: ex.prescribed_duration_seconds ?? null,
-      prescribed_load_kg: ex.prescribed_load_kg ?? null,
-      rest_after_seconds: ex.rest_after_seconds ?? null,
-      notes: ex.notes ?? null,
-    }));
-
-    const { error: exercisesError } = await supabase.from("template_exercises").insert(exerciseRows);
+    const { error: exercisesError } = await insertTemplateExercises(supabase, template.id, body.exercises);
 
     if (exercisesError) {
       await supabase.from("session_templates").delete().eq("id", template.id);
-      return { data: null, error: exercisesError.message };
+      return { data: null, error: exercisesError };
     }
   }
 
@@ -164,23 +213,10 @@ export async function updateTemplate(
     }
 
     if (body.exercises.length > 0) {
-      const exerciseRows = body.exercises.map((ex: TemplateExerciseInput) => ({
-        template_id: templateId,
-        exercise_id: ex.exercise_id,
-        phase: ex.phase,
-        sort_order: ex.sort_order,
-        prescribed_sets: ex.prescribed_sets,
-        prescribed_reps: ex.prescribed_reps ?? null,
-        prescribed_duration_seconds: ex.prescribed_duration_seconds ?? null,
-        prescribed_load_kg: ex.prescribed_load_kg ?? null,
-        rest_after_seconds: ex.rest_after_seconds ?? null,
-        notes: ex.notes ?? null,
-      }));
-
-      const { error: insertError } = await supabase.from("template_exercises").insert(exerciseRows);
+      const { error: insertError } = await insertTemplateExercises(supabase, templateId, body.exercises);
 
       if (insertError) {
-        return { data: null, error: insertError.message };
+        return { data: null, error: insertError };
       }
     }
   }
