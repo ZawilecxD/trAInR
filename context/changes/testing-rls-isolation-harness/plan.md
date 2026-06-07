@@ -482,20 +482,20 @@ No new SQL migrations. The harness tests existing schema and policies; it does n
 
 #### Automated
 
-- [x] 2.1 `npm run test:integration` passes all Phase 2 tests
-- [x] 2.2 `npm run lint` passes on new test files
+- [x] 2.1 `npm run test:integration` passes all Phase 2 tests — 33a3c85
+- [x] 2.2 `npm run lint` passes on new test files — 33a3c85
 
 #### Manual
 
-- [x] 2.3 Test output names each table and operation explicitly in describe/it nesting
-- [x] 2.4 Trainer A's rows appear in Trainer A's SELECT and are absent from Trainer B's SELECT (and vice versa)
+- [x] 2.3 Test output names each table and operation explicitly in describe/it nesting — 33a3c85
+- [x] 2.4 Trainer A's rows appear in Trainer A's SELECT and are absent from Trainer B's SELECT (and vice versa) — 33a3c85
 
 ### Phase 3: Assignment-Bridged Table Isolation
 
 #### Automated
 
-- [ ] 3.1 `npm run test:integration` passes all Phase 3 tests
-- [ ] 3.2 `npm run lint` passes
+- [x] 3.1 `npm run test:integration` passes all Phase 3 tests
+- [x] 3.2 `npm run lint` passes
 
 #### Manual
 
