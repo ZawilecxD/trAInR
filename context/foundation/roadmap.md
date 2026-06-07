@@ -128,8 +128,8 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Prerequisites:** S-02, S-03
 - **Parallel with:** —
 - **Blockers:** —
-- **Unknowns:** —
-- **Risk:** Session personalization (move/remove/edit exercises per client) adds complexity beyond basic template instantiation; keep the first version simple (clone + edit).
+- **Unknowns:** Assigned sessions inherit S-14 per-round prescription: `session_exercises` must gain a `session_exercise_sets` child table (mirror of `template_exercise_sets`), snapshot-copied from the template at session creation; `docs/ERD.md` still shows flat `session_exercises` and must be updated in this slice.
+- **Risk:** Session personalization (move/remove/edit exercises per client) adds complexity beyond basic template instantiation; keep the first version simple (clone + edit). S-14 left template-only gaps to resolve here: align load validation with ERD (`0` = bodyweight, negative = assisted — template schema currently rejects negative), add DB `check` that each prescription round has reps or duration on both `template_exercise_sets` (hardening) and new `session_exercise_sets`.
 - **Status:** proposed
 
 ### S-05: Client calendar view
@@ -248,7 +248,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Prerequisites:** S-02
 - **Parallel with:** S-03, S-04 (once S-02 is done)
 - **Blockers:** —
-- **Unknowns:** Whether per-round rows live on template exercises only or also on assigned session exercises (likely both for plan personalization); metric variants (time/distance) per round
+- **Unknowns:** ~~Whether per-round rows live on template exercises only or also on assigned session exercises~~ — **Resolved:** both; session mirror deferred to S-04 (`session_exercise_sets`). Metric variants (time/distance) per round remain per-exercise (S-14).
 - **Risk:** Data model shift from flat `prescribed_*` fields to round rows cascades to S-04 (assignment), S-06 (guided logging), and S-07 (trainer readout); plan should define migration/backfill for templates created with uniform prescriptions
 - **Status:** proposed
 
@@ -260,7 +260,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 | S-01 | exercise-library | Build exercise library CRUD (create, edit, browse/filter) | — | done |
 | S-02 | session-templates | Build session template builder with phase structure | no | Needs F-01 |
 | S-03 | client-onboarding | Implement invite-link client registration and auto-assignment | no | Needs F-01 |
-| S-04 | plan-assignment | Build plan assignment: place session on client calendar | no | Needs S-02 + S-03 |
+| S-04 | plan-assignment | Build plan assignment: place session on client calendar | no | Needs S-02 + S-03; must include `session_exercise_sets` mirror (S-14 follow-up), load semantics, and DB prescription checks |
 | S-05 | client-calendar | Build client calendar view (month/week + status colors) | no | Needs S-04 |
 | S-06 | guided-workout-logging | Build guided workout view with set-by-set logging | no | Needs S-04 |
 | S-07 | trainer-dashboard | Build trainer dashboard with client overview and session detail | no | Needs S-04 + S-06 |
