@@ -468,27 +468,27 @@ No new SQL migrations. The harness tests existing schema and policies; it does n
 
 #### Automated
 
-- [x] 1.1 `npm run test:integration` exits 0 with smoke test passing (requires `npx supabase start`)
-- [x] 1.2 `npm run test` still passes — 6 unit tests unchanged
-- [x] 1.3 `npm run lint` passes on all new files
+- [x] 1.1 `npm run test:integration` exits 0 with smoke test passing (requires `npx supabase start`) — 2f7da35
+- [x] 1.2 `npm run test` still passes — 6 unit tests unchanged — 2f7da35
+- [x] 1.3 `npm run lint` passes on all new files — 2f7da35
 
 #### Manual
 
-- [x] 1.4 Running `npm run test:integration` without env vars set prints a clear error naming the missing variables
-- [x] 1.5 Running without `npx supabase start` first prints a clear "Supabase is not running" message
-- [x] 1.6 `npx supabase start && npm run test:integration` passes on a fresh clone with env vars set
+- [x] 1.4 Running `npm run test:integration` without env vars set prints a clear error naming the missing variables — 2f7da35
+- [x] 1.5 Running without `npx supabase start` first prints a clear "Supabase is not running" message — 2f7da35
+- [x] 1.6 `npx supabase start && npm run test:integration` passes on a fresh clone with env vars set — 2f7da35
 
 ### Phase 2: Trainer-Direct Table Isolation
 
 #### Automated
 
-- [ ] 2.1 `npm run test:integration` passes all Phase 2 tests
-- [ ] 2.2 `npm run lint` passes on new test files
+- [x] 2.1 `npm run test:integration` passes all Phase 2 tests
+- [x] 2.2 `npm run lint` passes on new test files
 
 #### Manual
 
-- [ ] 2.3 Test output names each table and operation explicitly in describe/it nesting
-- [ ] 2.4 Trainer A's rows appear in Trainer A's SELECT and are absent from Trainer B's SELECT (and vice versa)
+- [x] 2.3 Test output names each table and operation explicitly in describe/it nesting
+- [x] 2.4 Trainer A's rows appear in Trainer A's SELECT and are absent from Trainer B's SELECT (and vice versa)
 
 ### Phase 3: Assignment-Bridged Table Isolation
 
