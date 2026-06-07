@@ -8,20 +8,20 @@ Implement S-03: a trainer generates a single-use invite link, copies it, shares 
 
 **Foundation tables exist; application layer is missing.**
 
-| Layer | Status | Evidence |
-|-------|--------|----------|
-| `invite_links` table + RLS | Done (F-01) | `20260526120100_trainer_onboarding.sql` |
-| `trainer_clients` table + RLS | Done (F-01) | Same migration |
-| `handle_new_user()` trigger (role from metadata) | Done | `20260526120000_enums_profiles_helpers.sql:77-107` |
-| `InviteLink` / `TrainerClient` TS types | Done | `src/types.ts:23-31` |
-| Middleware role guards (`/trainer/*`, `/client/*`) | Done | `src/middleware.ts:6-9` |
-| Trainer signup API (hardcodes `role: "trainer"`) | Done | `src/pages/api/auth/signup.ts:19` |
-| Token validation RPC (`validate_invite_token`) | **Missing** | Migration comment line 38: deferred to S-03 |
-| Invite consumption RPC (`complete_client_invite`) | **Missing** | Planned in research |
-| Invite generation API / trainer page | **Missing** | No `/api/invites`, no `/trainer/` pages |
-| Client signup via token | **Missing** | `SignUpForm.tsx` has no token field |
-| Role-based post-login redirect | **Missing** | `signin.ts` always redirects to `/` |
-| shadcn `input`, `sonner`, `badge` | **Not installed** | Only `button` exists in `src/components/ui/` |
+| Layer                                              | Status            | Evidence                                           |
+| -------------------------------------------------- | ----------------- | -------------------------------------------------- |
+| `invite_links` table + RLS                         | Done (F-01)       | `20260526120100_trainer_onboarding.sql`            |
+| `trainer_clients` table + RLS                      | Done (F-01)       | Same migration                                     |
+| `handle_new_user()` trigger (role from metadata)   | Done              | `20260526120000_enums_profiles_helpers.sql:77-107` |
+| `InviteLink` / `TrainerClient` TS types            | Done              | `src/types.ts:23-31`                               |
+| Middleware role guards (`/trainer/*`, `/client/*`) | Done              | `src/middleware.ts:6-9`                            |
+| Trainer signup API (hardcodes `role: "trainer"`)   | Done              | `src/pages/api/auth/signup.ts:19`                  |
+| Token validation RPC (`validate_invite_token`)     | **Missing**       | Migration comment line 38: deferred to S-03        |
+| Invite consumption RPC (`complete_client_invite`)  | **Missing**       | Planned in research                                |
+| Invite generation API / trainer page               | **Missing**       | No `/api/invites`, no `/trainer/` pages            |
+| Client signup via token                            | **Missing**       | `SignUpForm.tsx` has no token field                |
+| Role-based post-login redirect                     | **Missing**       | `signin.ts` always redirects to `/`                |
+| shadcn `input`, `sonner`, `badge`                  | **Not installed** | Only `button` exists in `src/components/ui/`       |
 
 ### Key Discoveries:
 

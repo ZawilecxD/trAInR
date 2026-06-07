@@ -65,28 +65,32 @@ Existing tools (Trainerize, TrueCoach) solve parts of this, but they're built fo
 
 **Role model:** Two roles, no admin in MVP.
 
-| Role | Can do | Cannot do |
-|---|---|---|
-| **Trainer** | Manage own profile, build exercise library, create plan templates, assign plans to clients, view all their clients' sessions and logs, see trainer dashboard, remove/reject clients | See other trainers' data, access platform admin |
-| **Client** | View own assigned plans, see calendar of sessions, use guided workout view to log session metrics, view own history and stats, leave/read session comments | See other clients' data, modify plans, access trainer features |
+| Role        | Can do                                                                                                                                                                              | Cannot do                                                      |
+| ----------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------- |
+| **Trainer** | Manage own profile, build exercise library, create plan templates, assign plans to clients, view all their clients' sessions and logs, see trainer dashboard, remove/reject clients | See other trainers' data, access platform admin                |
+| **Client**  | View own assigned plans, see calendar of sessions, use guided workout view to log session metrics, view own history and stats, leave/read session comments                          | See other clients' data, modify plans, access trainer features |
 
 **Unauthenticated access:** None — all routes are gated. Unauthenticated visitors see login/register only. Invite links lead to a registration page.
 
 ## Success Criteria
 
 ### Primary
+
 - A trainer can go from sign-up to assigning a first plan to a client in under 10 minutes.
 - 80% of clients who receive an invite link successfully complete registration and view their first plan.
 
 ### Secondary
+
 - Clients log actual metrics for >= 60% of their scheduled sessions within the first 4 weeks.
 - Trainers rate the plan-creation workflow >= 4/5 in a post-onboarding survey.
 
 ### Guardrails
+
 - Client data privacy: a trainer can only see their own clients' data — never another trainer's clients, plans, or session logs.
 - Data integrity: logged workout data (sets, reps, weights, completion status) never silently disappears, corrupts, or partially saves. If a write fails, the client sees an explicit error and can retry.
 
 ### MVP flow (10 steps)
+
 1. Trainer signs up (email+password or Google)
 2. Trainer creates exercises in their exercise library (name, type, muscle groups, notes, optional video/photo link)
 3. Trainer creates session templates from their exercises (single-session templates: phases with prescribed sets/reps/load, rest time)
@@ -107,6 +111,7 @@ Existing tools (Trainerize, TrueCoach) solve parts of this, but they're built fo
 **Tier 3 — Pressure valve (drop first):** Statistics (per-exercise history, estimated 1RM, volume/tonnage), 24h edit window for logged data.
 
 ### Timeline
+
 - mvp_weeks: 3
 - after_hours_only: true
 - hard_deadline: null
@@ -114,6 +119,7 @@ Existing tools (Trainerize, TrueCoach) solve parts of this, but they're built fo
 ## Functional Requirements
 
 ### Authentication & Onboarding
+
 - FR-001: Trainer can register with email+password or Google OAuth. Priority: must-have
   > Socrates: Counter-argument considered: "Dual auth doubles the auth surface — ship email+password first, Google as fast-follow." Resolution: kept; acknowledged implementation cost but dual auth lowers onboarding friction. Consider email+password first if time is tight.
 - FR-002: Trainer can log in and log out. Priority: must-have
@@ -128,6 +134,7 @@ Existing tools (Trainerize, TrueCoach) solve parts of this, but they're built fo
   > Socrates: Counter-argument considered: "Removing a client could orphan their workout data — what happens to logged sessions?" Resolution: kept; data lifecycle on removal needs a design decision (delete data vs. sever assignment and retain data). Captured as open question.
 
 ### Exercise Library
+
 - FR-007: Trainer can create exercises (name, type, muscle groups, notes, optional video/photo link). Priority: must-have
   > Socrates: Counter-argument considered: "A pre-populated exercise database would save trainers from entering common exercises." Resolution: kept as manual-only for MVP; pre-populated library is a future enhancement.
 - FR-008: Trainer can edit exercises. Priority: must-have
@@ -136,22 +143,26 @@ Existing tools (Trainerize, TrueCoach) solve parts of this, but they're built fo
   > Socrates: No counter-argument; it stands as written. Filtering is lightweight and useful even at small library sizes.
 
 ### Session Templates
+
 - FR-010: Trainer can create a reusable session template from their exercise library, organized into phases (warm-up/main/cooldown) with prescribed sets/reps/load and rest time per exercise. Priority: must-have
   > Socrates: No counter-argument; it stands as written. Templates are single-session units — a template represents one training session, not a multi-day plan.
 - FR-011: Trainer can edit existing session templates. Priority: must-have
   > Socrates: Clarification: editing a template does NOT retroactively update sessions already placed on client calendars. Templates are snapshots at the time of session creation.
 
 ### Plan Building & Assignment
+
 - FR-012: Trainer can create a session on a specific day of a client's calendar — either from a session template or from scratch — and personalize exercises (move/remove/edit). One active plan (collection of sessions) per client. Priority: must-have
   > Socrates: Counter-argument considered: "Placing sessions one-by-one is tedious for a 4-week plan (16+ manual placements). Needs bulk placement or 'repeat weekly' shortcut." Resolution: kept for MVP; one-by-one placement is the minimum. Bulk/repeat is a high-priority post-MVP improvement.
 
 ### Client Calendar View
+
 - FR-013: Client can view their assigned plan in a month view (default) with the ability to switch to week view. Priority: must-have
   > Socrates: No counter-argument; it stands as written. Month + week toggle covers overview and detail needs.
 - FR-014: Sessions are visually distinguished by status (not started / finished / finished partially), visible to both client and trainer. Priority: must-have
   > Socrates: No counter-argument; it stands as written. Three statuses are clear and cover the meaningful states.
 
 ### Guided Active Workout View
+
 - FR-015: Client can open a session and step through exercises one at a time in prescribed order (designed for one-handed phone use). Priority: must-have
   > Socrates: Counter-argument considered: "Some advanced lifters prefer seeing all exercises at once — the guided flow is opinionated." Resolution: kept; the guided view is the core differentiator for gym use. Advanced users can use the exercise list menu (FR-016) to jump around.
 - FR-016: Client can navigate between exercises via an exercise list menu. Priority: must-have
@@ -170,10 +181,12 @@ Existing tools (Trainerize, TrueCoach) solve parts of this, but they're built fo
   > Socrates: No counter-argument; it stands as written. Sealing prevents retroactive number inflation. For MVP, if this is cut (Tier 3), data remains always-editable.
 
 ### Session Comments
+
 - FR-023: Both client and trainer can comment on a session (bidirectional). Priority: must-have [Tier 2]
   > Socrates: No counter-argument; it stands as written. If cut (Tier 2), fall back to one-way client→trainer notes.
 
 ### Statistics
+
 - FR-024: Client can view a per-exercise history table showing past performances (weight, reps/time, sets) across all sessions. Priority: must-have [Tier 3]
   > Socrates: Counter-argument considered: "No history exists at launch — useless until client has weeks of data." Resolution: kept; the feature is low-cost and the data accumulates from day one. History visibility motivates continued logging.
 - FR-025: Estimated 1RM is calculated from logged working sets (Epley formula) and displayed in per-exercise history. Priority: must-have [Tier 3]
@@ -182,6 +195,7 @@ Existing tools (Trainerize, TrueCoach) solve parts of this, but they're built fo
   > Socrates: Counter-argument considered: "Tonnage without trend context is meaningless — needs comparison to previous weeks." Resolution: kept; even a single number shows workout density. Trend comparison is a post-MVP enhancement.
 
 ### Trainer Dashboard
+
 - FR-027: Trainer can see an overview of all their clients, assigned plans, and recent session activity. Priority: must-have
   > Socrates: Counter-argument considered: "With 20+ clients, a flat activity feed is noise — needs priority signals (missed sessions, recent completions)." Resolution: kept; dashboard should surface clients who need attention. Exact prioritization logic deferred to design.
 - FR-028: Trainer can view a read-only detail view of a client's session showing exercises, sets, weights, and session comments. Priority: must-have
@@ -196,6 +210,7 @@ Existing tools (Trainerize, TrueCoach) solve parts of this, but they're built fo
 - **Then** the client sees the session in their calendar view and can open the guided workout view to log actual metrics, and the trainer sees the logged activity on their dashboard
 
 #### Acceptance Criteria
+
 - Invite link leads to a registration page; client is auto-assigned to the trainer on completion
 - Trainer can place a session on any future calendar day for the client
 - Session appears in the client's calendar with "not started" status

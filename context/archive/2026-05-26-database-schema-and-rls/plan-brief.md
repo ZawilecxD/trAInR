@@ -20,20 +20,20 @@ After F-01, `supabase db reset` locally creates the full MVP schema with RLS ena
 
 ## Key Decisions Made
 
-| Decision | Choice | Why (1 sentence) | Source |
-| -------- | ------ | ---------------- | ------ |
-| Schema scope | All 13 MVP tables + T2/T3 columns | Avoid schema churn when S-09/S-10/S-13 add app code; lock rules stubbed until then. | Plan |
-| Migration split | 4–5 domain-ordered SQL files | Reviewable chunks following FK dependency order. | Plan |
-| Profile creation | `SECURITY DEFINER` trigger on `auth.users` | Covers email signup and future OAuth without duplicating API logic. | Plan |
-| Default role | `trainer` on public signup; `client` via invite in S-03 | Matches PRD onboarding model. | Plan |
-| `muscle_groups` data | `supabase/seed.sql` | Matches existing `config.toml`; keeps reference data out of migrations. | Plan |
-| `invite_links` RLS | Trainer CRUD only in F-01 | Minimal surface; S-03 adds validation UX/RPC. | Plan |
-| `locked_at` / edit seal | Column present; enforcement deferred to S-13 | Schema stable without building lock logic before logging exists. | Plan |
-| RLS structure | STABLE SQL helper functions | DRY isolation checks across 13 tables; auditable in one place. | Plan |
-| `context.locals` | `role: UserRole \| null` only | One profile query per request; enough for guards and layouts. | Plan |
-| Route protection | `/dashboard` + `/trainer/*` + `/client/*` | Forward-compatible with slice routes; role mismatch redirects. | Plan |
-| TypeScript types | Hand-written `src/types.ts` from ERD | Matches AGENTS.md; no codegen step in F-01. | Plan |
-| Remote deploy | Manual `supabase db push` + doc checklist | No new CI secrets; matches current pipeline. | Plan |
+| Decision                | Choice                                                  | Why (1 sentence)                                                                    | Source |
+| ----------------------- | ------------------------------------------------------- | ----------------------------------------------------------------------------------- | ------ |
+| Schema scope            | All 13 MVP tables + T2/T3 columns                       | Avoid schema churn when S-09/S-10/S-13 add app code; lock rules stubbed until then. | Plan   |
+| Migration split         | 4–5 domain-ordered SQL files                            | Reviewable chunks following FK dependency order.                                    | Plan   |
+| Profile creation        | `SECURITY DEFINER` trigger on `auth.users`              | Covers email signup and future OAuth without duplicating API logic.                 | Plan   |
+| Default role            | `trainer` on public signup; `client` via invite in S-03 | Matches PRD onboarding model.                                                       | Plan   |
+| `muscle_groups` data    | `supabase/seed.sql`                                     | Matches existing `config.toml`; keeps reference data out of migrations.             | Plan   |
+| `invite_links` RLS      | Trainer CRUD only in F-01                               | Minimal surface; S-03 adds validation UX/RPC.                                       | Plan   |
+| `locked_at` / edit seal | Column present; enforcement deferred to S-13            | Schema stable without building lock logic before logging exists.                    | Plan   |
+| RLS structure           | STABLE SQL helper functions                             | DRY isolation checks across 13 tables; auditable in one place.                      | Plan   |
+| `context.locals`        | `role: UserRole \| null` only                           | One profile query per request; enough for guards and layouts.                       | Plan   |
+| Route protection        | `/dashboard` + `/trainer/*` + `/client/*`               | Forward-compatible with slice routes; role mismatch redirects.                      | Plan   |
+| TypeScript types        | Hand-written `src/types.ts` from ERD                    | Matches AGENTS.md; no codegen step in F-01.                                         | Plan   |
+| Remote deploy           | Manual `supabase db push` + doc checklist               | No new CI secrets; matches current pipeline.                                        | Plan   |
 
 ## Scope
 
@@ -82,13 +82,13 @@ Migrations establish tables and policies; the app never bypasses RLS (anon key o
 
 ## Phases at a Glance
 
-| Phase | What it delivers | Key risk |
-| ----- | ---------------- | -------- |
-| 1. Profiles & helpers | Enums, `profiles`, trigger, SQL helpers, profiles RLS | Trigger/metadata mistakes block all signups |
-| 2. Onboarding & library | `trainer_clients`, `invite_links`, exercises stack, seed | Missing seed breaks FK demos |
-| 3. Templates & plans | Templates, `client_plans`, partial unique index | Active-plan constraint wrong → data model bug |
-| 4. Sessions & logging | Remaining tables, full RLS audit | Policy gaps → cross-tenant leak |
-| 5. App & verification | Types, middleware, docs, manual push | Forgotten remote `db push` leaves prod on auth-only |
+| Phase                   | What it delivers                                         | Key risk                                            |
+| ----------------------- | -------------------------------------------------------- | --------------------------------------------------- |
+| 1. Profiles & helpers   | Enums, `profiles`, trigger, SQL helpers, profiles RLS    | Trigger/metadata mistakes block all signups         |
+| 2. Onboarding & library | `trainer_clients`, `invite_links`, exercises stack, seed | Missing seed breaks FK demos                        |
+| 3. Templates & plans    | Templates, `client_plans`, partial unique index          | Active-plan constraint wrong → data model bug       |
+| 4. Sessions & logging   | Remaining tables, full RLS audit                         | Policy gaps → cross-tenant leak                     |
+| 5. App & verification   | Types, middleware, docs, manual push                     | Forgotten remote `db push` leaves prod on auth-only |
 
 **Prerequisites:** Docker for `npx supabase start`; `.env` with `SUPABASE_URL` / `SUPABASE_KEY`; linked remote project for push (optional until deploy).
 

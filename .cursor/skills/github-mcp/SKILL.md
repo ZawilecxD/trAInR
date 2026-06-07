@@ -29,6 +29,7 @@ Always pass `owner=ZawilecxD` and `repo=trAInR` to every MCP tool call.
 
 - Target branch: `master`
 - PR body format:
+
   ```
   ## Summary
   <1-3 bullet points>
@@ -36,6 +37,7 @@ Always pass `owner=ZawilecxD` and `repo=trAInR` to every MCP tool call.
   ## Test plan
   <checklist of what to verify>
   ```
+
 - After creating a PR, remind the user that the CI gate (lint + build) must pass before merge.
 
 ## CI / Actions
@@ -59,5 +61,6 @@ Always pass `owner=ZawilecxD` and `repo=trAInR` to every MCP tool call.
 Default toolsets active with the project config: `context`, `repos`, `issues`, `pull_requests`, `users`.
 
 If a tool call returns "not available":
+
 1. The required toolset may be opt-in (see `docs/github-mcp-setup.md` for the full list)
 2. The PAT may lack the needed scope — check the tool's required OAuth scope in the MCP server docs

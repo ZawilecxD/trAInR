@@ -12,15 +12,15 @@ description: >-
 
 ## When to use Exa vs other tools
 
-| Need | Tool |
-|------|------|
-| Code in this repo | Grep, Read, codebase search — not Exa |
-| GitHub issues/PRs/CI | GitHub MCP — not Exa |
-| Linear issues/roadmap | Linear MCP — not Exa |
-| Current web docs, releases, news, external APIs | **Exa MCP** |
-| Known URL content | `web_fetch_exa` |
-| Broad topic research | `web_search_exa` |
-| Filtered search (domain, date, category) | `web_search_advanced_exa` |
+| Need                                            | Tool                                  |
+| ----------------------------------------------- | ------------------------------------- |
+| Code in this repo                               | Grep, Read, codebase search — not Exa |
+| GitHub issues/PRs/CI                            | GitHub MCP — not Exa                  |
+| Linear issues/roadmap                           | Linear MCP — not Exa                  |
+| Current web docs, releases, news, external APIs | **Exa MCP**                           |
+| Known URL content                               | `web_fetch_exa`                       |
+| Broad topic research                            | `web_search_exa`                      |
+| Filtered search (domain, date, category)        | `web_search_advanced_exa`             |
 
 Prefer Exa over built-in `WebSearch` when Exa MCP is connected — Exa returns cleaner, citation-ready content.
 

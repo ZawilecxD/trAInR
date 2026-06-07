@@ -17,18 +17,19 @@ A `tests/integration/` suite and `vitest.integration.config.ts` that can be run 
 
 ## Key Decisions Made
 
-| Decision | Choice | Why (1 sentence) | Source |
-|---|---|---|---|
-| Test runner | Vitest integration (TypeScript, `@supabase/supabase-js`) | Same runner as existing unit tests; JS client mirrors the production auth path exactly — no new tooling | Plan |
-| File placement | `tests/integration/` + `vitest.integration.config.ts` | Keeps integration tests out of `src/` unit glob; separate config avoids any collision with existing `npm run test` | Plan |
-| CI strategy | Separate `test-integration` job (needs: test) | Supabase Docker start is slow; isolating it keeps the unit feedback loop fast | Plan |
-| User provisioning | `auth.admin.createUser` (service_role) in helpers only | Service_role never appears in test assertions — preserves the invariant that tests mirror production auth | Research |
-| SECURITY DEFINER gaps | Test and label gaps as "KNOWN GAP" | Documents the existing behaviour so a future hardening PR knows exactly what to flip | Research |
-| Post-removal isolation | Tested in Phase 3 (client_plans) and Phase 4 (session graph) | `20260605120000` tightened policies to require active assignment — this must be verified | Research |
+| Decision               | Choice                                                       | Why (1 sentence)                                                                                                   | Source   |
+| ---------------------- | ------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------ | -------- |
+| Test runner            | Vitest integration (TypeScript, `@supabase/supabase-js`)     | Same runner as existing unit tests; JS client mirrors the production auth path exactly — no new tooling            | Plan     |
+| File placement         | `tests/integration/` + `vitest.integration.config.ts`        | Keeps integration tests out of `src/` unit glob; separate config avoids any collision with existing `npm run test` | Plan     |
+| CI strategy            | Separate `test-integration` job (needs: test)                | Supabase Docker start is slow; isolating it keeps the unit feedback loop fast                                      | Plan     |
+| User provisioning      | `auth.admin.createUser` (service_role) in helpers only       | Service_role never appears in test assertions — preserves the invariant that tests mirror production auth          | Research |
+| SECURITY DEFINER gaps  | Test and label gaps as "KNOWN GAP"                           | Documents the existing behaviour so a future hardening PR knows exactly what to flip                               | Research |
+| Post-removal isolation | Tested in Phase 3 (client_plans) and Phase 4 (session graph) | `20260605120000` tightened policies to require active assignment — this must be verified                           | Research |
 
 ## Scope
 
 **In scope:**
+
 - Vitest integration project config + `tests/integration/` directory
 - Admin fixture helpers (service_role for setup only, never in assertions)
 - All 14 RLS-enabled tables — SELECT, INSERT, UPDATE, DELETE isolation
@@ -38,6 +39,7 @@ A `tests/integration/` suite and `vitest.integration.config.ts` that can be run 
 - CI `test-integration` job with Supabase start/stop
 
 **Out of scope:**
+
 - App route authorization tests (Phase 2 of rollout)
 - Partial-write failure injection (Phase 3 of rollout)
 - Invite expiry/reuse tests (Phase 4 of rollout)
@@ -51,13 +53,13 @@ Each test file creates a fresh, isolated trainer pair via `auth.admin.createUser
 
 ## Phases at a Glance
 
-| Phase | What it delivers | Key risk |
-|---|---|---|
-| 1. Harness infrastructure | Config, env helpers, admin factory, fixture helpers, smoke test | Setup tooling is greenfield — `globalSetup` or env loading misconfiguration fails everything |
-| 2. Trainer-direct isolation | `exercises`, `session_templates`, `invite_links`, `exercise_muscle_groups` write side | Assertions must distinguish RLS empty-result (expected) from a connectivity failure (both return empty) |
-| 3. Assignment-bridged isolation | `trainer_clients`, `client_plans`, `template_exercises`, `template_exercise_sets`, `profiles` | `can_access_client_plan` requires active assignment — post-removal scenario must be seeded carefully |
-| 4. Session graph + post-removal | `workout_sessions`, `session_exercises`, `set_logs`, `session_comments` end-to-end | Deep helper chain (`can_access_client_plan` → `can_access_workout_session` → `can_access_session_exercise`) — fixture must seed all layers |
-| 5. SECURITY DEFINER + CI | Gap tests for DEFINER functions, CI `test-integration` job | `supabase/setup-cli` key extraction syntax may need verification against the action's current README |
+| Phase                           | What it delivers                                                                              | Key risk                                                                                                                                   |
+| ------------------------------- | --------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| 1. Harness infrastructure       | Config, env helpers, admin factory, fixture helpers, smoke test                               | Setup tooling is greenfield — `globalSetup` or env loading misconfiguration fails everything                                               |
+| 2. Trainer-direct isolation     | `exercises`, `session_templates`, `invite_links`, `exercise_muscle_groups` write side         | Assertions must distinguish RLS empty-result (expected) from a connectivity failure (both return empty)                                    |
+| 3. Assignment-bridged isolation | `trainer_clients`, `client_plans`, `template_exercises`, `template_exercise_sets`, `profiles` | `can_access_client_plan` requires active assignment — post-removal scenario must be seeded carefully                                       |
+| 4. Session graph + post-removal | `workout_sessions`, `session_exercises`, `set_logs`, `session_comments` end-to-end            | Deep helper chain (`can_access_client_plan` → `can_access_workout_session` → `can_access_session_exercise`) — fixture must seed all layers |
+| 5. SECURITY DEFINER + CI        | Gap tests for DEFINER functions, CI `test-integration` job                                    | `supabase/setup-cli` key extraction syntax may need verification against the action's current README                                       |
 
 **Prerequisites:** `npx supabase start` running locally; `.env` populated with the three `INTEGRATION_*` vars from `npx supabase status`.
 **Estimated effort:** ~3–4 sessions across 5 phases.

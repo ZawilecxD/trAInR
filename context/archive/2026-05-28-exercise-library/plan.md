@@ -21,6 +21,7 @@ Implement trainer-facing exercise library capabilities for MVP: create exercises
 ## Desired End State
 
 Trainer can open a `/trainer/exercises` area, create a new exercise with required fields, edit existing exercises, and browse library entries with deterministic filters:
+
 - type filter
 - muscle-group filter (multi-select)
 - case-insensitive name search
@@ -38,6 +39,7 @@ Verification succeeds when trainer CRUD/filter flows work in UI, API validation 
 ## Implementation Approach
 
 Use a three-layer incremental approach:
+
 1. Build explicit API contracts with zod validation and SSR Supabase access for exercise CRUD/filter queries.
 2. Implement trainer UI pages/forms that consume those contracts, following existing route/middleware patterns.
 3. Verify behavior through a heavy but focused validation matrix (API edge cases, role gating, and RLS ownership checks).

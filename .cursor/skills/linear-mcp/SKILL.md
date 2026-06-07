@@ -37,12 +37,12 @@ Cache team/project identifiers for the rest of the session.
 
 Align Linear work with repo artifacts:
 
-| Repo source | Linear usage |
-|---|---|
-| `context/foundation/roadmap.md` slices (`F-01`, `S-01`, …) | One issue per slice; title includes Change ID |
-| `context/changes/<change-id>/` plans | Link in issue `links` or description; optional `linear_issue: ZAW-N` on `change.md` drives [linear-sync](../linear-sync/SKILL.md) |
-| GitHub PRs (`ZawilecxD/trAInR`) | Add PR URL via `links: [{ url, title }]` on the issue |
-| Commit style (AGENTS.md) | Lowercase imperative titles when creating issues from code work |
+| Repo source                                                | Linear usage                                                                                                                      |
+| ---------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| `context/foundation/roadmap.md` slices (`F-01`, `S-01`, …) | One issue per slice; title includes Change ID                                                                                     |
+| `context/changes/<change-id>/` plans                       | Link in issue `links` or description; optional `linear_issue: ZAW-N` on `change.md` drives [linear-sync](../linear-sync/SKILL.md) |
+| GitHub PRs (`ZawilecxD/trAInR`)                            | Add PR URL via `links: [{ url, title }]` on the issue                                                                             |
+| Commit style (AGENTS.md)                                   | Lowercase imperative titles when creating issues from code work                                                                   |
 
 **Issue title pattern for roadmap slices:**
 
@@ -56,17 +56,21 @@ Example: `database-schema-and-rls: supabase schema with RLS and role middleware`
 
 ```markdown
 ## Outcome
+
 <what "done" means for the user or system>
 
 ## PRD / roadmap
+
 - Slice: S-04
 - PRD refs: FR-012, US-01
 
 ## Repo pointers
+
 - Plan: context/changes/<change-id>/plan.md
 - ERD / docs: docs/ERD.md (if schema-related)
 
 ## Test plan
+
 - [ ] …
 ```
 
@@ -128,33 +132,33 @@ When the user says delegate to **Linear** or **the Linear agent**, set `delegate
 
 ## GitHub + Linear together
 
-| Task | Tooling |
-|---|---|
-| Code, PRs, CI | GitHub MCP — see `.cursor/skills/github-mcp/SKILL.md` |
-| Planning, prioritization, slice tracking | Linear MCP (this skill) |
+| Task                                     | Tooling                                               |
+| ---------------------------------------- | ----------------------------------------------------- |
+| Code, PRs, CI                            | GitHub MCP — see `.cursor/skills/github-mcp/SKILL.md` |
+| Planning, prioritization, slice tracking | Linear MCP (this skill)                               |
 
 After opening a GitHub PR, update the linked Linear issue: `state` → in review, add PR `links`, comment with test-plan checklist via `save_comment`.
 
 ## Tool index
 
-| Area | Tools |
-|---|---|
-| Issues | `list_issues`, `get_issue`, `save_issue`, `list_issue_statuses`, `get_issue_status`, `list_issue_labels`, `create_issue_label` |
-| Comments | `list_comments`, `save_comment`, `delete_comment` |
-| Projects | `list_projects`, `get_project`, `save_project`, `list_project_labels` |
-| Teams / users | `list_teams`, `get_team`, `list_users`, `get_user` |
-| Planning | `list_cycles`, `list_milestones`, `get_milestone`, `save_milestone` |
-| Docs | `list_documents`, `get_document`, `save_document` |
-| Diffs | `list_diffs`, `get_diff`, `get_diff_threads` |
-| Attachments | `prepare_attachment_upload`, `create_attachment_from_upload`, `create_attachment`, `get_attachment`, `delete_attachment` |
-| Help | `search_documentation` |
+| Area          | Tools                                                                                                                          |
+| ------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| Issues        | `list_issues`, `get_issue`, `save_issue`, `list_issue_statuses`, `get_issue_status`, `list_issue_labels`, `create_issue_label` |
+| Comments      | `list_comments`, `save_comment`, `delete_comment`                                                                              |
+| Projects      | `list_projects`, `get_project`, `save_project`, `list_project_labels`                                                          |
+| Teams / users | `list_teams`, `get_team`, `list_users`, `get_user`                                                                             |
+| Planning      | `list_cycles`, `list_milestones`, `get_milestone`, `save_milestone`                                                            |
+| Docs          | `list_documents`, `get_document`, `save_document`                                                                              |
+| Diffs         | `list_diffs`, `get_diff`, `get_diff_threads`                                                                                   |
+| Attachments   | `prepare_attachment_upload`, `create_attachment_from_upload`, `create_attachment`, `get_attachment`, `delete_attachment`       |
+| Help          | `search_documentation`                                                                                                         |
 
 ## Troubleshooting
 
-| Symptom | Action |
-|---|---|
-| Tool not found | Confirm Linear MCP is green in Settings; server id is `user-Linear`. |
-| Auth / 401 | Re-authenticate Linear plugin; restart Cursor. |
-| Invalid `team` / `state` | Re-run `list_teams` and `list_issue_statuses`. |
-| Wrong assignee field | Use `assignee`, not `assigneeId`, on `save_issue`. |
-| Escaped markdown | Remove `\\n`; use literal newlines in JSON arguments. |
+| Symptom                  | Action                                                               |
+| ------------------------ | -------------------------------------------------------------------- |
+| Tool not found           | Confirm Linear MCP is green in Settings; server id is `user-Linear`. |
+| Auth / 401               | Re-authenticate Linear plugin; restart Cursor.                       |
+| Invalid `team` / `state` | Re-run `list_teams` and `list_issue_statuses`.                       |
+| Wrong assignee field     | Use `assignee`, not `assigneeId`, on `save_issue`.                   |
+| Escaped markdown         | Remove `\\n`; use literal newlines in JSON arguments.                |

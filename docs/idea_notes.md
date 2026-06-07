@@ -1,9 +1,11 @@
 ## trAInR - MVP
 
 ### Core Problem
+
 Personal trainers manage their clients through scattered spreadsheets, chat messages, and PDF plans. Clients lack a single place to view their training schedule, log progress, and communicate with their trainer — leading to poor adherence and wasted coaching time.
 
 ### Minimum Feature Set (MVP)
+
 - **Trainer accounts & authentication** — trainers register, log in, manage their profile
 - **Client onboarding via referral link** — trainer generates an invite link; client registers through it and is automatically assigned to that trainer
 - **Exercise library (per-trainer)** — trainers build a personal database of exercises (name, type, muscle groups, notes, optional video/photo link) to reuse across plans
@@ -14,6 +16,7 @@ Personal trainers manage their clients through scattered spreadsheets, chat mess
 - **Trainer dashboard** — trainers see an overview of all their clients, assigned plans, and recent session activity
 
 ### What is NOT in MVP Scope
+
 - Mobile app (web-only first, responsive design for phone browsers)
 - Subscription / billing system for trainers (free tier only at launch)
 - Client goals and progress tracking (weight, measurements, check-ins)
@@ -27,6 +30,7 @@ Personal trainers manage their clients through scattered spreadsheets, chat mess
 - Audit logging
 
 ### Success Criteria
+
 - A trainer can go from sign-up to assigning a first plan to a client in **under 10 minutes**
 - **80%** of clients who receive a referral link successfully complete registration and view their first plan
 - Clients log actual metrics for **≥ 60%** of their scheduled sessions within the first 4 weeks
@@ -37,23 +41,27 @@ Personal trainers manage their clients through scattered spreadsheets, chat mess
 ## Full System — Post-MVP Roadmap
 
 ### Phase 2 — Engagement & Tracking
+
 - Client goals (target metric, target value, target date) with status tracking
 - Weekly check-ins (adherence score, recovery score, comments)
 - Progress entries (body weight, measurements, notes)
 - Progress photo uploads (MediaAsset)
 
 ### Phase 3 — Communication & Scheduling
+
 - In-app notification system (plan assigned, session reminder, check-in due)
 - CalendarEvent entity — proper time-slot scheduling with start/end times
 - Email / push notifications
 - Calendar export (iCal, Google Calendar sync)
 
 ### Phase 4 — Monetization & Business
+
 - Trainer subscription tiers (free / pro / premium) via Stripe
 - Subscription & Invoice management
 - Client capacity limits per tier
 
 ### Phase 5 — Scale & Intelligence
+
 - Multi-trainer gym / organization accounts
 - AI-assisted plan generation from client goals and history
 - Advanced analytics dashboard (volume trends, adherence heatmaps, client comparison)
@@ -68,35 +76,35 @@ Personal trainers manage their clients through scattered spreadsheets, chat mess
 
 ### Entities
 
-| Entity | Key Fields | Notes |
-|---|---|---|
-| **Trainer** | id, email, displayName, subscriptionTier, subscriptionStatus, createdAt | Auth via external provider (e.g. Supabase Auth) |
-| **Client** | id, trainerId (FK), firstName, lastName, status, joinedAt | `[+]` Add `email`, `authId` for login; `[+]` Add `avatarUrl` |
-| **InviteLink** `[+]` | id, trainerId (FK), token, expiresAt, maxUses, usedCount | `[+]` New entity — tracks referral links |
-| **Goal** | id, clientId (FK), title, targetMetric, targetValue, targetDate, status | Post-MVP |
-| **ExerciseLibraryItem** | id, trainerId (FK, nullable=global), name, exerciseType, trainingModality, difficultyLevel, youtubeUrl, photoUrl, defaultNotes, isArchived, timestamps | Trainer's personal exercise DB |
-| **MuscleGroup** | id, name, region, isActive | System-wide reference data |
-| **ExerciseMuscleGroup** | exerciseId (FK), muscleGroupId (FK), role (primary/secondary) | Many-to-many join |
-| **ExerciseTag** | id, trainerId (FK, nullable=global), name, color | Custom tags per trainer |
-| **ExerciseTagMap** | exerciseId (FK), tagId (FK) | Many-to-many join |
-| **PlanTemplate** | id, trainerId (FK), name, description, trainingModality, status, version, timestamps | Reusable plan blueprints |
-| **PlanTemplatePhase** | id, templateId (FK), phaseType, name, sortOrder, phaseNotes | Warm-up / main / cooldown etc. |
-| **PlanTemplateExercise** | id, templatePhaseId (FK), exerciseId (FK), sortOrder, restAfterSeconds, exerciseNotes, prescription (JSON) | `[+]` prescription JSON holds sets/reps/load/duration flexibly |
-| **TemplateTagMap** | templateId (FK), tagId (FK) | Many-to-many join |
-| **ClientPlan** | id, trainerId, clientId, sourceTemplateId, sourceTemplateVersion, name, trainingModality, status, startDate, timestamps | Snapshot of template assigned to a specific client |
-| **ClientPlanPhase** | id, clientPlanId (FK), phaseType, name, sortOrder, phaseNotes | Mirrors template phases, editable per client |
-| **ClientPlanExercise** | id, clientPlanPhaseId (FK), exerciseId (FK), sortOrder, restAfterSeconds, exerciseNotes, prescription (JSON) | Mirrors template exercises, editable per client |
-| **ProgramAssignment** | id, trainerId, clientId, templateId, clientPlanId, startDate, status, assignedAt | Links trainer → template → client plan |
-| **WorkoutSession** | id, assignmentId (FK), clientPlanId (FK), clientId (FK), scheduledAt, status, sessionNotes | One calendar day's workout |
-| **WorkoutSessionExercise** | id, sessionId (FK), clientPlanExerciseId (FK), exerciseId (FK), sortOrder, plannedPrescription (JSON), actualMetrics (JSON), exerciseNotes | Planned vs actual per exercise |
-| **ProgressEntry** | id, clientId (FK), date, weight, measurements (JSON), note | Post-MVP body metrics |
-| **CheckIn** | id, clientId (FK), weekStart, adherenceScore, recoveryScore, comment | Post-MVP weekly pulse |
-| **MediaAsset** | id, ownerType, ownerId, assetType, storagePath, createdAt | Polymorphic file storage |
-| **CalendarEvent** | id, trainerId, clientId, sessionId (FK), startAt, endAt, status | Post-MVP time-slot scheduling |
-| **Notification** | id, trainerId, clientId, type, scheduledAt, sentAt | Post-MVP |
-| **Subscription** | id, trainerId (FK), provider, externalId, plan, status, renewalAt | Post-MVP billing |
-| **Invoice** | id, trainerId (FK), subscriptionId (FK), amount, currency, status, issuedAt | Post-MVP billing |
-| **AuditEvent** | id, actorId, actorRole, action, targetType, targetId, createdAt | Post-MVP compliance log |
+| Entity                     | Key Fields                                                                                                                                             | Notes                                                          |
+| -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------- |
+| **Trainer**                | id, email, displayName, subscriptionTier, subscriptionStatus, createdAt                                                                                | Auth via external provider (e.g. Supabase Auth)                |
+| **Client**                 | id, trainerId (FK), firstName, lastName, status, joinedAt                                                                                              | `[+]` Add `email`, `authId` for login; `[+]` Add `avatarUrl`   |
+| **InviteLink** `[+]`       | id, trainerId (FK), token, expiresAt, maxUses, usedCount                                                                                               | `[+]` New entity — tracks referral links                       |
+| **Goal**                   | id, clientId (FK), title, targetMetric, targetValue, targetDate, status                                                                                | Post-MVP                                                       |
+| **ExerciseLibraryItem**    | id, trainerId (FK, nullable=global), name, exerciseType, trainingModality, difficultyLevel, youtubeUrl, photoUrl, defaultNotes, isArchived, timestamps | Trainer's personal exercise DB                                 |
+| **MuscleGroup**            | id, name, region, isActive                                                                                                                             | System-wide reference data                                     |
+| **ExerciseMuscleGroup**    | exerciseId (FK), muscleGroupId (FK), role (primary/secondary)                                                                                          | Many-to-many join                                              |
+| **ExerciseTag**            | id, trainerId (FK, nullable=global), name, color                                                                                                       | Custom tags per trainer                                        |
+| **ExerciseTagMap**         | exerciseId (FK), tagId (FK)                                                                                                                            | Many-to-many join                                              |
+| **PlanTemplate**           | id, trainerId (FK), name, description, trainingModality, status, version, timestamps                                                                   | Reusable plan blueprints                                       |
+| **PlanTemplatePhase**      | id, templateId (FK), phaseType, name, sortOrder, phaseNotes                                                                                            | Warm-up / main / cooldown etc.                                 |
+| **PlanTemplateExercise**   | id, templatePhaseId (FK), exerciseId (FK), sortOrder, restAfterSeconds, exerciseNotes, prescription (JSON)                                             | `[+]` prescription JSON holds sets/reps/load/duration flexibly |
+| **TemplateTagMap**         | templateId (FK), tagId (FK)                                                                                                                            | Many-to-many join                                              |
+| **ClientPlan**             | id, trainerId, clientId, sourceTemplateId, sourceTemplateVersion, name, trainingModality, status, startDate, timestamps                                | Snapshot of template assigned to a specific client             |
+| **ClientPlanPhase**        | id, clientPlanId (FK), phaseType, name, sortOrder, phaseNotes                                                                                          | Mirrors template phases, editable per client                   |
+| **ClientPlanExercise**     | id, clientPlanPhaseId (FK), exerciseId (FK), sortOrder, restAfterSeconds, exerciseNotes, prescription (JSON)                                           | Mirrors template exercises, editable per client                |
+| **ProgramAssignment**      | id, trainerId, clientId, templateId, clientPlanId, startDate, status, assignedAt                                                                       | Links trainer → template → client plan                         |
+| **WorkoutSession**         | id, assignmentId (FK), clientPlanId (FK), clientId (FK), scheduledAt, status, sessionNotes                                                             | One calendar day's workout                                     |
+| **WorkoutSessionExercise** | id, sessionId (FK), clientPlanExerciseId (FK), exerciseId (FK), sortOrder, plannedPrescription (JSON), actualMetrics (JSON), exerciseNotes             | Planned vs actual per exercise                                 |
+| **ProgressEntry**          | id, clientId (FK), date, weight, measurements (JSON), note                                                                                             | Post-MVP body metrics                                          |
+| **CheckIn**                | id, clientId (FK), weekStart, adherenceScore, recoveryScore, comment                                                                                   | Post-MVP weekly pulse                                          |
+| **MediaAsset**             | id, ownerType, ownerId, assetType, storagePath, createdAt                                                                                              | Polymorphic file storage                                       |
+| **CalendarEvent**          | id, trainerId, clientId, sessionId (FK), startAt, endAt, status                                                                                        | Post-MVP time-slot scheduling                                  |
+| **Notification**           | id, trainerId, clientId, type, scheduledAt, sentAt                                                                                                     | Post-MVP                                                       |
+| **Subscription**           | id, trainerId (FK), provider, externalId, plan, status, renewalAt                                                                                      | Post-MVP billing                                               |
+| **Invoice**                | id, trainerId (FK), subscriptionId (FK), amount, currency, status, issuedAt                                                                            | Post-MVP billing                                               |
+| **AuditEvent**             | id, actorId, actorRole, action, targetType, targetId, createdAt                                                                                        | Post-MVP compliance log                                        |
 
 ### Suggested ERD Improvements `[+]`
 

@@ -16,18 +16,18 @@ Trainer opens `/trainer/templates` from the Topbar or dashboard, creates a templ
 
 ## Key Decisions Made
 
-| Decision | Choice | Why (1 sentence) | Source |
-|---|---|---|---|
-| Exercise picker UX | Search-and-add modal per phase | Scales to large libraries; phase intent clear at pick-time | Plan |
-| Phase organization | 3 collapsible sections in one form | Mirrors coach mental model; all phases visible at once | Plan |
-| Sort order management | Up/Down arrow buttons per row | Simple React state swap; no extra library dependency | Plan |
-| Prescribed fields | Reps/Duration toggle per row | Trainer override possible; default from exercise.default_metric | Plan |
-| Template deletion | Hard delete + cascade | No archive column needed; acceptable for non-recoverable MVP delete | Plan |
-| Navigation | Topbar + dashboard card | Required by lessons.md rule for new user-facing routes | Plan |
-| API shape | Exercises embedded in template body | One round-trip; mirrors S-01 muscle_groups pattern | Plan |
-| Exercise data fetch | SSR on page load, passed as props | No modal loading state; consistent with S-01 page pattern | Plan |
-| Edit page hydration | SSR join query (template + exercises) | Form renders fully populated immediately; no extra client fetch | Plan |
-| Tests | Schema + service unit tests | Consistent with S-01 coverage level | Plan |
+| Decision              | Choice                                | Why (1 sentence)                                                    | Source |
+| --------------------- | ------------------------------------- | ------------------------------------------------------------------- | ------ |
+| Exercise picker UX    | Search-and-add modal per phase        | Scales to large libraries; phase intent clear at pick-time          | Plan   |
+| Phase organization    | 3 collapsible sections in one form    | Mirrors coach mental model; all phases visible at once              | Plan   |
+| Sort order management | Up/Down arrow buttons per row         | Simple React state swap; no extra library dependency                | Plan   |
+| Prescribed fields     | Reps/Duration toggle per row          | Trainer override possible; default from exercise.default_metric     | Plan   |
+| Template deletion     | Hard delete + cascade                 | No archive column needed; acceptable for non-recoverable MVP delete | Plan   |
+| Navigation            | Topbar + dashboard card               | Required by lessons.md rule for new user-facing routes              | Plan   |
+| API shape             | Exercises embedded in template body   | One round-trip; mirrors S-01 muscle_groups pattern                  | Plan   |
+| Exercise data fetch   | SSR on page load, passed as props     | No modal loading state; consistent with S-01 page pattern           | Plan   |
+| Edit page hydration   | SSR join query (template + exercises) | Form renders fully populated immediately; no extra client fetch     | Plan   |
+| Tests                 | Schema + service unit tests           | Consistent with S-01 coverage level                                 | Plan   |
 
 ## Scope
 
@@ -41,10 +41,10 @@ Two-phase delivery. Phase 1 builds the full API surface (zod schemas → service
 
 ## Phases at a Glance
 
-| Phase | What it delivers | Key risk |
-|---|---|---|
-| 1. Template API contracts | Typed schemas, service (list/get-with-join/create/update-replace-all/delete), API endpoints, schema unit tests | Replace-all semantics for template_exercises is a multi-step operation with no native transaction — acceptable for single-trainer MVP |
-| 2. Template UI, navigation, and hardening | form-validation module + tests, TemplateForm + ExercisePickerModal (no exclusion — same exercise can repeat in any phase/order), 3 Astro pages, Topbar + dashboard nav entry, RLS verification SQL | TemplateForm is the most complex React component in the codebase (3 phase sections × exercise rows × picker modal state) |
+| Phase                                     | What it delivers                                                                                                                                                                                   | Key risk                                                                                                                              |
+| ----------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
+| 1. Template API contracts                 | Typed schemas, service (list/get-with-join/create/update-replace-all/delete), API endpoints, schema unit tests                                                                                     | Replace-all semantics for template_exercises is a multi-step operation with no native transaction — acceptable for single-trainer MVP |
+| 2. Template UI, navigation, and hardening | form-validation module + tests, TemplateForm + ExercisePickerModal (no exclusion — same exercise can repeat in any phase/order), 3 Astro pages, Topbar + dashboard nav entry, RLS verification SQL | TemplateForm is the most complex React component in the codebase (3 phase sections × exercise rows × picker modal state)              |
 
 **Prerequisites:** S-01 exercise library live (exercises must exist for picker to show anything). Local Supabase running with migration 20260526120300 applied.
 **Estimated effort:** ~2–3 focused sessions across 2 phases.

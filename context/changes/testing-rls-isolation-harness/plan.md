@@ -513,13 +513,13 @@ No new SQL migrations. The harness tests existing schema and policies; it does n
 
 #### Automated
 
-- [x] 4.1 `npm run test:integration` passes all Phase 4 tests
-- [x] 4.2 `npm run lint` passes
+- [x] 4.1 `npm run test:integration` passes all Phase 4 tests — 246e851
+- [x] 4.2 `npm run lint` passes — 246e851
 
 #### Manual
 
-- [x] 4.3 Post-removal end-to-end: trainer sees data → remove → trainer sees nothing → client still sees historical plan
-- [x] 4.4 Client cannot DELETE their own set_logs (no grant — expect error)
+- [x] 4.3 Post-removal end-to-end: trainer sees data → remove → trainer sees nothing → client still sees historical plan — 246e851
+- [x] 4.4 Client cannot DELETE their own set_logs (no grant — expect error) — 246e851
 
 ### Phase 5: SECURITY DEFINER Coverage + CI Wiring
 

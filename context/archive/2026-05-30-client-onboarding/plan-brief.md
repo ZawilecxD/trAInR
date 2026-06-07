@@ -17,20 +17,21 @@ A trainer signs in, navigates to `/trainer/clients`, generates an invite link wi
 
 ## Key Decisions Made
 
-| Decision | Choice | Why (1 sentence) | Source |
-|----------|--------|-------------------|--------|
-| Invite delivery method | Copy-link only (no email send) | PRD non-goal #5 explicitly parks notifications post-MVP | Research |
-| Default invite expiry | 7 days | Balances urgency with flexibility; PRD says "expiry or usage limits" without specifying duration | Plan |
-| Google OAuth for client signup | Email+password only for now | Avoids redirect/state complexity with token preservation; FR-001 Socrates note supports shipping email first | Plan |
-| Rate limit on invite generation | No limit | Single-use + 7-day expiry provides sufficient abuse prevention for MVP | Plan |
-| Trainer name on client signup | Show trainer's display_name | Builds trust and confirms the client is joining the right trainer | Plan |
-| Post-login redirect | Role-based: `/trainer/clients` vs `/client/dashboard` | Clients and trainers need different landing pages; generic `/dashboard` becomes a redirect | Plan |
-| Invalid token UX | Friendly error on signup page (no form) | Keeps the user in context with clear guidance to request a new link | Plan |
-| Token validation approach | SECURITY DEFINER RPCs (no anon RLS) | Mandated by F-01 plan — never expose `invite_links` to anon SELECT | Research |
+| Decision                        | Choice                                                | Why (1 sentence)                                                                                             | Source   |
+| ------------------------------- | ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ | -------- |
+| Invite delivery method          | Copy-link only (no email send)                        | PRD non-goal #5 explicitly parks notifications post-MVP                                                      | Research |
+| Default invite expiry           | 7 days                                                | Balances urgency with flexibility; PRD says "expiry or usage limits" without specifying duration             | Plan     |
+| Google OAuth for client signup  | Email+password only for now                           | Avoids redirect/state complexity with token preservation; FR-001 Socrates note supports shipping email first | Plan     |
+| Rate limit on invite generation | No limit                                              | Single-use + 7-day expiry provides sufficient abuse prevention for MVP                                       | Plan     |
+| Trainer name on client signup   | Show trainer's display_name                           | Builds trust and confirms the client is joining the right trainer                                            | Plan     |
+| Post-login redirect             | Role-based: `/trainer/clients` vs `/client/dashboard` | Clients and trainers need different landing pages; generic `/dashboard` becomes a redirect                   | Plan     |
+| Invalid token UX                | Friendly error on signup page (no form)               | Keeps the user in context with clear guidance to request a new link                                          | Plan     |
+| Token validation approach       | SECURITY DEFINER RPCs (no anon RLS)                   | Mandated by F-01 plan — never expose `invite_links` to anon SELECT                                           | Research |
 
 ## Scope
 
 **In scope:**
+
 - `validate_invite_token` and `complete_client_invite` SECURITY DEFINER RPCs
 - Profile cross-visibility RLS (trainer ↔ client)
 - `POST /api/invites` — invite creation endpoint
@@ -40,6 +41,7 @@ A trainer signs in, navigates to `/trainer/clients`, generates an invite link wi
 - Minimal `/client/dashboard` placeholder
 
 **Out of scope:**
+
 - Email sending from trainer UI (post-MVP)
 - Google OAuth for clients
 - Client removal (S-11)
@@ -53,12 +55,12 @@ Two SECURITY DEFINER RPCs handle the security boundary — `validate_invite_toke
 
 ## Phases at a Glance
 
-| Phase | What it delivers | Key risk |
-|-------|-----------------|----------|
-| 1. Database RPCs | Token validation + consumption RPCs, profile cross-visibility | RPC grant permissions must include `anon` — easy to miss |
-| 2. Invite Generation | `/trainer/clients` page with generate + copy UX | First trainer-facing page; sets UX patterns for future trainer pages |
+| Phase                      | What it delivers                                                   | Key risk                                                                                  |
+| -------------------------- | ------------------------------------------------------------------ | ----------------------------------------------------------------------------------------- |
+| 1. Database RPCs           | Token validation + consumption RPCs, profile cross-visibility      | RPC grant permissions must include `anon` — easy to miss                                  |
+| 2. Invite Generation       | `/trainer/clients` page with generate + copy UX                    | First trainer-facing page; sets UX patterns for future trainer pages                      |
 | 3. Client Signup via Token | Modified signup flow handling both trainer and client registration | Race condition between page-load validation and form submission (mitigated by atomic RPC) |
-| 4. Role-Based Routing | Signin redirect by role + `/client/dashboard` placeholder | Must update existing `signin.ts` and `dashboard.astro` without breaking current flow |
+| 4. Role-Based Routing      | Signin redirect by role + `/client/dashboard` placeholder          | Must update existing `signin.ts` and `dashboard.astro` without breaking current flow      |
 
 **Prerequisites:** F-01 (database schema + RLS) — complete
 **Estimated effort:** ~2-3 sessions across 4 phases

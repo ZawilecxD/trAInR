@@ -18,14 +18,14 @@ Vercel scores a perfect 5/5 on the agent-friendly platform criteria (CLI-first, 
 
 ## Platform Comparison
 
-| Platform | CLI-first | Managed/Serverless | Agent-readable docs | Stable deploy API | MCP / Integration | Total |
-|---|---|---|---|---|---|---|
-| **Vercel** | Pass | Pass | Pass | Pass | Pass | **5 Pass** |
-| **Cloudflare** | Pass | Pass | Pass | Pass | Pass | **5 Pass** |
-| **Netlify** | Partial | Pass | Pass | Partial | Pass | **3P / 2Pt** |
-| **Railway** | Partial | Partial | Pass | Partial | Pass | **2P / 3Pt** |
-| **Render** | Partial | Partial | Pass | Partial | Pass | **2P / 3Pt** |
-| **Fly.io** | Partial | Partial | Partial | Partial | Partial | **0P / 5Pt** |
+| Platform       | CLI-first | Managed/Serverless | Agent-readable docs | Stable deploy API | MCP / Integration | Total        |
+| -------------- | --------- | ------------------ | ------------------- | ----------------- | ----------------- | ------------ |
+| **Vercel**     | Pass      | Pass               | Pass                | Pass              | Pass              | **5 Pass**   |
+| **Cloudflare** | Pass      | Pass               | Pass                | Pass              | Pass              | **5 Pass**   |
+| **Netlify**    | Partial   | Pass               | Pass                | Partial           | Pass              | **3P / 2Pt** |
+| **Railway**    | Partial   | Partial            | Pass                | Partial           | Pass              | **2P / 3Pt** |
+| **Render**     | Partial   | Partial            | Pass                | Partial           | Pass              | **2P / 3Pt** |
+| **Fly.io**     | Partial   | Partial            | Partial             | Partial           | Partial           | **0P / 5Pt** |
 
 ### Shortlisted Platforms
 
@@ -81,31 +81,34 @@ The team swapped from Cloudflare to Vercel in week one, spending a full day on t
 
 ## Risk Register
 
-| Risk | Source | Likelihood | Impact | Mitigation |
-|---|---|---|---|---|
-| Adapter migration takes >1 day | Devil's advocate | M | M | Time-box to 4 hours; if blocked, fall back to Cloudflare (zero migration) |
-| Hobby plan hard-pause on traffic spike | Devil's advocate / Pre-mortem | L | H | Monitor usage in Vercel dashboard; upgrade to Pro ($20/mo) before public launch if traction signals appear |
-| Cold-start latency on workout logging pages | Devil's advocate | M | L | Fluid Compute reduces cold starts; critical paths can use ISR or edge middleware for warm routing |
-| `astro:env/server` requires restructuring for Vercel | Pre-mortem | M | M | Audit env access pattern during migration; test all auth flows in preview deploy before merging |
-| Supabase OAuth breaks on preview deploys | Unknown unknowns | H | M | Configure wildcard redirect URL in Supabase auth settings during migration |
-| Shared state leak via Fluid Compute concurrency | Unknown unknowns | L | M | Ensure all SSR handlers are stateless; avoid module-level mutable variables |
-| Vercel rollback limited to one version on Hobby | Unknown unknowns | L | L | Use git-based revert (`git revert` + push) as primary rollback; CLI rollback as quick escape |
-| Build cache masks broken dependencies | Unknown unknowns | L | M | Run periodic clean builds in CI (`vercel build --no-cache`) on release branches |
-| Function timeout on heavy dashboard aggregation | Unknown unknowns | L | M | Paginate Supabase queries; add request-level timeouts; consider edge caching for dashboard data |
+| Risk                                                 | Source                        | Likelihood | Impact | Mitigation                                                                                                 |
+| ---------------------------------------------------- | ----------------------------- | ---------- | ------ | ---------------------------------------------------------------------------------------------------------- |
+| Adapter migration takes >1 day                       | Devil's advocate              | M          | M      | Time-box to 4 hours; if blocked, fall back to Cloudflare (zero migration)                                  |
+| Hobby plan hard-pause on traffic spike               | Devil's advocate / Pre-mortem | L          | H      | Monitor usage in Vercel dashboard; upgrade to Pro ($20/mo) before public launch if traction signals appear |
+| Cold-start latency on workout logging pages          | Devil's advocate              | M          | L      | Fluid Compute reduces cold starts; critical paths can use ISR or edge middleware for warm routing          |
+| `astro:env/server` requires restructuring for Vercel | Pre-mortem                    | M          | M      | Audit env access pattern during migration; test all auth flows in preview deploy before merging            |
+| Supabase OAuth breaks on preview deploys             | Unknown unknowns              | H          | M      | Configure wildcard redirect URL in Supabase auth settings during migration                                 |
+| Shared state leak via Fluid Compute concurrency      | Unknown unknowns              | L          | M      | Ensure all SSR handlers are stateless; avoid module-level mutable variables                                |
+| Vercel rollback limited to one version on Hobby      | Unknown unknowns              | L          | L      | Use git-based revert (`git revert` + push) as primary rollback; CLI rollback as quick escape               |
+| Build cache masks broken dependencies                | Unknown unknowns              | L          | M      | Run periodic clean builds in CI (`vercel build --no-cache`) on release branches                            |
+| Function timeout on heavy dashboard aggregation      | Unknown unknowns              | L          | M      | Paginate Supabase queries; add request-level timeouts; consider edge caching for dashboard data            |
 
 ## Getting Started
 
 1. **Install the Vercel CLI and link the project:**
+
    ```bash
    npm i -g vercel
    vercel link
    ```
 
 2. **Swap the Astro adapter:**
+
    ```bash
    npm uninstall @astrojs/cloudflare wrangler
    npx astro add vercel
    ```
+
    In `astro.config.mjs`, replace the Cloudflare adapter import with `@astrojs/vercel` — the `npx astro add` command handles this automatically for Astro 6.
 
 3. **Migrate environment variables:**
@@ -125,6 +128,7 @@ The team swapped from Cloudflare to Vercel in week one, spending a full day on t
 ## Out of Scope
 
 The following were not evaluated in this research:
+
 - Docker image configuration
 - CI/CD pipeline setup (GitHub Actions workflow updates for Vercel)
 - Production-scale architecture (multi-region, HA, DR)

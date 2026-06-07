@@ -6,14 +6,14 @@ Identity file for a unit of work under `context/changes/<change-id>/` or `contex
 
 ```yaml
 ---
-change_id: <kebab-case>      # required; matches folder name
-title: <human title>         # required
-status: <status>             # required; see below
-created: YYYY-MM-DD          # required
-updated: YYYY-MM-DD          # required
+change_id: <kebab-case> # required; matches folder name
+title: <human title> # required
+status: <status> # required; see below
+created: YYYY-MM-DD # required
+updated: YYYY-MM-DD # required
 archived_at: null | YYYY-MM-DD
-linear_issue: ZAW-42         # optional; links Linear sync (see .cursor/skills/linear-sync/SKILL.md)
-phase_issues:                # optional; phase -> Linear child issue mapping
+linear_issue: ZAW-42 # optional; links Linear sync (see .cursor/skills/linear-sync/SKILL.md)
+phase_issues: # optional; phase -> Linear child issue mapping
   "1": ZAW-101
   "2": ZAW-102
 ---

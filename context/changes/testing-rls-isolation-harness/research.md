@@ -21,6 +21,7 @@ last_updated_by: agent
 ## Research Question
 
 What is the full scope of the RLS isolation harness for Phase 1 (`context/changes/testing-rls-isolation-harness/`)? Specifically:
+
 - What tables and policies need to be covered?
 - How is the Supabase client initialized and is `service_role` used anywhere?
 - What does the tenant graph look like?
@@ -48,14 +49,14 @@ A single SSR factory is defined at `src/lib/supabase.ts:4-23`. It uses `SUPABASE
 
 **Key routes using Supabase** (`src/pages/api/`):
 
-| Route | Lines | Client | Guard |
-|---|---|---|---|
-| `exercises/index.ts` | 21, 52 | anon | `requireTrainer` |
-| `exercises/[id].ts` | 27, 70 | anon | `requireTrainer` |
-| `session-templates/index.ts` | 14, 45 | anon | `requireTrainer` |
-| `session-templates/[id].ts` | 27, 70, 99 | anon | `requireTrainer` |
-| `invites/index.ts` | 15 | anon | manual `getUser()` + role check |
-| `trainer-clients/[id].ts` | 22 | anon | manual `getUser()` + role check |
+| Route                        | Lines      | Client | Guard                           |
+| ---------------------------- | ---------- | ------ | ------------------------------- |
+| `exercises/index.ts`         | 21, 52     | anon   | `requireTrainer`                |
+| `exercises/[id].ts`          | 27, 70     | anon   | `requireTrainer`                |
+| `session-templates/index.ts` | 14, 45     | anon   | `requireTrainer`                |
+| `session-templates/[id].ts`  | 27, 70, 99 | anon   | `requireTrainer`                |
+| `invites/index.ts`           | 15         | anon   | manual `getUser()` + role check |
+| `trainer-clients/[id].ts`    | 22         | anon   | manual `getUser()` + role check |
 
 Service layer (`src/lib/exercises/service.ts`, `src/lib/session-templates/service.ts`) accepts a `SupabaseClient` parameter — they do not create clients independently.
 
@@ -64,11 +65,13 @@ Service layer (`src/lib/exercises/service.ts`, `src/lib/session-templates/servic
 All 14 public tables have RLS enabled. Isolation flows through two paths:
 
 **Trainer-direct tables** — `trainer_id = auth.uid()` enforced in every operation:
+
 - `exercises` (`src/supabase/migrations/20260526120200_exercise_library.sql:77-100`)
 - `session_templates` (`20260526120300_templates_and_plans.sql:34-57`)
 - `invite_links` (`20260526120100_trainer_onboarding.sql:123-146`)
 
 **Assignment-bridged tables** — access derived via `is_trainer_for_client()` / `can_access_client_plan()`:
+
 - `trainer_clients` — the primary assignment bridge (`20260526120100_trainer_onboarding.sql:87-113`)
 - `client_plans` — holds both `trainer_id` + `client_id`; SELECT for trainer now requires `is_trainer_for_client(client_id)` (tightened in `20260605120000_remove_trainer_client.sql:86-93`)
 - `workout_sessions` — access via `can_access_client_plan()` (`20260526120400_sessions_logging_comments.sql:183-187`)
@@ -77,44 +80,46 @@ All 14 public tables have RLS enabled. Isolation flows through two paths:
 - `session_comments` — via `can_access_workout_session()` (`:434-438`)
 
 **Derived-trainer tables** (ownership via parent join):
+
 - `template_exercises` — owner verified via `session_templates.trainer_id` JOIN (`20260526120300_templates_and_plans.sql:90-160`)
 - `template_exercise_sets` — ownership chain via `template_exercises` → `session_templates.trainer_id` (`20260605130000_per_round_template_prescription.sql:62-125`)
 - `exercise_muscle_groups` — write policies check `exercises.trainer_id` via EXISTS (`20260526120200_exercise_library.sql:116-161`); SELECT is open to all authenticated
 
 **Global / non-tenant tables**:
+
 - `muscle_groups` — intentional global catalog, SELECT open to all authenticated (`USING true`); no INSERT/UPDATE/DELETE for authenticated
 
 ### 3. Full RLS Policy Coverage (post-migration final state)
 
-| Table | SELECT | INSERT | UPDATE | DELETE |
-|---|---|---|---|---|
-| `profiles` | own row + cross-visibility for assigned pairs | — | own row | — |
-| `trainer_clients` | trainer side (active only) OR client side | trainer only | trainer only | — |
-| `invite_links` | trainer only | trainer only | trainer only | trainer only |
-| `muscle_groups` | all authenticated (`USING true`) | — | — | — |
-| `exercises` | `trainer_id = auth.uid()` | same | same | same |
-| `exercise_muscle_groups` | all authenticated | trainer (via exercise ownership) | trainer (via exercise ownership) | trainer (via exercise ownership) |
-| `session_templates` | `trainer_id = auth.uid()` | same | same | same |
-| `template_exercises` | via `session_templates.trainer_id` | same + exercise ownership | same | via template ownership |
-| `template_exercise_sets` | via `template_exercises` → `session_templates.trainer_id` | same | same | same |
-| `client_plans` | trainer (active assignment) OR client (own history) | trainer + active assignment | trainer + active assignment | trainer + active assignment |
-| `workout_sessions` | via `can_access_client_plan()` | trainer + active assignment | trainer (active) OR client (own plan) | trainer + active assignment |
-| `session_exercises` | via `can_access_workout_session()` | trainer + active assignment + exercise ownership | trainer + active assignment | trainer + active assignment |
-| `set_logs` | via `can_access_session_exercise()` | client only (+ active assignment) | client only | — (no grant) |
-| `session_comments` | via `can_access_workout_session()` | own author + session access | own author + session access | own author |
+| Table                    | SELECT                                                    | INSERT                                           | UPDATE                                | DELETE                           |
+| ------------------------ | --------------------------------------------------------- | ------------------------------------------------ | ------------------------------------- | -------------------------------- |
+| `profiles`               | own row + cross-visibility for assigned pairs             | —                                                | own row                               | —                                |
+| `trainer_clients`        | trainer side (active only) OR client side                 | trainer only                                     | trainer only                          | —                                |
+| `invite_links`           | trainer only                                              | trainer only                                     | trainer only                          | trainer only                     |
+| `muscle_groups`          | all authenticated (`USING true`)                          | —                                                | —                                     | —                                |
+| `exercises`              | `trainer_id = auth.uid()`                                 | same                                             | same                                  | same                             |
+| `exercise_muscle_groups` | all authenticated                                         | trainer (via exercise ownership)                 | trainer (via exercise ownership)      | trainer (via exercise ownership) |
+| `session_templates`      | `trainer_id = auth.uid()`                                 | same                                             | same                                  | same                             |
+| `template_exercises`     | via `session_templates.trainer_id`                        | same + exercise ownership                        | same                                  | via template ownership           |
+| `template_exercise_sets` | via `template_exercises` → `session_templates.trainer_id` | same                                             | same                                  | same                             |
+| `client_plans`           | trainer (active assignment) OR client (own history)       | trainer + active assignment                      | trainer + active assignment           | trainer + active assignment      |
+| `workout_sessions`       | via `can_access_client_plan()`                            | trainer + active assignment                      | trainer (active) OR client (own plan) | trainer + active assignment      |
+| `session_exercises`      | via `can_access_workout_session()`                        | trainer + active assignment + exercise ownership | trainer + active assignment           | trainer + active assignment      |
+| `set_logs`               | via `can_access_session_exercise()`                       | client only (+ active assignment)                | client only                           | — (no grant)                     |
+| `session_comments`       | via `can_access_workout_session()`                        | own author + session access                      | own author + session access           | own author                       |
 
 ### 4. SECURITY DEFINER Functions — Harness Implications
 
 Six functions bypass RLS at the Postgres layer. Each needs specific consideration for the test harness:
 
-| Function | File:lines | Grants to | Security concern |
-|---|---|---|---|
-| `handle_new_user()` | `20260526120000:77-108` | `supabase_auth_admin` | Trigger — auto-creates profile; safe (signup-only) |
-| `replace_exercise_muscle_groups(uuid, jsonb)` | `20260529183853:1-22` | `authenticated` | **No `auth.uid()` ownership check inside function body.** RLS on `exercise_muscle_groups` bypassed. Relies on app flow to prevent cross-trainer calls. Also not schema-qualified (`public.`) — `search_path` not pinned. |
-| `validate_invite_token(text)` | `20260604120000:7-40` | `anon, authenticated` | Intentional anon access; reads `invite_links` + `profiles` safely (returns display name only) |
-| `complete_client_invite(text, uuid)` | `20260604120000:49-80` | `anon, authenticated` | **Does not verify `p_client_id = auth.uid()`.** Relies on caller passing the freshly signed-up user's own UUID. If called with a different UUID by a malicious actor, it would create a fraudulent assignment. |
-| `get_my_assigned_trainer()` | `20260604193000:3-31` | `authenticated` | Reads `trainer_clients` + `profiles` for `auth.uid()`. Intentional bypass for client dashboard. |
-| `remove_trainer_client(uuid)` | `20260605120000:7-41` | `authenticated` | Checks `trainer_id = auth.uid()` inside the function before operating. Safe. |
+| Function                                      | File:lines              | Grants to             | Security concern                                                                                                                                                                                                         |
+| --------------------------------------------- | ----------------------- | --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `handle_new_user()`                           | `20260526120000:77-108` | `supabase_auth_admin` | Trigger — auto-creates profile; safe (signup-only)                                                                                                                                                                       |
+| `replace_exercise_muscle_groups(uuid, jsonb)` | `20260529183853:1-22`   | `authenticated`       | **No `auth.uid()` ownership check inside function body.** RLS on `exercise_muscle_groups` bypassed. Relies on app flow to prevent cross-trainer calls. Also not schema-qualified (`public.`) — `search_path` not pinned. |
+| `validate_invite_token(text)`                 | `20260604120000:7-40`   | `anon, authenticated` | Intentional anon access; reads `invite_links` + `profiles` safely (returns display name only)                                                                                                                            |
+| `complete_client_invite(text, uuid)`          | `20260604120000:49-80`  | `anon, authenticated` | **Does not verify `p_client_id = auth.uid()`.** Relies on caller passing the freshly signed-up user's own UUID. If called with a different UUID by a malicious actor, it would create a fraudulent assignment.           |
+| `get_my_assigned_trainer()`                   | `20260604193000:3-31`   | `authenticated`       | Reads `trainer_clients` + `profiles` for `auth.uid()`. Intentional bypass for client dashboard.                                                                                                                          |
+| `remove_trainer_client(uuid)`                 | `20260605120000:7-41`   | `authenticated`       | Checks `trainer_id = auth.uid()` inside the function before operating. Safe.                                                                                                                                             |
 
 ### 5. Existing Test Infrastructure
 
@@ -124,26 +129,28 @@ Six functions bypass RLS at the Postgres layer. Each needs specific consideratio
 
 **Existing tests (6 files, all unit)**:
 
-| File | What it tests |
-|---|---|
-| `src/lib/session-templates/schemas.test.ts` | Zod create/update/id schemas |
+| File                                                | What it tests                                    |
+| --------------------------------------------------- | ------------------------------------------------ |
+| `src/lib/session-templates/schemas.test.ts`         | Zod create/update/id schemas                     |
 | `src/lib/session-templates/form-validation.test.ts` | Form helpers (entry factories, payload assembly) |
-| `src/lib/exercises/schemas.test.ts` | Exercise Zod schemas |
-| `src/lib/exercises/form-validation.test.ts` | Exercise form validation |
-| `src/lib/exercises/filter-url.test.ts` | URL ↔ filter round-trips |
-| `src/lib/api/guards.test.ts` | `requireTrainer` 401/403/200 |
+| `src/lib/exercises/schemas.test.ts`                 | Exercise Zod schemas                             |
+| `src/lib/exercises/form-validation.test.ts`         | Exercise form validation                         |
+| `src/lib/exercises/filter-url.test.ts`              | URL ↔ filter round-trips                         |
+| `src/lib/api/guards.test.ts`                        | `requireTrainer` 401/403/200                     |
 
 No Supabase imports in any test. No shared test utils or fixture helpers. No `vi.mock`.
 
 **CI** (`github/workflows/ci.yml:18-25`): `npm run test` runs between lint and build. Note: `test-plan.md:110` says "CI runs lint + build only today" — this is **stale**, `npm test` is already wired.
 
 **Supabase local** (`supabase/config.toml`):
+
 - DB on port `54322` (`postgres:postgres@127.0.0.1:54322/postgres`)
 - API on port `54321`
 - Auth `site_url = "http://127.0.0.1:4321"`
 - Seed: `seed.sql` inserts 13 muscle groups (idempotent)
 
 **Integration harness — what must be built from scratch**:
+
 - `vitest.config.ts` needs either a new project config or extended `include` glob to pick up integration tests outside `src/`
 - A `globalSetup` file to start/stop local Supabase (or assume `npx supabase start` is pre-running)
 - A fixture helper to create two trainer users (`auth.admin.createUser`) and seed per-test data
@@ -189,7 +196,7 @@ No Supabase imports in any test. No shared test utils or fixture helpers. No `vi
 
 1. **Harness placement**: should integration tests live in `src/` (picked up by existing `vitest.config.ts`) or in a top-level `tests/integration/` directory with a separate Vitest project config? The latter avoids `include` glob conflicts and allows a different environment/timeout for DB tests.
 
-2. **User provisioning in tests**: `supabase.auth.admin.createUser` requires a service-role key at test setup time. Is it acceptable to use service_role *only* in test setup (fixture creation), then test with anon-key clients? This is the standard pgTAP/integration pattern and is consistent with the principle that service_role never appears in app code.
+2. **User provisioning in tests**: `supabase.auth.admin.createUser` requires a service-role key at test setup time. Is it acceptable to use service_role _only_ in test setup (fixture creation), then test with anon-key clients? This is the standard pgTAP/integration pattern and is consistent with the principle that service_role never appears in app code.
 
 3. **CI Supabase start**: when integration tests land, CI must run `npx supabase start` (slow, requires Docker). Should integration tests be gated behind a separate CI job or a `--project` flag so they don't block the fast lint+unit+build pipeline?
 

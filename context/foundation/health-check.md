@@ -88,13 +88,13 @@ Provider: GitHub Actions
 Configuration: .github/workflows/ci.yml
 ```
 
-| Stage | Status | Notes |
-|---|---|---|
-| Lint | ✓ | `npm run lint` (ESLint with type-checked rules) |
-| Test | ✗ | No test step — no test runner to invoke |
-| Build | ✓ | `npm run build` with Supabase secrets |
-| Type check | ✓ | Via `tseslint.configs.strictTypeChecked` + `astro sync` |
-| Security | ✗ | No `npm audit` or security scanning step |
+| Stage      | Status | Notes                                                   |
+| ---------- | ------ | ------------------------------------------------------- |
+| Lint       | ✓      | `npm run lint` (ESLint with type-checked rules)         |
+| Test       | ✗      | No test step — no test runner to invoke                 |
+| Build      | ✓      | `npm run build` with Supabase secrets                   |
+| Type check | ✓      | Via `tseslint.configs.strictTypeChecked` + `astro sync` |
+| Security   | ✗      | No `npm audit` or security scanning step                |
 
 The CI pipeline is solid for its scope: lint with full type checking, then build. The missing test step is a direct consequence of having no test runner — once a runner is installed, adding `- run: npm test` before the build step closes this gap.
 

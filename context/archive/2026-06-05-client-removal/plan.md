@@ -8,17 +8,17 @@ Implement FR-006: a trainer can remove a wrongly-assigned client from `/trainer/
 
 **Schema and RLS are ready; application layer is missing.**
 
-| Layer | Status | Evidence |
-|-------|--------|----------|
-| `trainer_client_status` enum (`active`, `removed`) | Done | `20260526120000_enums_profiles_helpers.sql:29` |
-| `trainer_clients.status` + `removed_at` | Done | `20260526120100_trainer_onboarding.sql:7-14` |
-| Trainer SELECT active-only | Done | `trainer_clients_trainer_select_active` policy lines 87-94 |
-| Trainer UPDATE any owned row | Done | `trainer_clients_trainer_update` lines 102-107 |
-| `is_trainer_for_client` / `is_assigned_trainer` filter `active` | Done | Same migration lines 44-74 |
-| `client_plan_status` includes `archived` | Done | `20260526120000_enums_profiles_helpers.sql:31` |
-| S-03 clients page + invite flow | Done | `context/changes/client-onboarding/change.md` (`implemented`) |
-| Remove RPC / API / UI | **Missing** | No route, no service, read-only client list in `InviteClientPanel.tsx` |
-| Trainer RLS isolation after removal | **Gap** | `client_plans_trainer_select_own` and `can_access_client_plan` grant trainer access by `trainer_id` only — no active-assignment gate |
+| Layer                                                           | Status      | Evidence                                                                                                                             |
+| --------------------------------------------------------------- | ----------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| `trainer_client_status` enum (`active`, `removed`)              | Done        | `20260526120000_enums_profiles_helpers.sql:29`                                                                                       |
+| `trainer_clients.status` + `removed_at`                         | Done        | `20260526120100_trainer_onboarding.sql:7-14`                                                                                         |
+| Trainer SELECT active-only                                      | Done        | `trainer_clients_trainer_select_active` policy lines 87-94                                                                           |
+| Trainer UPDATE any owned row                                    | Done        | `trainer_clients_trainer_update` lines 102-107                                                                                       |
+| `is_trainer_for_client` / `is_assigned_trainer` filter `active` | Done        | Same migration lines 44-74                                                                                                           |
+| `client_plan_status` includes `archived`                        | Done        | `20260526120000_enums_profiles_helpers.sql:31`                                                                                       |
+| S-03 clients page + invite flow                                 | Done        | `context/changes/client-onboarding/change.md` (`implemented`)                                                                        |
+| Remove RPC / API / UI                                           | **Missing** | No route, no service, read-only client list in `InviteClientPanel.tsx`                                                               |
+| Trainer RLS isolation after removal                             | **Gap**     | `client_plans_trainer_select_own` and `can_access_client_plan` grant trainer access by `trainer_id` only — no active-assignment gate |
 
 ### Key Discoveries:
 

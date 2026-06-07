@@ -47,13 +47,13 @@ The `--prebuilt` flag means `npm run build` runs once locally in CI (output goes
 
 These must be set in GitHub → repository Settings → Secrets → Actions:
 
-| Secret | Value |
-|---|---|
-| `VERCEL_TOKEN` | Token from vercel.com/account/tokens |
-| `VERCEL_ORG_ID` | `team_WceflVqXGTp5gkXucSsty62M` |
-| `VERCEL_PROJECT_ID` | `prj_0eeCL92XP14Pyi5mDwsclrWZctif` |
-| `SUPABASE_URL` | Supabase project URL |
-| `SUPABASE_KEY` | Supabase anon key |
+| Secret              | Value                                |
+| ------------------- | ------------------------------------ |
+| `VERCEL_TOKEN`      | Token from vercel.com/account/tokens |
+| `VERCEL_ORG_ID`     | `team_WceflVqXGTp5gkXucSsty62M`      |
+| `VERCEL_PROJECT_ID` | `prj_0eeCL92XP14Pyi5mDwsclrWZctif`   |
+| `SUPABASE_URL`      | Supabase project URL                 |
+| `SUPABASE_KEY`      | Supabase anon key                    |
 
 ---
 
@@ -61,10 +61,10 @@ These must be set in GitHub → repository Settings → Secrets → Actions:
 
 Set in Vercel Dashboard → project → Settings → Environment Variables (scope: Production + Preview + Development):
 
-| Variable | Description |
-|---|---|
+| Variable       | Description          |
+| -------------- | -------------------- |
 | `SUPABASE_URL` | Supabase project URL |
-| `SUPABASE_KEY` | Supabase anon key |
+| `SUPABASE_KEY` | Supabase anon key    |
 
 These are accessed at runtime via `astro:env/server` — they are server-only secrets and never exposed to the client.
 
@@ -78,6 +78,7 @@ npm run dev                   # starts Vite dev server on Node.js (no wrangler n
 ```
 
 To sync Vercel env vars to local `.env`:
+
 ```bash
 vercel env pull .env.local    # pulls Production vars — review before using locally
 ```
@@ -92,6 +93,7 @@ vercel deploy --prebuilt --prod   # deploys to production
 ```
 
 Or without pre-building (Vercel builds on its servers):
+
 ```bash
 vercel deploy --prod
 ```
@@ -110,11 +112,11 @@ For older versions: find the target commit in git, push it to master, or `git re
 
 ## Hobby plan limits to watch
 
-| Resource | Limit |
-|---|---|
-| Function invocations | 1M / month |
-| Bandwidth | 100 GB / month |
-| CPU time | 4 hours / month |
+| Resource             | Limit           |
+| -------------------- | --------------- |
+| Function invocations | 1M / month      |
+| Bandwidth            | 100 GB / month  |
+| CPU time             | 4 hours / month |
 
 Exceeding any limit **pauses the project** until the billing period resets (no graceful degradation). Monitor usage in the Vercel Dashboard. Upgrade to Pro ($20/mo) before any public traffic push.
 
@@ -125,11 +127,13 @@ Exceeding any limit **pauses the project** until the billing period resets (no g
 Each PR preview gets a unique URL like `tr-a-in-r-<hash>.vercel.app`. For auth redirects to work on preview deploys, Supabase must allow those URLs.
 
 In Supabase Dashboard → Authentication → URL Configuration, add a wildcard:
+
 ```
 https://tr-a-in-r-*.vercel.app/api/auth/callback
 ```
 
 Production redirect URL:
+
 ```
 https://tr-a-in-r.vercel.app/api/auth/callback
 ```

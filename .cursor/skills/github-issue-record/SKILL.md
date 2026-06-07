@@ -17,10 +17,10 @@ Uses [github-mcp](../github-mcp/SKILL.md) for `issue_write`, `search_issues`, an
 
 ## Modes
 
-| Input | Mode |
-|-------|------|
-| Freeform bug description | **Create** — interview → create GitHub issue → save local report |
-| `#42`, `42`, or issue URL | **Sync** — fetch existing issue → refresh local report only |
+| Input                     | Mode                                                             |
+| ------------------------- | ---------------------------------------------------------------- |
+| Freeform bug description  | **Create** — interview → create GitHub issue → save local report |
+| `#42`, `42`, or issue URL | **Sync** — fetch existing issue → refresh local report only      |
 
 Default is **Create**. Sync never opens a new GitHub issue.
 
@@ -47,21 +47,21 @@ Or sync an existing issue locally:
 
 Collect all five before creating the GitHub issue. Pre-fill from inline notes and codebase context; **ask only for what is still missing**.
 
-| Field | Guide |
-|-------|-------|
-| **Summary** | One or two sentences: what is broken |
-| **Steps to reproduce** | Numbered steps, or `unknown — not yet reproduced` |
-| **Affected area** | Route, component, or file pattern (e.g. `/trainer/exercises`, `ExerciseFilters.tsx`) |
-| **Severity** | `critical`, `high`, `medium`, or `low` |
-| **Expected vs actual** | Bullet pair describing correct vs broken behavior |
+| Field                  | Guide                                                                                |
+| ---------------------- | ------------------------------------------------------------------------------------ |
+| **Summary**            | One or two sentences: what is broken                                                 |
+| **Steps to reproduce** | Numbered steps, or `unknown — not yet reproduced`                                    |
+| **Affected area**      | Route, component, or file pattern (e.g. `/trainer/exercises`, `ExerciseFilters.tsx`) |
+| **Severity**           | `critical`, `high`, `medium`, or `low`                                               |
+| **Expected vs actual** | Bullet pair describing correct vs broken behavior                                    |
 
 ### Optional fields (ask once if not provided; accept "none")
 
-| Field | Guide |
-|-------|-------|
-| **Workaround** | Temporary fix, or `none` |
-| **Local notes** | Investigation context not suitable for GitHub (hypotheses, file hints) |
-| **Linear issue** | `ZAW-N` if linked |
+| Field            | Guide                                                                  |
+| ---------------- | ---------------------------------------------------------------------- |
+| **Workaround**   | Temporary fix, or `none`                                               |
+| **Local notes**  | Investigation context not suitable for GitHub (hypotheses, file hints) |
+| **Linear issue** | `ZAW-N` if linked                                                      |
 
 Do not invent reproduction steps or severity — ask the user.
 
@@ -166,7 +166,7 @@ severity: <critical|high|medium|low>
 affected_area: <string>
 recorded: <YYYY-MM-DD>
 updated: <YYYY-MM-DD>
-linear_issue: <ZAW-N>   # omit line if none
+linear_issue: <ZAW-N> # omit line if none
 ---
 
 ## Summary
@@ -218,9 +218,9 @@ linear_issue: <ZAW-N>   # omit line if none
 
 Local triage reports for [ZawilecxD/trAInR issues](https://github.com/ZawilecxD/trAInR/issues). One file per issue; filenames are `<number>-<slug>.md`.
 
-| # | Severity | Status | Area | Report |
-|---|----------|--------|------|--------|
-| 1 | medium | open | ExerciseFilters | [0001-fix-select-dropdown-unreadable-text.md](./0001-fix-select-dropdown-unreadable-text.md) |
+| #   | Severity | Status | Area            | Report                                                                                       |
+| --- | -------- | ------ | --------------- | -------------------------------------------------------------------------------------------- |
+| 1   | medium   | open   | ExerciseFilters | [0001-fix-select-dropdown-unreadable-text.md](./0001-fix-select-dropdown-unreadable-text.md) |
 ```
 
 6. **Echo result**:

@@ -16,7 +16,6 @@ Trainer can open a protected `/trainer/exercises` area, create/edit/archive exer
 
 ## Key Decisions Made
 
-
 | Decision           | Choice                                                      | Why (1 sentence)                                                                      | Source |
 | ------------------ | ----------------------------------------------------------- | ------------------------------------------------------------------------------------- | ------ |
 | Delivery scope     | Full trainer CRUD + filter UI                               | Matches S-01 outcome directly and avoids a throwaway API-only increment.              | Plan   |
@@ -27,7 +26,6 @@ Trainer can open a protected `/trainer/exercises` area, create/edit/archive exer
 | Muscle filtering   | Multi-select groups                                         | Better real-world browsing with manageable complexity.                                | Plan   |
 | Search             | Include case-insensitive name search                        | Improves usability with low incremental scope cost.                                   | Plan   |
 | Verification level | Heavy verification with explicit test harness bootstrap     | Keeps success criteria executable in a repo that initially had no test runner.        | Plan   |
-
 
 ## Scope
 
@@ -54,17 +52,15 @@ Use a staged implementation:
 1. API contracts + validation first,
 2. trainer UI consumption second,
 3. security and regression hardening last.
-This keeps contracts stable before UI wiring and makes issues easier to isolate during verification.
+   This keeps contracts stable before UI wiring and makes issues easier to isolate during verification.
 
 ## Phases at a Glance
-
 
 | Phase                           | What it delivers                                                | Key risk                                                 |
 | ------------------------------- | --------------------------------------------------------------- | -------------------------------------------------------- |
 | 1. API contracts and validation | Trainer CRUD/filter endpoints with zod and service helpers      | Contract drift between route handlers and UI needs       |
 | 2. Trainer UI                   | List/filter/search + dedicated create/edit pages + archive flow | UX edge cases around filter state and archive visibility |
 | 3. Hardening                    | RLS verification script, regression checks, doc touch-ups       | False confidence without realistic ownership tests       |
-
 
 **Prerequisites:** F-01 schema/RLS already applied locally; trainer auth flow operational.
 **Estimated effort:** ~2-3 focused sessions across 3 phases.
@@ -80,4 +76,3 @@ This keeps contracts stable before UI wiring and makes issues easier to isolate 
 - Trainer can complete `create -> filter -> edit -> archive` in UI without backend errors.
 - API validation rejects malformed input and role-mismatched access reliably.
 - RLS ownership checks confirm cross-trainer access is blocked.
-
