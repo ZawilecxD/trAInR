@@ -3,7 +3,7 @@ project: "trAInR"
 version: 1
 status: draft
 created: 2026-05-25
-updated: 2026-06-05
+updated: 2026-06-07
 prd_version: 1
 main_goal: speed
 top_blocker: time
@@ -295,5 +295,5 @@ Foundations below assume these are present and do NOT re-scaffold them.
 
 ## Done
 
-- **S-01: trainer can create exercises (name, type, muscle groups, notes, optional video/photo link), edit them, and browse/filter by type and muscle group** — Done 2026-05-29. Lesson: —.
+- **S-01: trainer can create exercises (name, type, muscle groups, notes, optional video/photo link), edit them, and browse/filter by type and muscle group** — Archived 2026-06-07 → `context/archive/2026-05-28-exercise-library/`. Lesson: —.
 
