@@ -292,7 +292,7 @@ Round counts are tiny (≤20 per exercise, a handful of exercises per template).
 #### Automated
 
 - [x] 1.1 Migration applies cleanly: `npx supabase db reset` — e0895e4
-- [x] 1.2 Type checking passes: `npm run lint`
+- [x] 1.2 Type checking passes: `npm run lint` — 0abdf9c
 - [x] 1.3 Build passes: `npm run build` — e0895e4
 
 #### Manual
@@ -317,13 +317,13 @@ Round counts are tiny (≤20 per exercise, a handful of exercises per template).
 
 #### Automated
 
-- [x] 3.1 Form-validation unit tests pass: `npm run test`
-- [x] 3.2 Lint/typecheck passes: `npm run lint`
-- [x] 3.3 Build passes: `npm run build`
+- [x] 3.1 Form-validation unit tests pass: `npm run test` — f6a0146
+- [x] 3.2 Lint/typecheck passes: `npm run lint` — f6a0146
+- [x] 3.3 Build passes: `npm run build` — f6a0146
 
 #### Manual
 
-- [x] 3.4 Create/edit multi-round template; reload persists all rounds in order
-- [x] 3.5 Add/Duplicate/Remove round controls behave correctly; cannot save 0 rounds
-- [x] 3.6 Legacy migrated template opens with N identical rounds
-- [x] 3.7 `verification.sql` shows every check PASS in Supabase Studio
+- [x] 3.4 Create/edit multi-round template; reload persists all rounds in order — f6a0146
+- [x] 3.5 Add/Duplicate/Remove round controls behave correctly; cannot save 0 rounds — f6a0146
+- [x] 3.6 Legacy migrated template opens with N identical rounds — f6a0146
+- [x] 3.7 `verification.sql` shows every check PASS in Supabase Studio — f6a0146
