@@ -24,6 +24,7 @@ All 14 public tables have RLS enabled and every operation is covered by at least
 ## Desired End State
 
 A `tests/integration/rls/` test suite and supporting helpers that:
+
 1. Can be run locally against a `npx supabase start` instance with `npm run test:integration`
 2. Covers all 14 tables: SELECT, INSERT, UPDATE, and DELETE isolation between two trainer identities, plus client-side access where applicable
 3. Covers SECURITY DEFINER RPCs — expected behavior and documented gaps
@@ -95,15 +96,19 @@ Wire the integration test project config, env helpers, admin client factory, fix
 **Intent**: Centralise the three integration env vars with a startup-time validation that gives a clear error message if any are missing — prevents silent `undefined` keys reaching test assertions.
 
 **Contract**:
+
 ```ts
-export const SUPABASE_URL = process.env.INTEGRATION_SUPABASE_URL
-export const SUPABASE_ANON_KEY = process.env.INTEGRATION_SUPABASE_ANON_KEY
-export const SUPABASE_SERVICE_ROLE_KEY = process.env.INTEGRATION_SUPABASE_SERVICE_ROLE_KEY
+export const SUPABASE_URL = process.env.INTEGRATION_SUPABASE_URL;
+export const SUPABASE_ANON_KEY = process.env.INTEGRATION_SUPABASE_ANON_KEY;
+export const SUPABASE_SERVICE_ROLE_KEY = process.env.INTEGRATION_SUPABASE_SERVICE_ROLE_KEY;
 
 export function assertEnv() {
-  const missing = ['INTEGRATION_SUPABASE_URL', 'INTEGRATION_SUPABASE_ANON_KEY', 'INTEGRATION_SUPABASE_SERVICE_ROLE_KEY']
-    .filter(k => !process.env[k])
-  if (missing.length) throw new Error(`Integration env vars missing: ${missing.join(', ')}`)
+  const missing = [
+    "INTEGRATION_SUPABASE_URL",
+    "INTEGRATION_SUPABASE_ANON_KEY",
+    "INTEGRATION_SUPABASE_SERVICE_ROLE_KEY",
+  ].filter((k) => !process.env[k]);
+  if (missing.length) throw new Error(`Integration env vars missing: ${missing.join(", ")}`);
 }
 ```
 
@@ -122,18 +127,19 @@ export function assertEnv() {
 **Intent**: Provide typed factory functions for creating test trainer/client users and linking them. Each factory call creates a unique user (email derived from `crypto.randomUUID()`) so test files don't collide.
 
 **Contract**:
+
 ```ts
 // All functions use the admin client internally; callers get back:
 // { id, email, password, client: SupabaseClient }
 // where `client` is an anon-key instance already signed in as this user
 
-export async function createTrainer(): Promise<TestUser>
-export async function createClient_(trainer: TestUser): Promise<TestUser>
+export async function createTrainer(): Promise<TestUser>;
+export async function createClient_(trainer: TestUser): Promise<TestUser>;
 // createClient_ links the client to trainer via the trainer's client
 // by inserting a trainer_clients row directly (admin bypass) so
 // RLS tests start from a known clean assignment state
 
-export async function deleteUser(id: string): Promise<void>
+export async function deleteUser(id: string): Promise<void>;
 ```
 
 The returned `client` in each `TestUser` is an anon-key Supabase client (`SUPABASE_ANON_KEY`) that has already called `signInWithPassword` — this is the client test assertions must use.
@@ -153,6 +159,7 @@ The returned `client` in each `TestUser` is an anon-key Supabase client (`SUPABA
 **Intent**: Document the three integration env vars so new developers know what to add. Values point to the local Supabase defaults.
 
 **Contract**: Append:
+
 ```
 # Integration tests (requires `npx supabase start`)
 INTEGRATION_SUPABASE_URL=http://localhost:54321
@@ -388,12 +395,12 @@ Document the two known SECURITY DEFINER security gaps via explicit tests that as
 
 ```yaml
 test-integration:
-  needs: [test]   # wait for unit tests to pass first
+  needs: [test] # wait for unit tests to pass first
   runs-on: ubuntu-latest
   steps:
     - uses: actions/checkout@v4
     - uses: actions/setup-node@v4
-      with: { node-version: '22' }
+      with: { node-version: "22" }
     - run: npm ci
     - uses: supabase/setup-cli@v1
       with: { version: latest }
@@ -494,25 +501,25 @@ No new SQL migrations. The harness tests existing schema and policies; it does n
 
 #### Automated
 
-- [x] 3.1 `npm run test:integration` passes all Phase 3 tests
-- [x] 3.2 `npm run lint` passes
+- [x] 3.1 `npm run test:integration` passes all Phase 3 tests — 0c4750d
+- [x] 3.2 `npm run lint` passes — 0c4750d
 
 #### Manual
 
-- [ ] 3.3 Post-removal scenario confirmed: after `remove_trainer_client`, Trainer A's SELECT of client plans returns empty
-- [ ] 3.4 Trainer A sees their own clients' profiles and nothing else
+- [x] 3.3 Post-removal scenario confirmed: after `remove_trainer_client`, Trainer A's SELECT of client plans returns empty — 0c4750d
+- [x] 3.4 Trainer A sees their own clients' profiles and nothing else — 0c4750d
 
 ### Phase 4: Session Graph + Post-Removal Isolation
 
 #### Automated
 
-- [ ] 4.1 `npm run test:integration` passes all Phase 4 tests
-- [ ] 4.2 `npm run lint` passes
+- [x] 4.1 `npm run test:integration` passes all Phase 4 tests
+- [x] 4.2 `npm run lint` passes
 
 #### Manual
 
-- [ ] 4.3 Post-removal end-to-end: trainer sees data → remove → trainer sees nothing → client still sees historical plan
-- [ ] 4.4 Client cannot DELETE their own set_logs (no grant — expect error)
+- [x] 4.3 Post-removal end-to-end: trainer sees data → remove → trainer sees nothing → client still sees historical plan
+- [x] 4.4 Client cannot DELETE their own set_logs (no grant — expect error)
 
 ### Phase 5: SECURITY DEFINER Coverage + CI Wiring
 
