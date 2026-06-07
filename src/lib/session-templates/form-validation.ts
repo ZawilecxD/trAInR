@@ -10,17 +10,20 @@ import type { ExerciseMetric, ExercisePhase } from "@/types";
 
 export type MetricMode = "reps" | "duration";
 
+export interface TemplateExerciseSetFormEntry {
+  prescribedReps: number | null;
+  prescribedDuration: number | null;
+  prescribedLoadKg: number | null;
+  restAfterSeconds: number | null;
+}
+
 export interface TemplateExerciseFormEntry {
   exerciseId: string;
   exerciseName: string;
   exerciseDefaultMetric: ExerciseMetric;
   phase: ExercisePhase;
-  prescribedSets: number;
   metricMode: MetricMode;
-  prescribedReps: number | null;
-  prescribedDuration: number | null;
-  prescribedLoadKg: number | null;
-  restAfterSeconds: number | null;
+  rounds: TemplateExerciseSetFormEntry[];
   notes: string;
 }
 
@@ -29,6 +32,33 @@ export type PhaseEntries = Record<ExercisePhase, TemplateExerciseFormEntry[]>;
 export type TemplateFormFieldErrors = Partial<Record<"name" | "description" | "form", string>>;
 
 const PHASES: ExercisePhase[] = ["warm_up", "main", "cool_down"];
+
+function defaultRound(metricMode: MetricMode): TemplateExerciseSetFormEntry {
+  return {
+    prescribedReps: metricMode === "reps" ? 10 : null,
+    prescribedDuration: metricMode === "duration" ? 30 : null,
+    prescribedLoadKg: null,
+    restAfterSeconds: null,
+  };
+}
+
+function setToRound(set: TemplateExerciseWithName["sets"][number]): TemplateExerciseSetFormEntry {
+  return {
+    prescribedReps: set.prescribed_reps,
+    prescribedDuration: set.prescribed_duration_seconds,
+    prescribedLoadKg: set.prescribed_load_kg,
+    restAfterSeconds: set.rest_after_seconds,
+  };
+}
+
+function roundToPayload(round: TemplateExerciseSetFormEntry, metricMode: MetricMode) {
+  return {
+    prescribed_reps: metricMode === "reps" ? round.prescribedReps : null,
+    prescribed_duration_seconds: metricMode === "duration" ? round.prescribedDuration : null,
+    prescribed_load_kg: round.prescribedLoadKg,
+    rest_after_seconds: round.restAfterSeconds,
+  };
+}
 
 export function emptyPhaseEntries(): PhaseEntries {
   return {
@@ -55,12 +85,8 @@ export function exerciseToFormEntry(
     exerciseName: exercise.name,
     exerciseDefaultMetric: exercise.default_metric,
     phase,
-    prescribedSets: 3,
     metricMode,
-    prescribedReps: metricMode === "reps" ? 10 : null,
-    prescribedDuration: metricMode === "duration" ? 30 : null,
-    prescribedLoadKg: null,
-    restAfterSeconds: null,
+    rounds: [defaultRound(metricMode)],
     notes: "",
   };
 }
@@ -75,19 +101,23 @@ export function templateExerciseToFormEntry(row: TemplateExerciseWithName): Temp
       ? "duration"
       : hasReps && !hasDuration
         ? "reps"
-        : defaultMetricMode({ default_metric: row.exercise_default_metric });
+        : firstSet
+          ? firstSet.prescribed_reps !== null
+            ? "reps"
+            : firstSet.prescribed_duration_seconds !== null
+              ? "duration"
+              : defaultMetricMode({ default_metric: row.exercise_default_metric })
+          : defaultMetricMode({ default_metric: row.exercise_default_metric });
+
+  const rounds = sortedSets.length > 0 ? sortedSets.map(setToRound) : [defaultRound(metricMode)];
 
   return {
     exerciseId: row.exercise_id,
     exerciseName: row.exercise_name,
     exerciseDefaultMetric: row.exercise_default_metric,
     phase: row.phase,
-    prescribedSets: Math.max(sortedSets.length, 1),
     metricMode,
-    prescribedReps: firstSet ? firstSet.prescribed_reps : null,
-    prescribedDuration: firstSet ? firstSet.prescribed_duration_seconds : null,
-    prescribedLoadKg: firstSet ? firstSet.prescribed_load_kg : null,
-    restAfterSeconds: firstSet ? firstSet.rest_after_seconds : null,
+    rounds,
     notes: row.notes ?? "",
   };
 }
@@ -103,19 +133,44 @@ export function templateExercisesToPhaseEntries(exercises: TemplateExerciseWithN
   return entries;
 }
 
-export function exerciseEntryToPayload(entry: TemplateExerciseFormEntry, sortOrder: number): TemplateExerciseInput {
-  const round = {
-    prescribed_reps: entry.metricMode === "reps" ? entry.prescribedReps : null,
-    prescribed_duration_seconds: entry.metricMode === "duration" ? entry.prescribedDuration : null,
-    prescribed_load_kg: entry.prescribedLoadKg,
-    rest_after_seconds: entry.restAfterSeconds,
-  };
+export function addRound(entry: TemplateExerciseFormEntry): TemplateExerciseFormEntry {
+  const lastRound = entry.rounds.at(-1);
+  const nextRound = lastRound ? { ...lastRound } : defaultRound(entry.metricMode);
 
+  return {
+    ...entry,
+    rounds: [...entry.rounds, nextRound],
+  };
+}
+
+export function removeRound(entry: TemplateExerciseFormEntry, roundIndex: number): TemplateExerciseFormEntry {
+  if (entry.rounds.length <= 1) {
+    return entry;
+  }
+
+  return {
+    ...entry,
+    rounds: entry.rounds.filter((_, index) => index !== roundIndex),
+  };
+}
+
+export function updateRound(
+  entry: TemplateExerciseFormEntry,
+  roundIndex: number,
+  patch: Partial<TemplateExerciseSetFormEntry>,
+): TemplateExerciseFormEntry {
+  return {
+    ...entry,
+    rounds: entry.rounds.map((round, index) => (index === roundIndex ? { ...round, ...patch } : round)),
+  };
+}
+
+export function exerciseEntryToPayload(entry: TemplateExerciseFormEntry, sortOrder: number): TemplateExerciseInput {
   return {
     exercise_id: entry.exerciseId,
     phase: entry.phase,
     sort_order: sortOrder,
-    sets: Array.from({ length: entry.prescribedSets }, () => ({ ...round })),
+    sets: entry.rounds.map((round) => roundToPayload(round, entry.metricMode)),
     notes: entry.notes.trim().length > 0 ? entry.notes.trim() : null,
   };
 }

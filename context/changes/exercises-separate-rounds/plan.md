@@ -292,7 +292,7 @@ Round counts are tiny (≤20 per exercise, a handful of exercises per template).
 #### Automated
 
 - [x] 1.1 Migration applies cleanly: `npx supabase db reset` — e0895e4
-- [ ] 1.2 Type checking passes: `npm run lint`
+- [x] 1.2 Type checking passes: `npm run lint`
 - [x] 1.3 Build passes: `npm run build` — e0895e4
 
 #### Manual
@@ -305,25 +305,25 @@ Round counts are tiny (≤20 per exercise, a handful of exercises per template).
 
 #### Automated
 
-- [x] 2.1 Schema unit tests pass: `npm run test`
-- [x] 2.2 Lint/typecheck passes: `npm run lint`
-- [x] 2.3 Build passes: `npm run build`
+- [x] 2.1 Schema unit tests pass: `npm run test` — 0abdf9c
+- [x] 2.2 Lint/typecheck passes: `npm run lint` — 0abdf9c
+- [x] 2.3 Build passes: `npm run build` — 0abdf9c
 
 #### Manual
 
-- [x] 2.4 POST/PATCH + GET-by-id round-trip returns rounds in order
+- [x] 2.4 POST/PATCH + GET-by-id round-trip returns rounds in order — 0abdf9c
 
 ### Phase 3: Per-round editor UI, form-validation, and RLS verification
 
 #### Automated
 
-- [ ] 3.1 Form-validation unit tests pass: `npm run test`
-- [ ] 3.2 Lint/typecheck passes: `npm run lint`
-- [ ] 3.3 Build passes: `npm run build`
+- [x] 3.1 Form-validation unit tests pass: `npm run test`
+- [x] 3.2 Lint/typecheck passes: `npm run lint`
+- [x] 3.3 Build passes: `npm run build`
 
 #### Manual
 
-- [ ] 3.4 Create/edit multi-round template; reload persists all rounds in order
-- [ ] 3.5 Add/Duplicate/Remove round controls behave correctly; cannot save 0 rounds
-- [ ] 3.6 Legacy migrated template opens with N identical rounds
-- [ ] 3.7 `verification.sql` shows every check PASS in Supabase Studio
+- [x] 3.4 Create/edit multi-round template; reload persists all rounds in order
+- [x] 3.5 Add/Duplicate/Remove round controls behave correctly; cannot save 0 rounds
+- [x] 3.6 Legacy migrated template opens with N identical rounds
+- [x] 3.7 `verification.sql` shows every check PASS in Supabase Studio

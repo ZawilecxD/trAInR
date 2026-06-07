@@ -3,14 +3,18 @@ import { ChevronDown, ChevronUp, CircleAlert, Loader2, Plus, Save, Trash2, Arrow
 import ExercisePickerModal from "@/components/session-templates/ExercisePickerModal";
 import { Button } from "@/components/ui/button";
 import {
+  addRound,
   emptyPhaseEntries,
   exerciseToFormEntry,
+  removeRound,
   templateExercisesToPhaseEntries,
+  updateRound,
   validateCreateTemplateForm,
   validateUpdateTemplateForm,
   type MetricMode,
   type PhaseEntries,
   type TemplateExerciseFormEntry,
+  type TemplateExerciseSetFormEntry,
   type TemplateFormFieldErrors,
 } from "@/lib/session-templates/form-validation";
 import type { TemplateExerciseWithName } from "@/lib/session-templates/service";
@@ -114,6 +118,16 @@ export default function TemplateForm({ mode, templateId, availableExercises, ini
       entryIndex === index ? { ...entry, ...patch } : entry,
     );
     updatePhaseEntries(phase, entries);
+  }
+
+  function updateExerciseRound(
+    phase: ExercisePhase,
+    exerciseIndex: number,
+    roundIndex: number,
+    patch: Partial<TemplateExerciseSetFormEntry>,
+  ) {
+    const entry = phaseEntries[phase][exerciseIndex];
+    updateExerciseEntry(phase, exerciseIndex, updateRound(entry, roundIndex, patch));
   }
 
   function removeExerciseEntry(phase: ExercisePhase, index: number) {
@@ -374,9 +388,12 @@ export default function TemplateForm({ mode, templateId, availableExercises, ini
                                 onClick={() => {
                                   updateExerciseEntry(phase, index, {
                                     metricMode,
-                                    prescribedReps: metricMode === "reps" ? (entry.prescribedReps ?? 10) : null,
-                                    prescribedDuration:
-                                      metricMode === "duration" ? (entry.prescribedDuration ?? 30) : null,
+                                    rounds: entry.rounds.map((round) => ({
+                                      ...round,
+                                      prescribedReps: metricMode === "reps" ? (round.prescribedReps ?? 10) : null,
+                                      prescribedDuration:
+                                        metricMode === "duration" ? (round.prescribedDuration ?? 30) : null,
+                                    })),
                                   });
                                 }}
                               >
@@ -385,100 +402,127 @@ export default function TemplateForm({ mode, templateId, availableExercises, ini
                             ))}
                           </div>
 
-                          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-                            <div>
-                              <label className="mb-1 block text-xs text-blue-100/70">Sets</label>
-                              <input
-                                type="number"
-                                min={1}
-                                value={entry.prescribedSets}
-                                onChange={(event) => {
-                                  updateExerciseEntry(phase, index, {
-                                    prescribedSets: Number(event.target.value),
-                                  });
-                                }}
-                                className={inputClass}
-                              />
-                            </div>
+                          <div className="space-y-2">
+                            {entry.rounds.map((round, roundIndex) => (
+                              <div
+                                key={`${entry.exerciseId}-round-${roundIndex}`}
+                                className="rounded-lg border border-white/10 bg-white/5 p-3"
+                              >
+                                <div className="mb-2 flex items-center justify-between gap-2">
+                                  <p className="text-xs font-medium text-blue-100/80">Round {roundIndex + 1}</p>
+                                  <Button
+                                    type="button"
+                                    variant="outline"
+                                    size="sm"
+                                    className="border-white/20 bg-transparent text-red-200 hover:bg-red-500/10"
+                                    disabled={entry.rounds.length <= 1}
+                                    onClick={() => {
+                                      updateExerciseEntry(phase, index, removeRound(entry, roundIndex));
+                                    }}
+                                    aria-label={`Remove round ${roundIndex + 1}`}
+                                  >
+                                    <Trash2 className="size-4" />
+                                  </Button>
+                                </div>
 
-                            {entry.metricMode === "reps" ? (
-                              <div>
-                                <label className="mb-1 block text-xs text-blue-100/70">Reps</label>
-                                <input
-                                  type="number"
-                                  min={1}
-                                  value={entry.prescribedReps ?? ""}
-                                  onChange={(event) => {
-                                    const value = event.target.value;
-                                    updateExerciseEntry(phase, index, {
-                                      prescribedReps: value === "" ? null : Number(value),
-                                    });
-                                  }}
-                                  className={inputClass}
-                                />
+                                <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                                  {entry.metricMode === "reps" ? (
+                                    <div>
+                                      <label className="mb-1 block text-xs text-blue-100/70">Reps</label>
+                                      <input
+                                        type="number"
+                                        min={1}
+                                        value={round.prescribedReps ?? ""}
+                                        onChange={(event) => {
+                                          const value = event.target.value;
+                                          updateExerciseRound(phase, index, roundIndex, {
+                                            prescribedReps: value === "" ? null : Number(value),
+                                          });
+                                        }}
+                                        className={inputClass}
+                                      />
+                                    </div>
+                                  ) : (
+                                    <div>
+                                      <label className="mb-1 block text-xs text-blue-100/70">Duration (s)</label>
+                                      <input
+                                        type="number"
+                                        min={1}
+                                        value={round.prescribedDuration ?? ""}
+                                        onChange={(event) => {
+                                          const value = event.target.value;
+                                          updateExerciseRound(phase, index, roundIndex, {
+                                            prescribedDuration: value === "" ? null : Number(value),
+                                          });
+                                        }}
+                                        className={inputClass}
+                                      />
+                                    </div>
+                                  )}
+
+                                  <div>
+                                    <label className="mb-1 block text-xs text-blue-100/70">Load (kg, optional)</label>
+                                    <input
+                                      type="number"
+                                      min={0}
+                                      step="0.5"
+                                      value={round.prescribedLoadKg ?? ""}
+                                      onChange={(event) => {
+                                        const value = event.target.value;
+                                        updateExerciseRound(phase, index, roundIndex, {
+                                          prescribedLoadKg: value === "" ? null : Number(value),
+                                        });
+                                      }}
+                                      className={inputClass}
+                                    />
+                                  </div>
+
+                                  <div>
+                                    <label className="mb-1 block text-xs text-blue-100/70">Rest (s, optional)</label>
+                                    <input
+                                      type="number"
+                                      min={0}
+                                      value={round.restAfterSeconds ?? ""}
+                                      onChange={(event) => {
+                                        const value = event.target.value;
+                                        updateExerciseRound(phase, index, roundIndex, {
+                                          restAfterSeconds: value === "" ? null : Number(value),
+                                        });
+                                      }}
+                                      className={inputClass}
+                                    />
+                                  </div>
+                                </div>
                               </div>
-                            ) : (
-                              <div>
-                                <label className="mb-1 block text-xs text-blue-100/70">Duration (s)</label>
-                                <input
-                                  type="number"
-                                  min={1}
-                                  value={entry.prescribedDuration ?? ""}
-                                  onChange={(event) => {
-                                    const value = event.target.value;
-                                    updateExerciseEntry(phase, index, {
-                                      prescribedDuration: value === "" ? null : Number(value),
-                                    });
-                                  }}
-                                  className={inputClass}
-                                />
-                              </div>
-                            )}
+                            ))}
 
-                            <div>
-                              <label className="mb-1 block text-xs text-blue-100/70">Load (kg, optional)</label>
-                              <input
-                                type="number"
-                                min={0}
-                                step="0.5"
-                                value={entry.prescribedLoadKg ?? ""}
-                                onChange={(event) => {
-                                  const value = event.target.value;
-                                  updateExerciseEntry(phase, index, {
-                                    prescribedLoadKg: value === "" ? null : Number(value),
-                                  });
+                            <div className="flex flex-wrap gap-2">
+                              <Button
+                                type="button"
+                                variant="outline"
+                                size="sm"
+                                className="border-white/20 bg-transparent text-white hover:bg-white/10"
+                                disabled={entry.rounds.length >= 20}
+                                onClick={() => {
+                                  updateExerciseEntry(phase, index, addRound(entry));
                                 }}
-                                className={inputClass}
-                              />
+                              >
+                                <Plus className="size-4" />
+                                Add round
+                              </Button>
                             </div>
+                          </div>
 
-                            <div>
-                              <label className="mb-1 block text-xs text-blue-100/70">Rest (s, optional)</label>
-                              <input
-                                type="number"
-                                min={0}
-                                value={entry.restAfterSeconds ?? ""}
-                                onChange={(event) => {
-                                  const value = event.target.value;
-                                  updateExerciseEntry(phase, index, {
-                                    restAfterSeconds: value === "" ? null : Number(value),
-                                  });
-                                }}
-                                className={inputClass}
-                              />
-                            </div>
-
-                            <div className="sm:col-span-2 lg:col-span-4">
-                              <label className="mb-1 block text-xs text-blue-100/70">Notes (optional)</label>
-                              <input
-                                type="text"
-                                value={entry.notes}
-                                onChange={(event) => {
-                                  updateExerciseEntry(phase, index, { notes: event.target.value });
-                                }}
-                                className={inputClass}
-                              />
-                            </div>
+                          <div className="mt-3">
+                            <label className="mb-1 block text-xs text-blue-100/70">Notes (optional)</label>
+                            <input
+                              type="text"
+                              value={entry.notes}
+                              onChange={(event) => {
+                                updateExerciseEntry(phase, index, { notes: event.target.value });
+                              }}
+                              className={inputClass}
+                            />
                           </div>
                         </div>
                       ))
