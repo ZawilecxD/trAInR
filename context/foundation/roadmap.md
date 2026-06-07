@@ -43,7 +43,7 @@ Independent personal trainers lose coaching time to admin — hunting across spr
 | S-11 | client-removal | remove or reject a wrongly-assigned client | S-03 | FR-006 | done |
 | S-12 | exercise-statistics | view per-exercise history, estimated 1RM, and volume/tonnage | S-06 | FR-024, FR-025, FR-026 | proposed |
 | S-13 | data-edit-window | edit logged data for 24 hours, then sealed | S-06 | FR-022 | proposed |
-| S-14 | exercises-separate-rounds | prescribe each exercise round separately (reps, load, rest per round) | S-02 | FR-010, FR-011 | proposed |
+| S-14 | exercises-separate-rounds | prescribe each exercise round separately (reps, load, rest per round) | S-02 | FR-010, FR-011 | done |
 
 ## Streams
 
@@ -250,7 +250,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Blockers:** —
 - **Unknowns:** ~~Whether per-round rows live on template exercises only or also on assigned session exercises~~ — **Resolved:** both; session mirror deferred to S-04 (`session_exercise_sets`). Metric variants (time/distance) per round remain per-exercise (S-14).
 - **Risk:** Data model shift from flat `prescribed_*` fields to round rows cascades to S-04 (assignment), S-06 (guided logging), and S-07 (trainer readout); plan should define migration/backfill for templates created with uniform prescriptions
-- **Status:** proposed
+- **Status:** done
 
 ## Backlog Handoff
 
@@ -300,4 +300,5 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **S-03: trainer generates an invite link, client registers through it (email+password or Google), is auto-assigned to that trainer, and can log in/out** — Archived 2026-06-07 → `context/archive/2026-05-30-client-onboarding/`. Lesson: —.
 - **S-02: trainer can create a reusable session template organized into phases (warm-up/main/cooldown) with prescribed sets/reps/load and rest time per exercise, and edit existing templates** — Archived 2026-06-07 → `context/archive/2026-06-05-session-templates/`. Lesson: —.
 - **S-11: trainer can remove or reject a wrongly-assigned client** — Archived 2026-06-07 → `context/archive/2026-06-05-client-removal/`. Lesson: —.
+- **S-14: trainer can add an exercise to a session template and configure each round separately — e.g. round 1: 10 reps × 50 kg + 2 min rest, round 2: 8 × 60 kg + 2 min rest, round 3: 6 × 70 kg + 3 min rest — instead of a single uniform prescription for all sets** — Archived 2026-06-07 → `context/archive/2026-06-05-exercises-separate-rounds/`. Lesson: —.
 
