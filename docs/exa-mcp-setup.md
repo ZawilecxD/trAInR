@@ -65,15 +65,15 @@ export EXA_API_KEY="..."
 1. **Fully restart Cursor** (quit and reopen — reload is not enough)
 2. Open **Settings → Tools & Integrations → MCP**
 3. Confirm `exa` shows a green status dot
-4. In Agent chat, test: *"Search the web for Astro 6 SSR release notes"*
+4. In Agent chat, test: _"Search the web for Astro 6 SSR release notes"_
 
 ## Available tools
 
-| Tool | Default | Use for |
-|------|---------|---------|
-| `web_search_exa` | yes | General web search; clean, ready-to-use content |
-| `web_fetch_exa` | yes | Full content from a known URL |
-| `web_search_advanced_exa` | no* | Filters, domains, dates, categories — opt-in via `tools=` param |
+| Tool                      | Default | Use for                                                         |
+| ------------------------- | ------- | --------------------------------------------------------------- |
+| `web_search_exa`          | yes     | General web search; clean, ready-to-use content                 |
+| `web_fetch_exa`           | yes     | Full content from a known URL                                   |
+| `web_search_advanced_exa` | no\*    | Filters, domains, dates, categories — opt-in via `tools=` param |
 
 \* Enabled in this project's example config via the `tools=` query parameter.
 
@@ -95,13 +95,13 @@ https://mcp.exa.ai/mcp?tools=web_search_exa,web_fetch_exa,web_search_advanced_ex
 
 ## Troubleshooting
 
-| Symptom | Fix |
-|---------|-----|
-| MCP not loading | Restart Cursor; validate JSON in `.cursor/mcp.json` |
-| OAuth / auth failure | Complete browser sign-in; or add `x-api-key` header with a valid key |
-| Tools not visible | Toggle MCP on in Settings; inspect **Output → MCP Logs** |
-| Rate limits on free tier | Add your own API key via header or `exaApiKey` query param |
-| Wrong config picked up | Both `~/.cursor/mcp.json` (global) and `.cursor/mcp.json` (workspace) load — check both |
+| Symptom                  | Fix                                                                                     |
+| ------------------------ | --------------------------------------------------------------------------------------- |
+| MCP not loading          | Restart Cursor; validate JSON in `.cursor/mcp.json`                                     |
+| OAuth / auth failure     | Complete browser sign-in; or add `x-api-key` header with a valid key                    |
+| Tools not visible        | Toggle MCP on in Settings; inspect **Output → MCP Logs**                                |
+| Rate limits on free tier | Add your own API key via header or `exaApiKey` query param                              |
+| Wrong config picked up   | Both `~/.cursor/mcp.json` (global) and `.cursor/mcp.json` (workspace) load — check both |
 
 ## Security notes
 

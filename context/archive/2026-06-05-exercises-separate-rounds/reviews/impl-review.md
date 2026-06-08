@@ -1,4 +1,5 @@
 <!-- IMPL-REVIEW-REPORT -->
+
 # Implementation Review: Per-Round Exercise Prescription (S-14)
 
 - **Plan**: context/changes/exercises-separate-rounds/plan.md
@@ -9,22 +10,22 @@
 
 ## Verdicts
 
-| Dimension | Verdict |
-|-----------|---------|
-| Plan Adherence | PASS |
-| Scope Discipline | PASS |
-| Safety & Quality | PASS |
-| Architecture | PASS |
+| Dimension           | Verdict |
+| ------------------- | ------- |
+| Plan Adherence      | PASS    |
+| Scope Discipline    | PASS    |
+| Safety & Quality    | PASS    |
+| Architecture        | PASS    |
 | Pattern Consistency | WARNING |
-| Success Criteria | PASS |
+| Success Criteria    | PASS    |
 
 ## Automated Verification (re-run 2026-06-07)
 
-| Command | Result |
-|---------|--------|
-| `npm run test` | PASS — 47 tests, 6 files |
-| `npm run lint` | PASS — no issues |
-| `npm run build` | PASS |
+| Command         | Result                   |
+| --------------- | ------------------------ |
+| `npm run test`  | PASS — 47 tests, 6 files |
+| `npm run lint`  | PASS — no issues         |
+| `npm run build` | PASS                     |
 
 ## Findings
 

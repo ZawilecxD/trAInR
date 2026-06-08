@@ -52,40 +52,40 @@ The `.cursor/mcp.json` file is gitignored and stays local. Never commit it.
 1. Restart Cursor completely
 2. Open **Settings → Tools & Integrations → MCP**
 3. Confirm `github` shows a green status dot
-4. In Agent chat, test: *"List open issues in ZawilecxD/trAInR"*
+4. In Agent chat, test: _"List open issues in ZawilecxD/trAInR"_
 
 ## Available toolsets
 
 The remote server exposes these toolset groups. Default toolsets are active with no extra config.
 
-| Toolset | Default | Capabilities |
-|---------|---------|-------------|
-| `context` | yes | Current user and GitHub context |
-| `repos` | yes | Repository browsing, file contents, commits |
-| `issues` | yes | List, create, update issues |
-| `pull_requests` | yes | List, create, review PRs |
-| `users` | yes | User info lookups |
-| `actions` | no | Workflow runs, job logs, CI status |
-| `code_security` | no | Code scanning alerts |
-| `discussions` | no | GitHub Discussions |
-| `labels` | no | Label management |
-| `notifications` | no | GitHub Notifications |
-| `projects` | no | GitHub Projects |
-| `dependabot` | no | Dependabot alerts |
-| `git` | no | Low-level Git API operations |
-| `secret_protection` | no | Secret scanning |
-| `orgs` | no | Organization tools |
+| Toolset             | Default | Capabilities                                |
+| ------------------- | ------- | ------------------------------------------- |
+| `context`           | yes     | Current user and GitHub context             |
+| `repos`             | yes     | Repository browsing, file contents, commits |
+| `issues`            | yes     | List, create, update issues                 |
+| `pull_requests`     | yes     | List, create, review PRs                    |
+| `users`             | yes     | User info lookups                           |
+| `actions`           | no      | Workflow runs, job logs, CI status          |
+| `code_security`     | no      | Code scanning alerts                        |
+| `discussions`       | no      | GitHub Discussions                          |
+| `labels`            | no      | Label management                            |
+| `notifications`     | no      | GitHub Notifications                        |
+| `projects`          | no      | GitHub Projects                             |
+| `dependabot`        | no      | Dependabot alerts                           |
+| `git`               | no      | Low-level Git API operations                |
+| `secret_protection` | no      | Secret scanning                             |
+| `orgs`              | no      | Organization tools                          |
 
 ## Troubleshooting
 
-| Symptom | Fix |
-|---------|-----|
-| MCP not loading | Restart Cursor; validate JSON in `.cursor/mcp.json` |
+| Symptom                      | Fix                                                                                                               |
+| ---------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| MCP not loading              | Restart Cursor; validate JSON in `.cursor/mcp.json`                                                               |
 | 401 / authentication failure | Regenerate PAT; confirm scopes; confirm env var is visible to Cursor (launch from terminal with the var exported) |
-| Streamable HTTP error | Update Cursor to v0.48+ |
-| Tools not visible | Toggle MCP on in Settings; inspect **Output → MCP Logs** |
-| Wrong repo access | Fine-grained PAT must include `ZawilecxD/trAInR` in repository access |
-| Tool returns "not available" | The required toolset is opt-in; PAT may also need additional scopes |
+| Streamable HTTP error        | Update Cursor to v0.48+                                                                                           |
+| Tools not visible            | Toggle MCP on in Settings; inspect **Output → MCP Logs**                                                          |
+| Wrong repo access            | Fine-grained PAT must include `ZawilecxD/trAInR` in repository access                                             |
+| Tool returns "not available" | The required toolset is opt-in; PAT may also need additional scopes                                               |
 
 ## Security notes
 

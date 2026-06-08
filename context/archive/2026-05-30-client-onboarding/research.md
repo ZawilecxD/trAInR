@@ -35,11 +35,11 @@ How should we handle client onboarding, what should be the flow? Should we allow
 
 **If email is added later:** use **[Resend](https://resend.com/docs/send-with-astro)** (`npm install resend`) from an Astro API route (`POST /api/invites/send`) on Vercel. Do **not** conflate this with Supabase Auth’s built-in confirmation emails — those are a separate SMTP configuration (Resend as custom SMTP in Supabase Dashboard is still recommended for production auth mail). Implementation reference: [resend-docs.md](./resend-docs.md) (Context7).
 
-| Mode | MVP? | Fits PRD? | Complexity |
-|------|------|-----------|------------|
-| **Copy link only** | Yes (S-03) | Yes — FR-003/004 | Low — no email infra |
-| **Copy + optional “Send email”** | Post-MVP | Compatible extension | Medium — Resend + domain verify + API route |
-| **Email-only (trainer enters client email, system invites)** | No | Rejected for MVP; “future alternative” per PRD | High — different UX, deliverability, bounce handling |
+| Mode                                                         | MVP?       | Fits PRD?                                      | Complexity                                           |
+| ------------------------------------------------------------ | ---------- | ---------------------------------------------- | ---------------------------------------------------- |
+| **Copy link only**                                           | Yes (S-03) | Yes — FR-003/004                               | Low — no email infra                                 |
+| **Copy + optional “Send email”**                             | Post-MVP   | Compatible extension                           | Medium — Resend + domain verify + API route          |
+| **Email-only (trainer enters client email, system invites)** | No         | Rejected for MVP; “future alternative” per PRD | High — different UX, deliverability, bounce handling |
 
 ## Detailed Findings
 
@@ -47,16 +47,16 @@ How should we handle client onboarding, what should be the flow? Should we allow
 
 **Foundation exists; application layer not started.**
 
-| Layer | Status | Evidence |
-|-------|--------|----------|
-| `invite_links` + `trainer_clients` tables + RLS | Done (F-01) | `supabase/migrations/20260526120100_trainer_onboarding.sql` |
-| Profile role from signup metadata | Done — defaults `trainer` | `handle_new_user()` in `20260526120000_enums_profiles_helpers.sql:77-93` |
-| Trainer signup API | Done — hardcodes `role: "trainer"` | `src/pages/api/auth/signup.ts:15-21` |
-| Middleware role guards | Done — `/trainer/*`, `/client/*` prefixes | `src/middleware.ts:6-49` |
-| Invite generation UI/API | **Missing** | No `/api/invites`, no trainer pages |
-| Token validation RPC | **Deferred to S-03** | Migration comment line 38 |
-| Client signup via token | **Missing** | `SignUpForm.tsx` has no token field |
-| Email libraries in `package.json` | **None** | No resend/nodemailer/sendgrid |
+| Layer                                           | Status                                    | Evidence                                                                 |
+| ----------------------------------------------- | ----------------------------------------- | ------------------------------------------------------------------------ |
+| `invite_links` + `trainer_clients` tables + RLS | Done (F-01)                               | `supabase/migrations/20260526120100_trainer_onboarding.sql`              |
+| Profile role from signup metadata               | Done — defaults `trainer`                 | `handle_new_user()` in `20260526120000_enums_profiles_helpers.sql:77-93` |
+| Trainer signup API                              | Done — hardcodes `role: "trainer"`        | `src/pages/api/auth/signup.ts:15-21`                                     |
+| Middleware role guards                          | Done — `/trainer/*`, `/client/*` prefixes | `src/middleware.ts:6-49`                                                 |
+| Invite generation UI/API                        | **Missing**                               | No `/api/invites`, no trainer pages                                      |
+| Token validation RPC                            | **Deferred to S-03**                      | Migration comment line 38                                                |
+| Client signup via token                         | **Missing**                               | `SignUpForm.tsx` has no token field                                      |
+| Email libraries in `package.json`               | **None**                                  | No resend/nodemailer/sendgrid                                            |
 
 Roadmap marks S-03 as **proposed** (`context/foundation/roadmap.md:110-120`).
 
@@ -133,15 +133,15 @@ FR-003 already rejected email-based onboarding as the primary model:
 
 ### Full comparison: copy-link vs copy+email vs email-only
 
-| Dimension | Copy link only | Copy + send email | Email-only onboarding |
-|-----------|----------------|-------------------|------------------------|
-| **Trainer steps** | Generate → copy → paste in WhatsApp/SMS | Generate → copy *or* enter email → send | Enter client email → wait |
-| **Client steps** | Open link → register | Same | Click email link → register (or magic link) |
-| **PRD alignment** | Must-have (FR-003) | Extension; not required | Explicitly deferred |
-| **Infra** | DB + RPC only | + Resend API key, domain DNS | + deliverability, bounces, “didn’t receive email?” support |
-| **Privacy** | Trainer controls channel | App stores client email before account exists | App must handle invite to wrong address |
-| **Leak risk** | Link can be forwarded | Same + email forwarding | Supabase admin invite or custom token in email |
-| **Implementation** | S-03 scope | +1 API route, template, env secret | Different product flow; not planned |
+| Dimension          | Copy link only                          | Copy + send email                             | Email-only onboarding                                      |
+| ------------------ | --------------------------------------- | --------------------------------------------- | ---------------------------------------------------------- |
+| **Trainer steps**  | Generate → copy → paste in WhatsApp/SMS | Generate → copy _or_ enter email → send       | Enter client email → wait                                  |
+| **Client steps**   | Open link → register                    | Same                                          | Click email link → register (or magic link)                |
+| **PRD alignment**  | Must-have (FR-003)                      | Extension; not required                       | Explicitly deferred                                        |
+| **Infra**          | DB + RPC only                           | + Resend API key, domain DNS                  | + deliverability, bounces, “didn’t receive email?” support |
+| **Privacy**        | Trainer controls channel                | App stores client email before account exists | App must handle invite to wrong address                    |
+| **Leak risk**      | Link can be forwarded                   | Same + email forwarding                       | Supabase admin invite or custom token in email             |
+| **Implementation** | S-03 scope                              | +1 API route, template, env secret            | Different product flow; not planned                        |
 
 **Recommendation:** Ship **copy link only** in S-03. Design the invite API so a future `sendEmail: true` flag can call the same link without schema changes.
 
@@ -156,11 +156,11 @@ Use **`SECURITY DEFINER` RPC** — F-01 intentionally has **no anon RLS** on `in
 
 **API routes:**
 
-| Route | Role | Purpose |
-|-------|------|---------|
-| `POST /api/invites` | Trainer | Create invite row, return full URL |
-| `POST /api/auth/signup` | Anon | If `token` present: validate → `signUp({ data: { role: 'client' }})` → RPC assign |
-| `POST /api/invites/send` | Trainer | **Post-MVP** — Resend transactional email |
+| Route                    | Role    | Purpose                                                                           |
+| ------------------------ | ------- | --------------------------------------------------------------------------------- |
+| `POST /api/invites`      | Trainer | Create invite row, return full URL                                                |
+| `POST /api/auth/signup`  | Anon    | If `token` present: validate → `signUp({ data: { role: 'client' }})` → RPC assign |
+| `POST /api/invites/send` | Trainer | **Post-MVP** — Resend transactional email                                         |
 
 **Signup metadata contract:** S-03 must pass `role: 'client'` in `raw_user_meta_data` — `context/changes/database-schema-and-rls/plan.md:64-65`. Current trainer signup hardcodes `trainer` (`src/pages/api/auth/signup.ts:19`).
 
@@ -170,10 +170,10 @@ Use **`SECURITY DEFINER` RPC** — F-01 intentionally has **no anon RLS** on `in
 
 Do not merge these when planning:
 
-| Concern | Who triggers | MVP? | How to send |
-|---------|--------------|------|-------------|
+| Concern                                        | Who triggers                | MVP?                | How to send                                                   |
+| ---------------------------------------------- | --------------------------- | ------------------- | ------------------------------------------------------------- |
 | **Auth confirmation** (verify email on signup) | Supabase Auth automatically | Yes (existing flow) | Supabase built-in SMTP locally; **custom SMTP in production** |
-| **Trainer-initiated invite email** (optional) | Trainer clicks “Send” | No (non-goal) | App-owned API route + transactional provider |
+| **Trainer-initiated invite email** (optional)  | Trainer clicks “Send”       | No (non-goal)       | App-owned API route + transactional provider                  |
 
 #### Auth emails (Supabase)
 
@@ -212,14 +212,14 @@ export const POST: APIRoute = async (context) => {
 
 **Recommended library: [Resend](https://resend.com/docs/send-with-astro)** (`resend` npm package).
 
-| Provider | Why / why not for trAInR |
-|----------|--------------------------|
-| **Resend** | Best DX for Astro + Vercel + React 19; official Astro/Vercel docs; Vercel Marketplace integration; 3k emails/mo free tier; pairs with Supabase SMTP |
-| **Postmark** | Excellent deliverability; only 100 emails/mo free — fine for tiny MVP but less headroom |
-| **SendGrid** | Enterprise-grade; heavier setup; better if marketing + transactional at scale |
-| **AWS SES** | Cheapest at volume; more ops (IAM, region, sandbox exit) |
-| **Nodemailer** | Generic SMTP transport — use only if you must abstract over SMTP; adds indirection vs Resend SDK |
-| **Supabase Edge Function + provider** | Valid pattern; unnecessary here since Astro API routes already run on Vercel |
+| Provider                              | Why / why not for trAInR                                                                                                                            |
+| ------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Resend**                            | Best DX for Astro + Vercel + React 19; official Astro/Vercel docs; Vercel Marketplace integration; 3k emails/mo free tier; pairs with Supabase SMTP |
+| **Postmark**                          | Excellent deliverability; only 100 emails/mo free — fine for tiny MVP but less headroom                                                             |
+| **SendGrid**                          | Enterprise-grade; heavier setup; better if marketing + transactional at scale                                                                       |
+| **AWS SES**                           | Cheapest at volume; more ops (IAM, region, sandbox exit)                                                                                            |
+| **Nodemailer**                        | Generic SMTP transport — use only if you must abstract over SMTP; adds indirection vs Resend SDK                                                    |
+| **Supabase Edge Function + provider** | Valid pattern; unnecessary here since Astro API routes already run on Vercel                                                                        |
 
 Store `RESEND_API_KEY` in Vercel env (and `.env` locally). Verify sending domain in Resend before production.
 
@@ -285,9 +285,9 @@ Existing patterns to reuse:
 
 ## Recommendation Summary
 
-| Question | Answer |
-|----------|--------|
-| **What flow?** | Trainer generates single-use link → client registers at `/auth/signup?token=…` → auto-assign → confirm email → client home |
-| **Copy ref link on page?** | **Yes — required for S-03 MVP** |
-| **Send email from trainer UI?** | **Not in MVP** (PRD non-goal); optional post-MVP on same link |
+| Question                           | Answer                                                                                                                          |
+| ---------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| **What flow?**                     | Trainer generates single-use link → client registers at `/auth/signup?token=…` → auto-assign → confirm email → client home      |
+| **Copy ref link on page?**         | **Yes — required for S-03 MVP**                                                                                                 |
+| **Send email from trainer UI?**    | **Not in MVP** (PRD non-goal); optional post-MVP on same link                                                                   |
 | **If email later, which library?** | **`resend`** npm package from Astro API route on Vercel; configure Resend SMTP separately for Supabase Auth confirmation emails |

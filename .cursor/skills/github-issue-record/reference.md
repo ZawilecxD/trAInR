@@ -2,12 +2,12 @@
 
 ## Severity guide
 
-| Level | When to use |
-|-------|-------------|
-| **critical** | Data loss, auth bypass, production down, blocks all users |
-| **high** | Core flow broken for many users; no reasonable workaround |
-| **medium** | Feature degraded or broken for a subset; workaround exists |
-| **low** | Cosmetic, edge case, or nice-to-fix |
+| Level        | When to use                                                |
+| ------------ | ---------------------------------------------------------- |
+| **critical** | Data loss, auth bypass, production down, blocks all users  |
+| **high**     | Core flow broken for many users; no reasonable workaround  |
+| **medium**   | Feature degraded or broken for a subset; workaround exists |
+| **low**      | Cosmetic, edge case, or nice-to-fix                        |
 
 ## Affected area examples
 
@@ -21,19 +21,19 @@ Be specific enough that `/10x-plan` or `/10x-implement` can grep the codebase:
 
 ## Title examples (Create mode)
 
-| Summary seed | Title |
-|--------------|-------|
-| Select dropdown white on white | `fix select dropdown unreadable text on dark theme` |
-| Login redirect loops after signout | `fix login redirect loop after signout` |
-| RLS blocks trainer from own exercises | `fix exercises RLS policy for trainer owner` |
+| Summary seed                          | Title                                               |
+| ------------------------------------- | --------------------------------------------------- |
+| Select dropdown white on white        | `fix select dropdown unreadable text on dark theme` |
+| Login redirect loops after signout    | `fix login redirect loop after signout`             |
+| RLS blocks trainer from own exercises | `fix exercises RLS policy for trainer owner`        |
 
 ## Parsing issue references (Sync mode)
 
-| Input | Resolved `#` |
-|-------|----------------|
-| `42` | 42 |
-| `#42` | 42 |
-| `https://github.com/ZawilecxD/trAInR/issues/42` | 42 |
+| Input                                           | Resolved `#` |
+| ----------------------------------------------- | ------------ |
+| `42`                                            | 42           |
+| `#42`                                           | 42           |
+| `https://github.com/ZawilecxD/trAInR/issues/42` | 42           |
 
 Reject references to other repos unless the user explicitly overrides.
 

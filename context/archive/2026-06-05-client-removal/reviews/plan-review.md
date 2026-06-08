@@ -1,4 +1,5 @@
 <!-- PLAN-REVIEW-REPORT -->
+
 # Plan Review: Client Removal (S-11)
 
 - **Plan**: `context/changes/client-removal/plan.md`
@@ -9,13 +10,13 @@
 
 ## Verdicts
 
-| Dimension | Verdict |
-|-----------|---------|
-| End-State Alignment | PASS |
-| Lean Execution | PASS |
-| Architectural Fitness | PASS |
-| Blind Spots | PASS |
-| Plan Completeness | PASS |
+| Dimension             | Verdict |
+| --------------------- | ------- |
+| End-State Alignment   | PASS    |
+| Lean Execution        | PASS    |
+| Architectural Fitness | PASS    |
+| Blind Spots           | PASS    |
+| Plan Completeness     | PASS    |
 
 ## Grounding
 

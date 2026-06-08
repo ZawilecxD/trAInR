@@ -43,10 +43,10 @@ Solo developer shipping a trainer-client web app in 3 weeks after-hours, with au
 
 ## Pre-scaffold verification
 
-| Signal | Value | Severity | Notes |
-| --- | --- | --- | --- |
-| npm package | not run | n/a | cmd_template uses `git clone`, not an npm create CLI |
-| GitHub repo | not run | n/a | `gh` CLI not installed; could not query repos/przeprogramowani/10x-astro-starter pushed_at |
+| Signal      | Value   | Severity | Notes                                                                                      |
+| ----------- | ------- | -------- | ------------------------------------------------------------------------------------------ |
+| npm package | not run | n/a      | cmd_template uses `git clone`, not an npm create CLI                                       |
+| GitHub repo | not run | n/a      | `gh` CLI not installed; could not query repos/przeprogramowani/10x-astro-starter pushed_at |
 
 ## Scaffold log
 
@@ -98,27 +98,28 @@ None.
 
 ## Hints recorded but not acted on
 
-| Hint | Value |
-| --- | --- |
-| bootstrapper_confidence | first-class |
-| quality_override | false |
-| path_taken | custom |
-| self_check_answers | typed: false, from_official_starter: true, conventions: true, docs_current: true, can_judge_agent: true |
-| team_size | solo |
-| deployment_target | cloudflare-pages |
-| ci_provider | github-actions |
-| ci_default_flow | auto-deploy-on-merge |
-| has_auth | true |
-| has_payments | false |
-| has_realtime | false |
-| has_ai | false |
-| has_background_jobs | false |
+| Hint                    | Value                                                                                                   |
+| ----------------------- | ------------------------------------------------------------------------------------------------------- |
+| bootstrapper_confidence | first-class                                                                                             |
+| quality_override        | false                                                                                                   |
+| path_taken              | custom                                                                                                  |
+| self_check_answers      | typed: false, from_official_starter: true, conventions: true, docs_current: true, can_judge_agent: true |
+| team_size               | solo                                                                                                    |
+| deployment_target       | cloudflare-pages                                                                                        |
+| ci_provider             | github-actions                                                                                          |
+| ci_default_flow         | auto-deploy-on-merge                                                                                    |
+| has_auth                | true                                                                                                    |
+| has_payments            | false                                                                                                   |
+| has_realtime            | false                                                                                                   |
+| has_ai                  | false                                                                                                   |
+| has_background_jobs     | false                                                                                                   |
 
 ## Next steps
 
 Next: a future skill will set up agent context (CLAUDE.md, AGENTS.md). For now, your project is scaffolded and verified — happy hacking.
 
 Useful manual steps in the meantime:
+
 - Review any `.scaffold` siblings the conflict policy created and decide which version of each file to keep.
 - Address audit findings per your project's risk tolerance — the full breakdown is in this log.
 - The 47 `.scaffold` files can be diffed against their existing counterparts (`diff README.md README.md.scaffold`) to see what the latest starter ships vs what you have. Clean them up once reviewed.

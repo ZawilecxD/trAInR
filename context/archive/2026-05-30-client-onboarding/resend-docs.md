@@ -15,11 +15,11 @@ Reference notes fetched via **Context7 MCP** (`/websites/resend`, `/resend/resen
 
 ## How Resend fits client-onboarding
 
-| Concern | S-03 MVP? | Resend usage |
-|---------|-----------|--------------|
-| Trainer copies invite link | **Yes** | None — no Resend API route needed |
-| Auth confirmation after signup | **Yes** (production) | **SMTP** in Supabase Dashboard |
-| Trainer “Send email” from UI | **Post-MVP** | **Node SDK** in Astro server code |
+| Concern                        | S-03 MVP?            | Resend usage                      |
+| ------------------------------ | -------------------- | --------------------------------- |
+| Trainer copies invite link     | **Yes**              | None — no Resend API route needed |
+| Auth confirmation after signup | **Yes** (production) | **SMTP** in Supabase Dashboard    |
+| Trainer “Send email” from UI   | **Post-MVP**         | **Node SDK** in Astro server code |
 
 Do not merge auth confirmation mail with trainer-initiated invite mail when planning — same provider (Resend) can serve both via **SMTP + API key**.
 
@@ -41,25 +41,25 @@ Validate trainer session and role server-side before sending. Never call Resend 
 ### Official Astro Actions pattern (Context7)
 
 ```typescript
-import { ActionError, defineAction } from 'astro:actions';
-import { Resend } from 'resend';
+import { ActionError, defineAction } from "astro:actions";
+import { Resend } from "resend";
 
 const resend = new Resend(import.meta.env.RESEND_API_KEY);
 
 export const server = {
   send: defineAction({
-    accept: 'form',
+    accept: "form",
     handler: async () => {
       const { data, error } = await resend.emails.send({
-        from: 'Acme <onboarding@resend.dev>',
-        to: ['delivered@resend.dev'],
-        subject: 'Hello world',
-        html: '<strong>It works!</strong>',
+        from: "Acme <onboarding@resend.dev>",
+        to: ["delivered@resend.dev"],
+        subject: "Hello world",
+        html: "<strong>It works!</strong>",
       });
 
       if (error) {
         throw new ActionError({
-          code: 'BAD_REQUEST',
+          code: "BAD_REQUEST",
           message: error.message,
         });
       }
@@ -121,12 +121,12 @@ Covers **“confirm your email”** after client signup — not trainer invite d
 
 Configure in **Supabase → Authentication → Email → SMTP Settings** ([Resend + Supabase guide](https://resend.com/docs/send-with-supabase-smtp)):
 
-| Field | Value |
-|-------|--------|
-| SMTP host | `smtp.resend.com` |
-| Port | `587` (TLS) or `465` (SSL) |
-| Username | `resend` |
-| Password | Resend API key |
+| Field               | Value                           |
+| ------------------- | ------------------------------- |
+| SMTP host           | `smtp.resend.com`               |
+| Port                | `587` (TLS) or `465` (SSL)      |
+| Username            | `resend`                        |
+| Password            | Resend API key                  |
 | Sender email / name | Verified address on your domain |
 
 After switching off Supabase default SMTP, raise the default **30 emails/hour** auth rate limit.
@@ -155,7 +155,7 @@ Laravel/Django examples in Resend docs also document `smtp.resend.com`, user `re
 
 ## Context7 sources
 
-| Library ID | Use |
-|------------|-----|
-| `/websites/resend` | Astro send, SMTP/Supabase, prerequisites |
+| Library ID                | Use                                                   |
+| ------------------------- | ----------------------------------------------------- |
+| `/websites/resend`        | Astro send, SMTP/Supabase, prerequisites              |
 | `/resend/resend-examples` | Node/TypeScript patterns, error handling, React Email |

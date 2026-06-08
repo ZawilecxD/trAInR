@@ -14,14 +14,14 @@ Auth is **disabled gracefully** when env vars are missing: API routes redirect w
 
 ## Architecture
 
-| Piece | Location | Role |
-| ----- | -------- | ---- |
-| Env schema | `astro.config.mjs` | Declares `SUPABASE_URL` and `SUPABASE_KEY` as server-only secrets |
-| SSR client | `src/lib/supabase.ts` | `createServerClient()` with cookie read/write |
-| Middleware | `src/middleware.ts` | Resolves user, protects `PROTECTED_ROUTES` |
-| Auth API | `src/pages/api/auth/{signin,signup,signout}.ts` | Form POST handlers |
-| Auth UI | `src/pages/auth/{signin,signup,confirm-email}.astro` | Sign-in/up forms |
-| Config check | `src/lib/config-status.ts` | Surfaces missing Supabase config in UI |
+| Piece        | Location                                             | Role                                                              |
+| ------------ | ---------------------------------------------------- | ----------------------------------------------------------------- |
+| Env schema   | `astro.config.mjs`                                   | Declares `SUPABASE_URL` and `SUPABASE_KEY` as server-only secrets |
+| SSR client   | `src/lib/supabase.ts`                                | `createServerClient()` with cookie read/write                     |
+| Middleware   | `src/middleware.ts`                                  | Resolves user, protects `PROTECTED_ROUTES`                        |
+| Auth API     | `src/pages/api/auth/{signin,signup,signout}.ts`      | Form POST handlers                                                |
+| Auth UI      | `src/pages/auth/{signin,signup,confirm-email}.astro` | Sign-in/up forms                                                  |
+| Config check | `src/lib/config-status.ts`                           | Surfaces missing Supabase config in UI                            |
 
 Secrets are imported from `astro:env/server` — they are **never** exposed to the client bundle. See `CLAUDE.md` for Astro env notes.
 
@@ -29,9 +29,9 @@ Secrets are imported from `astro:env/server` — they are **never** exposed to t
 
 Copy `.env.example` to `.env` and set:
 
-| Variable | Description |
-| -------- | ----------- |
-| `SUPABASE_URL` | Project API URL |
+| Variable       | Description                                |
+| -------------- | ------------------------------------------ |
+| `SUPABASE_URL` | Project API URL                            |
 | `SUPABASE_KEY` | **anon** (public) key — not `service_role` |
 
 Also configure the same variables for:
@@ -82,7 +82,6 @@ Requires [Docker](https://www.docker.com/) and ~7 GB RAM.
    ```
 
    This applies migrations in timestamp order:
-
    - `20260526120000_enums_profiles_helpers.sql`
    - `20260526120100_trainer_onboarding.sql`
    - `20260526120200_exercise_library.sql`
@@ -172,22 +171,22 @@ Recommended checklist:
 
 ## Auth routes
 
-| Route | Description |
-| ----- | ----------- |
-| `/auth/signin` | Sign-in form |
-| `/auth/signup` | Sign-up form |
-| `/auth/confirm-email` | Post-signup “check your inbox” page |
-| `/dashboard` | Example protected page (redirects to sign-in if unauthenticated) |
+| Route                 | Description                                                      |
+| --------------------- | ---------------------------------------------------------------- |
+| `/auth/signin`        | Sign-in form                                                     |
+| `/auth/signup`        | Sign-up form                                                     |
+| `/auth/confirm-email` | Post-signup “check your inbox” page                              |
+| `/dashboard`          | Example protected page (redirects to sign-in if unauthenticated) |
 
 `src/middleware.ts` protects `/dashboard`, and enforces role prefixes on `/trainer/*` and `/client/*`.
 
 ## API endpoints
 
-| Method | Path | Action |
-| ------ | ---- | ------ |
-| `POST` | `/api/auth/signin` | `signInWithPassword` → redirect `/` |
-| `POST` | `/api/auth/signup` | `signUp` → redirect `/auth/confirm-email` |
-| `POST` | `/api/auth/signout` | `signOut` → redirect `/` |
+| Method | Path                | Action                                    |
+| ------ | ------------------- | ----------------------------------------- |
+| `POST` | `/api/auth/signin`  | `signInWithPassword` → redirect `/`       |
+| `POST` | `/api/auth/signup`  | `signUp` → redirect `/auth/confirm-email` |
+| `POST` | `/api/auth/signout` | `signOut` → redirect `/`                  |
 
 All API route files must export `const prerender = false` when added (project convention for SSR endpoints).
 
@@ -214,23 +213,23 @@ All API route files must export `const prerender = false` when added (project co
 
 ## Local vs hosted quick reference
 
-| | Local (`supabase start`) | Hosted (cloud) |
-| --- | --- | --- |
-| `SUPABASE_URL` | `http://127.0.0.1:54321` | `https://<ref>.supabase.co` |
-| `SUPABASE_KEY` | anon key from CLI | anon key from dashboard |
-| Auth redirect config | `supabase/config.toml` | Supabase dashboard |
-| Docker | Required | Not required |
-| Studio | `http://localhost:54323` | Dashboard UI |
+|                      | Local (`supabase start`) | Hosted (cloud)              |
+| -------------------- | ------------------------ | --------------------------- |
+| `SUPABASE_URL`       | `http://127.0.0.1:54321` | `https://<ref>.supabase.co` |
+| `SUPABASE_KEY`       | anon key from CLI        | anon key from dashboard     |
+| Auth redirect config | `supabase/config.toml`   | Supabase dashboard          |
+| Docker               | Required                 | Not required                |
+| Studio               | `http://localhost:54323` | Dashboard UI                |
 
 ## Troubleshooting
 
-| Symptom | Likely cause | Fix |
-| ------- | ------------ | --- |
-| “Supabase is not configured” | Missing/empty env vars | Set `SUPABASE_URL` and `SUPABASE_KEY` in `.env`, restart dev server |
-| Still talking to local Supabase | `.env` has `127.0.0.1:54321` | Switch to cloud URL and anon key |
-| Sign-in fails after signup | Email confirmation enabled | Disable in dashboard or confirm via email |
-| Redirect / auth errors | Wrong Site URL or Redirect URLs | Use `http://localhost:4321` and `http://localhost:4321/**` for local dev |
-| Build fails in CI | Missing GitHub secrets | Add `SUPABASE_URL` and `SUPABASE_KEY` repository secrets |
+| Symptom                         | Likely cause                    | Fix                                                                      |
+| ------------------------------- | ------------------------------- | ------------------------------------------------------------------------ |
+| “Supabase is not configured”    | Missing/empty env vars          | Set `SUPABASE_URL` and `SUPABASE_KEY` in `.env`, restart dev server      |
+| Still talking to local Supabase | `.env` has `127.0.0.1:54321`    | Switch to cloud URL and anon key                                         |
+| Sign-in fails after signup      | Email confirmation enabled      | Disable in dashboard or confirm via email                                |
+| Redirect / auth errors          | Wrong Site URL or Redirect URLs | Use `http://localhost:4321` and `http://localhost:4321/**` for local dev |
+| Build fails in CI               | Missing GitHub secrets          | Add `SUPABASE_URL` and `SUPABASE_KEY` repository secrets                 |
 
 ## Related docs
 

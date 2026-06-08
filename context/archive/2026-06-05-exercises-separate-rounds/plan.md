@@ -67,6 +67,7 @@ Create the `template_exercise_sets` table with RLS, backfill existing prescripti
 **Intent**: Add per-round prescription storage, migrate existing data, then remove the flat per-exercise prescription columns.
 
 **Contract**:
+
 - Create `public.template_exercise_sets`:
   - `id uuid pk default gen_random_uuid()`
   - `template_exercise_id uuid not null references public.template_exercises(id) on delete cascade`
@@ -136,6 +137,7 @@ Make the API accept and return the nested round collection, with replace-all sem
 **Intent**: Read sets via the join, and write them through a two-step nested insert in both create and update.
 
 **Contract**:
+
 - `TemplateExerciseWithName` = updated `TemplateExercise` (now with `sets`) + `exercise_name` + `exercise_default_metric`.
 - `getTemplate` join becomes `*, template_exercises(*, exercises(name, default_metric), template_exercise_sets(*))`; `mapTemplateExerciseRow` maps nested `template_exercise_sets` into `sets` sorted by `set_number`.
 - `createTemplate` / `updateTemplate`: persist exercises with a per-exercise loop — for each input exercise insert its `template_exercises` row via `.select().single()`, then insert that exercise's `sets[]` as `template_exercise_sets` rows using the returned id and `set_number` = index+1 (explicit id↔sets binding; never zip-by-index, see Critical Implementation Details). Update keeps the existing `delete template_exercises` step (sets cascade away); on any error return `{ error }`. Create keeps template-rollback on child-insert failure.
@@ -187,6 +189,7 @@ Grow `TemplateForm` from single-value inputs to a per-round editor, update the f
 **Intent**: Move per-round numeric fields into a `rounds` array on the form entry; map to/from the API `sets` shape; keep `metricMode` and `notes` at the exercise level.
 
 **Contract**:
+
 - New `TemplateExerciseSetFormEntry { prescribedReps: number | null; prescribedDuration: number | null; prescribedLoadKg: number | null; restAfterSeconds: number | null }`.
 - `TemplateExerciseFormEntry` drops the single `prescribedSets`/`prescribedReps`/`prescribedDuration`/`prescribedLoadKg`/`restAfterSeconds`; keeps `exerciseId`, `exerciseName`, `exerciseDefaultMetric`, `phase`, `metricMode`, `notes`; adds `rounds: TemplateExerciseSetFormEntry[]`.
 - `exerciseToFormEntry`: seed `rounds` with one default round (reps 10 or duration 30 per `defaultMetricMode`).
@@ -271,7 +274,7 @@ Round counts are tiny (≤20 per exercise, a handful of exercises per template).
 - Backfill runs inside the migration before the column drop; `greatest(prescribed_sets, 1)` guards against any zero/null count. Existing templates become N identical rounds — semantically equivalent to the old uniform prescription.
 - Backfill correctness cannot be proven by `npx supabase db reset` (that migrates an empty DB). Verify it by migrating onto a populated DB — see the Phase 1 manual verification recipe (apply prior migrations → insert a legacy `template_exercises` row → run `supabase migration up` for this migration → assert expanded rows).
 - Irreversible: dropping the flat columns means a down-migration would lose per-round data. Acceptable for pre-launch MVP with no production data.
-- **Follow-up for S-04:** when plan-assignment is built, `session_exercises` must adopt the same per-round model (a `session_exercise_sets` table) and the session-creation/snapshot logic must copy `template_exercise_sets` → `session_exercise_sets`. Logged data already lives per-set in `set_logs`; only the *prescription* snapshot needs the parallel structure.
+- **Follow-up for S-04:** when plan-assignment is built, `session_exercises` must adopt the same per-round model (a `session_exercise_sets` table) and the session-creation/snapshot logic must copy `template_exercise_sets` → `session_exercise_sets`. Logged data already lives per-set in `set_logs`; only the _prescription_ snapshot needs the parallel structure.
 
 ## References
 

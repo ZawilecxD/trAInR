@@ -1,4 +1,5 @@
 <!-- PLAN-REVIEW-REPORT -->
+
 # Plan Review: Per-Round Exercise Prescription (S-14)
 
 - **Plan**: `context/changes/exercises-separate-rounds/plan.md`
@@ -9,13 +10,13 @@
 
 ## Verdicts
 
-| Dimension | Verdict |
-|-----------|---------|
-| End-State Alignment | PASS |
-| Lean Execution | PASS |
+| Dimension             | Verdict              |
+| --------------------- | -------------------- |
+| End-State Alignment   | PASS                 |
+| Lean Execution        | PASS                 |
 | Architectural Fitness | WARNING (F1 — fixed) |
-| Blind Spots | WARNING (F2 — fixed) |
-| Plan Completeness | WARNING (F3 — fixed) |
+| Blind Spots           | WARNING (F2 — fixed) |
+| Plan Completeness     | WARNING (F3 — fixed) |
 
 ## Grounding
 

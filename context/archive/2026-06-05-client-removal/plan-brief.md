@@ -16,15 +16,15 @@ On `/trainer/clients`, the trainer confirms removal in a dialog; the client vani
 
 ## Key Decisions Made
 
-| Decision | Choice | Why (1 sentence) | Source |
-|----------|--------|------------------|--------|
-| Removal mechanism | Soft update (`status=removed`, `removed_at`) | Matches schema design and roadmap retention policy | Research / ERD |
-| Plan handling | Archive active `client_plans` in same transaction | ERD Q3; prevents orphaned active plans | ERD |
-| Backend entry point | `remove_trainer_client` RPC + thin DELETE API | Atomicity; mirrors S-03 invite RPC pattern | Plan |
-| UX surface | Extend `InviteClientPanel` only | Avoid scope creep into S-04/S-07 | Plan |
-| "Reject" semantics | Same as post-assignment remove | No pending-assignment state exists pre-signup | Plan |
-| Re-invite after removal | Allow via existing invite flow (new row) | No unique constraint; out of scope to block | Plan |
-| Post-removal trainer access | Tighten RLS — active assignment required | Plan-review F1 Fix B; blocks trainer reads on plans/sessions after removal | Plan review |
+| Decision                    | Choice                                            | Why (1 sentence)                                                           | Source         |
+| --------------------------- | ------------------------------------------------- | -------------------------------------------------------------------------- | -------------- |
+| Removal mechanism           | Soft update (`status=removed`, `removed_at`)      | Matches schema design and roadmap retention policy                         | Research / ERD |
+| Plan handling               | Archive active `client_plans` in same transaction | ERD Q3; prevents orphaned active plans                                     | ERD            |
+| Backend entry point         | `remove_trainer_client` RPC + thin DELETE API     | Atomicity; mirrors S-03 invite RPC pattern                                 | Plan           |
+| UX surface                  | Extend `InviteClientPanel` only                   | Avoid scope creep into S-04/S-07                                           | Plan           |
+| "Reject" semantics          | Same as post-assignment remove                    | No pending-assignment state exists pre-signup                              | Plan           |
+| Re-invite after removal     | Allow via existing invite flow (new row)          | No unique constraint; out of scope to block                                | Plan           |
+| Post-removal trainer access | Tighten RLS — active assignment required          | Plan-review F1 Fix B; blocks trainer reads on plans/sessions after removal | Plan review    |
 
 ## Scope
 
@@ -46,10 +46,10 @@ RLS and existing active-only queries automatically hide the client from the trai
 
 ## Phases at a Glance
 
-| Phase | What it delivers | Key risk |
-|-------|------------------|----------|
+| Phase                      | What it delivers                                            | Key risk                                                        |
+| -------------------------- | ----------------------------------------------------------- | --------------------------------------------------------------- |
 | 1. Remove client RPC + RLS | Transactional soft-remove, plan archival, trainer isolation | Archive must run before assignment removal; policy blast radius |
-| 2. API + clients UI | DELETE route, dialog, optimistic list update | Missing shadcn alert-dialog install |
+| 2. API + clients UI        | DELETE route, dialog, optimistic list update                | Missing shadcn alert-dialog install                             |
 
 **Prerequisites:** S-03 implemented; local Supabase with F-01 migrations applied.
 

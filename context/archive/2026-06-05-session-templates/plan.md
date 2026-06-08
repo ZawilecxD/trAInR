@@ -27,6 +27,7 @@ DB schema is already migrated (`session_templates`, `template_exercises`, RLS). 
 ## Desired End State
 
 Trainer opens `/trainer/templates`, sees all their templates, clicks "New template" or an existing template name:
+
 - Creates / edits template name and description.
 - Organizes exercises into three phase sections (Warm-up / Main / Cool-down), each with a "Add exercise" button that opens a search modal listing their library.
 - Each exercise row shows a toggle (Reps | Duration), plus sets, the active metric field, optional load (kg) and rest (s) fields, optional notes, and Up/Down reorder buttons.
@@ -47,6 +48,7 @@ Trainer opens `/trainer/templates`, sees all their templates, clicks "New templa
 ## Implementation Approach
 
 Two-phase incremental delivery mirroring S-01:
+
 1. Build API contracts with typed zod validation, a service layer using replace-all semantics for exercises, and SSR join queries for edit-page hydration.
 2. Build trainer UI pages with TemplateForm (3 collapsible phase sections + per-phase ExercisePickerModal + Up/Down reorder) and wire navigation into Topbar + dashboard.
 
@@ -74,6 +76,7 @@ Create typed zod schemas, a service module with CRUD + join read, and two API en
 **Intent**: Define zod validation for template create/update payloads, template_exercise entries within those payloads, and the template UUID param — following the exact shape of `src/lib/exercises/schemas.ts`.
 
 **Contract**:
+
 - `templateExerciseInputSchema`: `{ exercise_id: uuid, phase: ExercisePhase enum, sort_order: int ≥ 0, prescribed_sets: int ≥ 1, prescribed_reps: int ≥ 1 | null, prescribed_duration_seconds: int ≥ 1 | null, prescribed_load_kg: number > 0 | null, rest_after_seconds: int ≥ 0 | null, notes: string | null }`
 - `createTemplateBodySchema`: `{ name: string non-empty, description: string | null, exercises: templateExerciseInputSchema[] min-0 }` (empty array allowed — template shell without exercises is valid)
 - `updateTemplateBodySchema`: same fields all optional, `exercises` if present replaces all
@@ -88,6 +91,7 @@ Create typed zod schemas, a service module with CRUD + join read, and two API en
 **Intent**: Encapsulate all Supabase operations for templates and their exercises: list, get (with exercises joined), create (with exercise bulk-insert), update (replace-all exercises), delete.
 
 **Contract**:
+
 - `listTemplates(supabase, trainerId): Promise<{ data: SessionTemplate[] | null, error: string | null }>`
 - `getTemplate(supabase, templateId): Promise<{ data: TemplateWithExercises | null, error: string | null }>` — joins `template_exercises` and additionally fetches `exercises.name` and `exercises.default_metric` for display in the edit form
 - `createTemplate(supabase, trainerId, body: CreateTemplateBody): Promise<{ data: SessionTemplate | null, error: string | null }>`
@@ -155,6 +159,7 @@ Build trainer-facing pages (list / new / edit), the TemplateForm React component
 **Intent**: Extract payload assembly, metricMode defaulting, and client-side validation into a separately testable module — following the `src/lib/exercises/form-validation.ts` pattern from S-01.
 
 **Contract**:
+
 - `TemplateExerciseFormEntry` type: the React state shape for one exercise row (`{ exerciseId, exerciseName, exerciseDefaultMetric, phase, prescribedSets, metricMode: "reps" | "duration", prescribedReps, prescribedDuration, prescribedLoadKg, restAfterSeconds, notes }`)
 - `defaultMetricMode(exercise: ExerciseWithMuscleGroups): "reps" | "duration"` — returns "reps" for `reps_weight`, "duration" for `time` or `distance`
 - `exerciseEntryToPayload(entry: TemplateExerciseFormEntry, sortOrder: number): TemplateExerciseInput` — maps form state to API payload shape
@@ -176,6 +181,7 @@ Build trainer-facing pages (list / new / edit), the TemplateForm React component
 **Intent**: React form component supporting create and edit modes. Renders name + description fields, then three collapsible phase sections (Warm-up / Main / Cool-down), each with its exercise list and an "Add exercise" button that opens ExercisePickerModal. Each exercise row shows Up/Down reorder buttons, Reps/Duration toggle, prescribed fields, load, rest, notes, and a remove button.
 
 **Contract**:
+
 - Props: `mode: "create" | "edit"`, `templateId?: string`, `availableExercises: ExerciseWithMuscleGroups[]`, `initialTemplate?: { name, description, exercises: TemplateExerciseWithName[] }`
 - Internal state: `name`, `description`, per-phase exercise arrays (each item: `{ exerciseId, exerciseName, defaultMetric, prescribedSets, metricMode: "reps" | "duration", prescribedReps, prescribedDuration, prescribedLoadKg, restAfterSeconds, notes }`)
 - On submit: assemble payload with `sort_order` = index within each phase array; POST to `/api/session-templates` or PATCH to `/api/session-templates/:id`
@@ -190,6 +196,7 @@ Build trainer-facing pages (list / new / edit), the TemplateForm React component
 **Intent**: Modal that receives the full `availableExercises` list as a prop, filters client-side by name search, excludes exercises already in the target phase, and calls `onPick(exercise)` when one is selected. No network call on open.
 
 **Contract**:
+
 - Props: `open: boolean`, `onClose: () => void`, `onPick: (exercise: ExerciseWithMuscleGroups) => void`, `availableExercises: ExerciseWithMuscleGroups[]`
 - No exclusion: the same exercise can be added multiple times to the same phase or across phases (trainers may interleave identical exercises, e.g., ABCABC patterns)
 - Search input filters `exercise.name` case-insensitively against the query
@@ -242,11 +249,12 @@ Build trainer-facing pages (list / new / edit), the TemplateForm React component
 **Intent**: Copy-paste Studio script for manual local verification of RLS ownership isolation and CRUD behavior.
 
 **Contract**: Single transaction using `begin`, `set local role authenticated`, scoped `set_config` for JWT claims; includes:
+
 - Trainer A can insert/select/update/delete their own template and exercises
 - Trainer A cannot select trainer B's templates or exercises
 - Trainer A cannot insert template_exercises referencing trainer B's exercises
 - `rollback` at end
-Follows the lesson from `context/foundation/lessons.md`.
+  Follows the lesson from `context/foundation/lessons.md`.
 
 ### Success Criteria:
 

@@ -16,16 +16,16 @@ In the template builder, each exercise shows an ordered per-round editor (reps-o
 
 ## Key Decisions Made
 
-| Decision | Choice | Why (1 sentence) | Source |
-|---|---|---|---|
-| Rounds data model | New child table `template_exercise_sets` | Matches the repo's fully-relational style + RLS-via-parent like `set_logs` | Plan |
-| Set count | Derived from number of round rows; drop `prescribed_sets` | Single source of truth, no count≠rows drift | Plan |
-| `session_exercises` scope | Template-only; defer to S-04 | Roadmap scope is S-02 only; no consumers exist yet (YAGNI) | Plan |
-| Existing data | Backfill flat prescription into N identical rounds before dropping columns | No template loses data on migration | Plan |
-| Editor UX | Per-round rows + Add round / Duplicate last round | Common case (same as previous round) is one click | Plan |
-| Per-round fields | reps/duration, load, rest vary; metricMode + notes stay per-exercise | Metric/notes don't change between sets | Plan |
-| Validation | ≥1 round, max 20, each round needs reps or duration | Prevents empty/invalid prescriptions | Plan |
-| Tests | Schema + form-validation unit tests + RLS Studio SQL | Matches S-02 coverage | Plan |
+| Decision                  | Choice                                                                     | Why (1 sentence)                                                           | Source |
+| ------------------------- | -------------------------------------------------------------------------- | -------------------------------------------------------------------------- | ------ |
+| Rounds data model         | New child table `template_exercise_sets`                                   | Matches the repo's fully-relational style + RLS-via-parent like `set_logs` | Plan   |
+| Set count                 | Derived from number of round rows; drop `prescribed_sets`                  | Single source of truth, no count≠rows drift                                | Plan   |
+| `session_exercises` scope | Template-only; defer to S-04                                               | Roadmap scope is S-02 only; no consumers exist yet (YAGNI)                 | Plan   |
+| Existing data             | Backfill flat prescription into N identical rounds before dropping columns | No template loses data on migration                                        | Plan   |
+| Editor UX                 | Per-round rows + Add round / Duplicate last round                          | Common case (same as previous round) is one click                          | Plan   |
+| Per-round fields          | reps/duration, load, rest vary; metricMode + notes stay per-exercise       | Metric/notes don't change between sets                                     | Plan   |
+| Validation                | ≥1 round, max 20, each round needs reps or duration                        | Prevents empty/invalid prescriptions                                       | Plan   |
+| Tests                     | Schema + form-validation unit tests + RLS Studio SQL                       | Matches S-02 coverage                                                      | Plan   |
 
 ## Scope
 
@@ -39,11 +39,11 @@ Bottom-up in three phases: data model + migration/backfill → API (schema/servi
 
 ## Phases at a Glance
 
-| Phase | What it delivers | Key risk |
-|---|---|---|
-| 1. Data model & migration | `template_exercise_sets` + RLS + backfill, drop flat columns, type updates | Backfill must run before column drop; type changes break later layers until built |
-| 2. API contracts | Nested zod schema, service two-step nested insert, routes, schema tests | Correlating returned `template_exercises` ids to their `sets[]` without transactions |
-| 3. UI & hardening | Per-round `TemplateForm` editor, form-validation rounds, tests, RLS SQL | `TemplateForm` is already the most complex component in the repo |
+| Phase                     | What it delivers                                                           | Key risk                                                                             |
+| ------------------------- | -------------------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
+| 1. Data model & migration | `template_exercise_sets` + RLS + backfill, drop flat columns, type updates | Backfill must run before column drop; type changes break later layers until built    |
+| 2. API contracts          | Nested zod schema, service two-step nested insert, routes, schema tests    | Correlating returned `template_exercises` ids to their `sets[]` without transactions |
+| 3. UI & hardening         | Per-round `TemplateForm` editor, form-validation rounds, tests, RLS SQL    | `TemplateForm` is already the most complex component in the repo                     |
 
 **Prerequisites:** S-02 live (it is). Local Supabase running; `npx supabase db reset` available.
 **Estimated effort:** ~2–3 focused sessions across 3 phases.

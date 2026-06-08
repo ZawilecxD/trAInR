@@ -16,6 +16,7 @@ archived_at: 2026-06-07T05:27:42Z
 
 S-01 from `context/foundation/roadmap.md`.
 Planning assumptions from skipped questions:
+
 - filter logic: AND across active filter groups
 - muscle filter: multi-select
 - search: include case-insensitive name search

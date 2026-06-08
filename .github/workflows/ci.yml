@@ -2,12 +2,25 @@ name: CI
 
 on:
   push:
-    branches: [master]
+    branches: [main]
   pull_request:
-    branches: [master]
+    branches: [main]
 
 jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npx astro sync
+      - run: npm run test
+
   ci:
+    needs: [test]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -18,7 +31,6 @@ jobs:
       - run: npm ci
       - run: npx astro sync
       - run: npm run lint
-      - run: npm run test
       - run: npm run build
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
@@ -30,8 +42,32 @@ jobs:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
       - name: Deploy production
-        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: npx vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
         env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+
+  test-integration:
+    needs: [test]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - uses: supabase/setup-cli@v1
+        with:
+          version: latest
+      - run: supabase start
+      - name: Run integration tests
+        run: |
+          eval "$(supabase status -o env)"
+          export INTEGRATION_SUPABASE_URL="$API_URL"
+          export INTEGRATION_SUPABASE_ANON_KEY="$ANON_KEY"
+          export INTEGRATION_SUPABASE_SERVICE_ROLE_KEY="$SERVICE_ROLE_KEY"
+          npm run test:integration
+      - run: supabase stop
+        if: always()

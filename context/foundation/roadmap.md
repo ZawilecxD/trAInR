@@ -27,33 +27,33 @@ Independent personal trainers lose coaching time to admin — hunting across spr
 
 ## At a glance
 
-| ID | Change ID | Outcome (user can …) | Prerequisites | PRD refs | Status |
-|---|---|---|---|---|---|
-| F-01 | database-schema-and-rls | (foundation) Supabase schema with RLS and role-aware middleware landed | — | NFR privacy, NFR data integrity, Access Control | done |
-| S-01 | exercise-library | create, edit, and browse/filter exercises | F-01 | FR-007, FR-008, FR-009 | done |
-| S-02 | session-templates | create and edit reusable session templates from exercises | F-01, S-01 | FR-010, FR-011 | done |
-| S-03 | client-onboarding | register via invite link and be auto-assigned to trainer | F-01 | FR-001, FR-002, FR-003, FR-004, FR-005 | done |
-| S-04 | plan-assignment | place a session on a specific day of a client's calendar | S-02, S-03 | FR-012, US-01 | proposed |
-| S-05 | client-calendar | view assigned sessions in month/week view with status colors | S-04 | FR-013, FR-014 | proposed |
-| S-06 | guided-workout-logging | open a session, step through exercises, log sets, see previous hints | S-04 | FR-015, FR-016, FR-017, FR-019, FR-020, US-01 | proposed |
-| S-07 | trainer-dashboard | see client overview and read-only session detail with logged data | S-04, S-06 | FR-027, FR-028, US-01 | proposed |
-| S-08 | session-completion-marking | manually mark a session as finished or finished partially | S-06 | FR-021 | proposed |
-| S-09 | session-comments | comment on a session (bidirectional) | S-04 | FR-023 | proposed |
-| S-10 | warmup-working-flag | flag each logged set as warm-up or working | S-06 | FR-018 | proposed |
-| S-11 | client-removal | remove or reject a wrongly-assigned client | S-03 | FR-006 | done |
-| S-12 | exercise-statistics | view per-exercise history, estimated 1RM, and volume/tonnage | S-06 | FR-024, FR-025, FR-026 | proposed |
-| S-13 | data-edit-window | edit logged data for 24 hours, then sealed | S-06 | FR-022 | proposed |
-| S-14 | exercises-separate-rounds | prescribe each exercise round separately (reps, load, rest per round) | S-02 | FR-010, FR-011 | done |
+| ID   | Change ID                  | Outcome (user can …)                                                   | Prerequisites | PRD refs                                        | Status   |
+| ---- | -------------------------- | ---------------------------------------------------------------------- | ------------- | ----------------------------------------------- | -------- |
+| F-01 | database-schema-and-rls    | (foundation) Supabase schema with RLS and role-aware middleware landed | —             | NFR privacy, NFR data integrity, Access Control | done     |
+| S-01 | exercise-library           | create, edit, and browse/filter exercises                              | F-01          | FR-007, FR-008, FR-009                          | done     |
+| S-02 | session-templates          | create and edit reusable session templates from exercises              | F-01, S-01    | FR-010, FR-011                                  | done     |
+| S-03 | client-onboarding          | register via invite link and be auto-assigned to trainer               | F-01          | FR-001, FR-002, FR-003, FR-004, FR-005          | done     |
+| S-04 | plan-assignment            | place a session on a specific day of a client's calendar               | S-02, S-03    | FR-012, US-01                                   | proposed |
+| S-05 | client-calendar            | view assigned sessions in month/week view with status colors           | S-04          | FR-013, FR-014                                  | proposed |
+| S-06 | guided-workout-logging     | open a session, step through exercises, log sets, see previous hints   | S-04          | FR-015, FR-016, FR-017, FR-019, FR-020, US-01   | proposed |
+| S-07 | trainer-dashboard          | see client overview and read-only session detail with logged data      | S-04, S-06    | FR-027, FR-028, US-01                           | proposed |
+| S-08 | session-completion-marking | manually mark a session as finished or finished partially              | S-06          | FR-021                                          | proposed |
+| S-09 | session-comments           | comment on a session (bidirectional)                                   | S-04          | FR-023                                          | proposed |
+| S-10 | warmup-working-flag        | flag each logged set as warm-up or working                             | S-06          | FR-018                                          | proposed |
+| S-11 | client-removal             | remove or reject a wrongly-assigned client                             | S-03          | FR-006                                          | done     |
+| S-12 | exercise-statistics        | view per-exercise history, estimated 1RM, and volume/tonnage           | S-06          | FR-024, FR-025, FR-026                          | proposed |
+| S-13 | data-edit-window           | edit logged data for 24 hours, then sealed                             | S-06          | FR-022                                          | proposed |
+| S-14 | exercises-separate-rounds  | prescribe each exercise round separately (reps, load, rest per round)  | S-02          | FR-010, FR-011                                  | done     |
 
 ## Streams
 
 Navigation aid — groups items that share a Prerequisites chain. Canonical ordering still lives in the dependency graph below; this table is the proposed reading order across parallel tracks.
 
-| Stream | Theme | Chain | Note |
-|---|---|---|---|
-| A | Trainer authoring → north star | `F-01` → `S-01` → `S-02` → `S-04` → `S-06` → `S-07` | Critical path: every link is on the shortest route to validating the async training loop. |
-| B | Client onboarding & calendar | `S-03` → `S-05` | Joins Stream A at `S-04` (S-03 is a prerequisite for S-04); `S-05` branches off `S-04` parallel with `S-06`. |
-| C | Enhancement & polish | `S-08` / `S-09` / `S-10` / `S-11` / `S-12` / `S-13` / `S-14` | Tier 2+3 items; sequence after core loop completes or when capacity opens. `S-14` extends session template prescription (after S-02). |
+| Stream | Theme                          | Chain                                                        | Note                                                                                                                                  |
+| ------ | ------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------- |
+| A      | Trainer authoring → north star | `F-01` → `S-01` → `S-02` → `S-04` → `S-06` → `S-07`          | Critical path: every link is on the shortest route to validating the async training loop.                                             |
+| B      | Client onboarding & calendar   | `S-03` → `S-05`                                              | Joins Stream A at `S-04` (S-03 is a prerequisite for S-04); `S-05` branches off `S-04` parallel with `S-06`.                          |
+| C      | Enhancement & polish           | `S-08` / `S-09` / `S-10` / `S-11` / `S-12` / `S-13` / `S-14` | Tier 2+3 items; sequence after core loop completes or when capacity opens. `S-14` extends session template prescription (after S-02). |
 
 ## Baseline
 
@@ -254,23 +254,23 @@ Foundations below assume these are present and do NOT re-scaffold them.
 
 ## Backlog Handoff
 
-| Roadmap ID | Change ID | Suggested issue title | Ready for `/10x-plan` | Notes |
-|---|---|---|---|---|
-| F-01 | database-schema-and-rls | Create Supabase schema with RLS policies and role-aware middleware | yes | Run `/10x-plan database-schema-and-rls` |
-| S-01 | exercise-library | Build exercise library CRUD (create, edit, browse/filter) | — | done |
-| S-02 | session-templates | Build session template builder with phase structure | no | Needs F-01 |
-| S-03 | client-onboarding | Implement invite-link client registration and auto-assignment | no | Needs F-01 |
-| S-04 | plan-assignment | Build plan assignment: place session on client calendar | no | Needs S-02 + S-03; must include `session_exercise_sets` mirror (S-14 follow-up), load semantics, and DB prescription checks |
-| S-05 | client-calendar | Build client calendar view (month/week + status colors) | no | Needs S-04 |
-| S-06 | guided-workout-logging | Build guided workout view with set-by-set logging | no | Needs S-04 |
-| S-07 | trainer-dashboard | Build trainer dashboard with client overview and session detail | no | Needs S-04 + S-06 |
-| S-08 | session-completion-marking | Add manual session completion status (finished/partial) | no | Needs S-06 |
-| S-09 | session-comments | Add bidirectional session comments | no | Needs S-04 |
-| S-10 | warmup-working-flag | Add warm-up/working set flag per logged set | no | Needs S-06 |
-| S-11 | client-removal | Implement trainer can remove/reject client | no | Needs S-03 |
-| S-12 | exercise-statistics | Build per-exercise history with 1RM and volume stats | no | Needs S-06 |
-| S-13 | data-edit-window | Implement 24h edit window then seal logged data | no | Needs S-06 |
-| S-14 | exercises-separate-rounds | Per-round prescription (reps, load, rest) in session templates | no | Needs S-02 |
+| Roadmap ID | Change ID                  | Suggested issue title                                              | Ready for `/10x-plan` | Notes                                                                                                                       |
+| ---------- | -------------------------- | ------------------------------------------------------------------ | --------------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| F-01       | database-schema-and-rls    | Create Supabase schema with RLS policies and role-aware middleware | yes                   | Run `/10x-plan database-schema-and-rls`                                                                                     |
+| S-01       | exercise-library           | Build exercise library CRUD (create, edit, browse/filter)          | —                     | done                                                                                                                        |
+| S-02       | session-templates          | Build session template builder with phase structure                | no                    | Needs F-01                                                                                                                  |
+| S-03       | client-onboarding          | Implement invite-link client registration and auto-assignment      | no                    | Needs F-01                                                                                                                  |
+| S-04       | plan-assignment            | Build plan assignment: place session on client calendar            | no                    | Needs S-02 + S-03; must include `session_exercise_sets` mirror (S-14 follow-up), load semantics, and DB prescription checks |
+| S-05       | client-calendar            | Build client calendar view (month/week + status colors)            | no                    | Needs S-04                                                                                                                  |
+| S-06       | guided-workout-logging     | Build guided workout view with set-by-set logging                  | no                    | Needs S-04                                                                                                                  |
+| S-07       | trainer-dashboard          | Build trainer dashboard with client overview and session detail    | no                    | Needs S-04 + S-06                                                                                                           |
+| S-08       | session-completion-marking | Add manual session completion status (finished/partial)            | no                    | Needs S-06                                                                                                                  |
+| S-09       | session-comments           | Add bidirectional session comments                                 | no                    | Needs S-04                                                                                                                  |
+| S-10       | warmup-working-flag        | Add warm-up/working set flag per logged set                        | no                    | Needs S-06                                                                                                                  |
+| S-11       | client-removal             | Implement trainer can remove/reject client                         | no                    | Needs S-03                                                                                                                  |
+| S-12       | exercise-statistics        | Build per-exercise history with 1RM and volume stats               | no                    | Needs S-06                                                                                                                  |
+| S-13       | data-edit-window           | Implement 24h edit window then seal logged data                    | no                    | Needs S-06                                                                                                                  |
+| S-14       | exercises-separate-rounds  | Per-round prescription (reps, load, rest) in session templates     | no                    | Needs S-02                                                                                                                  |
 
 ## Open Roadmap Questions
 
@@ -301,4 +301,3 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **S-02: trainer can create a reusable session template organized into phases (warm-up/main/cooldown) with prescribed sets/reps/load and rest time per exercise, and edit existing templates** — Archived 2026-06-07 → `context/archive/2026-06-05-session-templates/`. Lesson: —.
 - **S-11: trainer can remove or reject a wrongly-assigned client** — Archived 2026-06-07 → `context/archive/2026-06-05-client-removal/`. Lesson: —.
 - **S-14: trainer can add an exercise to a session template and configure each round separately — e.g. round 1: 10 reps × 50 kg + 2 min rest, round 2: 8 × 60 kg + 2 min rest, round 3: 6 × 70 kg + 3 min rest — instead of a single uniform prescription for all sets** — Archived 2026-06-07 → `context/archive/2026-06-05-exercises-separate-rounds/`. Lesson: —.
-

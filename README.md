@@ -13,12 +13,12 @@ A modern fitness coaching app built with Astro SSR, React islands, Supabase auth
 
 ## Related Services
 
-| Service | Purpose | Link |
-| ------- | ------- | ---- |
-| **Vercel** | Production and preview deployments | [tr-a-in-r project](https://vercel.com/zawilecxd1/tr-a-in-r) |
-| **Supabase** | Auth and database (cloud project) | [Dashboard](https://supabase.com/dashboard/project/ywcshfujgapoptdkdqtj) |
-| **Linear** | MVP backlog and issues | [trainr-mvp project](https://linear.app/zawilecxd/project/trainr-mvp-5d6b10ab8d1e/issues) |
-| **GitHub** | Source and CI | [ZawilecxD/trAInR](https://github.com/ZawilecxD/trAInR) |
+| Service      | Purpose                            | Link                                                                                      |
+| ------------ | ---------------------------------- | ----------------------------------------------------------------------------------------- |
+| **Vercel**   | Production and preview deployments | [tr-a-in-r project](https://vercel.com/zawilecxd1/tr-a-in-r)                              |
+| **Supabase** | Auth and database (cloud project)  | [Dashboard](https://supabase.com/dashboard/project/ywcshfujgapoptdkdqtj)                  |
+| **Linear**   | MVP backlog and issues             | [trainr-mvp project](https://linear.app/zawilecxd/project/trainr-mvp-5d6b10ab8d1e/issues) |
+| **GitHub**   | Source and CI                      | [ZawilecxD/trAInR](https://github.com/ZawilecxD/trAInR)                                   |
 
 Set `SUPABASE_URL` and `SUPABASE_KEY` in the [Vercel project Environment Variables](https://vercel.com/zawilecxd1/tr-a-in-r/settings/environment-variables) for Production and Preview. CI uses the same values from GitHub repository secrets when building and deploying.
 
@@ -81,14 +81,14 @@ npm run local-workspace
 ```md
 .
 ├── src/
-│   ├── layouts/       # Astro layouts
-│   ├── pages/         # Astro pages
-│   │   └── api/       # API endpoints
-│   ├── components/    # UI components (Astro & React)
-│   ├── lib/           # Supabase client, helpers, services
-│   └── middleware.ts  # Auth and protected routes
-├── supabase/          # Local Supabase config and migrations
-└── public/            # Static assets
+│ ├── layouts/ # Astro layouts
+│ ├── pages/ # Astro pages
+│ │ └── api/ # API endpoints
+│ ├── components/ # UI components (Astro & React)
+│ ├── lib/ # Supabase client, helpers, services
+│ └── middleware.ts # Auth and protected routes
+├── supabase/ # Local Supabase config and migrations
+└── public/ # Static assets
 ```
 
 ## Supabase Configuration
@@ -146,7 +146,7 @@ For the hosted trAInR project, use the [Supabase dashboard](https://supabase.com
 | Variable       | Description                                                |
 | -------------- | ---------------------------------------------------------- |
 | `SUPABASE_URL` | Project URL from Supabase dashboard → Settings → API       |
-| `SUPABASE_KEY` | `anon` public key from Supabase dashboard → Settings → API   |
+| `SUPABASE_KEY` | `anon` public key from Supabase dashboard → Settings → API |
 
 ```
 SUPABASE_URL=https://<project-ref>.supabase.co
@@ -183,11 +183,11 @@ Route protection and role guards are handled in `src/middleware.ts` (`/dashboard
 
 Trainer-only routes (requires sign-in with `role: trainer` in profile):
 
-| Route                      | Description                                              |
-| -------------------------- | -------------------------------------------------------- |
-| `/trainer/exercises`       | Browse, filter, and search the exercise library          |
-| `/trainer/exercises/new`   | Create a new exercise                                    |
-| `/trainer/exercises/[id]`  | Edit or archive an existing exercise                     |
+| Route                     | Description                                     |
+| ------------------------- | ----------------------------------------------- |
+| `/trainer/exercises`      | Browse, filter, and search the exercise library |
+| `/trainer/exercises/new`  | Create a new exercise                           |
+| `/trainer/exercises/[id]` | Edit or archive an existing exercise            |
 
 Entry point: **Exercises** link in the top navigation (visible when signed in as a trainer).
 

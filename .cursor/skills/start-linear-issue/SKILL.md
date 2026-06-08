@@ -98,12 +98,12 @@ If `save_issue` fails, report the error; leave the user on the new branch (do no
 
 Reply with a short summary:
 
-| Item | Value |
-|------|--------|
-| Issue | `ZAW-N` — title (link if URL known) |
-| Branch | `branch-name` (base was `…`) |
-| Linear state | In Progress |
-| Next | Optional: link `context/changes/…` plan, run `/10x-plan`, or open issue description |
+| Item         | Value                                                                               |
+| ------------ | ----------------------------------------------------------------------------------- |
+| Issue        | `ZAW-N` — title (link if URL known)                                                 |
+| Branch       | `branch-name` (base was `…`)                                                        |
+| Linear state | In Progress                                                                         |
+| Next         | Optional: link `context/changes/…` plan, run `/10x-plan`, or open issue description |
 
 ## Examples
 
