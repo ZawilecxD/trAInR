@@ -597,15 +597,15 @@ Integration tests for RPCs and new RLS; update existing RLS tests for per-round 
 
 #### Automated
 
-- [x] 1.1 Migration applies cleanly: `npx supabase db reset`
-- [x] 1.2 Linting passes: `npm run lint`
-- [x] 1.3 Production build passes: `npm run build`
+- [x] 1.1 Migration applies cleanly: `npx supabase db reset` — b78021c
+- [x] 1.2 Linting passes: `npm run lint` — b78021c
+- [x] 1.3 Production build passes: `npm run build` — b78021c
 
 #### Manual
 
-- [x] 1.4 In Supabase Studio: `\d session_exercise_sets` shows expected columns and FKs
-- [x] 1.5 Flat columns absent from `session_exercises`
-- [x] 1.6 RLS enabled on `session_exercise_sets`
+- [x] 1.4 In Supabase Studio: `\d session_exercise_sets` shows expected columns and FKs — b78021c
+- [x] 1.5 Flat columns absent from `session_exercises` — b78021c
+- [x] 1.6 RLS enabled on `session_exercise_sets` — b78021c
 
 ### Phase 2: RPC + API layer
 
