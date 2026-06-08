@@ -526,7 +526,7 @@ No new SQL migrations. The harness tests existing schema and policies; it does n
 #### Automated
 
 - [x] 5.1 `npm run test:integration` passes all Phase 5 tests including KNOWN GAP tests — 03a543e
-- [ ] 5.2 CI `test-integration` job passes on a push to the branch
+- [x] 5.2 CI `test-integration` job passes on a push to the branch — c78c0bb
 - [x] 5.3 `npm run lint` passes — 03a543e
 
 #### Manual
