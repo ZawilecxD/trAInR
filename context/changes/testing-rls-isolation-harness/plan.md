@@ -525,11 +525,11 @@ No new SQL migrations. The harness tests existing schema and policies; it does n
 
 #### Automated
 
-- [ ] 5.1 `npm run test:integration` passes all Phase 5 tests including KNOWN GAP tests
+- [x] 5.1 `npm run test:integration` passes all Phase 5 tests including KNOWN GAP tests
 - [ ] 5.2 CI `test-integration` job passes on a push to the branch
-- [ ] 5.3 `npm run lint` passes
+- [x] 5.3 `npm run lint` passes
 
 #### Manual
 
-- [ ] 5.4 `replace_exercise_muscle_groups` gap test is clearly labelled "KNOWN GAP" in CI output
-- [ ] 5.5 `supabase stop` runs even when tests fail (`if: always()` confirmed in workflow)
+- [x] 5.4 `replace_exercise_muscle_groups` gap test is clearly labelled "KNOWN GAP" in CI output
+- [x] 5.5 `supabase stop` runs even when tests fail (`if: always()` confirmed in workflow)

@@ -46,6 +46,26 @@ export async function createTrainer(): Promise<TestUser> {
   return { id: data.user.id, email, password, client };
 }
 
+export async function createBareClient(role: "trainer" | "client" = "client"): Promise<TestUser> {
+  const email = `${role}-${crypto.randomUUID()}@test.local`;
+  const password = crypto.randomUUID();
+
+  const { data, error } = await getAdmin().auth.admin.createUser({
+    email,
+    password,
+    email_confirm: true,
+    user_metadata: { role },
+  });
+
+  if (error) {
+    throw new Error(`Failed to create ${role}: ${error.message}`);
+  }
+
+  const client = await signInAnonClient(email, password);
+
+  return { id: data.user.id, email, password, client };
+}
+
 export async function createClient_(trainer: TestUser): Promise<TestUser> {
   const email = `client-${crypto.randomUUID()}@test.local`;
   const password = crypto.randomUUID();
