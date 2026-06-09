@@ -6,6 +6,7 @@ describe("replace_exercise_muscle_groups", () => {
   let trainerA: TestUser;
   let trainerB: TestUser;
   let exerciseAId: string;
+  let muscleGroupId: string;
 
   beforeAll(async () => {
     trainerA = await createTrainer();
@@ -20,6 +21,8 @@ describe("replace_exercise_muscle_groups", () => {
     if (muscleError) {
       throw new Error(`Failed to load muscle group: ${muscleError.message}`);
     }
+
+    muscleGroupId = muscleGroup.id;
 
     const { data: exercise, error: exerciseError } = await trainerA.client
       .from("exercises")
@@ -40,7 +43,7 @@ describe("replace_exercise_muscle_groups", () => {
 
     const { error: linkError } = await trainerA.client.from("exercise_muscle_groups").insert({
       exercise_id: exerciseAId,
-      muscle_group_id: muscleGroup.id,
+      muscle_group_id: muscleGroupId,
       role: "primary",
     });
 
@@ -55,14 +58,57 @@ describe("replace_exercise_muscle_groups", () => {
   });
 
   describe("SECURITY DEFINER cross-tenant call", () => {
-    it("KNOWN GAP: Trainer B can call replace_exercise_muscle_groups on Trainer A exercise", async () => {
-      // KNOWN GAP: this call should be rejected — harden in a follow-up PR
+    it("Trainer B cannot call replace_exercise_muscle_groups on Trainer A exercise", async () => {
       const { error } = await trainerB.client.rpc("replace_exercise_muscle_groups", {
         p_exercise_id: exerciseAId,
         p_muscle_groups: [],
       });
 
+      expect(error).not.toBeNull();
+
+      const { data, error: selectError } = await trainerA.client
+        .from("exercise_muscle_groups")
+        .select("exercise_id, muscle_group_id, role")
+        .eq("exercise_id", exerciseAId);
+
+      expect(selectError).toBeNull();
+      expect(data).toEqual([
+        {
+          exercise_id: exerciseAId,
+          muscle_group_id: muscleGroupId,
+          role: "primary",
+        },
+      ]);
+    });
+  });
+
+  describe("owner happy path", () => {
+    it("Trainer A can replace muscle groups on own exercise", async () => {
+      const { error } = await trainerA.client.rpc("replace_exercise_muscle_groups", {
+        p_exercise_id: exerciseAId,
+        p_muscle_groups: [
+          {
+            muscle_group_id: muscleGroupId,
+            role: "secondary",
+          },
+        ],
+      });
+
       expect(error).toBeNull();
+
+      const { data, error: selectError } = await trainerA.client
+        .from("exercise_muscle_groups")
+        .select("exercise_id, muscle_group_id, role")
+        .eq("exercise_id", exerciseAId);
+
+      expect(selectError).toBeNull();
+      expect(data).toEqual([
+        {
+          exercise_id: exerciseAId,
+          muscle_group_id: muscleGroupId,
+          role: "secondary",
+        },
+      ]);
     });
   });
 });
