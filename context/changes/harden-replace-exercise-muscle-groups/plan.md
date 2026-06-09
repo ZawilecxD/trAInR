@@ -187,9 +187,9 @@ Negligible — one indexed lookup on `exercises(id)` (PK) before the existing de
 
 #### Automated
 
-- [x] 2.1 Integration tests pass: `npm run test:integration`
-- [x] 2.2 Full CI-equivalent: `npm run lint && npm run test && npm run test:integration`
+- [x] 2.1 Integration tests pass: `npm run test:integration` — 3a47911
+- [x] 2.2 Full CI-equivalent: `npm run lint - [x] 2.2 Full CI-equivalent: `npm run lint && npm run test && npm run test:integration`- [x] 2.2 Full CI-equivalent: `npm run lint && npm run test && npm run test:integration` npm run test - [x] 2.2 Full CI-equivalent: `npm run lint && npm run test && npm run test:integration`- [x] 2.2 Full CI-equivalent: `npm run lint && npm run test && npm run test:integration` npm run test:integration` — 3a47911
 
 #### Manual
 
-- [x] 2.3 Studio SQL re-run confirms behaviour matches integration assertions
+- [x] 2.3 Studio SQL re-run confirms behaviour matches integration assertions — 3a47911
