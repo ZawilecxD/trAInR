@@ -175,13 +175,13 @@ Negligible — one indexed lookup on `exercises(id)` (PK) before the existing de
 
 #### Automated
 
-- [x] 1.1 Migration applies cleanly: `npx supabase db reset`
-- [x] 1.2 Lint passes: `npm run lint`
-- [x] 1.3 Unit tests pass: `npm run test`
+- [x] 1.1 Migration applies cleanly: `npx supabase db reset` — d3bb9f6
+- [x] 1.2 Lint passes: `npm run lint` — d3bb9f6
+- [x] 1.3 Unit tests pass: `npm run test` — d3bb9f6
 
 #### Manual
 
-- [x] 1.4 Supabase Studio SQL script confirms owner success and non-owner rejection with rows unchanged
+- [x] 1.4 Supabase Studio SQL script confirms owner success and non-owner rejection with rows unchanged — d3bb9f6
 
 ### Phase 2: Flip integration test & verify
 
