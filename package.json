@@ -12,7 +12,8 @@
     "format": "prettier --write .",
     "test": "vitest run",
     "test:integration": "vitest run --config vitest.integration.config.ts",
-    "local-workspace": "bash scripts/local-workspace"
+    "local-workspace": "bash scripts/local-workspace",
+    "seed:dev-users": "bash scripts/seed-dev-users.sh"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.8",
