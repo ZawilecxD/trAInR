@@ -134,18 +134,24 @@ export interface WorkoutSession {
   created_at: string;
 }
 
+export interface SessionExerciseSet {
+  id: string;
+  session_exercise_id: string;
+  set_number: number;
+  prescribed_reps: number | null;
+  prescribed_duration_seconds: number | null;
+  prescribed_load_kg: number | null;
+  rest_after_seconds: number | null;
+}
+
 export interface SessionExercise {
   id: string;
   session_id: string;
   exercise_id: string;
   phase: ExercisePhase;
   sort_order: number;
-  prescribed_sets: number;
-  prescribed_reps: number | null;
-  prescribed_duration_seconds: number | null;
-  prescribed_load_kg: number | null;
-  rest_after_seconds: number | null;
   notes: string | null;
+  sets?: SessionExerciseSet[];
 }
 
 export interface SetLog {

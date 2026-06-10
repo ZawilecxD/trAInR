@@ -64,8 +64,6 @@ describe("set_logs", () => {
         exercise_id: exercise.id,
         phase: "main",
         sort_order: 1,
-        prescribed_sets: 3,
-        prescribed_reps: 10,
       })
       .select("id")
       .single<{ id: string }>();

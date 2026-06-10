@@ -87,8 +87,6 @@ describe("session_exercises", () => {
         exercise_id: exerciseAId,
         phase: "main",
         sort_order: 1,
-        prescribed_sets: 3,
-        prescribed_reps: 10,
       })
       .select("id")
       .single<{ id: string }>();
@@ -131,7 +129,6 @@ describe("session_exercises", () => {
           exercise_id: exerciseBId,
           phase: "main",
           sort_order: 2,
-          prescribed_sets: 3,
         })
         .select("id");
 

@@ -3,7 +3,7 @@ project: "trAInR"
 version: 1
 status: draft
 created: 2026-05-25
-updated: 2026-06-07
+updated: 2026-06-08
 prd_version: 1
 main_goal: speed
 top_blocker: time
@@ -45,6 +45,14 @@ Independent personal trainers lose coaching time to admin — hunting across spr
 | S-13 | data-edit-window           | edit logged data for 24 hours, then sealed                             | S-06          | FR-022                                          | proposed |
 | S-14 | exercises-separate-rounds  | prescribe each exercise round separately (reps, load, rest per round)  | S-02          | FR-010, FR-011                                  | done     |
 
+### Quality & testing
+
+| ID   | Change ID                    | Outcome (team can …)                                                                 | Prerequisites              | PRD refs              | Status   |
+| ---- | ---------------------------- | ------------------------------------------------------------------------------------ | -------------------------- | --------------------- | -------- |
+| Q-01 | add-stryker-mutation-testing | run Stryker on risk-critical modules to catch weak assertions beyond coverage        | test-plan Phase 1 complete | NFR data integrity    | proposed |
+| Q-02 | harden-replace-exercise-muscle-groups | close KNOWN GAP: RPC rejects cross-trainer muscle group replacement; flip integration test | S-01, test-plan Phase 1 complete | NFR privacy, NFR data integrity | proposed |
+| Q-03 | harden-complete-client-invite | close KNOWN GAP: block fraudulent p_client_id on authenticated invite completion; preserve anon signup | S-03, test-plan Phase 1 complete | FR-003, FR-004, FR-005 | proposed |
+
 ## Streams
 
 Navigation aid — groups items that share a Prerequisites chain. Canonical ordering still lives in the dependency graph below; this table is the proposed reading order across parallel tracks.
@@ -54,6 +62,7 @@ Navigation aid — groups items that share a Prerequisites chain. Canonical orde
 | A      | Trainer authoring → north star | `F-01` → `S-01` → `S-02` → `S-04` → `S-06` → `S-07`          | Critical path: every link is on the shortest route to validating the async training loop.                                             |
 | B      | Client onboarding & calendar   | `S-03` → `S-05`                                              | Joins Stream A at `S-04` (S-03 is a prerequisite for S-04); `S-05` branches off `S-04` parallel with `S-06`.                          |
 | C      | Enhancement & polish           | `S-08` / `S-09` / `S-10` / `S-11` / `S-12` / `S-13` / `S-14` | Tier 2+3 items; sequence after core loop completes or when capacity opens. `S-14` extends session template prescription (after S-02). |
+| D      | Quality & testing              | `Q-01` / `Q-02` / `Q-03`                                     | Cross-cutting; selective mutation testing per `test-plan.md` after the integration harness lands. `Q-02`/`Q-03` close SECURITY DEFINER gaps documented by the harness (flip KNOWN GAP tests). |
 
 ## Baseline
 
@@ -81,6 +90,20 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Unknowns:** —
 - **Risk:** Schema decisions lock in early; changing table shapes later cascades through all slices. Mitigated by following the reviewed ERD in `docs/ERD.md`.
 - **Status:** done
+
+## Quality
+
+### Q-01: Stryker mutation testing
+
+- **Outcome:** team can run Stryker (Vitest runner) on scoped, risk-critical modules to surface survived mutants — weak assertions and mirror-implementation tests that green coverage misses
+- **Change ID:** add-stryker-mutation-testing
+- **PRD refs:** NFR data integrity (test quality as a guardrail for regressions in high-churn `src/lib/` and security-sensitive paths)
+- **Prerequisites:** test-plan Phase 1 complete (RLS isolation harness + `npm test` in CI); initial scope targets modules already covered by unit/integration tests
+- **Parallel with:** any in-flight test-plan phase or feature slice — run selectively after `/10x-implement`, not on every commit
+- **Blockers:** —
+- **Unknowns:** which modules from `test-plan.md` risk map yield the best signal-per-runtime on first run; whether mutation runs belong in CI or stay local/pre-merge only
+- **Risk:** chasing 100% mutation score produces brittle mirror tests; treat survived mutants as review items, not a todo list (m3-l2). Scope with `--mutate` and incremental mode to keep runs practical.
+- **Status:** proposed
 
 ## Slices
 
@@ -271,6 +294,10 @@ Foundations below assume these are present and do NOT re-scaffold them.
 | S-12       | exercise-statistics        | Build per-exercise history with 1RM and volume stats               | no                    | Needs S-06                                                                                                                  |
 | S-13       | data-edit-window           | Implement 24h edit window then seal logged data                    | no                    | Needs S-06                                                                                                                  |
 | S-14       | exercises-separate-rounds  | Per-round prescription (reps, load, rest) in session templates     | no                    | Needs S-02                                                                                                                  |
+| Q-01       | add-stryker-mutation-testing | Run Stryker on risk-critical modules                               | no                    | Needs test-plan Phase 1 complete                                                                                            |
+| Q-02       | harden-replace-exercise-muscle-groups | Add auth.uid() ownership check to replace_exercise_muscle_groups RPC | yes                   | Run `/10x-plan harden-replace-exercise-muscle-groups`; flip KNOWN GAP test in `tests/integration/security-definer/`         |
+| Q-03       | harden-complete-client-invite | Harden complete_client_invite p_client_id binding for authenticated callers | no                    | Run `/10x-frame harden-complete-client-invite` first (anon vs authenticated design); then `/10x-plan`                       |
+| Q-01       | add-stryker-mutation-testing | Add Stryker mutation testing as a selective quality gate           | yes                   | Run `/10x-research add-stryker-mutation-testing`; see `context/changes/add-stryker-mutation-testing/`                       |
 
 ## Open Roadmap Questions
 

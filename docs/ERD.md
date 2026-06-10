@@ -130,12 +130,17 @@ erDiagram
         uuid exercise_id FK
         text phase
         integer sort_order
-        integer prescribed_sets
+        text notes
+    }
+
+    session_exercise_sets {
+        uuid id PK
+        uuid session_exercise_id FK
+        integer set_number
         integer prescribed_reps
         integer prescribed_duration_seconds
         decimal prescribed_load_kg
         integer rest_after_seconds
-        text notes
     }
 
     set_logs {
@@ -179,6 +184,7 @@ erDiagram
 
     workout_sessions ||--o{ session_exercises : "has"
     exercises ||--o{ session_exercises : "used in"
+    session_exercises ||--o{ session_exercise_sets : "prescribed via"
     workout_sessions ||--o{ session_comments : "has"
 
     session_exercises ||--o{ set_logs : "logged via"
@@ -350,12 +356,19 @@ interface SessionExercise {
   exercise_id: string; // FK → exercises
   phase: ExercisePhase;
   sort_order: number;
-  prescribed_sets: number;
-  prescribed_reps: number | null;
-  prescribed_duration_seconds: number | null;
-  prescribed_load_kg: number | null;
-  rest_after_seconds: number | null;
   notes: string | null;
+  sets: SessionExerciseSet[];
+}
+
+// session_exercise_sets — per-round prescription for a session exercise
+interface SessionExerciseSet {
+  id: string;
+  session_exercise_id: string; // FK → session_exercises
+  set_number: number; // 1-based
+  prescribed_reps: number | null; // null if timed
+  prescribed_duration_seconds: number | null; // null if reps-based
+  prescribed_load_kg: number | null; // null = unspecified, 0 = bodyweight, neg = assisted
+  rest_after_seconds: number | null; // data field; rest timer UI is post-MVP
 }
 ```
 
