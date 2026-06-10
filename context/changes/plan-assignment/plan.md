@@ -618,9 +618,9 @@ Integration tests for RPCs and new RLS; update existing RLS tests for per-round 
 
 #### Manual
 
-- [ ] 2.5 Supabase Studio: `create_workout_session` creates session + exercises + sets atomically
-- [ ] 2.6 Cross-trainer call with another trainer's `client_id` fails
-- [ ] 2.7 Update rejected after manually setting `started_at`
+- [x] 2.5 Supabase Studio: `create_workout_session` creates session + exercises + sets atomically
+- [x] 2.6 Cross-trainer call with another trainer's `client_id` fails
+- [x] 2.7 Update rejected after manually setting `started_at`
 
 ### Phase 3: Trainer calendar & assignment UI
 
