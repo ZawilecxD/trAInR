@@ -611,10 +611,10 @@ Integration tests for RPCs and new RLS; update existing RLS tests for per-round 
 
 #### Automated
 
-- [ ] 2.1 Migration applies cleanly: `npx supabase db reset`
-- [ ] 2.2 Unit tests for zod schemas: `src/lib/workout-sessions/schemas.test.ts`
-- [ ] 2.3 Linting passes: `npm run lint`
-- [ ] 2.4 Production build passes: `npm run build`
+- [x] 2.1 Migration applies cleanly: `npx supabase db reset` — ff23609
+- [x] 2.2 Unit tests for zod schemas: `src/lib/workout-sessions/schemas.test.ts` — ff23609
+- [x] 2.3 Linting passes: `npm run lint` — ff23609
+- [x] 2.4 Production build passes: `npm run build` — ff23609
 
 #### Manual
 
