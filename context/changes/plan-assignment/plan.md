@@ -626,17 +626,17 @@ Integration tests for RPCs and new RLS; update existing RLS tests for per-round 
 
 #### Automated
 
-- [ ] 3.1 Linting passes: `npm run lint`
-- [ ] 3.2 Production build passes: `npm run build`
+- [x] 3.1 Linting passes: `npm run lint` — a6093e8
+- [x] 3.2 Production build passes: `npm run build` — a6093e8
 
 #### Manual
 
-- [ ] 3.3 Full happy path: Clients → plan → template → personalize → save → calendar
-- [ ] 3.4 Blank session path: add exercises manually → save
-- [ ] 3.5 Edit not_started session → save → calendar reflects changes
-- [ ] 3.6 Multiple sessions same day visible on calendar
-- [ ] 3.7 Mobile viewport calendar usable
-- [ ] 3.8 Unassigned client URL returns 404 or redirect
+- [x] 3.3 Full happy path: Clients → plan → template → personalize → save → calendar — a6093e8
+- [x] 3.4 Blank session path: add exercises manually → save — a6093e8
+- [x] 3.5 Edit not_started session → save → calendar reflects changes — a6093e8
+- [x] 3.6 Multiple sessions same day visible on calendar — a6093e8
+- [x] 3.7 Mobile viewport calendar usable — a6093e8
+- [x] 3.8 Unassigned client URL returns 404 or redirect — a6093e8
 
 ### Phase 4: Testing & hardening
 
