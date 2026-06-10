@@ -1,6 +1,7 @@
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
 import { createClient_, createTrainer, deleteUser, type TestUser } from "../helpers/fixtures.js";
+import { seedSessionExerciseWithSets } from "../helpers/session-graph.js";
 
 describe("set_logs", () => {
   let trainerA: TestUser;
@@ -57,24 +58,12 @@ describe("set_logs", () => {
       throw new Error(`Failed to seed workout session: ${sessionError.message}`);
     }
 
-    const { data: sessionExercise, error: sessionExerciseError } = await trainerA.client
-      .from("session_exercises")
-      .insert({
-        session_id: session.id,
-        exercise_id: exercise.id,
-        phase: "main",
-        sort_order: 1,
-        prescribed_sets: 3,
-        prescribed_reps: 10,
-      })
-      .select("id")
-      .single<{ id: string }>();
+    const seeded = await seedSessionExerciseWithSets(trainerA.client, {
+      sessionId: session.id,
+      exerciseId: exercise.id,
+    });
 
-    if (sessionExerciseError) {
-      throw new Error(`Failed to seed session exercise: ${sessionExerciseError.message}`);
-    }
-
-    sessionExerciseAId = sessionExercise.id;
+    sessionExerciseAId = seeded.sessionExerciseId;
   });
 
   afterAll(async () => {
