@@ -642,12 +642,12 @@ Integration tests for RPCs and new RLS; update existing RLS tests for per-round 
 
 #### Automated
 
-- [x] 4.1 Integration tests pass
-- [x] 4.2 Unit tests pass
-- [x] 4.3 Linting passes: `npm run lint`
-- [x] 4.4 Production build passes: `npm run build`
+- [x] 4.1 Integration tests pass — c931c16
+- [x] 4.2 Unit tests pass — c931c16
+- [x] 4.3 Linting passes: `npm run lint` — c931c16
+- [x] 4.4 Production build passes: `npm run build` — c931c16
 
 #### Manual
 
-- [x] 4.5 Run `verification.sql` in Supabase Studio — all checks PASS
-- [x] 4.6 Trainer removed from client cannot create new sessions for that client
+- [x] 4.5 Run `verification.sql` in Supabase Studio — all checks PASS — c931c16
+- [x] 4.6 Trainer removed from client cannot create new sessions for that client — c931c16
