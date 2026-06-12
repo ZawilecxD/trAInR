@@ -31,22 +31,27 @@ export const createWorkoutSessionBodySchema = z.object({
   scheduled_date: isoDateSchema,
   name: z.string().trim().min(1, "Name is required"),
   source_template_id: uuidSchema.nullable(),
-  exercises: z.array(sessionExerciseInputSchema),
+  exercises: z.array(sessionExerciseInputSchema).max(50, "too many exercises"),
 });
 
 export const updateWorkoutSessionBodySchema = z
   .object({
     scheduled_date: isoDateSchema.optional(),
     name: z.string().trim().min(1, "Name cannot be empty").optional(),
-    exercises: z.array(sessionExerciseInputSchema).optional(),
+    exercises: z.array(sessionExerciseInputSchema).max(50, "too many exercises").optional(),
   })
   .refine((value) => Object.keys(value).length > 0, "At least one field is required for update");
 
-export const listSessionsQuerySchema = z.object({
-  client_id: uuidSchema,
-  from: isoDateSchema,
-  to: isoDateSchema,
-});
+export const listSessionsQuerySchema = z
+  .object({
+    client_id: uuidSchema,
+    from: isoDateSchema,
+    to: isoDateSchema,
+  })
+  .refine((q) => q.from <= q.to, { message: "from must be on or before to" })
+  .refine((q) => new Date(q.to).getTime() - new Date(q.from).getTime() <= 366 * 24 * 60 * 60 * 1000, {
+    message: "date range cannot exceed 366 days",
+  });
 
 export const sessionIdParamSchema = uuidSchema;
 

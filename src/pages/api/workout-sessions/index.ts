@@ -104,7 +104,7 @@ export const POST: APIRoute = async (context) => {
   const { data: sessionId, error } = await createWorkoutSession(supabase, parsed.data);
   if (error) {
     const mapped = mapWorkoutSessionRpcError(error);
-    return jsonError(mapped.code, mapped.status, { message: error });
+    return jsonError(mapped.code, mapped.status, mapped.status < 500 ? { message: error } : undefined);
   }
 
   if (!sessionId) {

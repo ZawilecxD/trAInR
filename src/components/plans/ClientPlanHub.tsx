@@ -44,7 +44,7 @@ async function fetchSessions(clientId: string, from: string, to: string): Promis
   const params = new URLSearchParams({ client_id: clientId, from, to });
   const response = await fetch(`/api/workout-sessions?${params.toString()}`);
   if (!response.ok) {
-    return [];
+    throw new Error(`Failed to load sessions (${response.status})`);
   }
   const body = (await response.json()) as { sessions?: PlanCalendarSession[] };
   return body.sessions ?? [];
@@ -64,6 +64,7 @@ export default function ClientPlanHub({
   const [selectedDate, setSelectedDate] = useState(parseISODate(initialSelectedDate));
   const [sessions, setSessions] = useState(initialSessions);
   const [loadingMonth, setLoadingMonth] = useState(false);
+  const [fetchError, setFetchError] = useState<string | null>(null);
   const [pickerOpen, setPickerOpen] = useState(false);
   const [dismissedBanner, setDismissedBanner] = useState(false);
 
@@ -78,10 +79,14 @@ export default function ClientPlanHub({
   async function handleMonthChange(nextMonth: Date) {
     setMonth(nextMonth);
     setLoadingMonth(true);
+    setFetchError(null);
     try {
       const range = monthRange(nextMonth.getFullYear(), nextMonth.getMonth());
+      setSelectedDate(parseISODate(range.from));
       const nextSessions = await fetchSessions(clientId, range.from, range.to);
       setSessions(nextSessions);
+    } catch (err) {
+      setFetchError(err instanceof Error ? err.message : "Failed to load sessions");
     } finally {
       setLoadingMonth(false);
     }
@@ -109,6 +114,7 @@ export default function ClientPlanHub({
           <div className="mb-3 flex items-center justify-between gap-2">
             <h2 className="text-sm font-medium text-blue-100/80">Calendar</h2>
             {loadingMonth ? <span className="text-xs text-blue-100/50">Loading…</span> : null}
+            {fetchError ? <span className="text-xs text-red-400/80">{fetchError}</span> : null}
           </div>
           <PlanCalendar
             sessions={sessions}

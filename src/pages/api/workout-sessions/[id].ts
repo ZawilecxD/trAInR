@@ -76,7 +76,7 @@ export const PATCH: APIRoute = async (context) => {
   const { error } = await updateWorkoutSession(supabase, parsedId.data, parsedBody.data);
   if (error) {
     const mapped = mapWorkoutSessionRpcError(error);
-    return jsonError(mapped.code, mapped.status, { message: error });
+    return jsonError(mapped.code, mapped.status, mapped.status < 500 ? { message: error } : undefined);
   }
 
   const { data, error: fetchError } = await getSessionWithExercises(supabase, parsedId.data);
@@ -120,7 +120,7 @@ export const DELETE: APIRoute = async (context) => {
   const { error } = await deleteWorkoutSession(supabase, parsedId.data);
   if (error) {
     const mapped = mapWorkoutSessionRpcError(error);
-    return jsonError(mapped.code, mapped.status, { message: error });
+    return jsonError(mapped.code, mapped.status, mapped.status < 500 ? { message: error } : undefined);
   }
 
   return new Response(null, { status: 204 });
