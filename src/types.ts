@@ -151,7 +151,7 @@ export interface SessionExercise {
   phase: ExercisePhase;
   sort_order: number;
   notes: string | null;
-  sets?: SessionExerciseSet[];
+  sets: SessionExerciseSet[];
 }
 
 export interface SetLog {

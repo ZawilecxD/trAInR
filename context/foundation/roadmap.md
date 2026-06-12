@@ -1,5 +1,6 @@
 ---
-project: "trAInR"
+
+## project: "trAInR"
 version: 1
 status: draft
 created: 2026-05-25
@@ -7,7 +8,6 @@ updated: 2026-06-08
 prd_version: 1
 main_goal: speed
 top_blocker: time
----
 
 # Roadmap: trAInR
 
@@ -27,6 +27,7 @@ Independent personal trainers lose coaching time to admin — hunting across spr
 
 ## At a glance
 
+
 | ID   | Change ID                  | Outcome (user can …)                                                   | Prerequisites | PRD refs                                        | Status   |
 | ---- | -------------------------- | ---------------------------------------------------------------------- | ------------- | ----------------------------------------------- | -------- |
 | F-01 | database-schema-and-rls    | (foundation) Supabase schema with RLS and role-aware middleware landed | —             | NFR privacy, NFR data integrity, Access Control | done     |
@@ -45,24 +46,29 @@ Independent personal trainers lose coaching time to admin — hunting across spr
 | S-13 | data-edit-window           | edit logged data for 24 hours, then sealed                             | S-06          | FR-022                                          | proposed |
 | S-14 | exercises-separate-rounds  | prescribe each exercise round separately (reps, load, rest per round)  | S-02          | FR-010, FR-011                                  | done     |
 
+
 ### Quality & testing
 
-| ID   | Change ID                    | Outcome (team can …)                                                                 | Prerequisites              | PRD refs              | Status   |
-| ---- | ---------------------------- | ------------------------------------------------------------------------------------ | -------------------------- | --------------------- | -------- |
-| Q-01 | add-stryker-mutation-testing | run Stryker on risk-critical modules to catch weak assertions beyond coverage        | test-plan Phase 1 complete | NFR data integrity    | proposed |
-| Q-02 | harden-replace-exercise-muscle-groups | close KNOWN GAP: RPC rejects cross-trainer muscle group replacement; flip integration test | S-01, test-plan Phase 1 complete | NFR privacy, NFR data integrity | proposed |
-| Q-03 | harden-complete-client-invite | close KNOWN GAP: block fraudulent p_client_id on authenticated invite completion; preserve anon signup | S-03, test-plan Phase 1 complete | FR-003, FR-004, FR-005 | proposed |
+
+| ID   | Change ID                             | Outcome (team can …)                                                                                   | Prerequisites                    | PRD refs                        | Status   |
+| ---- | ------------------------------------- | ------------------------------------------------------------------------------------------------------ | -------------------------------- | ------------------------------- | -------- |
+| Q-01 | add-stryker-mutation-testing          | run Stryker on risk-critical modules to catch weak assertions beyond coverage                          | test-plan Phase 1 complete       | NFR data integrity              | proposed |
+| Q-02 | harden-replace-exercise-muscle-groups | close KNOWN GAP: RPC rejects cross-trainer muscle group replacement; flip integration test             | S-01, test-plan Phase 1 complete | NFR privacy, NFR data integrity | proposed |
+| Q-03 | harden-complete-client-invite         | close KNOWN GAP: block fraudulent p_client_id on authenticated invite completion; preserve anon signup | S-03, test-plan Phase 1 complete | FR-003, FR-004, FR-005          | proposed |
+
 
 ## Streams
 
 Navigation aid — groups items that share a Prerequisites chain. Canonical ordering still lives in the dependency graph below; this table is the proposed reading order across parallel tracks.
 
-| Stream | Theme                          | Chain                                                        | Note                                                                                                                                  |
-| ------ | ------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------- |
-| A      | Trainer authoring → north star | `F-01` → `S-01` → `S-02` → `S-04` → `S-06` → `S-07`          | Critical path: every link is on the shortest route to validating the async training loop.                                             |
-| B      | Client onboarding & calendar   | `S-03` → `S-05`                                              | Joins Stream A at `S-04` (S-03 is a prerequisite for S-04); `S-05` branches off `S-04` parallel with `S-06`.                          |
-| C      | Enhancement & polish           | `S-08` / `S-09` / `S-10` / `S-11` / `S-12` / `S-13` / `S-14` | Tier 2+3 items; sequence after core loop completes or when capacity opens. `S-14` extends session template prescription (after S-02). |
+
+| Stream | Theme                          | Chain                                                        | Note                                                                                                                                                                                          |
+| ------ | ------------------------------ | ------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| A      | Trainer authoring → north star | `F-01` → `S-01` → `S-02` → `S-04` → `S-06` → `S-07`          | Critical path: every link is on the shortest route to validating the async training loop.                                                                                                     |
+| B      | Client onboarding & calendar   | `S-03` → `S-05`                                              | Joins Stream A at `S-04` (S-03 is a prerequisite for S-04); `S-05` branches off `S-04` parallel with `S-06`.                                                                                  |
+| C      | Enhancement & polish           | `S-08` / `S-09` / `S-10` / `S-11` / `S-12` / `S-13` / `S-14` | Tier 2+3 items; sequence after core loop completes or when capacity opens. `S-14` extends session template prescription (after S-02).                                                         |
 | D      | Quality & testing              | `Q-01` / `Q-02` / `Q-03`                                     | Cross-cutting; selective mutation testing per `test-plan.md` after the integration harness lands. `Q-02`/`Q-03` close SECURITY DEFINER gaps documented by the harness (flip KNOWN GAP tests). |
+
 
 ## Baseline
 
@@ -272,32 +278,34 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Parallel with:** S-03, S-04 (once S-02 is done)
 - **Blockers:** —
 - **Unknowns:** ~~Whether per-round rows live on template exercises only or also on assigned session exercises~~ — **Resolved:** both; session mirror deferred to S-04 (`session_exercise_sets`). Metric variants (time/distance) per round remain per-exercise (S-14).
-- **Risk:** Data model shift from flat `prescribed_*` fields to round rows cascades to S-04 (assignment), S-06 (guided logging), and S-07 (trainer readout); plan should define migration/backfill for templates created with uniform prescriptions
+- **Risk:** Data model shift from flat `prescribed_`* fields to round rows cascades to S-04 (assignment), S-06 (guided logging), and S-07 (trainer readout); plan should define migration/backfill for templates created with uniform prescriptions
 - **Status:** done
 
 ## Backlog Handoff
 
-| Roadmap ID | Change ID                  | Suggested issue title                                              | Ready for `/10x-plan` | Notes                                                                                                                       |
-| ---------- | -------------------------- | ------------------------------------------------------------------ | --------------------- | --------------------------------------------------------------------------------------------------------------------------- |
-| F-01       | database-schema-and-rls    | Create Supabase schema with RLS policies and role-aware middleware | yes                   | Run `/10x-plan database-schema-and-rls`                                                                                     |
-| S-01       | exercise-library           | Build exercise library CRUD (create, edit, browse/filter)          | —                     | done                                                                                                                        |
-| S-02       | session-templates          | Build session template builder with phase structure                | no                    | Needs F-01                                                                                                                  |
-| S-03       | client-onboarding          | Implement invite-link client registration and auto-assignment      | no                    | Needs F-01                                                                                                                  |
-| S-04       | plan-assignment            | Build plan assignment: place session on client calendar            | no                    | Needs S-02 + S-03; must include `session_exercise_sets` mirror (S-14 follow-up), load semantics, and DB prescription checks |
-| S-05       | client-calendar            | Build client calendar view (month/week + status colors)            | no                    | Needs S-04                                                                                                                  |
-| S-06       | guided-workout-logging     | Build guided workout view with set-by-set logging                  | no                    | Needs S-04                                                                                                                  |
-| S-07       | trainer-dashboard          | Build trainer dashboard with client overview and session detail    | no                    | Needs S-04 + S-06                                                                                                           |
-| S-08       | session-completion-marking | Add manual session completion status (finished/partial)            | no                    | Needs S-06                                                                                                                  |
-| S-09       | session-comments           | Add bidirectional session comments                                 | no                    | Needs S-04                                                                                                                  |
-| S-10       | warmup-working-flag        | Add warm-up/working set flag per logged set                        | no                    | Needs S-06                                                                                                                  |
-| S-11       | client-removal             | Implement trainer can remove/reject client                         | no                    | Needs S-03                                                                                                                  |
-| S-12       | exercise-statistics        | Build per-exercise history with 1RM and volume stats               | no                    | Needs S-06                                                                                                                  |
-| S-13       | data-edit-window           | Implement 24h edit window then seal logged data                    | no                    | Needs S-06                                                                                                                  |
-| S-14       | exercises-separate-rounds  | Per-round prescription (reps, load, rest) in session templates     | no                    | Needs S-02                                                                                                                  |
-| Q-01       | add-stryker-mutation-testing | Run Stryker on risk-critical modules                               | no                    | Needs test-plan Phase 1 complete                                                                                            |
-| Q-02       | harden-replace-exercise-muscle-groups | Add auth.uid() ownership check to replace_exercise_muscle_groups RPC | yes                   | Run `/10x-plan harden-replace-exercise-muscle-groups`; flip KNOWN GAP test in `tests/integration/security-definer/`         |
-| Q-03       | harden-complete-client-invite | Harden complete_client_invite p_client_id binding for authenticated callers | no                    | Run `/10x-frame harden-complete-client-invite` first (anon vs authenticated design); then `/10x-plan`                       |
-| Q-01       | add-stryker-mutation-testing | Add Stryker mutation testing as a selective quality gate           | yes                   | Run `/10x-research add-stryker-mutation-testing`; see `context/changes/add-stryker-mutation-testing/`                       |
+
+| Roadmap ID | Change ID                             | Suggested issue title                                                       | Ready for `/10x-plan` | Notes                                                                                                                       |
+| ---------- | ------------------------------------- | --------------------------------------------------------------------------- | --------------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| F-01       | database-schema-and-rls               | Create Supabase schema with RLS policies and role-aware middleware          | yes                   | Run `/10x-plan database-schema-and-rls`                                                                                     |
+| S-01       | exercise-library                      | Build exercise library CRUD (create, edit, browse/filter)                   | —                     | done                                                                                                                        |
+| S-02       | session-templates                     | Build session template builder with phase structure                         | no                    | Needs F-01                                                                                                                  |
+| S-03       | client-onboarding                     | Implement invite-link client registration and auto-assignment               | no                    | Needs F-01                                                                                                                  |
+| S-04       | plan-assignment                       | Build plan assignment: place session on client calendar                     | no                    | Needs S-02 + S-03; must include `session_exercise_sets` mirror (S-14 follow-up), load semantics, and DB prescription checks |
+| S-05       | client-calendar                       | Build client calendar view (month/week + status colors)                     | no                    | Needs S-04                                                                                                                  |
+| S-06       | guided-workout-logging                | Build guided workout view with set-by-set logging                           | no                    | Needs S-04                                                                                                                  |
+| S-07       | trainer-dashboard                     | Build trainer dashboard with client overview and session detail             | no                    | Needs S-04 + S-06                                                                                                           |
+| S-08       | session-completion-marking            | Add manual session completion status (finished/partial)                     | no                    | Needs S-06                                                                                                                  |
+| S-09       | session-comments                      | Add bidirectional session comments                                          | no                    | Needs S-04                                                                                                                  |
+| S-10       | warmup-working-flag                   | Add warm-up/working set flag per logged set                                 | no                    | Needs S-06                                                                                                                  |
+| S-11       | client-removal                        | Implement trainer can remove/reject client                                  | no                    | Needs S-03                                                                                                                  |
+| S-12       | exercise-statistics                   | Build per-exercise history with 1RM and volume stats                        | no                    | Needs S-06                                                                                                                  |
+| S-13       | data-edit-window                      | Implement 24h edit window then seal logged data                             | no                    | Needs S-06                                                                                                                  |
+| S-14       | exercises-separate-rounds             | Per-round prescription (reps, load, rest) in session templates              | no                    | Needs S-02                                                                                                                  |
+| Q-01       | add-stryker-mutation-testing          | Run Stryker on risk-critical modules                                        | no                    | Needs test-plan Phase 1 complete                                                                                            |
+| Q-02       | harden-replace-exercise-muscle-groups | Add auth.uid() ownership check to replace_exercise_muscle_groups RPC        | yes                   | Run `/10x-plan harden-replace-exercise-muscle-groups`; flip KNOWN GAP test in `tests/integration/security-definer/`         |
+| Q-03       | harden-complete-client-invite         | Harden complete_client_invite p_client_id binding for authenticated callers | no                    | Run `/10x-frame harden-complete-client-invite` first (anon vs authenticated design); then `/10x-plan`                       |
+| Q-01       | add-stryker-mutation-testing          | Add Stryker mutation testing as a selective quality gate                    | yes                   | Run `/10x-research add-stryker-mutation-testing`; see `context/changes/add-stryker-mutation-testing/`                       |
+
 
 ## Open Roadmap Questions
 
@@ -328,3 +336,4 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **S-02: trainer can create a reusable session template organized into phases (warm-up/main/cooldown) with prescribed sets/reps/load and rest time per exercise, and edit existing templates** — Archived 2026-06-07 → `context/archive/2026-06-05-session-templates/`. Lesson: —.
 - **S-11: trainer can remove or reject a wrongly-assigned client** — Archived 2026-06-07 → `context/archive/2026-06-05-client-removal/`. Lesson: —.
 - **S-14: trainer can add an exercise to a session template and configure each round separately — e.g. round 1: 10 reps × 50 kg + 2 min rest, round 2: 8 × 60 kg + 2 min rest, round 3: 6 × 70 kg + 3 min rest — instead of a single uniform prescription for all sets** — Archived 2026-06-07 → `context/archive/2026-06-05-exercises-separate-rounds/`. Lesson: —.
+
