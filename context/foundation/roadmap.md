@@ -45,6 +45,7 @@ Independent personal trainers lose coaching time to admin — hunting across spr
 | S-12 | exercise-statistics        | view per-exercise history, estimated 1RM, and volume/tonnage           | S-06          | FR-024, FR-025, FR-026                          | proposed |
 | S-13 | data-edit-window           | edit logged data for 24 hours, then sealed                             | S-06          | FR-022                                          | proposed |
 | S-14 | exercises-separate-rounds  | prescribe each exercise round separately (reps, load, rest per round)  | S-02          | FR-010, FR-011                                  | done     |
+| S-15 | exercise-favourites        | mark exercises as favourites and filter exercise lists by favourites only | S-01          | FR-009                                          | proposed |
 
 
 ### Quality & testing
@@ -66,7 +67,7 @@ Navigation aid — groups items that share a Prerequisites chain. Canonical orde
 | ------ | ------------------------------ | ------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | A      | Trainer authoring → north star | `F-01` → `S-01` → `S-02` → `S-04` → `S-06` → `S-07`          | Critical path: every link is on the shortest route to validating the async training loop.                                                                                                     |
 | B      | Client onboarding & calendar   | `S-03` → `S-05`                                              | Joins Stream A at `S-04` (S-03 is a prerequisite for S-04); `S-05` branches off `S-04` parallel with `S-06`.                                                                                  |
-| C      | Enhancement & polish           | `S-08` / `S-09` / `S-10` / `S-11` / `S-12` / `S-13` / `S-14` | Tier 2+3 items; sequence after core loop completes or when capacity opens. `S-14` extends session template prescription (after S-02).                                                         |
+| C      | Enhancement & polish           | `S-08` / `S-09` / `S-10` / `S-11` / `S-12` / `S-13` / `S-14` / `S-15` | Tier 2+3 items; sequence after core loop completes or when capacity opens. `S-14` extends session template prescription (after S-02). `S-15` extends exercise library browse/filter (after S-01). |
 | D      | Quality & testing              | `Q-01` / `Q-02` / `Q-03`                                     | Cross-cutting; selective mutation testing per `test-plan.md` after the integration harness lands. `Q-02`/`Q-03` close SECURITY DEFINER gaps documented by the harness (flip KNOWN GAP tests). |
 
 
@@ -281,6 +282,18 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Risk:** Data model shift from flat `prescribed_`* fields to round rows cascades to S-04 (assignment), S-06 (guided logging), and S-07 (trainer readout); plan should define migration/backfill for templates created with uniform prescriptions
 - **Status:** done
 
+### S-15: Exercise favourites
+
+- **Outcome:** trainer can mark exercises as favourites and filter exercise lists to show favourites only (exercise library and anywhere else exercises are browsed for selection)
+- **Change ID:** exercise-favourites
+- **PRD refs:** FR-009 (extends browse/filter; dedicated FR not yet in PRD — add at `/10x-plan` if scope needs contract lock-in)
+- **Prerequisites:** S-01
+- **Parallel with:** S-02, S-03, S-04, S-05, S-06, S-07, S-08, S-09, S-10, S-12, S-13
+- **Blockers:** —
+- **Unknowns:** Whether favourite toggle appears inline on list rows only, or also on exercise detail/edit; whether template builder exercise picker shares the same filter component as the library page
+- **Risk:** Minimal — per-trainer boolean flag; main work is consistent filter UX across exercise pickers (library, template builder, session personalization)
+- **Status:** proposed
+
 ## Backlog Handoff
 
 
@@ -301,6 +314,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 | S-12       | exercise-statistics                   | Build per-exercise history with 1RM and volume stats                        | no                    | Needs S-06                                                                                                                  |
 | S-13       | data-edit-window                      | Implement 24h edit window then seal logged data                             | no                    | Needs S-06                                                                                                                  |
 | S-14       | exercises-separate-rounds             | Per-round prescription (reps, load, rest) in session templates              | no                    | Needs S-02                                                                                                                  |
+| S-15       | exercise-favourites                   | Mark exercises as favourites and filter exercise lists                      | yes                   | Run `/10x-plan exercise-favourites`; extends FR-009 browse/filter                                                           |
 | Q-01       | add-stryker-mutation-testing          | Run Stryker on risk-critical modules                                        | no                    | Needs test-plan Phase 1 complete                                                                                            |
 | Q-02       | harden-replace-exercise-muscle-groups | Add auth.uid() ownership check to replace_exercise_muscle_groups RPC        | yes                   | Run `/10x-plan harden-replace-exercise-muscle-groups`; flip KNOWN GAP test in `tests/integration/security-definer/`         |
 | Q-03       | harden-complete-client-invite         | Harden complete_client_invite p_client_id binding for authenticated callers | no                    | Run `/10x-frame harden-complete-client-invite` first (anon vs authenticated design); then `/10x-plan`                       |
