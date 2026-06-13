@@ -358,14 +358,14 @@ None — no schema changes. Read access already provided by existing RLS (`worko
 
 #### Automated
 
-- [ ] 4.1 Type checking passes: `npx astro check`
-- [ ] 4.2 Linting passes: `npm run lint`
-- [ ] 4.3 Unit tests pass: `npm run test` (week-grouping boundaries, if extracted)
-- [ ] 4.4 Build passes: `npm run build`
+- [x] 4.1 Type checking passes: `npx astro check`
+- [x] 4.2 Linting passes: `npm run lint`
+- [x] 4.3 Unit tests pass: `npm run test` (week-grouping boundaries, if extracted)
+- [x] 4.4 Build passes: `npm run build`
 
 #### Manual
 
-- [ ] 4.5 Month→Week toggle shows selected week as vertical agenda with per-day sessions + "Rest day" rows
-- [ ] 4.6 Prev/next-week navigation refetches and updates correctly (Monday-start label)
-- [ ] 4.7 Week-card status colours match month dots
-- [ ] 4.8 Week view readable/scrollable one-handed on phone width; toggling back preserves context
+- [x] 4.5 Month→Week toggle shows selected week as vertical agenda with per-day sessions + "Rest day" rows
+- [x] 4.6 Prev/next-week navigation refetches and updates correctly (Monday-start label)
+- [x] 4.7 Week-card status colours match month dots
+- [x] 4.8 Week view readable/scrollable one-handed on phone width; toggling back preserves context
