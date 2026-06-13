@@ -1,9 +1,10 @@
 ---
 change_id: plan-assignment
 title: Plan assignment — place sessions on client calendar
-status: impl_reviewed
+status: archived
 created: 2026-06-08
-updated: 2026-06-12
+updated: 2026-06-13
+archived_at: 2026-06-13T07:59:55Z
 linear_issue: ZAW-9
 ---
 
