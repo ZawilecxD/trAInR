@@ -67,7 +67,10 @@ const showAssignedBanner = Astro.url.searchParams.get("assigned") === "1";
             client:load
             clientId={clientId}
             clientName={clientName}
-            initialSessions={sessions ?? []}
+            initialSessions={(sessions ?? []).map((session) => ({
+              ...session,
+              name: session.name ?? "Workout",
+            }))}
             initialSelectedDate={selectedDate}
             initialMonth={initialMonth}
             templates={templates ?? []}

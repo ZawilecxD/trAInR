@@ -124,7 +124,7 @@ const scheduledDate = session?.scheduled_date ?? "";
               initialScheduledDate={session.scheduled_date}
               availableExercises={availableExercises}
               initialSession={{
-                name: session.name,
+                name: session.name ?? "Workout",
                 exercises: session.exercises,
               }}
             />

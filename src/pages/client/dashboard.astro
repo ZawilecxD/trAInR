@@ -1,7 +1,7 @@
 ---
 import Layout from "@/layouts/Layout.astro";
 import { createClient } from "@/lib/supabase";
-import type { AssignedTrainer, Profile } from "@/types";
+import type { AssignedTrainer } from "@/types";
 
 const userId = Astro.locals.user?.id;
 const supabase = createClient(Astro.request.headers, Astro.cookies);
@@ -24,7 +24,8 @@ if (supabase && userId) {
       .maybeSingle();
 
     if (!assignmentResult.error && assignmentResult.data) {
-      const trainer = assignmentResult.data.trainer as Pick<Profile, "display_name"> | null;
+      const trainerData = assignmentResult.data.trainer;
+      const trainer = Array.isArray(trainerData) ? trainerData[0] : trainerData;
       trainerName = trainer?.display_name ?? null;
     }
   }

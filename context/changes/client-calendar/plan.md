@@ -315,15 +315,15 @@ None — no schema changes. Read access already provided by existing RLS (`worko
 
 #### Automated
 
-- [ ] 1.1 Type checking passes: `npx astro check`
-- [x] 1.2 Linting passes: `npm run lint`
-- [x] 1.3 Unit tests pass: `npm run test` (requireClient guard + clientSessionsQuerySchema)
-- [x] 1.4 Build passes: `npm run build`
+- [x] 1.1 Type checking passes: `npx astro check`
+- [x] 1.2 Linting passes: `npm run lint` — a77b64e
+- [x] 1.3 Unit tests pass: `npm run test` (requireClient guard + clientSessionsQuerySchema) — a77b64e
+- [x] 1.4 Build passes: `npm run build` — a77b64e
 
 #### Manual
 
-- [x] 1.5 verification.sql confirms client reads only own sessions, zero for other client's plan
-- [x] 1.6 `GET /api/client/sessions` returns 200 (client), 403 (trainer), 401 (signed out)
+- [x] 1.5 verification.sql confirms client reads only own sessions, zero for other client's plan — a77b64e
+- [x] 1.6 `GET /api/client/sessions` returns 200 (client), 403 (trainer), 401 (signed out) — a77b64e
 
 ### Phase 2: Shared status-coloured dots + touch targets
 
