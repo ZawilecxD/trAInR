@@ -1,10 +1,10 @@
 ---
 change_id: harden-replace-exercise-muscle-groups
 title: Harden replace_exercise_muscle_groups RPC ownership check
-status: implemented
+status: archived
 created: 2026-06-08
-updated: 2026-06-09
-archived_at: null
+updated: 2026-06-13
+archived_at: 2026-06-13T08:02:56Z
 ---
 
 ## Notes
