@@ -2,7 +2,7 @@ import type { APIRoute } from "astro";
 import { requireTrainer } from "@/lib/api/guards";
 import { jsonError, jsonResponse } from "@/lib/api/responses";
 import { createTemplateBodySchema, formatZodIssues } from "@/lib/session-templates/schemas";
-import { createTemplate, listTemplates } from "@/lib/session-templates/service";
+import { createTemplate, listTemplateSummaries } from "@/lib/session-templates/service";
 import { createClient } from "@/lib/supabase";
 
 export const prerender = false;
@@ -16,7 +16,7 @@ export const GET: APIRoute = async (context) => {
     return jsonError("service_unavailable", 503);
   }
 
-  const { data, error } = await listTemplates(supabase, guard.userId);
+  const { data, error } = await listTemplateSummaries(supabase, guard.userId);
   if (error) {
     return jsonError("list_failed", 500, { message: error });
   }
