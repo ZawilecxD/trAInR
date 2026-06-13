@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  clientSessionsQuerySchema,
   createWorkoutSessionBodySchema,
   listSessionsQuerySchema,
   sessionIdParamSchema,
@@ -182,6 +183,44 @@ describe("listSessionsQuerySchema", () => {
     const parsed = listSessionsQuerySchema.safeParse({
       client_id: "not-a-uuid",
       from: "2026-06-01",
+      to: "2026-06-30",
+    });
+
+    expect(parsed.success).toBe(false);
+  });
+});
+
+describe("clientSessionsQuerySchema", () => {
+  it("accepts valid date range", () => {
+    const parsed = clientSessionsQuerySchema.safeParse({
+      from: "2026-06-01",
+      to: "2026-06-30",
+    });
+
+    expect(parsed.success).toBe(true);
+  });
+
+  it("rejects from after to", () => {
+    const parsed = clientSessionsQuerySchema.safeParse({
+      from: "2026-06-30",
+      to: "2026-06-01",
+    });
+
+    expect(parsed.success).toBe(false);
+  });
+
+  it("rejects range exceeding 366 days", () => {
+    const parsed = clientSessionsQuerySchema.safeParse({
+      from: "2025-01-01",
+      to: "2026-06-01",
+    });
+
+    expect(parsed.success).toBe(false);
+  });
+
+  it("rejects malformed dates", () => {
+    const parsed = clientSessionsQuerySchema.safeParse({
+      from: "06/01/2026",
       to: "2026-06-30",
     });
 

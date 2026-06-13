@@ -109,6 +109,56 @@ export async function listSessionsForClient(
   return { data: sessions, error: null };
 }
 
+export async function listMySessionsAsClient(
+  supabase: SupabaseClient,
+  from: string,
+  to: string,
+): Promise<{ data: SessionListItem[] | null; error: string | null }> {
+  const {
+    data: { user },
+    error: authError,
+  } = await supabase.auth.getUser();
+
+  if (authError) {
+    return { data: null, error: authError.message };
+  }
+
+  if (!user) {
+    return { data: [], error: null };
+  }
+
+  const planResult = await supabase
+    .from("client_plans")
+    .select("id")
+    .eq("client_id", user.id)
+    .eq("status", "active")
+    .maybeSingle();
+
+  if (planResult.error) {
+    return { data: null, error: planResult.error.message };
+  }
+
+  if (!planResult.data) {
+    return { data: [], error: null };
+  }
+
+  const sessionsResult = await supabase
+    .from("workout_sessions")
+    .select("id, name, scheduled_date, status, source_template_id")
+    .eq("client_plan_id", planResult.data.id)
+    .gte("scheduled_date", from)
+    .lte("scheduled_date", to)
+    .order("scheduled_date", { ascending: true });
+
+  if (sessionsResult.error) {
+    return { data: null, error: sessionsResult.error.message };
+  }
+
+  const sessions = Array.isArray(sessionsResult.data) ? sessionsResult.data.map(parseSessionListItem) : [];
+
+  return { data: sessions, error: null };
+}
+
 export async function getSessionWithExercises(
   supabase: SupabaseClient,
   sessionId: string,
