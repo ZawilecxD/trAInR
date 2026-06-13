@@ -611,43 +611,43 @@ Integration tests for RPCs and new RLS; update existing RLS tests for per-round 
 
 #### Automated
 
-- [ ] 2.1 Migration applies cleanly: `npx supabase db reset`
-- [ ] 2.2 Unit tests for zod schemas: `src/lib/workout-sessions/schemas.test.ts`
-- [ ] 2.3 Linting passes: `npm run lint`
-- [ ] 2.4 Production build passes: `npm run build`
+- [x] 2.1 Migration applies cleanly: `npx supabase db reset` — ff23609
+- [x] 2.2 Unit tests for zod schemas: `src/lib/workout-sessions/schemas.test.ts` — ff23609
+- [x] 2.3 Linting passes: `npm run lint` — ff23609
+- [x] 2.4 Production build passes: `npm run build` — ff23609
 
 #### Manual
 
-- [ ] 2.5 Supabase Studio: `create_workout_session` creates session + exercises + sets atomically
-- [ ] 2.6 Cross-trainer call with another trainer's `client_id` fails
-- [ ] 2.7 Update rejected after manually setting `started_at`
+- [x] 2.5 Supabase Studio: `create_workout_session` creates session + exercises + sets atomically
+- [x] 2.6 Cross-trainer call with another trainer's `client_id` fails
+- [x] 2.7 Update rejected after manually setting `started_at`
 
 ### Phase 3: Trainer calendar & assignment UI
 
 #### Automated
 
-- [ ] 3.1 Linting passes: `npm run lint`
-- [ ] 3.2 Production build passes: `npm run build`
+- [x] 3.1 Linting passes: `npm run lint` — a6093e8
+- [x] 3.2 Production build passes: `npm run build` — a6093e8
 
 #### Manual
 
-- [ ] 3.3 Full happy path: Clients → plan → template → personalize → save → calendar
-- [ ] 3.4 Blank session path: add exercises manually → save
-- [ ] 3.5 Edit not_started session → save → calendar reflects changes
-- [ ] 3.6 Multiple sessions same day visible on calendar
-- [ ] 3.7 Mobile viewport calendar usable
-- [ ] 3.8 Unassigned client URL returns 404 or redirect
+- [x] 3.3 Full happy path: Clients → plan → template → personalize → save → calendar — a6093e8
+- [x] 3.4 Blank session path: add exercises manually → save — a6093e8
+- [x] 3.5 Edit not_started session → save → calendar reflects changes — a6093e8
+- [x] 3.6 Multiple sessions same day visible on calendar — a6093e8
+- [x] 3.7 Mobile viewport calendar usable — a6093e8
+- [x] 3.8 Unassigned client URL returns 404 or redirect — a6093e8
 
 ### Phase 4: Testing & hardening
 
 #### Automated
 
-- [ ] 4.1 Integration tests pass
-- [ ] 4.2 Unit tests pass
-- [ ] 4.3 Linting passes: `npm run lint`
-- [ ] 4.4 Production build passes: `npm run build`
+- [x] 4.1 Integration tests pass — c931c16
+- [x] 4.2 Unit tests pass — c931c16
+- [x] 4.3 Linting passes: `npm run lint` — c931c16
+- [x] 4.4 Production build passes: `npm run build` — c931c16
 
 #### Manual
 
-- [ ] 4.5 Run `verification.sql` in Supabase Studio — all checks PASS
-- [ ] 4.6 Trainer removed from client cannot create new sessions for that client
+- [x] 4.5 Run `verification.sql` in Supabase Studio — all checks PASS — c931c16
+- [x] 4.6 Trainer removed from client cannot create new sessions for that client — c931c16

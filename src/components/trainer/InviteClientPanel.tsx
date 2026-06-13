@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Copy, Link2, Trash2, Users } from "lucide-react";
+import { CalendarDays, Copy, Link2, Trash2, Users } from "lucide-react";
 import { toast } from "sonner";
 import {
   AlertDialog,
@@ -239,46 +239,65 @@ export default function InviteClientPanel({ invites: initialInvites, clients: in
             {clients.map((row) => (
               <li
                 key={row.id}
-                className="flex items-center justify-between gap-3 rounded-lg border border-white/10 bg-white/5 px-4 py-3 text-sm text-white"
+                className="flex flex-col gap-3 rounded-lg border border-white/10 bg-white/5 px-4 py-3 text-sm text-white sm:flex-row sm:items-center sm:justify-between"
               >
-                <span>{row.client.display_name}</span>
-                <AlertDialog>
-                  <AlertDialogTrigger asChild>
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="sm"
-                      disabled={removingId === row.id}
-                      className="text-red-300 hover:bg-red-500/10 hover:text-red-200"
-                    >
-                      <Trash2 className="size-3.5" />
-                      Remove
-                    </Button>
-                  </AlertDialogTrigger>
-                  <AlertDialogContent className="border-white/10 bg-slate-900 text-white">
-                    <AlertDialogHeader>
-                      <AlertDialogTitle>Remove client?</AlertDialogTitle>
-                      <AlertDialogDescription className="text-blue-100/70">
-                        {row.client.display_name} will be removed from your client list. Their workout history is
-                        retained; you will no longer see them or their plans.
-                      </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                      <AlertDialogCancel className="border-white/20 bg-white/10 text-white hover:bg-white/20">
-                        Cancel
-                      </AlertDialogCancel>
-                      <AlertDialogAction
-                        className="bg-destructive hover:bg-destructive/90 text-white"
+                <a
+                  href={`/trainer/clients/${row.client_id}/plan`}
+                  className="font-medium transition-colors hover:text-purple-200"
+                >
+                  {row.client.display_name}
+                </a>
+                <div className="flex shrink-0 items-center gap-2">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    className="border-white/20 bg-white/5 text-white hover:bg-white/10"
+                    asChild
+                  >
+                    <a href={`/trainer/clients/${row.client_id}/plan`}>
+                      <CalendarDays className="size-3.5" />
+                      View plan
+                    </a>
+                  </Button>
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
                         disabled={removingId === row.id}
-                        onClick={() => {
-                          void handleRemove(row.id, row.client.display_name);
-                        }}
+                        className="text-red-300 hover:bg-red-500/10 hover:text-red-200"
                       >
-                        {removingId === row.id ? "Removing…" : "Remove client"}
-                      </AlertDialogAction>
-                    </AlertDialogFooter>
-                  </AlertDialogContent>
-                </AlertDialog>
+                        <Trash2 className="size-3.5" />
+                        Remove
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent className="border-white/10 bg-slate-900 text-white">
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Remove client?</AlertDialogTitle>
+                        <AlertDialogDescription className="text-blue-100/70">
+                          {row.client.display_name} will be removed from your client list. Their workout history is
+                          retained; you will no longer see them or their plans.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel className="border-white/20 bg-white/10 text-white hover:bg-white/20">
+                          Cancel
+                        </AlertDialogCancel>
+                        <AlertDialogAction
+                          className="bg-destructive hover:bg-destructive/90 text-white"
+                          disabled={removingId === row.id}
+                          onClick={() => {
+                            void handleRemove(row.id, row.client.display_name);
+                          }}
+                        >
+                          {removingId === row.id ? "Removing…" : "Remove client"}
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                </div>
               </li>
             ))}
           </ul>

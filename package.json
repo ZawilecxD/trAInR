@@ -12,7 +12,8 @@
     "format": "prettier --write .",
     "test": "vitest run",
     "test:integration": "vitest run --config vitest.integration.config.ts",
-    "local-workspace": "bash scripts/local-workspace"
+    "local-workspace": "bash scripts/local-workspace",
+    "seed:dev-users": "bash scripts/seed-dev-users.sh"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.8",
@@ -30,10 +31,12 @@
     "astro": "^6.3.1",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "date-fns": "^4.4.0",
     "lucide-react": "^1.14.0",
     "next-themes": "^0.4.6",
     "radix-ui": "^1.4.3",
     "react": "^19.2.6",
+    "react-day-picker": "^9.14.0",
     "react-dom": "^19.2.6",
     "sonner": "^2.0.7",
     "tailwind-merge": "^3.5.0",

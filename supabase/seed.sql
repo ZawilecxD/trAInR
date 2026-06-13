@@ -1,4 +1,5 @@
 -- F-01: canonical muscle_groups for FR-009 filtering (idempotent by name)
+-- Runs on every `supabase db reset`. Local dev accounts/exercises follow in scripts/seed-dev-users.sql.
 
 insert into public.muscle_groups (id, name, region)
 values
