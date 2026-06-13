@@ -20,6 +20,7 @@ export default function SignUpForm({ serverError, token, trainerName }: Props) {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
   const [errors, setErrors] = useState<{ email?: string; password?: string; confirmPassword?: string }>({});
 
   function validate() {
@@ -54,7 +55,10 @@ export default function SignUpForm({ serverError, token, trainerName }: Props) {
   function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
     if (!validate()) {
       e.preventDefault();
+      return;
     }
+
+    setSubmitting(true);
   }
 
   const passwordHint =
@@ -134,6 +138,7 @@ export default function SignUpForm({ serverError, token, trainerName }: Props) {
       <ServerError message={serverError} />
 
       <SubmitButton
+        pending={submitting}
         pendingText={isClientInvite ? "Joining…" : "Creating account..."}
         icon={<UserPlus className="size-4" />}
       >
