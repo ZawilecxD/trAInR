@@ -5,7 +5,7 @@ export { formatZodIssues };
 
 const uuidSchema = z.uuid({ error: "Invalid UUID" });
 
-const isoDateSchema = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Invalid date (expected YYYY-MM-DD)");
+export const isoDateSchema = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Invalid date (expected YYYY-MM-DD)");
 
 export const sessionExerciseSetInputSchema = z
   .object({

@@ -28,7 +28,7 @@ export const GET: APIRoute = async (context) => {
     return jsonError("service_unavailable", 503);
   }
 
-  const { data, error } = await listMySessionsAsClient(supabase, parsed.data.from, parsed.data.to);
+  const { data, error } = await listMySessionsAsClient(supabase, guard.userId, parsed.data.from, parsed.data.to);
 
   if (error) {
     return jsonError("list_failed", 500, { message: error });

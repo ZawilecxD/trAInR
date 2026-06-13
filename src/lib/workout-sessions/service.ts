@@ -111,26 +111,14 @@ export async function listSessionsForClient(
 
 export async function listMySessionsAsClient(
   supabase: SupabaseClient,
+  userId: string,
   from: string,
   to: string,
 ): Promise<{ data: SessionListItem[] | null; error: string | null }> {
-  const {
-    data: { user },
-    error: authError,
-  } = await supabase.auth.getUser();
-
-  if (authError) {
-    return { data: null, error: authError.message };
-  }
-
-  if (!user) {
-    return { data: [], error: null };
-  }
-
   const planResult = await supabase
     .from("client_plans")
     .select("id")
-    .eq("client_id", user.id)
+    .eq("client_id", userId)
     .eq("status", "active")
     .maybeSingle();
 

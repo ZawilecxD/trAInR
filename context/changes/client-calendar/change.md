@@ -1,7 +1,7 @@
 ---
 change_id: client-calendar
 title: Client calendar
-status: implemented
+status: impl_reviewed
 created: 2026-06-13
 updated: 2026-06-13
 archived_at: null

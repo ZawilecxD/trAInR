@@ -16,6 +16,36 @@
 - **Rule**: Finish the phase-end commit (code + `change.md` + plan checkboxes), push the branch, run `git rev-parse --short HEAD` on the commit that contains the phase work, then write that SHA into Progress and external sync; never post a phase-complete SHA to Linear before push, and amend or follow up if the phase commit was incomplete when first cited.
 - **Applies to**: implement, linear-sync
 
+## Thread userId from the guard into service functions rather than re-calling getUser()
+
+- **Context**: `src/lib/workout-sessions/service.ts` — `listMySessionsAsClient`
+  called `supabase.auth.getUser()` internally even though `requireClient` in the
+  API route had already verified and extracted the user.
+- **Problem**: Re-calling `getUser()` inside the service creates a redundant auth
+  round-trip and introduces a null-user edge case between guard and service (session
+  expires in between → service returns empty data instead of an error). The trainer
+  pattern (`listSessionsForClient` receiving `trainerId`) avoids this entirely.
+- **Rule**: Service functions that operate on behalf of an authenticated caller should
+  receive `userId` (or `trainerId`, `clientId`) as an explicit parameter from the API
+  route guard, not re-derive identity from `auth.getUser()`. Reserve internal
+  `auth.getUser()` calls for services that may be invoked outside of a guarded route.
+- **Applies to**: plan, implement
+
+## Distinguish utility extraction from hook extraction in plans
+
+- **Context**: `src/lib/week-view.ts` — plan said "extract to `src/components/hooks/`
+  if it grows beyond local state"; implementation put pure functions in `src/lib/`.
+- **Problem**: Plans that say "extract to hooks/" are ambiguous when the extracted
+  logic turns out to be pure utilities (no React state/effects). Pure utilities
+  landed in the wrong stated location even though `src/lib/` is architecturally
+  more correct.
+- **Rule**: When planning an extraction, distinguish the outcome upfront: if the
+  extracted logic needs React lifecycle (useState, useEffect, useRef), target
+  `src/components/hooks/`; if it's pure computation (date math, grouping,
+  formatting), target `src/lib/`. Write the target path accordingly in the plan
+  so reviewers don't flag a correct decision as drift.
+- **Applies to**: plan, plan-review
+
 ## Plan navigation for new user-facing routes
 
 - **Context**: Any `/10x-plan` phase that adds new pages, routes, or primary user workflows (especially role-scoped areas like `/trainer/*`).

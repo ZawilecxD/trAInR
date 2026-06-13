@@ -1,14 +1,14 @@
 import { addDays, differenceInCalendarDays } from "date-fns";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import ClientWeekView from "@/components/plans/ClientWeekView";
 import PlanCalendar, { type PlanCalendarSession } from "@/components/plans/PlanCalendar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { monthRange, parseISODate, startOfMonth, toLocalISODate } from "@/lib/dates";
 import { formatWeekRangeLabel, getWeekStart, weekRange } from "@/lib/week-view";
+import { sessionStatusBadgeClass, sessionStatusLabel } from "@/lib/session-status";
 import { cn } from "@/lib/utils";
-import type { SessionStatus } from "@/types";
 
 interface ClientCalendarHubProps {
   initialSessions: PlanCalendarSession[];
@@ -17,28 +17,6 @@ interface ClientCalendarHubProps {
 }
 
 type CalendarView = "month" | "week";
-
-function statusLabel(status: SessionStatus): string {
-  switch (status) {
-    case "not_started":
-      return "Not started";
-    case "finished":
-      return "Finished";
-    case "finished_partially":
-      return "Partial";
-  }
-}
-
-function statusBadgeClass(status: SessionStatus): string {
-  switch (status) {
-    case "not_started":
-      return "border-blue-400/40 bg-blue-500/20 text-blue-100";
-    case "finished":
-      return "border-emerald-400/40 bg-emerald-500/20 text-emerald-100";
-    case "finished_partially":
-      return "border-amber-400/40 bg-amber-500/20 text-amber-100";
-  }
-}
 
 async function fetchMySessions(from: string, to: string): Promise<PlanCalendarSession[]> {
   const params = new URLSearchParams({ from, to });
@@ -70,6 +48,7 @@ export default function ClientCalendarHub({
   const [sessions, setSessions] = useState(initialSessions);
   const [loading, setLoading] = useState(false);
   const [fetchError, setFetchError] = useState<string | null>(null);
+  const requestRef = useRef(0);
 
   const selectedIso = toLocalISODate(selectedDate);
 
@@ -80,15 +59,18 @@ export default function ClientCalendarHub({
   );
 
   async function loadSessions(from: string, to: string) {
+    const req = ++requestRef.current;
     setLoading(true);
     setFetchError(null);
     try {
       const nextSessions = await fetchMySessions(from, to);
+      if (req !== requestRef.current) return;
       setSessions(nextSessions);
     } catch (err) {
+      if (req !== requestRef.current) return;
       setFetchError(err instanceof Error ? err.message : "Failed to load sessions");
     } finally {
-      setLoading(false);
+      if (req === requestRef.current) setLoading(false);
     }
   }
 
@@ -238,8 +220,8 @@ export default function ClientCalendarHub({
                 {sessionsOnSelectedDay.map((session) => (
                   <li key={session.id} className="rounded-lg border border-white/10 bg-white/5 px-4 py-3">
                     <span className="block truncate font-medium text-white">{session.name}</span>
-                    <Badge variant="outline" className={cn("mt-1", statusBadgeClass(session.status))}>
-                      {statusLabel(session.status)}
+                    <Badge variant="outline" className={cn("mt-1", sessionStatusBadgeClass(session.status))}>
+                      {sessionStatusLabel(session.status)}
                     </Badge>
                   </li>
                 ))}
