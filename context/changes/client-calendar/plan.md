@@ -342,17 +342,17 @@ None — no schema changes. Read access already provided by existing RLS (`worko
 
 #### Automated
 
-- [x] 3.1 Type checking passes: `npx astro check`
-- [x] 3.2 Linting passes: `npm run lint`
-- [x] 3.3 Build passes: `npm run build`
+- [x] 3.1 Type checking passes: `npx astro check` — f61c3b5
+- [x] 3.2 Linting passes: `npm run lint` — f61c3b5
+- [x] 3.3 Build passes: `npm run build` — f61c3b5
 
 #### Manual
 
-- [x] 3.4 Client sees "My Plan" nav, opens /client/plan, sees current month with status dots
-- [x] 3.5 Day selection shows view-only session list; no add/edit/delete anywhere
-- [x] 3.6 Month navigation refetches; error surfaces on failure
-- [x] 3.7 Empty month shows a single friendly message; grid still renders; empty days show no dot
-- [x] 3.8 Month view usable one-handed on phone-width viewport
+- [x] 3.4 Client sees "My Plan" nav, opens /client/plan, sees current month with status dots — f61c3b5
+- [x] 3.5 Day selection shows view-only session list; no add/edit/delete anywhere — f61c3b5
+- [x] 3.6 Month navigation refetches; error surfaces on failure — f61c3b5
+- [x] 3.7 Empty month shows a single friendly message; grid still renders; empty days show no dot — f61c3b5
+- [x] 3.8 Month view usable one-handed on phone-width viewport — f61c3b5
 
 ### Phase 4: Week view toggle
 
