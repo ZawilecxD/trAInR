@@ -110,7 +110,7 @@ export default function ClientPlanHub({
       ) : null}
 
       <div className="grid gap-6 lg:grid-cols-[minmax(0,22rem)_1fr] lg:items-start">
-        <section className="rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur-xl">
+        <section className="min-w-0 rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur-xl">
           <div className="mb-3 flex items-center justify-between gap-2">
             <h2 className="text-sm font-medium text-blue-100/80">Calendar</h2>
             {loadingMonth ? <span className="text-xs text-blue-100/50">Loading…</span> : null}

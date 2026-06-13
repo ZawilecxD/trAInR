@@ -329,14 +329,14 @@ None — no schema changes. Read access already provided by existing RLS (`worko
 
 #### Automated
 
-- [ ] 2.1 Type checking passes: `npx astro check`
-- [ ] 2.2 Linting passes: `npm run lint`
-- [ ] 2.3 Build passes: `npm run build`
+- [x] 2.1 Type checking passes: `npx astro check`
+- [x] 2.2 Linting passes: `npm run lint`
+- [x] 2.3 Build passes: `npm run build`
 
 #### Manual
 
-- [ ] 2.4 Trainer calendar shows status-coloured dots (priority on mixed days); trainer CRUD unaffected
-- [ ] 2.5 Day buttons ≥44px and grid alignment correct on phone width
+- [x] 2.4 Trainer calendar shows status-coloured dots (priority on mixed days); trainer CRUD unaffected
+- [x] 2.5 Day buttons ≥44px and grid alignment correct on phone width
 
 ### Phase 3: Client calendar page — month view
 
