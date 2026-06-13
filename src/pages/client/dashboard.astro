@@ -11,7 +11,7 @@ let trainerName: string | null = null;
 if (supabase && userId) {
   const trainerResult = await supabase.rpc("get_my_assigned_trainer");
 
-  if (!trainerResult.error && trainerResult.data !== null) {
+  if (!trainerResult.error && trainerResult.data) {
     trainerName = (trainerResult.data as AssignedTrainer).display_name;
   } else if (trainerResult.error?.code === "PGRST202") {
     const assignmentResult = await supabase
@@ -24,7 +24,10 @@ if (supabase && userId) {
       .maybeSingle();
 
     if (!assignmentResult.error && assignmentResult.data) {
-      const trainerData = assignmentResult.data.trainer;
+      const row = assignmentResult.data as {
+        trainer: { display_name: string } | { display_name: string }[] | null;
+      };
+      const trainerData = row.trainer;
       const trainer = Array.isArray(trainerData) ? trainerData[0] : trainerData;
       trainerName = trainer?.display_name ?? null;
     }
@@ -49,9 +52,13 @@ if (supabase && userId) {
           <p class="text-blue-100/80">Your trainer will assign your first plan soon.</p>
         )
       }
-      <p class="mt-4 text-sm text-blue-100/50">
-        Workout plans and your training calendar will appear here in a future update.
-      </p>
+      <p class="mt-4 text-sm text-blue-100/50">View your assigned workouts on your training calendar.</p>
+      <a
+        href="/client/plan"
+        class="mt-6 inline-flex min-h-11 items-center justify-center rounded-lg bg-purple-500 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-purple-500/90"
+      >
+        My Plan
+      </a>
     </div>
   </div>
 </Layout>
