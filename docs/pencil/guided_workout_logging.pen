@@ -1,0 +1,2375 @@
+{
+  "version": "2.13",
+  "children": [
+    {
+      "type": "frame",
+      "id": "YURh3x",
+      "name": "Design Spec",
+      "x": 0,
+      "y": 0,
+      "width": 420,
+      "fill": "#131b2e",
+      "cornerRadius": 10,
+      "stroke": "#ffffff1a",
+      "strokeWidth": 1,
+      "layout": "vertical",
+      "gap": 16,
+      "padding": 24,
+      "children": [
+        {
+          "type": "text",
+          "id": "6Uh3WV",
+          "name": "Title",
+          "fill": "#c0c1ff",
+          "content": "Guided Workout Logging \u2014 Design Spec",
+          "fontFamily": "Geist",
+          "fontSize": 18,
+          "fontWeight": "700",
+          "textGrowth": "fixed-width",
+          "width": 372
+        },
+        {
+          "type": "text",
+          "id": "dMewsw",
+          "name": "Mode",
+          "fill": "#908fa0",
+          "content": "S-06 \u00b7 MOBILE-FIRST \u00b7 ONE-HANDED GYM USE",
+          "fontFamily": "JetBrains Mono",
+          "fontSize": 11,
+          "fontWeight": "600"
+        },
+        {
+          "type": "frame",
+          "id": "VTAVBM",
+          "name": "Purpose (FR-015\u2013020, US-01)",
+          "layout": "vertical",
+          "gap": 4,
+          "width": "fill_container",
+          "children": [
+            {
+              "type": "text",
+              "id": "oeqJhH",
+              "name": "Heading",
+              "fill": "#dae2fd",
+              "content": "Purpose (FR-015\u2013020, US-01)",
+              "fontFamily": "Geist",
+              "fontSize": 13,
+              "fontWeight": "600"
+            },
+            {
+              "type": "text",
+              "id": "o4MJpV",
+              "name": "Body",
+              "fill": "#c7c4d7",
+              "content": "Client opens an assigned session, steps through exercises one at a time, logs each set (reps + weight or time), and sees previous-performance hints from the last workout containing each exercise.",
+              "fontFamily": "Geist",
+              "fontSize": 12,
+              "fontWeight": "normal",
+              "textGrowth": "fixed-width",
+              "width": 372,
+              "lineHeight": 1.4
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "Dsd03V",
+          "name": "Screen 1 \u2014 Session Overview",
+          "layout": "vertical",
+          "gap": 4,
+          "width": "fill_container",
+          "children": [
+            {
+              "type": "text",
+              "id": "EgVvmh",
+              "name": "Heading",
+              "fill": "#dae2fd",
+              "content": "Screen 1 \u2014 Session Overview",
+              "fontFamily": "Geist",
+              "fontSize": 13,
+              "fontWeight": "600"
+            },
+            {
+              "type": "text",
+              "id": "KLQ1ZI",
+              "name": "Body",
+              "fill": "#c7c4d7",
+              "content": "Entry point before starting. Session meta, trainer note, and phase breakdown. 'Begin Workout' CTA anchored at bottom for thumb reach.",
+              "fontFamily": "Geist",
+              "fontSize": 12,
+              "fontWeight": "normal",
+              "textGrowth": "fixed-width",
+              "width": 372,
+              "lineHeight": 1.4
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "aBCvY8",
+          "name": "Screen 2 \u2014 Exercise Logging",
+          "layout": "vertical",
+          "gap": 4,
+          "width": "fill_container",
+          "children": [
+            {
+              "type": "text",
+              "id": "f1gnJs",
+              "name": "Heading",
+              "fill": "#dae2fd",
+              "content": "Screen 2 \u2014 Exercise Logging",
+              "fontFamily": "Geist",
+              "fontSize": 13,
+              "fontWeight": "600"
+            },
+            {
+              "type": "text",
+              "id": "UTTRD3",
+              "name": "Body",
+              "fill": "#c7c4d7",
+              "content": "Primary gym screen. Progress counter (3 of 7), prescription bar, last-session hint (FR-019), set-by-set table with active row highlight. Prev/Next at bottom.",
+              "fontFamily": "Geist",
+              "fontSize": 12,
+              "fontWeight": "normal",
+              "textGrowth": "fixed-width",
+              "width": 372,
+              "lineHeight": 1.4
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "OxXXW3",
+          "name": "Screen 3 \u2014 Navigation Menu",
+          "layout": "vertical",
+          "gap": 4,
+          "width": "fill_container",
+          "children": [
+            {
+              "type": "text",
+              "id": "Q3txFF",
+              "name": "Heading",
+              "fill": "#dae2fd",
+              "content": "Screen 3 \u2014 Navigation Menu",
+              "fontFamily": "Geist",
+              "fontSize": 13,
+              "fontWeight": "600"
+            },
+            {
+              "type": "text",
+              "id": "fohSDT",
+              "name": "Body",
+              "fill": "#c7c4d7",
+              "content": "Full exercise list grouped by phase, accessible via \u2261 icon. Status dots: green=done, accent=active, empty=pending. Tap any row to jump.",
+              "fontFamily": "Geist",
+              "fontSize": 12,
+              "fontWeight": "normal",
+              "textGrowth": "fixed-width",
+              "width": 372,
+              "lineHeight": 1.4
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "UIbWyV",
+          "name": "Set logging (FR-017)",
+          "layout": "vertical",
+          "gap": 4,
+          "width": "fill_container",
+          "children": [
+            {
+              "type": "text",
+              "id": "DHGtJn",
+              "name": "Heading",
+              "fill": "#dae2fd",
+              "content": "Set logging (FR-017)",
+              "fontFamily": "Geist",
+              "fontSize": 13,
+              "fontWeight": "600"
+            },
+            {
+              "type": "text",
+              "id": "THZiA0",
+              "name": "Body",
+              "fill": "#c7c4d7",
+              "content": "Each row: Set #, Reps, Weight (kg), OK toggle. Active row highlighted. Time-based exercises swap Reps for duration \u2014 same layout.",
+              "fontFamily": "Geist",
+              "fontSize": 12,
+              "fontWeight": "normal",
+              "textGrowth": "fixed-width",
+              "width": 372,
+              "lineHeight": 1.4
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "TjfGVL",
+          "name": "Previous hints (FR-019)",
+          "layout": "vertical",
+          "gap": 4,
+          "width": "fill_container",
+          "children": [
+            {
+              "type": "text",
+              "id": "WiLFUs",
+              "name": "Heading",
+              "fill": "#dae2fd",
+              "content": "Previous hints (FR-019)",
+              "fontFamily": "Geist",
+              "fontSize": 13,
+              "fontWeight": "600"
+            },
+            {
+              "type": "text",
+              "id": "reRhZd",
+              "name": "Body",
+              "fill": "#c7c4d7",
+              "content": "Query last workout containing this exercise. Show per-set weight \u00d7 reps above the logging table as a reference target.",
+              "fontFamily": "Geist",
+              "fontSize": 12,
+              "fontWeight": "normal",
+              "textGrowth": "fixed-width",
+              "width": 372,
+              "lineHeight": 1.4
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "MAMCn9",
+          "name": "Out of scope",
+          "layout": "vertical",
+          "gap": 4,
+          "width": "fill_container",
+          "children": [
+            {
+              "type": "text",
+              "id": "YM9WyI",
+              "name": "Heading",
+              "fill": "#dae2fd",
+              "content": "Out of scope",
+              "fontFamily": "Geist",
+              "fontSize": 13,
+              "fontWeight": "600"
+            },
+            {
+              "type": "text",
+              "id": "fNsGcI",
+              "name": "Body",
+              "fill": "#c7c4d7",
+              "content": "Rest timer, warm-up/working flag (S-10), session completion marking (S-08) \u2014 separate slices.",
+              "fontFamily": "Geist",
+              "fontSize": 12,
+              "fontWeight": "normal",
+              "textGrowth": "fixed-width",
+              "width": 372,
+              "lineHeight": 1.4
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "RVhY7v",
+      "name": "1 \u00b7 Session Overview",
+      "x": 480,
+      "y": 0,
+      "clip": true,
+      "width": 390,
+      "height": 844,
+      "fill": "#0b1326",
+      "layout": "vertical",
+      "children": [
+        {
+          "type": "frame",
+          "id": "Fq7R26",
+          "name": "Status Bar",
+          "width": "fill_container",
+          "height": 44,
+          "padding": [
+            0,
+            20
+          ],
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "DYPiLQ",
+              "name": "Time",
+              "fill": "#dae2fd",
+              "content": "9:41",
+              "fontFamily": "Geist",
+              "fontSize": 15,
+              "fontWeight": "600"
+            },
+            {
+              "type": "frame",
+              "id": "09hcfH",
+              "name": "SBR",
+              "gap": 6,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon",
+                  "id": "utoUTA",
+                  "name": "signal",
+                  "width": 16,
+                  "height": 16,
+                  "icon": "signal",
+                  "library": "lucide",
+                  "fill": "#dae2fd"
+                },
+                {
+                  "type": "icon",
+                  "id": "j6rl47",
+                  "name": "wifi",
+                  "width": 16,
+                  "height": 16,
+                  "icon": "wifi",
+                  "library": "lucide",
+                  "fill": "#dae2fd"
+                },
+                {
+                  "type": "icon",
+                  "id": "9f9epK",
+                  "name": "battery-full",
+                  "width": 20,
+                  "height": 20,
+                  "icon": "battery-full",
+                  "library": "lucide",
+                  "fill": "#dae2fd"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "LhVo83",
+          "name": "Nav",
+          "width": "fill_container",
+          "stroke": "#ffffff1a",
+          "strokeWidth": {
+            "bottom": 1
+          },
+          "padding": [
+            12,
+            16
+          ],
+          "alignItems": "center",
+          "gap": 8,
+          "children": [
+            {
+              "type": "frame",
+              "id": "FAFW7K",
+              "name": "Back",
+              "gap": 4,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon",
+                  "id": "TXPgGo",
+                  "name": "chevron-left",
+                  "width": 16,
+                  "height": 16,
+                  "icon": "chevron-left",
+                  "library": "lucide",
+                  "fill": "#c0c1ff"
+                },
+                {
+                  "type": "text",
+                  "id": "rEBByG",
+                  "name": "BackLabel",
+                  "fill": "#c0c1ff",
+                  "content": "Calendar",
+                  "fontFamily": "Geist",
+                  "fontSize": 14,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "EHlPIf",
+              "name": "TitleWrap",
+              "width": "fill_container",
+              "justifyContent": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "TMi4cq",
+                  "name": "Title",
+                  "fill": "#dae2fd",
+                  "content": "Upper Body Day 1",
+                  "fontFamily": "Geist",
+                  "fontSize": 16,
+                  "fontWeight": "600"
+                }
+              ]
+            },
+            {
+              "type": "icon",
+              "id": "h1Qh4Q",
+              "name": "ellipsis",
+              "width": 16,
+              "height": 16,
+              "icon": "ellipsis",
+              "library": "lucide",
+              "fill": "#464554"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "1GEv3T",
+          "name": "Content",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 12,
+          "padding": [
+            14,
+            16
+          ],
+          "children": [
+            {
+              "type": "frame",
+              "id": "5Flojn",
+              "name": "Card",
+              "width": "fill_container",
+              "fill": "#171f33",
+              "cornerRadius": 10,
+              "stroke": "#ffffff1a",
+              "strokeWidth": 1,
+              "layout": "vertical",
+              "gap": 6,
+              "padding": 12,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "MDmrmt",
+                  "name": "Meta Assigned by",
+                  "width": "fill_container",
+                  "justifyContent": "space_between",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "Ja2PGh",
+                      "name": "Label",
+                      "fill": "#908fa0",
+                      "content": "Assigned by",
+                      "fontFamily": "Geist",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "sdvPix",
+                      "name": "Value",
+                      "fill": "#dae2fd",
+                      "content": "John Smith",
+                      "fontFamily": "Geist",
+                      "fontSize": 12,
+                      "fontWeight": "600"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "NDnU6x",
+                  "name": "Meta Date",
+                  "width": "fill_container",
+                  "justifyContent": "space_between",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "zTh18I",
+                      "name": "Label",
+                      "fill": "#908fa0",
+                      "content": "Date",
+                      "fontFamily": "Geist",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "45OjKN",
+                      "name": "Value",
+                      "fill": "#dae2fd",
+                      "content": "Sat, Jun 14 2026",
+                      "fontFamily": "Geist",
+                      "fontSize": 12,
+                      "fontWeight": "600"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "bI3t9y",
+                  "name": "Meta Total exercises",
+                  "width": "fill_container",
+                  "justifyContent": "space_between",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "IrCw7M",
+                      "name": "Label",
+                      "fill": "#908fa0",
+                      "content": "Total exercises",
+                      "fontFamily": "Geist",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "8z9UuO",
+                      "name": "Value",
+                      "fill": "#dae2fd",
+                      "content": "7",
+                      "fontFamily": "Geist",
+                      "fontSize": 12,
+                      "fontWeight": "600"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "KtKW8B",
+              "name": "Card",
+              "width": "fill_container",
+              "fill": "#171f33",
+              "cornerRadius": 10,
+              "stroke": "#ffffff1a",
+              "strokeWidth": 1,
+              "layout": "vertical",
+              "gap": 4,
+              "padding": 12,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "bKJAIZ",
+                  "name": "NoteLabel",
+                  "fill": "#908fa0",
+                  "content": "Trainer note",
+                  "fontFamily": "Geist",
+                  "fontSize": 12,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "f0nxPz",
+                  "name": "NoteBody",
+                  "fill": "#c7c4d7",
+                  "content": "Focus on depth on squats. Keep the back neutral throughout.",
+                  "fontFamily": "Geist",
+                  "fontSize": 12,
+                  "fontWeight": "normal",
+                  "textGrowth": "fixed-width",
+                  "width": 320,
+                  "lineHeight": 1.4
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "eifuUq",
+              "name": "Warm-up",
+              "width": "fill_container",
+              "fill": "#131b2e",
+              "cornerRadius": 10,
+              "stroke": "#ffffff1a",
+              "strokeWidth": 1,
+              "gap": 10,
+              "padding": 12,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "Sul1L4",
+                  "name": "Accent",
+                  "width": 3,
+                  "height": 36,
+                  "fill": "#F1B467",
+                  "cornerRadius": 2
+                },
+                {
+                  "type": "frame",
+                  "id": "PxvQCm",
+                  "name": "Info",
+                  "layout": "vertical",
+                  "gap": 2,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "wTOMoO",
+                      "name": "Phase",
+                      "fill": "#dae2fd",
+                      "content": "Warm-up",
+                      "fontFamily": "Geist",
+                      "fontSize": 13,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "AEnVlz",
+                      "name": "Count",
+                      "fill": "#908fa0",
+                      "content": "2 exercises",
+                      "fontFamily": "Geist",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "FeHV7X",
+                  "name": "Spacer",
+                  "width": "fill_container"
+                },
+                {
+                  "type": "icon",
+                  "id": "6Tn6tp",
+                  "name": "chevron-right",
+                  "width": 16,
+                  "height": 16,
+                  "icon": "chevron-right",
+                  "library": "lucide",
+                  "fill": "#908fa0"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "V493z1",
+              "name": "Main",
+              "width": "fill_container",
+              "fill": "#131b2e",
+              "cornerRadius": 10,
+              "stroke": "#ffffff1a",
+              "strokeWidth": 1,
+              "gap": 10,
+              "padding": 12,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "r50P4y",
+                  "name": "Accent",
+                  "width": 3,
+                  "height": 36,
+                  "fill": "#7BAFE9",
+                  "cornerRadius": 2
+                },
+                {
+                  "type": "frame",
+                  "id": "nGfT3a",
+                  "name": "Info",
+                  "layout": "vertical",
+                  "gap": 2,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "hsCE82",
+                      "name": "Phase",
+                      "fill": "#dae2fd",
+                      "content": "Main",
+                      "fontFamily": "Geist",
+                      "fontSize": 13,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "3Jd2ME",
+                      "name": "Count",
+                      "fill": "#908fa0",
+                      "content": "3 exercises",
+                      "fontFamily": "Geist",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "yhZfJF",
+                  "name": "Spacer",
+                  "width": "fill_container"
+                },
+                {
+                  "type": "icon",
+                  "id": "NRbt29",
+                  "name": "chevron-right",
+                  "width": 16,
+                  "height": 16,
+                  "icon": "chevron-right",
+                  "library": "lucide",
+                  "fill": "#908fa0"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "ip7MLe",
+              "name": "Cooldown",
+              "width": "fill_container",
+              "fill": "#131b2e",
+              "cornerRadius": 10,
+              "stroke": "#ffffff1a",
+              "strokeWidth": 1,
+              "gap": 10,
+              "padding": 12,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "1W8O7m",
+                  "name": "Accent",
+                  "width": 3,
+                  "height": 36,
+                  "fill": "#3FA266",
+                  "cornerRadius": 2
+                },
+                {
+                  "type": "frame",
+                  "id": "dtsCrZ",
+                  "name": "Info",
+                  "layout": "vertical",
+                  "gap": 2,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "q4kHdH",
+                      "name": "Phase",
+                      "fill": "#dae2fd",
+                      "content": "Cooldown",
+                      "fontFamily": "Geist",
+                      "fontSize": 13,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "20BzFW",
+                      "name": "Count",
+                      "fill": "#908fa0",
+                      "content": "2 exercises",
+                      "fontFamily": "Geist",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "oi7dlm",
+                  "name": "Spacer",
+                  "width": "fill_container"
+                },
+                {
+                  "type": "icon",
+                  "id": "pB4rxk",
+                  "name": "chevron-right",
+                  "width": 16,
+                  "height": 16,
+                  "icon": "chevron-right",
+                  "library": "lucide",
+                  "fill": "#908fa0"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "VVGuFz",
+          "name": "Bottom CTA",
+          "width": "fill_container",
+          "stroke": "#ffffff1a",
+          "strokeWidth": {
+            "top": 1
+          },
+          "padding": [
+            12,
+            16,
+            24,
+            16
+          ],
+          "children": [
+            {
+              "type": "frame",
+              "id": "HmKl6I",
+              "name": "Primary Button",
+              "width": "fill_container",
+              "fill": "#8083ff",
+              "cornerRadius": 12,
+              "padding": [
+                14,
+                0
+              ],
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "zngedf",
+                  "name": "Label",
+                  "fill": "#0d0096",
+                  "content": "Begin Workout",
+                  "fontFamily": "Geist",
+                  "fontSize": 15,
+                  "fontWeight": "600"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "G1RigG",
+      "name": "2 \u00b7 Exercise Logging",
+      "x": 920,
+      "y": 0,
+      "clip": true,
+      "width": 390,
+      "height": 844,
+      "fill": "#0b1326",
+      "layout": "vertical",
+      "children": [
+        {
+          "type": "frame",
+          "id": "NgsaYH",
+          "name": "Status Bar",
+          "width": "fill_container",
+          "height": 44,
+          "padding": [
+            0,
+            20
+          ],
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "bR4KSd",
+              "name": "Time",
+              "fill": "#dae2fd",
+              "content": "9:41",
+              "fontFamily": "Geist",
+              "fontSize": 15,
+              "fontWeight": "600"
+            },
+            {
+              "type": "frame",
+              "id": "XR0k2d",
+              "name": "SBR",
+              "gap": 6,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon",
+                  "id": "tzlrVl",
+                  "name": "signal",
+                  "width": 16,
+                  "height": 16,
+                  "icon": "signal",
+                  "library": "lucide",
+                  "fill": "#dae2fd"
+                },
+                {
+                  "type": "icon",
+                  "id": "JpznrK",
+                  "name": "wifi",
+                  "width": 16,
+                  "height": 16,
+                  "icon": "wifi",
+                  "library": "lucide",
+                  "fill": "#dae2fd"
+                },
+                {
+                  "type": "icon",
+                  "id": "SZQJ21",
+                  "name": "battery-full",
+                  "width": 20,
+                  "height": 20,
+                  "icon": "battery-full",
+                  "library": "lucide",
+                  "fill": "#dae2fd"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "hEvHu4",
+          "name": "Nav",
+          "width": "fill_container",
+          "stroke": "#ffffff1a",
+          "strokeWidth": {
+            "bottom": 1
+          },
+          "padding": [
+            10,
+            16
+          ],
+          "alignItems": "center",
+          "gap": 8,
+          "children": [
+            {
+              "type": "icon",
+              "id": "ScOUTS",
+              "name": "chevron-left",
+              "width": 16,
+              "height": 16,
+              "icon": "chevron-left",
+              "library": "lucide",
+              "fill": "#c0c1ff"
+            },
+            {
+              "type": "frame",
+              "id": "SShaHV",
+              "name": "Center",
+              "width": "fill_container",
+              "justifyContent": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "EzpCWk",
+                  "name": "Progress",
+                  "fill": "#908fa0",
+                  "content": "3 of 7",
+                  "fontFamily": "Geist",
+                  "fontSize": 13,
+                  "fontWeight": "600"
+                }
+              ]
+            },
+            {
+              "type": "icon",
+              "id": "lrwPUa",
+              "name": "menu",
+              "width": 16,
+              "height": 16,
+              "icon": "menu",
+              "library": "lucide",
+              "fill": "#c0c1ff"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "jALIY0",
+          "name": "Content",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 12,
+          "padding": [
+            14,
+            16
+          ],
+          "children": [
+            {
+              "type": "frame",
+              "id": "fMciRL",
+              "name": "Exercise Header",
+              "layout": "vertical",
+              "gap": 4,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "NXjmAj",
+                  "name": "Phase",
+                  "fill": "#7BAFE9",
+                  "content": "MAIN PHASE",
+                  "fontFamily": "JetBrains Mono",
+                  "fontSize": 10,
+                  "fontWeight": "600",
+                  "letterSpacing": 0.08
+                },
+                {
+                  "type": "text",
+                  "id": "o8GRGW",
+                  "name": "Exercise",
+                  "fill": "#dae2fd",
+                  "content": "Barbell Back Squat",
+                  "fontFamily": "Geist",
+                  "fontSize": 22,
+                  "fontWeight": "700"
+                },
+                {
+                  "type": "text",
+                  "id": "jjcTQt",
+                  "name": "Muscles",
+                  "fill": "#908fa0",
+                  "content": "Quadriceps \u00b7 Glutes \u00b7 Hamstrings",
+                  "fontFamily": "Geist",
+                  "fontSize": 12,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "YDh4cn",
+              "name": "Card",
+              "width": "fill_container",
+              "fill": "#171f33",
+              "cornerRadius": 10,
+              "stroke": "#ffffff1a",
+              "strokeWidth": 1,
+              "layout": "vertical",
+              "gap": 8,
+              "padding": 10,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "vkpVFK",
+                  "name": "Rx",
+                  "fill": "#c7c4d7",
+                  "content": "3 sets \u00b7 8 reps \u00b7 80 kg \u00b7 Rest 2 min",
+                  "fontFamily": "Geist",
+                  "fontSize": 12,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "gKBo9W",
+              "name": "Last Session",
+              "width": "fill_container",
+              "fill": "#131b2e",
+              "cornerRadius": 8,
+              "stroke": "#ffffff1a",
+              "strokeWidth": 1,
+              "layout": "vertical",
+              "gap": 4,
+              "padding": [
+                8,
+                12
+              ],
+              "children": [
+                {
+                  "type": "text",
+                  "id": "L2QEEO",
+                  "name": "Label",
+                  "fill": "#908fa0",
+                  "content": "Last session (Jun 7)",
+                  "fontFamily": "Geist",
+                  "fontSize": 12,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "Yb2Y2S",
+                  "name": "Hint",
+                  "fill": "#464554",
+                  "content": "Set 1: 75 kg \u00d7 8 \u00b7 Set 2: 75 kg \u00d7 8 \u00b7 Set 3: 75 kg \u00d7 8",
+                  "fontFamily": "Geist",
+                  "fontSize": 11,
+                  "fontWeight": "normal",
+                  "textGrowth": "fixed-width",
+                  "width": 330,
+                  "lineHeight": 1.4
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "3wtRDW",
+              "name": "Set Table",
+              "layout": "vertical",
+              "gap": 4,
+              "width": "fill_container",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "O4Iqif",
+                  "name": "Headers",
+                  "width": "fill_container",
+                  "gap": 6,
+                  "padding": [
+                    0,
+                    8,
+                    6,
+                    8
+                  ],
+                  "stroke": "#ffffff1a",
+                  "strokeWidth": {
+                    "bottom": 1
+                  },
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "Rhjeuk",
+                      "name": "H1",
+                      "fill": "#908fa0",
+                      "content": "Set",
+                      "fontFamily": "Geist",
+                      "fontSize": 11,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "P5eFaf",
+                      "name": "H2",
+                      "width": "fill_container",
+                      "justifyContent": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "FlRKN6",
+                          "name": "H2t",
+                          "fill": "#908fa0",
+                          "content": "Reps",
+                          "fontFamily": "Geist",
+                          "fontSize": 11,
+                          "fontWeight": "600"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "wJcZIq",
+                      "name": "H3",
+                      "width": "fill_container",
+                      "justifyContent": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "rKwYaJ",
+                          "name": "H3t",
+                          "fill": "#908fa0",
+                          "content": "kg",
+                          "fontFamily": "Geist",
+                          "fontSize": 11,
+                          "fontWeight": "600"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "uKBCW6",
+                      "name": "H4",
+                      "fill": "#908fa0",
+                      "content": "OK",
+                      "fontFamily": "Geist",
+                      "fontSize": 11,
+                      "fontWeight": "600"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "9o1zOP",
+                  "name": "Set 1",
+                  "width": "fill_container",
+                  "fill": "#00000000",
+                  "cornerRadius": 8,
+                  "stroke": "#00000000",
+                  "strokeWidth": 1,
+                  "gap": 6,
+                  "padding": [
+                    6,
+                    8
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "PHFoqp",
+                      "name": "Num",
+                      "fill": "#908fa0",
+                      "content": "1",
+                      "fontFamily": "Geist",
+                      "fontSize": 12,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "pbnxeB",
+                      "name": "Field",
+                      "width": "fill_container",
+                      "fill": "#131b2e",
+                      "cornerRadius": 6,
+                      "stroke": "#ffffff1a",
+                      "strokeWidth": 1,
+                      "padding": [
+                        5,
+                        8
+                      ],
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "RqhFtc",
+                          "name": "Value",
+                          "fill": "#dae2fd",
+                          "content": "8",
+                          "fontFamily": "Geist",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "01hMDC",
+                      "name": "Field",
+                      "width": "fill_container",
+                      "fill": "#131b2e",
+                      "cornerRadius": 6,
+                      "stroke": "#ffffff1a",
+                      "strokeWidth": 1,
+                      "padding": [
+                        5,
+                        8
+                      ],
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "I0yrCp",
+                          "name": "Value",
+                          "fill": "#dae2fd",
+                          "content": "75",
+                          "fontFamily": "Geist",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "GtmHlP",
+                      "name": "Status",
+                      "width": 22,
+                      "height": 22,
+                      "fill": "#3FA266",
+                      "cornerRadius": 999,
+                      "stroke": "#3FA266",
+                      "strokeWidth": 1.5,
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "8LqQBV",
+                          "name": "Check",
+                          "width": 10,
+                          "height": 10,
+                          "fill": "#0b1326",
+                          "cornerRadius": 5
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "Q05SSp",
+                  "name": "Set 2",
+                  "width": "fill_container",
+                  "fill": "#171f33",
+                  "cornerRadius": 8,
+                  "stroke": "#ffffff33",
+                  "strokeWidth": 1,
+                  "gap": 6,
+                  "padding": [
+                    6,
+                    8
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "p13XLw",
+                      "name": "Num",
+                      "fill": "#908fa0",
+                      "content": "2",
+                      "fontFamily": "Geist",
+                      "fontSize": 12,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "jrPv5k",
+                      "name": "Field",
+                      "width": "fill_container",
+                      "fill": "#131b2e",
+                      "cornerRadius": 6,
+                      "stroke": "#666666",
+                      "strokeWidth": 1,
+                      "padding": [
+                        5,
+                        8
+                      ],
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "XKFK9C",
+                          "name": "Value",
+                          "fill": "#dae2fd",
+                          "content": "\u2014",
+                          "fontFamily": "Geist",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "lhX2R3",
+                      "name": "Field",
+                      "width": "fill_container",
+                      "fill": "#131b2e",
+                      "cornerRadius": 6,
+                      "stroke": "#666666",
+                      "strokeWidth": 1,
+                      "padding": [
+                        5,
+                        8
+                      ],
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "nA92ZZ",
+                          "name": "Value",
+                          "fill": "#dae2fd",
+                          "content": "\u2014",
+                          "fontFamily": "Geist",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "otqULh",
+                      "name": "Status",
+                      "width": 22,
+                      "height": 22,
+                      "fill": "#ffffff0a",
+                      "cornerRadius": 999,
+                      "stroke": "#ffffff33",
+                      "strokeWidth": 1.5,
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": []
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "NlGNTL",
+                  "name": "Set 3",
+                  "width": "fill_container",
+                  "fill": "#00000000",
+                  "cornerRadius": 8,
+                  "stroke": "#00000000",
+                  "strokeWidth": 1,
+                  "gap": 6,
+                  "padding": [
+                    6,
+                    8
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "2YIP9e",
+                      "name": "Num",
+                      "fill": "#908fa0",
+                      "content": "3",
+                      "fontFamily": "Geist",
+                      "fontSize": 12,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "FhzE1x",
+                      "name": "Field",
+                      "width": "fill_container",
+                      "fill": "#131b2e",
+                      "cornerRadius": 6,
+                      "stroke": "#ffffff1a",
+                      "strokeWidth": 1,
+                      "padding": [
+                        5,
+                        8
+                      ],
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "5QlKVj",
+                          "name": "Value",
+                          "fill": "#dae2fd",
+                          "content": "\u2014",
+                          "fontFamily": "Geist",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "xDsBp1",
+                      "name": "Field",
+                      "width": "fill_container",
+                      "fill": "#131b2e",
+                      "cornerRadius": 6,
+                      "stroke": "#ffffff1a",
+                      "strokeWidth": 1,
+                      "padding": [
+                        5,
+                        8
+                      ],
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "u4N5gU",
+                          "name": "Value",
+                          "fill": "#dae2fd",
+                          "content": "\u2014",
+                          "fontFamily": "Geist",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "ickPo7",
+                      "name": "Status",
+                      "width": 22,
+                      "height": 22,
+                      "fill": "#ffffff0a",
+                      "cornerRadius": 999,
+                      "stroke": "#ffffff1a",
+                      "strokeWidth": 1.5,
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "6U0sr5",
+          "name": "Bottom Nav",
+          "width": "fill_container",
+          "stroke": "#ffffff1a",
+          "strokeWidth": {
+            "top": 1
+          },
+          "padding": [
+            10,
+            16,
+            24,
+            16
+          ],
+          "gap": 10,
+          "children": [
+            {
+              "type": "frame",
+              "id": "rTzGJR",
+              "name": "Secondary Button",
+              "width": "fill_container",
+              "fill": "#171f33",
+              "cornerRadius": 10,
+              "stroke": "#ffffff1a",
+              "strokeWidth": 1,
+              "padding": [
+                11,
+                0
+              ],
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "mE117P",
+                  "name": "Label",
+                  "fill": "#dae2fd",
+                  "content": "Prev",
+                  "fontFamily": "Geist",
+                  "fontSize": 13,
+                  "fontWeight": "600"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "tJriEq",
+              "name": "Next",
+              "width": "fill_container",
+              "fill": "#8083ff",
+              "cornerRadius": 10,
+              "padding": [
+                11,
+                0
+              ],
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "jwPIUR",
+                  "name": "Label",
+                  "fill": "#0d0096",
+                  "content": "Next Exercise",
+                  "fontFamily": "Geist",
+                  "fontSize": 13,
+                  "fontWeight": "600"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "jCdh7F",
+      "name": "3 \u00b7 Navigation Menu",
+      "x": 1360,
+      "y": 0,
+      "clip": true,
+      "width": 390,
+      "height": 844,
+      "fill": "#0b1326",
+      "layout": "vertical",
+      "children": [
+        {
+          "type": "frame",
+          "id": "2kCcLn",
+          "name": "Status Bar",
+          "width": "fill_container",
+          "height": 44,
+          "padding": [
+            0,
+            20
+          ],
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "T04av0",
+              "name": "Time",
+              "fill": "#dae2fd",
+              "content": "9:41",
+              "fontFamily": "Geist",
+              "fontSize": 15,
+              "fontWeight": "600"
+            },
+            {
+              "type": "frame",
+              "id": "pwv48q",
+              "name": "SBR",
+              "gap": 6,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon",
+                  "id": "mGfMiL",
+                  "name": "signal",
+                  "width": 16,
+                  "height": 16,
+                  "icon": "signal",
+                  "library": "lucide",
+                  "fill": "#dae2fd"
+                },
+                {
+                  "type": "icon",
+                  "id": "sJQyty",
+                  "name": "wifi",
+                  "width": 16,
+                  "height": 16,
+                  "icon": "wifi",
+                  "library": "lucide",
+                  "fill": "#dae2fd"
+                },
+                {
+                  "type": "icon",
+                  "id": "3XKyEf",
+                  "name": "battery-full",
+                  "width": 20,
+                  "height": 20,
+                  "icon": "battery-full",
+                  "library": "lucide",
+                  "fill": "#dae2fd"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "PKDFLi",
+          "name": "Header",
+          "width": "fill_container",
+          "stroke": "#ffffff1a",
+          "strokeWidth": {
+            "bottom": 1
+          },
+          "padding": [
+            12,
+            16
+          ],
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "Oeb8Iu",
+              "name": "Title",
+              "fill": "#dae2fd",
+              "content": "Exercises",
+              "fontFamily": "Geist",
+              "fontSize": 16,
+              "fontWeight": "600"
+            },
+            {
+              "type": "text",
+              "id": "rrr3hF",
+              "name": "Close",
+              "fill": "#c0c1ff",
+              "content": "Close",
+              "fontFamily": "Geist",
+              "fontSize": 14,
+              "fontWeight": "normal"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "22qpji",
+          "name": "Progress",
+          "width": "fill_container",
+          "fill": "#131b2e",
+          "stroke": "#ffffff1a",
+          "strokeWidth": {
+            "bottom": 1
+          },
+          "padding": [
+            8,
+            16
+          ],
+          "gap": 16,
+          "children": [
+            {
+              "type": "text",
+              "id": "bDrzoJ",
+              "name": "Done",
+              "fill": "#908fa0",
+              "content": "2 done",
+              "fontFamily": "Geist",
+              "fontSize": 12,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "text",
+              "id": "dVNrzm",
+              "name": "Active",
+              "fill": "#c0c1ff",
+              "content": "1 in progress",
+              "fontFamily": "Geist",
+              "fontSize": 12,
+              "fontWeight": "600"
+            },
+            {
+              "type": "text",
+              "id": "hviEyL",
+              "name": "Remaining",
+              "fill": "#464554",
+              "content": "4 remaining",
+              "fontFamily": "Geist",
+              "fontSize": 12,
+              "fontWeight": "normal"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "VhtquW",
+          "name": "List",
+          "width": "fill_container",
+          "layout": "vertical",
+          "children": [
+            {
+              "type": "frame",
+              "id": "uZsXWK",
+              "name": "Warm-up Header",
+              "width": "fill_container",
+              "gap": 6,
+              "padding": [
+                10,
+                16,
+                4,
+                16
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "J66HkS",
+                  "name": "Dot",
+                  "width": 8,
+                  "height": 8,
+                  "fill": "#F1B467",
+                  "cornerRadius": 4
+                },
+                {
+                  "type": "text",
+                  "id": "RJAszb",
+                  "name": "PhaseLabel",
+                  "fill": "#908fa0",
+                  "content": "WARM-UP",
+                  "fontFamily": "JetBrains Mono",
+                  "fontSize": 10,
+                  "fontWeight": "600",
+                  "letterSpacing": 0.08
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "UpTSNg",
+              "name": "Treadmill Jog",
+              "width": "fill_container",
+              "fill": "#00000000",
+              "gap": 10,
+              "padding": [
+                10,
+                16
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "nth16J",
+                  "name": "Dot",
+                  "width": 18,
+                  "height": 18,
+                  "fill": "#3FA266",
+                  "cornerRadius": 999,
+                  "stroke": "#3FA266",
+                  "strokeWidth": 1.5,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "YIngjh",
+                      "name": "Inner",
+                      "width": 7,
+                      "height": 7,
+                      "fill": "#0b1326",
+                      "cornerRadius": 2
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "jekqnV",
+                  "name": "Info",
+                  "layout": "vertical",
+                  "gap": 2,
+                  "width": "fill_container",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "33RLou",
+                      "name": "Name",
+                      "fill": "#dae2fd",
+                      "content": "Treadmill Jog",
+                      "fontFamily": "Geist",
+                      "fontSize": 13,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "PJGgQC",
+                      "name": "Rx",
+                      "fill": "#908fa0",
+                      "content": "1 set \u00b7 10 min",
+                      "fontFamily": "Geist",
+                      "fontSize": 11,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "iSGmBy",
+                  "name": "Num",
+                  "fill": "#464554",
+                  "content": "1",
+                  "fontFamily": "Geist",
+                  "fontSize": 11,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "hACK2x",
+              "name": "Shoulder Circles",
+              "width": "fill_container",
+              "fill": "#00000000",
+              "gap": 10,
+              "padding": [
+                10,
+                16
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "Gi3rs8",
+                  "name": "Dot",
+                  "width": 18,
+                  "height": 18,
+                  "fill": "#3FA266",
+                  "cornerRadius": 999,
+                  "stroke": "#3FA266",
+                  "strokeWidth": 1.5,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "Hz7CuR",
+                      "name": "Inner",
+                      "width": 7,
+                      "height": 7,
+                      "fill": "#0b1326",
+                      "cornerRadius": 2
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "ttXfif",
+                  "name": "Info",
+                  "layout": "vertical",
+                  "gap": 2,
+                  "width": "fill_container",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "T3hAdT",
+                      "name": "Name",
+                      "fill": "#dae2fd",
+                      "content": "Shoulder Circles",
+                      "fontFamily": "Geist",
+                      "fontSize": 13,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "8DREqK",
+                      "name": "Rx",
+                      "fill": "#908fa0",
+                      "content": "2 sets \u00b7 20 reps \u00b7 BW",
+                      "fontFamily": "Geist",
+                      "fontSize": 11,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "gIRkly",
+                  "name": "Num",
+                  "fill": "#464554",
+                  "content": "2",
+                  "fontFamily": "Geist",
+                  "fontSize": 11,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "vTWb0d",
+              "name": "Main Header",
+              "width": "fill_container",
+              "gap": 6,
+              "padding": [
+                10,
+                16,
+                4,
+                16
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "Q29nIA",
+                  "name": "Dot",
+                  "width": 8,
+                  "height": 8,
+                  "fill": "#7BAFE9",
+                  "cornerRadius": 4
+                },
+                {
+                  "type": "text",
+                  "id": "YoPDGH",
+                  "name": "PhaseLabel",
+                  "fill": "#908fa0",
+                  "content": "MAIN",
+                  "fontFamily": "JetBrains Mono",
+                  "fontSize": 10,
+                  "fontWeight": "600",
+                  "letterSpacing": 0.08
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "G7qXKq",
+              "name": "Barbell Back Squat",
+              "width": "fill_container",
+              "fill": "#171f33",
+              "gap": 10,
+              "padding": [
+                10,
+                16
+              ],
+              "alignItems": "center",
+              "stroke": "#8083ff",
+              "strokeWidth": {
+                "left": 3
+              },
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "MrRXHi",
+                  "name": "Dot",
+                  "width": 18,
+                  "height": 18,
+                  "fill": "#8083ff",
+                  "cornerRadius": 999,
+                  "stroke": "#8083ff",
+                  "strokeWidth": 1.5,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "49Uotn",
+                      "name": "Inner",
+                      "width": 6,
+                      "height": 6,
+                      "fill": "#0d0096",
+                      "cornerRadius": 3
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "HUv0BI",
+                  "name": "Info",
+                  "layout": "vertical",
+                  "gap": 2,
+                  "width": "fill_container",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "KO0ipO",
+                      "name": "Name",
+                      "fill": "#dae2fd",
+                      "content": "Barbell Back Squat",
+                      "fontFamily": "Geist",
+                      "fontSize": 13,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "9l27so",
+                      "name": "Rx",
+                      "fill": "#908fa0",
+                      "content": "3 sets \u00b7 8 reps \u00b7 80 kg",
+                      "fontFamily": "Geist",
+                      "fontSize": 11,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "T60Vqk",
+                  "name": "Num",
+                  "fill": "#464554",
+                  "content": "3",
+                  "fontFamily": "Geist",
+                  "fontSize": 11,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "62RQbv",
+              "name": "Romanian Deadlift",
+              "width": "fill_container",
+              "fill": "#00000000",
+              "gap": 10,
+              "padding": [
+                10,
+                16
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "SWCkiY",
+                  "name": "Dot",
+                  "width": 18,
+                  "height": 18,
+                  "fill": "#131b2e",
+                  "cornerRadius": 999,
+                  "stroke": "#ffffff33",
+                  "strokeWidth": 1.5,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": []
+                },
+                {
+                  "type": "frame",
+                  "id": "xIxvxs",
+                  "name": "Info",
+                  "layout": "vertical",
+                  "gap": 2,
+                  "width": "fill_container",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "YWWfyT",
+                      "name": "Name",
+                      "fill": "#dae2fd",
+                      "content": "Romanian Deadlift",
+                      "fontFamily": "Geist",
+                      "fontSize": 13,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "sHBtyk",
+                      "name": "Rx",
+                      "fill": "#908fa0",
+                      "content": "3 sets \u00b7 10 reps \u00b7 70 kg",
+                      "fontFamily": "Geist",
+                      "fontSize": 11,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "7qndqz",
+                  "name": "Num",
+                  "fill": "#464554",
+                  "content": "4",
+                  "fontFamily": "Geist",
+                  "fontSize": 11,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "i2nGS0",
+              "name": "Leg Press",
+              "width": "fill_container",
+              "fill": "#00000000",
+              "gap": 10,
+              "padding": [
+                10,
+                16
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "lbSFep",
+                  "name": "Dot",
+                  "width": 18,
+                  "height": 18,
+                  "fill": "#131b2e",
+                  "cornerRadius": 999,
+                  "stroke": "#ffffff33",
+                  "strokeWidth": 1.5,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": []
+                },
+                {
+                  "type": "frame",
+                  "id": "oaFM6A",
+                  "name": "Info",
+                  "layout": "vertical",
+                  "gap": 2,
+                  "width": "fill_container",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "fxMb5D",
+                      "name": "Name",
+                      "fill": "#dae2fd",
+                      "content": "Leg Press",
+                      "fontFamily": "Geist",
+                      "fontSize": 13,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "JPseLi",
+                      "name": "Rx",
+                      "fill": "#908fa0",
+                      "content": "4 sets \u00b7 12 reps \u00b7 120 kg",
+                      "fontFamily": "Geist",
+                      "fontSize": 11,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "xhPvvJ",
+                  "name": "Num",
+                  "fill": "#464554",
+                  "content": "5",
+                  "fontFamily": "Geist",
+                  "fontSize": 11,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "r21Bw6",
+              "name": "Cooldown Header",
+              "width": "fill_container",
+              "gap": 6,
+              "padding": [
+                10,
+                16,
+                4,
+                16
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "27mrAx",
+                  "name": "Dot",
+                  "width": 8,
+                  "height": 8,
+                  "fill": "#3FA266",
+                  "cornerRadius": 4
+                },
+                {
+                  "type": "text",
+                  "id": "brE9cX",
+                  "name": "PhaseLabel",
+                  "fill": "#908fa0",
+                  "content": "COOLDOWN",
+                  "fontFamily": "JetBrains Mono",
+                  "fontSize": 10,
+                  "fontWeight": "600",
+                  "letterSpacing": 0.08
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "3T9zE9",
+              "name": "Calf Raise",
+              "width": "fill_container",
+              "fill": "#00000000",
+              "gap": 10,
+              "padding": [
+                10,
+                16
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "aI388K",
+                  "name": "Dot",
+                  "width": 18,
+                  "height": 18,
+                  "fill": "#131b2e",
+                  "cornerRadius": 999,
+                  "stroke": "#ffffff33",
+                  "strokeWidth": 1.5,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": []
+                },
+                {
+                  "type": "frame",
+                  "id": "WC9j9X",
+                  "name": "Info",
+                  "layout": "vertical",
+                  "gap": 2,
+                  "width": "fill_container",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "Rlnvox",
+                      "name": "Name",
+                      "fill": "#dae2fd",
+                      "content": "Calf Raise",
+                      "fontFamily": "Geist",
+                      "fontSize": 13,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "oo3sfg",
+                      "name": "Rx",
+                      "fill": "#908fa0",
+                      "content": "3 sets \u00b7 15 reps \u00b7 BW",
+                      "fontFamily": "Geist",
+                      "fontSize": 11,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "NvkfhR",
+                  "name": "Num",
+                  "fill": "#464554",
+                  "content": "6",
+                  "fontFamily": "Geist",
+                  "fontSize": 11,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "ZzTZ0L",
+              "name": "Quad Stretch",
+              "width": "fill_container",
+              "fill": "#00000000",
+              "gap": 10,
+              "padding": [
+                10,
+                16
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "RE1Jnv",
+                  "name": "Dot",
+                  "width": 18,
+                  "height": 18,
+                  "fill": "#131b2e",
+                  "cornerRadius": 999,
+                  "stroke": "#ffffff33",
+                  "strokeWidth": 1.5,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": []
+                },
+                {
+                  "type": "frame",
+                  "id": "Tu1357",
+                  "name": "Info",
+                  "layout": "vertical",
+                  "gap": 2,
+                  "width": "fill_container",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "bVGuOw",
+                      "name": "Name",
+                      "fill": "#dae2fd",
+                      "content": "Quad Stretch",
+                      "fontFamily": "Geist",
+                      "fontSize": 13,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "Je5F7y",
+                      "name": "Rx",
+                      "fill": "#908fa0",
+                      "content": "1 set \u00b7 2 min each leg",
+                      "fontFamily": "Geist",
+                      "fontSize": 11,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "fAX6D8",
+                  "name": "Num",
+                  "fill": "#464554",
+                  "content": "7",
+                  "fontFamily": "Geist",
+                  "fontSize": 11,
+                  "fontWeight": "normal"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "themes": {
+    "Mode": [
+      "Light",
+      "Dark"
+    ]
+  },
+  "variables": {
+    "--font-primary": {
+      "type": "string",
+      "value": "JetBrains Mono"
+    },
+    "--font-secondary": {
+      "type": "string",
+      "value": "Geist"
+    },
+    "--radius-m": {
+      "type": "number",
+      "value": 16
+    }
+  }
+}
