@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { upsertSetLogBodySchema } from "@/lib/set-logs/schemas";
+import { deleteSetLogQuerySchema, upsertSetLogBodySchema } from "@/lib/set-logs/schemas";
 
 const validSessionExerciseId = "a1000001-0000-4000-8000-000000000001";
 
@@ -77,6 +77,29 @@ describe("upsertSetLogBodySchema", () => {
       duration_seconds: null,
       load_kg: null,
       is_complete: false,
+    });
+
+    expect(parsed.success).toBe(false);
+  });
+});
+
+describe("deleteSetLogQuerySchema", () => {
+  it("accepts valid query params", () => {
+    const parsed = deleteSetLogQuerySchema.safeParse({
+      session_exercise_id: validSessionExerciseId,
+      set_number: "2",
+    });
+
+    expect(parsed.success).toBe(true);
+    if (parsed.success) {
+      expect(parsed.data.set_number).toBe(2);
+    }
+  });
+
+  it("rejects invalid session_exercise_id", () => {
+    const parsed = deleteSetLogQuerySchema.safeParse({
+      session_exercise_id: "bad-id",
+      set_number: "1",
     });
 
     expect(parsed.success).toBe(false);

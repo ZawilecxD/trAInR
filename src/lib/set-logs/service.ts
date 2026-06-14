@@ -130,3 +130,65 @@ export async function upsertSetLog(
 
   return { ok: true, data: parseSetLog(upsertResult.data) };
 }
+
+type DeleteSetLogErrorCode = "not_found" | "locked";
+
+export type DeleteSetLogResult = { ok: true } | { ok: false; code: DeleteSetLogErrorCode; message: string };
+
+export async function deleteSetLog(
+  supabase: SupabaseClient,
+  userId: string,
+  sessionExerciseId: string,
+  setNumber: number,
+): Promise<DeleteSetLogResult> {
+  const contextResult = await supabase
+    .from("session_exercises")
+    .select("id, workout_sessions(locked_at, client_plans!inner(client_id))")
+    .eq("id", sessionExerciseId)
+    .maybeSingle();
+
+  if (contextResult.error) {
+    return { ok: false, code: "not_found", message: contextResult.error.message };
+  }
+
+  if (!contextResult.data) {
+    return { ok: false, code: "not_found", message: "Session exercise not found" };
+  }
+
+  const row = contextResult.data as {
+    id: string;
+    workout_sessions:
+      | {
+          locked_at: string | null;
+          client_plans: { client_id: string } | { client_id: string }[];
+        }
+      | {
+          locked_at: string | null;
+          client_plans: { client_id: string } | { client_id: string }[];
+        }[]
+      | null;
+  };
+
+  const session = unwrapSingle(row.workout_sessions);
+  const clientId = getClientIdFromPlanJoin(session);
+
+  if (clientId !== userId) {
+    return { ok: false, code: "not_found", message: "Session exercise not found" };
+  }
+
+  if (session?.locked_at) {
+    return { ok: false, code: "locked", message: "Session is locked" };
+  }
+
+  const deleteResult = await supabase
+    .from("set_logs")
+    .delete()
+    .eq("session_exercise_id", sessionExerciseId)
+    .eq("set_number", setNumber);
+
+  if (deleteResult.error) {
+    return { ok: false, code: "not_found", message: deleteResult.error.message };
+  }
+
+  return { ok: true };
+}

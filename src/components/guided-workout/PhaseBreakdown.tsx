@@ -1,4 +1,5 @@
-import { PHASE_ORDER, phaseLabel } from "@/lib/guided-workout/phase-labels";
+import { PHASE_ORDER, phaseLabel, sortByPhaseThenSortOrder } from "@/lib/guided-workout/phase-labels";
+import { formatExercisePrescriptionDetail } from "@/lib/guided-workout/format-prescription";
 import type { SessionExerciseDetail } from "@/lib/workout-sessions/service";
 import type { ExercisePhase } from "@/types";
 
@@ -13,7 +14,7 @@ function groupExercisesByPhase(exercises: SessionExerciseDetail[]): Map<Exercise
     groups.set(phase, []);
   }
 
-  for (const exercise of exercises) {
+  for (const exercise of sortByPhaseThenSortOrder(exercises)) {
     const bucket = groups.get(exercise.phase) ?? [];
     bucket.push(exercise);
     groups.set(exercise.phase, bucket);
@@ -39,13 +40,13 @@ export default function PhaseBreakdown({ exercises }: PhaseBreakdownProps) {
             <p className="mt-1 text-sm text-blue-100/60">
               {phaseExercises.length} exercise{phaseExercises.length === 1 ? "" : "s"}
             </p>
-            <ul className="mt-3 space-y-2">
+            <ul className="mt-3 space-y-3">
               {phaseExercises.map((exercise) => (
-                <li key={exercise.id} className="text-sm text-white">
-                  {exercise.exercise_name || "Exercise"}
-                  {exercise.sets.length > 0 ? (
-                    <span className="text-blue-100/50"> · {exercise.sets.length} sets</span>
-                  ) : null}
+                <li key={exercise.id}>
+                  <p className="text-sm font-medium text-white">{exercise.exercise_name || "Exercise"}</p>
+                  <p className="mt-0.5 text-sm text-blue-100/60">
+                    {formatExercisePrescriptionDetail(exercise.sets, exercise.exercise_default_metric)}
+                  </p>
                 </li>
               ))}
             </ul>

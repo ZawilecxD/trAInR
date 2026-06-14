@@ -1,6 +1,10 @@
 import { useCallback, useMemo, useState } from "react";
+import ExerciseNavList from "@/components/guided-workout/ExerciseNavList";
+import ExerciseNavMenu from "@/components/guided-workout/ExerciseNavMenu";
 import GuidedExerciseView from "@/components/guided-workout/GuidedExerciseView";
+import SessionEditList from "@/components/guided-workout/SessionEditList";
 import SessionOverview from "@/components/guided-workout/SessionOverview";
+import { sortByPhaseThenSortOrder } from "@/lib/guided-workout/phase-labels";
 import { resolveInitialMode, type GuidedWorkoutMode } from "@/lib/guided-workout/session-mode";
 import type { ClientSessionDetail } from "@/lib/workout-sessions/service";
 import type { SetLog } from "@/types";
@@ -25,17 +29,28 @@ function mergeSetLog(exercises: ClientSessionDetail["exercises"], setLog: SetLog
   });
 }
 
+function removeSetLog(exercises: ClientSessionDetail["exercises"], sessionExerciseId: string, setNumber: number) {
+  return exercises.map((exercise) => {
+    if (exercise.id !== sessionExerciseId) {
+      return exercise;
+    }
+
+    return {
+      ...exercise,
+      logs: exercise.logs.filter((log) => log.set_number !== setNumber),
+    };
+  });
+}
+
 export default function GuidedWorkoutHub({ initialSession }: GuidedWorkoutHubProps) {
   const [session, setSession] = useState(initialSession);
   const [mode, setMode] = useState<GuidedWorkoutMode>(() => resolveInitialMode(initialSession));
   const [exerciseIndex, setExerciseIndex] = useState(0);
+  const [menuOpen, setMenuOpen] = useState(false);
   const [beginPending, setBeginPending] = useState(false);
   const [beginError, setBeginError] = useState<string | null>(null);
 
-  const orderedExercises = useMemo(
-    () => [...session.exercises].sort((a, b) => a.sort_order - b.sort_order),
-    [session.exercises],
-  );
+  const orderedExercises = useMemo(() => sortByPhaseThenSortOrder(session.exercises), [session.exercises]);
 
   const handleLogSaved = useCallback((setLog: SetLog) => {
     setSession((prev) => ({
@@ -43,6 +58,34 @@ export default function GuidedWorkoutHub({ initialSession }: GuidedWorkoutHubPro
       exercises: mergeSetLog(prev.exercises, setLog),
     }));
   }, []);
+
+  const handleLogDeleted = useCallback((sessionExerciseId: string, setNumber: number) => {
+    setSession((prev) => ({
+      ...prev,
+      exercises: removeSetLog(prev.exercises, sessionExerciseId, setNumber),
+    }));
+  }, []);
+
+  async function handleRestart() {
+    const response = await fetch(`/api/client/sessions/${session.id}/restart`, { method: "POST" });
+    const body = (await response.json()) as {
+      session?: { started_at: string | null };
+      error?: string;
+      details?: { message?: string };
+    };
+
+    if (!response.ok) {
+      throw new Error(body.details?.message ?? body.error ?? `Failed to restart session (${response.status})`);
+    }
+
+    setSession((prev) => ({
+      ...prev,
+      started_at: body.session?.started_at ?? null,
+      exercises: prev.exercises.map((exercise) => ({ ...exercise, logs: [] })),
+    }));
+    setExerciseIndex(0);
+    setMode("overview");
+  }
 
   async function handleBegin() {
     setBeginPending(true);
@@ -88,30 +131,21 @@ export default function GuidedWorkoutHub({ initialSession }: GuidedWorkoutHubPro
 
   if (mode === "edit-list") {
     return (
-      <div className="space-y-4">
-        <a href="/client/plan" className="text-sm text-blue-100/70 hover:text-white">
-          ← Calendar
-        </a>
-        <h1 className="text-2xl font-bold text-white">{session.name ?? "Workout"}</h1>
-        <p className="text-sm text-blue-100/70">Edit list view — full UI in Phase 4.</p>
-        <ul className="space-y-2">
-          {orderedExercises.map((exercise, index) => (
-            <li key={exercise.id} className="rounded-lg border border-white/10 bg-white/5 px-4 py-3 text-white">
-              {exercise.exercise_name || "Exercise"}
-              <button
-                type="button"
-                className="ml-3 text-sm text-blue-200 underline"
-                onClick={() => {
-                  setExerciseIndex(index);
-                  setMode("guided");
-                }}
-              >
-                Edit
-              </button>
-            </li>
-          ))}
-        </ul>
-      </div>
+      <SessionEditList
+        session={session}
+        exercises={orderedExercises}
+        onContinueWorkout={(index) => {
+          setExerciseIndex(index);
+          setMode("guided");
+        }}
+        onJumpToExercise={(index) => {
+          setExerciseIndex(index);
+          setMode("guided");
+        }}
+        onLogSaved={handleLogSaved}
+        onLogDeleted={handleLogDeleted}
+        onRestart={handleRestart}
+      />
     );
   }
 
@@ -129,25 +163,52 @@ export default function GuidedWorkoutHub({ initialSession }: GuidedWorkoutHubPro
   const currentExercise = orderedExercises[exerciseIndex] ?? orderedExercises[0];
 
   return (
-    <GuidedExerciseView
-      key={currentExercise.id}
-      exercise={currentExercise}
-      exerciseIndex={exerciseIndex}
-      totalExercises={orderedExercises.length}
-      startedAt={session.started_at}
-      onBackToOverview={() => {
-        setMode("overview");
-      }}
-      onBackToEditList={() => {
-        setMode("edit-list");
-      }}
-      onPrev={() => {
-        setExerciseIndex((index) => Math.max(0, index - 1));
-      }}
-      onNext={() => {
-        setExerciseIndex((index) => Math.min(orderedExercises.length - 1, index + 1));
-      }}
-      onLogSaved={handleLogSaved}
-    />
+    <div className="lg:flex lg:min-h-[calc(100vh-4rem)] lg:items-stretch lg:gap-6">
+      <aside className="hidden lg:flex lg:w-72 lg:shrink-0 xl:w-80">
+        <div className="sticky top-8 flex max-h-[calc(100vh-4rem)] w-full flex-col overflow-hidden rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl">
+          <ExerciseNavList
+            exercises={orderedExercises}
+            exerciseIndex={exerciseIndex}
+            onSelectExercise={setExerciseIndex}
+            className="min-h-0 flex-1 p-4"
+          />
+        </div>
+      </aside>
+
+      <div className="min-w-0 flex-1">
+        <GuidedExerciseView
+          key={currentExercise.id}
+          exercise={currentExercise}
+          exerciseIndex={exerciseIndex}
+          totalExercises={orderedExercises.length}
+          startedAt={session.started_at}
+          onBackToOverview={() => {
+            setMode("overview");
+          }}
+          onBackToEditList={() => {
+            setMode("edit-list");
+          }}
+          onOpenMenu={() => {
+            setMenuOpen(true);
+          }}
+          onPrev={() => {
+            setExerciseIndex((index) => Math.max(0, index - 1));
+          }}
+          onNext={() => {
+            setExerciseIndex((index) => Math.min(orderedExercises.length - 1, index + 1));
+          }}
+          onLogSaved={handleLogSaved}
+          onLogDeleted={handleLogDeleted}
+        />
+      </div>
+
+      <ExerciseNavMenu
+        open={menuOpen}
+        onOpenChange={setMenuOpen}
+        exercises={orderedExercises}
+        exerciseIndex={exerciseIndex}
+        onSelectExercise={setExerciseIndex}
+      />
+    </div>
   );
 }

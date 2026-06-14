@@ -1,4 +1,5 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { sortByPhaseThenSortOrder } from "@/lib/guided-workout/phase-labels";
 import type { CreateWorkoutSessionBody, UpdateWorkoutSessionBody } from "@/lib/workout-sessions/schemas";
 import type { AssignedTrainer } from "@/types";
 import type {
@@ -224,7 +225,7 @@ export async function getMySessionDetail(
   }
 
   const raw = parseWorkoutSessionWithLogs(getResult.data);
-  const exercises = raw.session_exercises.map(mapSessionExerciseDetailRow).sort((a, b) => a.sort_order - b.sort_order);
+  const exercises = sortByPhaseThenSortOrder(raw.session_exercises.map(mapSessionExerciseDetailRow));
   const trainerDisplayName = await getTrainerDisplayName(supabase);
   const { client_plans: _omitPlan, session_exercises: _omitExercises, ...session } = raw;
 
@@ -287,6 +288,68 @@ export async function startMySession(
   return { ok: true, data: parseWorkoutSession(updateResult.data) };
 }
 
+export type RestartMySessionResult =
+  | { ok: true; data: WorkoutSession }
+  | { ok: false; code: "not_found" | "locked"; message: string };
+
+export async function restartMySession(
+  supabase: SupabaseClient,
+  userId: string,
+  sessionId: string,
+): Promise<RestartMySessionResult> {
+  const sessionResult = await supabase
+    .from("workout_sessions")
+    .select("id, locked_at, client_plans!inner(client_id), session_exercises(id)")
+    .eq("id", sessionId)
+    .eq("client_plans.client_id", userId)
+    .maybeSingle();
+
+  if (sessionResult.error) {
+    return { ok: false, code: "not_found", message: sessionResult.error.message };
+  }
+
+  if (!sessionResult.data) {
+    return { ok: false, code: "not_found", message: "Session not found" };
+  }
+
+  const session = sessionResult.data as {
+    id: string;
+    locked_at: string | null;
+    session_exercises: { id: string }[];
+  };
+
+  if (session.locked_at) {
+    return { ok: false, code: "locked", message: "Session is locked" };
+  }
+
+  const exerciseIds = session.session_exercises.map((exercise) => exercise.id);
+
+  if (exerciseIds.length > 0) {
+    const deleteLogsResult = await supabase.from("set_logs").delete().in("session_exercise_id", exerciseIds);
+
+    if (deleteLogsResult.error) {
+      return { ok: false, code: "not_found", message: deleteLogsResult.error.message };
+    }
+  }
+
+  const updateResult = await supabase
+    .from("workout_sessions")
+    .update({ started_at: null })
+    .eq("id", sessionId)
+    .select("*")
+    .maybeSingle();
+
+  if (updateResult.error) {
+    return { ok: false, code: "not_found", message: updateResult.error.message };
+  }
+
+  if (!updateResult.data) {
+    return { ok: false, code: "not_found", message: "Session not found" };
+  }
+
+  return { ok: true, data: parseWorkoutSession(updateResult.data) };
+}
+
 export async function getSessionWithExercises(
   supabase: SupabaseClient,
   sessionId: string,
@@ -306,7 +369,7 @@ export async function getSessionWithExercises(
   }
 
   const raw = parseSessionWithJoin(getResult.data);
-  const exercises = raw.session_exercises.map(mapSessionExerciseRow);
+  const exercises = sortByPhaseThenSortOrder(raw.session_exercises.map(mapSessionExerciseRow));
   const { session_exercises: _omit, ...session } = raw;
 
   return {

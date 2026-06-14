@@ -16,3 +16,10 @@ export const upsertSetLogBodySchema = z
   });
 
 export type UpsertSetLogBody = z.infer<typeof upsertSetLogBodySchema>;
+
+export const deleteSetLogQuerySchema = z.object({
+  session_exercise_id: uuidSchema,
+  set_number: z.coerce.number().int().min(1, "set_number must be ≥ 1"),
+});
+
+export type DeleteSetLogQuery = z.infer<typeof deleteSetLogQuerySchema>;

@@ -34,7 +34,12 @@ export function useDebouncedSetLogSave({
   values,
   debounceMs = 500,
   onSaved,
-}: UseDebouncedSetLogSaveOptions): { status: SetLogSaveStatus; error: string | null; retry: () => void } {
+}: UseDebouncedSetLogSaveOptions): {
+  status: SetLogSaveStatus;
+  error: string | null;
+  retry: () => void;
+  cancelPendingSave: () => void;
+} {
   const [status, setStatus] = useState<SetLogSaveStatus>("idle");
   const [error, setError] = useState<string | null>(null);
   const skipNextSaveRef = useRef(true);
@@ -94,6 +99,13 @@ export function useDebouncedSetLogSave({
     void saveNow(values);
   }, [saveNow, values]);
 
+  const cancelPendingSave = useCallback(() => {
+    saveGenerationRef.current += 1;
+    skipNextSaveRef.current = true;
+    setStatus("idle");
+    setError(null);
+  }, []);
+
   useEffect(() => {
     if (skipNextSaveRef.current) {
       skipNextSaveRef.current = false;
@@ -111,5 +123,5 @@ export function useDebouncedSetLogSave({
     };
   }, [debounceMs, saveNow, serializedValues]);
 
-  return { status, error, retry };
+  return { status, error, retry, cancelPendingSave };
 }

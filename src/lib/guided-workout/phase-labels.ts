@@ -11,3 +11,19 @@ export function phaseLabel(phase: ExercisePhase): string {
 }
 
 export const PHASE_ORDER: ExercisePhase[] = ["warm_up", "main", "cool_down"];
+
+export function compareByPhaseThenSortOrder<T extends { phase: ExercisePhase; sort_order: number }>(
+  a: T,
+  b: T,
+): number {
+  const phaseDiff = PHASE_ORDER.indexOf(a.phase) - PHASE_ORDER.indexOf(b.phase);
+  if (phaseDiff !== 0) {
+    return phaseDiff;
+  }
+
+  return a.sort_order - b.sort_order;
+}
+
+export function sortByPhaseThenSortOrder<T extends { phase: ExercisePhase; sort_order: number }>(items: T[]): T[] {
+  return [...items].sort(compareByPhaseThenSortOrder);
+}
