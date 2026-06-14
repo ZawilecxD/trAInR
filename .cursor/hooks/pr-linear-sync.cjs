@@ -125,8 +125,12 @@ function gatherCandidates(branch, command, text) {
 }
 
 function writePendingState(payload) {
-  fs.mkdirSync(STATE_DIR, { recursive: true });
-  fs.writeFileSync(PENDING_PATH, JSON.stringify(truncatedPayload(payload), null, 2), "utf8");
+  try {
+    fs.mkdirSync(STATE_DIR, { recursive: true });
+    fs.writeFileSync(PENDING_PATH, JSON.stringify(truncatedPayload(payload), null, 2), "utf8");
+  } catch {
+    // State is best-effort; gating still works if a later write succeeds.
+  }
 }
 
 function truncatedPayload(payload) {
@@ -355,12 +359,12 @@ function handlePostToolUse(data) {
     return;
   }
 
-  writePendingState(info);
   process.stdout.write(
     JSON.stringify({
       additional_context: buildAdditionalContext(info),
     }),
   );
+  writePendingState(info);
 }
 
 function handleBeforeMcpExecution(data) {

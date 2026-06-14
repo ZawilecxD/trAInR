@@ -9,6 +9,16 @@
       {
         "command": "node .cursor/hooks/pr-linear-sync.cjs",
         "matcher": "MCP:.*create_pull_request"
+      },
+      {
+        "command": "node .cursor/hooks/lint-edited-file.cjs",
+        "matcher": "Write|StrReplace",
+        "timeout": 60
+      },
+      {
+        "command": "node .cursor/hooks/typecheck-edited-file.cjs",
+        "matcher": "Write|StrReplace",
+        "timeout": 90
       }
     ],
     "beforeMCPExecution": [
