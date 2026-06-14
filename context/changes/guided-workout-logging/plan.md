@@ -427,16 +427,16 @@ Add the exercise list sheet (mockup Screen 3) and the minimal edit-list view for
 
 #### Automated
 
-- [x] 3.1 Type checking passes
-- [x] 3.2 Linting passes
-- [x] 3.3 Unit tests pass
-- [x] 3.4 Build passes
+- [x] 3.1 Type checking passes — 1b7ff14
+- [x] 3.2 Linting passes — 1b7ff14
+- [x] 3.3 Unit tests pass — 1b7ff14
+- [x] 3.4 Build passes — 1b7ff14
 
 #### Manual
 
-- [x] 3.5 Set autosave and OK toggle persist across reload
-- [x] 3.6 Timed exercise duration input works
-- [x] 3.7 Prev/Next navigation and save error retry verified
+- [x] 3.5 Set autosave and OK toggle persist across reload — 1b7ff14
+- [x] 3.6 Timed exercise duration input works — 1b7ff14
+- [x] 3.7 Prev/Next navigation and save error retry verified — 1b7ff14
 
 ### Phase 4: Navigation menu + edit list (FR-016 / FR-020)
 
