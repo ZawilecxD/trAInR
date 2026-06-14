@@ -1,10 +1,10 @@
 ---
 change_id: client-calendar
 title: Client calendar
-status: impl_reviewed
+status: archived
 created: 2026-06-13
-updated: 2026-06-13
-archived_at: null
+updated: 2026-06-14
+archived_at: 2026-06-14T14:21:21Z
 linear_issue: ZAW-10
 ---
 
