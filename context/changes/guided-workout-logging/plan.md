@@ -442,13 +442,13 @@ Add the exercise list sheet (mockup Screen 3) and the minimal edit-list view for
 
 #### Automated
 
-- [x] 4.1 Type checking passes
-- [x] 4.2 Linting passes
-- [x] 4.3 Unit tests pass
-- [x] 4.4 Build passes
+- [x] 4.1 Type checking passes — 517d5dd
+- [x] 4.2 Linting passes — 517d5dd
+- [x] 4.3 Unit tests pass — 517d5dd
+- [x] 4.4 Build passes — 517d5dd
 
 #### Manual
 
-- [x] 4.5 Exercise nav menu jump and status dots verified
-- [x] 4.6 Edit list loads for sessions with logs; inline edits autosave
-- [x] 4.7 Edit list ↔ guided mode switching works
+- [x] 4.5 Exercise nav menu jump and status dots verified — 517d5dd
+- [x] 4.6 Edit list loads for sessions with logs; inline edits autosave — 517d5dd
+- [x] 4.7 Edit list ↔ guided mode switching works — 517d5dd
