@@ -1,0 +1,158 @@
+---
+name: Athletic Intelligence System
+colors:
+  surface: '#0b1326'
+  surface-dim: '#0b1326'
+  surface-bright: '#31394d'
+  surface-container-lowest: '#060e20'
+  surface-container-low: '#131b2e'
+  surface-container: '#171f33'
+  surface-container-high: '#222a3d'
+  surface-container-highest: '#2d3449'
+  on-surface: '#dae2fd'
+  on-surface-variant: '#c7c4d7'
+  inverse-surface: '#dae2fd'
+  inverse-on-surface: '#283044'
+  outline: '#908fa0'
+  outline-variant: '#464554'
+  surface-tint: '#c0c1ff'
+  primary: '#c0c1ff'
+  on-primary: '#1000a9'
+  primary-container: '#8083ff'
+  on-primary-container: '#0d0096'
+  inverse-primary: '#494bd6'
+  secondary: '#ffb95f'
+  on-secondary: '#472a00'
+  secondary-container: '#ee9800'
+  on-secondary-container: '#5b3800'
+  tertiary: '#4edea3'
+  on-tertiary: '#003824'
+  tertiary-container: '#00885d'
+  on-tertiary-container: '#000703'
+  error: '#ffb4ab'
+  on-error: '#690005'
+  error-container: '#93000a'
+  on-error-container: '#ffdad6'
+  primary-fixed: '#e1e0ff'
+  primary-fixed-dim: '#c0c1ff'
+  on-primary-fixed: '#07006c'
+  on-primary-fixed-variant: '#2f2ebe'
+  secondary-fixed: '#ffddb8'
+  secondary-fixed-dim: '#ffb95f'
+  on-secondary-fixed: '#2a1700'
+  on-secondary-fixed-variant: '#653e00'
+  tertiary-fixed: '#6ffbbe'
+  tertiary-fixed-dim: '#4edea3'
+  on-tertiary-fixed: '#002113'
+  on-tertiary-fixed-variant: '#005236'
+  background: '#0b1326'
+  on-background: '#dae2fd'
+  surface-variant: '#2d3449'
+typography:
+  display-hero:
+    fontFamily: Geist
+    fontSize: 48px
+    fontWeight: '800'
+    lineHeight: 48px
+    letterSpacing: -0.04em
+  headline-lg:
+    fontFamily: Geist
+    fontSize: 32px
+    fontWeight: '700'
+    lineHeight: 40px
+    letterSpacing: -0.02em
+  headline-lg-mobile:
+    fontFamily: Geist
+    fontSize: 28px
+    fontWeight: '700'
+    lineHeight: 34px
+  stat-readout:
+    fontFamily: Geist
+    fontSize: 24px
+    fontWeight: '600'
+    lineHeight: 32px
+    letterSpacing: -0.01em
+  body-md:
+    fontFamily: Geist
+    fontSize: 16px
+    fontWeight: '400'
+    lineHeight: 24px
+  label-caps:
+    fontFamily: JetBrains Mono
+    fontSize: 12px
+    fontWeight: '600'
+    lineHeight: 16px
+    letterSpacing: 0.05em
+  data-mono:
+    fontFamily: JetBrains Mono
+    fontSize: 14px
+    fontWeight: '500'
+    lineHeight: 20px
+rounded:
+  sm: 0.25rem
+  DEFAULT: 0.5rem
+  md: 0.75rem
+  lg: 1rem
+  xl: 1.5rem
+  full: 9999px
+spacing:
+  base: 4px
+  container-padding: 1.25rem
+  stack-sm: 0.5rem
+  stack-md: 1rem
+  stack-lg: 2rem
+  touch-target-min: 44px
+---
+
+## Brand & Style
+The design system is engineered for the high-intensity, high-focus environment of a gym. It balances two distinct modes: **Calm Authoring** for trainers (structured, systematic, and clean) and **Energetic Execution** for clients (bold, high-contrast, and glanceable).
+
+The visual language follows a **Modern Corporate/Athletic** hybrid. It utilizes generous whitespace to prevent "data-overload" during complex programming while employing high-impact typographic scales and vibrant primary accents to drive motivation during physical exertion. The overall feel is professional, precise, and technologically advanced, instilling trust in the data tracking while maintaining the "pump" of a fitness environment.
+
+## Colors
+The palette is rooted in a "Charcoal & Electric" theme. While the system supports both modes, the **Dark Mode** is the primary "At-the-Gym" experience to reduce glare and save battery. 
+
+- **Primary (Electric Violet):** Used for main action triggers (Start Workout, Finish Set) and active state indicators.
+- **Secondary (Warm Amber):** Reserved for "In Progress" states, rest timers, and partial completions.
+- **Semantic Logic:** Warm-up sets use a desaturated version of the neutral border color to indicate lower priority, while "Working Sets" utilize the Primary color or high-contrast White/Black to signal maximum effort.
+- **Surface Strategy:** Use slightly elevated grays (Slate-800/900) for card backgrounds against the Near-black base to create depth without relying on heavy shadows.
+
+## Typography
+The system uses **Geist** for its clean, technical, and modern geometric feel. It provides the necessary "tech-first" aesthetic while remaining highly legible under moving gym lights.
+
+- **Numerals:** Data is the hero. Large-scale Geist numerals are used for weight and rep tracking.
+- **Technical Context:** **JetBrains Mono** is introduced for labels (e.g., "SET 1", "RPE", "REST") to provide a functional, "instrument-panel" feel that distinguishes metadata from primary content.
+- **Hierarchy:** High contrast in weight is preferred over size variations to maintain scannability. Use "Bold" or "Black" weights for active metrics and "Regular" for instructional text.
+
+## Layout & Spacing
+This is a **Mobile-First Fluid** layout. 
+
+- **Thumb-Zone Optimization:** Primary logging actions (Checkmarks, "Add Set", "Save") are placed in the bottom 40% of the screen.
+- **Rhythm:** A strict 4px/8px grid ensures vertical rhythm. 
+- **The "Gym Safety" Margin:** A generous 20px (1.25rem) side margin is maintained on mobile to prevent accidental triggers while holding a phone with sweaty hands or gloves.
+- **Authoring View (Desktop):** Transitions to a multi-pane split view where the workout template is on the left and the exercise library is on the right, allowing for drag-and-drop programming.
+
+## Elevation & Depth
+The system uses **Tonal Layering** combined with soft, ambient shadows to define hierarchy.
+
+- **Base Level (0):** The app background (Near-black or Near-white).
+- **Surface Level (1):** Exercise cards and list items. These use a subtle 1px border (`border-neutral-200/10`) to define edges.
+- **Active Level (2):** The currently active set or the "Live Timer" sheet. These use a soft, diffused shadow with a 10% opacity of the primary color to "glow" and draw the eye.
+- **Overlays:** Modals and bottom sheets use a backdrop blur (12px) to maintain the sense of place within the workout while focusing on the specific data entry.
+
+## Shapes
+A consistent `0.625rem` (10px) radius is applied to all primary containers and buttons. This "Rounded" approach softens the technical edge of the Geist typeface, making the app feel approachable rather than clinical.
+
+- **Buttons:** Large buttons (logging sets) are fully rounded (pill-shaped) to distinguish them from data cards.
+- **Input Fields:** Use the standard 10px radius with a slightly thicker 2px border when focused to ensure the user knows exactly where they are typing.
+- **Progress Bars:** Use fully rounded caps to imply fluid movement and completion.
+
+## Components
+- **The "Set Row":** A horizontal component containing: [Set Number (Mono Label)] | [Weight Input] | [Reps Input] | [Status Checkbox]. The inputs should have large hit-areas (min 44px height).
+- **Primary Logging Button:** A full-width, energetic button at the bottom of the screen. In "Execution" mode, this uses the Primary color. In "Authoring" mode, it uses a secondary outline style.
+- **The Timer Bar:** A persistent, thin bar at the top or bottom of the screen that fills with the Secondary Accent color (Amber) during rest periods.
+- **Status Chips:** Small, semi-transparent pills used in the calendar view. 
+    - *Gray:* Not Started.
+    - *Amber:* Partial/In-Progress.
+    - *Green:* Completed.
+- **Exercise Cards:** Grouped sets within a container. Use a subtle vertical line on the left side of the exercise card (colored Primary) to indicate the "Active Exercise."

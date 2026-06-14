@@ -4,7 +4,7 @@
 version: 1
 status: draft
 created: 2026-05-25
-updated: 2026-06-08
+updated: 2026-06-13
 prd_version: 1
 main_goal: speed
 top_blocker: time
@@ -34,7 +34,7 @@ Independent personal trainers lose coaching time to admin — hunting across spr
 | S-01 | exercise-library           | create, edit, and browse/filter exercises                              | F-01          | FR-007, FR-008, FR-009                          | done     |
 | S-02 | session-templates          | create and edit reusable session templates from exercises              | F-01, S-01    | FR-010, FR-011                                  | done     |
 | S-03 | client-onboarding          | register via invite link and be auto-assigned to trainer               | F-01          | FR-001, FR-002, FR-003, FR-004, FR-005          | done     |
-| S-04 | plan-assignment            | place a session on a specific day of a client's calendar               | S-02, S-03    | FR-012, US-01                                   | proposed |
+| S-04 | plan-assignment            | place a session on a specific day of a client's calendar               | S-02, S-03    | FR-012, US-01                                   | done     |
 | S-05 | client-calendar            | view assigned sessions in month/week view with status colors           | S-04          | FR-013, FR-014                                  | proposed |
 | S-06 | guided-workout-logging     | open a session, step through exercises, log sets, see previous hints   | S-04          | FR-015, FR-016, FR-017, FR-019, FR-020, US-01   | proposed |
 | S-07 | trainer-dashboard          | see client overview and read-only session detail with logged data      | S-04, S-06    | FR-027, FR-028, US-01                           | proposed |
@@ -45,6 +45,7 @@ Independent personal trainers lose coaching time to admin — hunting across spr
 | S-12 | exercise-statistics        | view per-exercise history, estimated 1RM, and volume/tonnage           | S-06          | FR-024, FR-025, FR-026                          | proposed |
 | S-13 | data-edit-window           | edit logged data for 24 hours, then sealed                             | S-06          | FR-022                                          | proposed |
 | S-14 | exercises-separate-rounds  | prescribe each exercise round separately (reps, load, rest per round)  | S-02          | FR-010, FR-011                                  | done     |
+| S-15 | exercise-favourites        | mark exercises as favourites and filter exercise lists by favourites only | S-01          | FR-009                                          | proposed |
 
 
 ### Quality & testing
@@ -53,7 +54,7 @@ Independent personal trainers lose coaching time to admin — hunting across spr
 | ID   | Change ID                             | Outcome (team can …)                                                                                   | Prerequisites                    | PRD refs                        | Status   |
 | ---- | ------------------------------------- | ------------------------------------------------------------------------------------------------------ | -------------------------------- | ------------------------------- | -------- |
 | Q-01 | add-stryker-mutation-testing          | run Stryker on risk-critical modules to catch weak assertions beyond coverage                          | test-plan Phase 1 complete       | NFR data integrity              | proposed |
-| Q-02 | harden-replace-exercise-muscle-groups | close KNOWN GAP: RPC rejects cross-trainer muscle group replacement; flip integration test             | S-01, test-plan Phase 1 complete | NFR privacy, NFR data integrity | proposed |
+| Q-02 | harden-replace-exercise-muscle-groups | close KNOWN GAP: RPC rejects cross-trainer muscle group replacement; flip integration test             | S-01, test-plan Phase 1 complete | NFR privacy, NFR data integrity | done     |
 | Q-03 | harden-complete-client-invite         | close KNOWN GAP: block fraudulent p_client_id on authenticated invite completion; preserve anon signup | S-03, test-plan Phase 1 complete | FR-003, FR-004, FR-005          | proposed |
 
 
@@ -66,7 +67,7 @@ Navigation aid — groups items that share a Prerequisites chain. Canonical orde
 | ------ | ------------------------------ | ------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | A      | Trainer authoring → north star | `F-01` → `S-01` → `S-02` → `S-04` → `S-06` → `S-07`          | Critical path: every link is on the shortest route to validating the async training loop.                                                                                                     |
 | B      | Client onboarding & calendar   | `S-03` → `S-05`                                              | Joins Stream A at `S-04` (S-03 is a prerequisite for S-04); `S-05` branches off `S-04` parallel with `S-06`.                                                                                  |
-| C      | Enhancement & polish           | `S-08` / `S-09` / `S-10` / `S-11` / `S-12` / `S-13` / `S-14` | Tier 2+3 items; sequence after core loop completes or when capacity opens. `S-14` extends session template prescription (after S-02).                                                         |
+| C      | Enhancement & polish           | `S-08` / `S-09` / `S-10` / `S-11` / `S-12` / `S-13` / `S-14` / `S-15` | Tier 2+3 items; sequence after core loop completes or when capacity opens. `S-14` extends session template prescription (after S-02). `S-15` extends exercise library browse/filter (after S-01). |
 | D      | Quality & testing              | `Q-01` / `Q-02` / `Q-03`                                     | Cross-cutting; selective mutation testing per `test-plan.md` after the integration harness lands. `Q-02`/`Q-03` close SECURITY DEFINER gaps documented by the harness (flip KNOWN GAP tests). |
 
 
@@ -159,7 +160,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Blockers:** —
 - **Unknowns:** Assigned sessions inherit S-14 per-round prescription: `session_exercises` must gain a `session_exercise_sets` child table (mirror of `template_exercise_sets`), snapshot-copied from the template at session creation; `docs/ERD.md` still shows flat `session_exercises` and must be updated in this slice.
 - **Risk:** Session personalization (move/remove/edit exercises per client) adds complexity beyond basic template instantiation; keep the first version simple (clone + edit). S-14 left template-only gaps to resolve here: align load validation with ERD (`0` = bodyweight, negative = assisted — template schema currently rejects negative), add DB `check` that each prescription round has reps or duration on both `template_exercise_sets` (hardening) and new `session_exercise_sets`.
-- **Status:** proposed
+- **Status:** done
 
 ### S-05: Client calendar view
 
@@ -281,6 +282,18 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Risk:** Data model shift from flat `prescribed_`* fields to round rows cascades to S-04 (assignment), S-06 (guided logging), and S-07 (trainer readout); plan should define migration/backfill for templates created with uniform prescriptions
 - **Status:** done
 
+### S-15: Exercise favourites
+
+- **Outcome:** trainer can mark exercises as favourites and filter exercise lists to show favourites only (exercise library and anywhere else exercises are browsed for selection)
+- **Change ID:** exercise-favourites
+- **PRD refs:** FR-009 (extends browse/filter; dedicated FR not yet in PRD — add at `/10x-plan` if scope needs contract lock-in)
+- **Prerequisites:** S-01
+- **Parallel with:** S-02, S-03, S-04, S-05, S-06, S-07, S-08, S-09, S-10, S-12, S-13
+- **Blockers:** —
+- **Unknowns:** Whether favourite toggle appears inline on list rows only, or also on exercise detail/edit; whether template builder exercise picker shares the same filter component as the library page
+- **Risk:** Minimal — per-trainer boolean flag; main work is consistent filter UX across exercise pickers (library, template builder, session personalization)
+- **Status:** proposed
+
 ## Backlog Handoff
 
 
@@ -301,6 +314,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 | S-12       | exercise-statistics                   | Build per-exercise history with 1RM and volume stats                        | no                    | Needs S-06                                                                                                                  |
 | S-13       | data-edit-window                      | Implement 24h edit window then seal logged data                             | no                    | Needs S-06                                                                                                                  |
 | S-14       | exercises-separate-rounds             | Per-round prescription (reps, load, rest) in session templates              | no                    | Needs S-02                                                                                                                  |
+| S-15       | exercise-favourites                   | Mark exercises as favourites and filter exercise lists                      | yes                   | Run `/10x-plan exercise-favourites`; extends FR-009 browse/filter                                                           |
 | Q-01       | add-stryker-mutation-testing          | Run Stryker on risk-critical modules                                        | no                    | Needs test-plan Phase 1 complete                                                                                            |
 | Q-02       | harden-replace-exercise-muscle-groups | Add auth.uid() ownership check to replace_exercise_muscle_groups RPC        | yes                   | Run `/10x-plan harden-replace-exercise-muscle-groups`; flip KNOWN GAP test in `tests/integration/security-definer/`         |
 | Q-03       | harden-complete-client-invite         | Harden complete_client_invite p_client_id binding for authenticated callers | no                    | Run `/10x-frame harden-complete-client-invite` first (anon vs authenticated design); then `/10x-plan`                       |
@@ -336,4 +350,6 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **S-02: trainer can create a reusable session template organized into phases (warm-up/main/cooldown) with prescribed sets/reps/load and rest time per exercise, and edit existing templates** — Archived 2026-06-07 → `context/archive/2026-06-05-session-templates/`. Lesson: —.
 - **S-11: trainer can remove or reject a wrongly-assigned client** — Archived 2026-06-07 → `context/archive/2026-06-05-client-removal/`. Lesson: —.
 - **S-14: trainer can add an exercise to a session template and configure each round separately — e.g. round 1: 10 reps × 50 kg + 2 min rest, round 2: 8 × 60 kg + 2 min rest, round 3: 6 × 70 kg + 3 min rest — instead of a single uniform prescription for all sets** — Archived 2026-06-07 → `context/archive/2026-06-05-exercises-separate-rounds/`. Lesson: —.
+- **S-04: trainer can create a session on a specific day of a client's calendar — from a template or from scratch — and personalize exercises (move/remove/edit)** — Archived 2026-06-13 → `context/archive/2026-06-08-plan-assignment/`. Lesson: —.
+- **Q-02: close KNOWN GAP: RPC rejects cross-trainer muscle group replacement; flip integration test** — Archived 2026-06-13 → `context/archive/2026-06-08-harden-replace-exercise-muscle-groups/`. Lesson: —.
 

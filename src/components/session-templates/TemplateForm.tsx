@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import { ChevronDown, ChevronUp, CircleAlert, Loader2, Plus, Save, Trash2, ArrowDown, ArrowUp } from "lucide-react";
+import DeleteConfirmDialog from "@/components/DeleteConfirmDialog";
 import ExercisePickerModal from "@/components/session-templates/ExercisePickerModal";
 import { Button } from "@/components/ui/button";
 import {
@@ -33,6 +34,9 @@ interface TemplateFormProps {
     description: string | null;
     exercises: TemplateExerciseWithName[];
   };
+  onSuccess?: () => void;
+  onCancel?: () => void;
+  onDeleted?: () => void;
 }
 
 interface ApiValidationIssue {
@@ -89,7 +93,15 @@ function swapEntries(
   return next;
 }
 
-export default function TemplateForm({ mode, templateId, availableExercises, initialTemplate }: TemplateFormProps) {
+export default function TemplateForm({
+  mode,
+  templateId,
+  availableExercises,
+  initialTemplate,
+  onSuccess,
+  onCancel,
+  onDeleted,
+}: TemplateFormProps) {
   const initialPhaseEntries = useMemo(
     () => (initialTemplate ? templateExercisesToPhaseEntries(initialTemplate.exercises) : emptyPhaseEntries()),
     [initialTemplate],
@@ -174,6 +186,11 @@ export default function TemplateForm({ mode, templateId, availableExercises, ini
           return;
         }
 
+        if (onSuccess) {
+          onSuccess();
+          return;
+        }
+
         window.location.assign("/trainer/templates?created=1");
       } finally {
         setSubmitting(false);
@@ -210,6 +227,11 @@ export default function TemplateForm({ mode, templateId, availableExercises, ini
         return;
       }
 
+      if (onSuccess) {
+        onSuccess();
+        return;
+      }
+
       window.location.assign(`/trainer/templates/${templateId}?updated=1`);
     } finally {
       setSubmitting(false);
@@ -218,11 +240,6 @@ export default function TemplateForm({ mode, templateId, availableExercises, ini
 
   async function handleDelete() {
     if (!templateId) {
-      return;
-    }
-
-    const confirmed = window.confirm("Delete this template? This cannot be undone.");
-    if (!confirmed) {
       return;
     }
 
@@ -235,6 +252,11 @@ export default function TemplateForm({ mode, templateId, availableExercises, ini
       if (!response.ok) {
         const payload = await safeJsonParse(response);
         setErrors({ form: payload.details?.message ?? "Failed to delete template." });
+        return;
+      }
+
+      if (onDeleted) {
+        onDeleted();
         return;
       }
 
@@ -568,6 +590,10 @@ export default function TemplateForm({ mode, templateId, availableExercises, ini
             variant="outline"
             className="border-white/20 bg-transparent text-white hover:bg-white/10"
             onClick={() => {
+              if (onCancel) {
+                onCancel();
+                return;
+              }
               window.location.assign("/trainer/templates");
             }}
           >
@@ -575,17 +601,19 @@ export default function TemplateForm({ mode, templateId, availableExercises, ini
           </Button>
 
           {mode === "edit" ? (
-            <Button
-              type="button"
-              variant="destructive"
-              disabled={submitting || deleting}
-              onClick={() => {
-                void handleDelete();
-              }}
-            >
-              {deleting ? <Loader2 className="size-4 animate-spin" /> : <Trash2 className="size-4" />}
-              Delete template
-            </Button>
+            <DeleteConfirmDialog
+              title="Delete template?"
+              description="This template will be permanently removed. This cannot be undone."
+              confirmLabel="Delete template"
+              loading={deleting}
+              onConfirm={handleDelete}
+              trigger={
+                <Button type="button" variant="destructive" disabled={submitting || deleting}>
+                  {deleting ? <Loader2 className="size-4 animate-spin" /> : <Trash2 className="size-4" />}
+                  Delete template
+                </Button>
+              }
+            />
           ) : null}
         </div>
       </form>

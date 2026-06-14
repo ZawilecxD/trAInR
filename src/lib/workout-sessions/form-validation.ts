@@ -3,6 +3,7 @@ import {
   assembleTemplatePayload,
   templateExercisesToPhaseEntries,
 } from "@/lib/session-templates/form-validation";
+import type { TemplateExerciseWithName } from "@/lib/session-templates/service";
 import {
   createWorkoutSessionBodySchema,
   type CreateWorkoutSessionBody,
@@ -14,7 +15,27 @@ import type { SessionExerciseWithName } from "@/lib/workout-sessions/service";
 export type SessionFormFieldErrors = Partial<Record<"name" | "scheduledDate" | "form", string>>;
 
 export function sessionExercisesToPhaseEntries(exercises: SessionExerciseWithName[]): PhaseEntries {
-  return templateExercisesToPhaseEntries(exercises);
+  const mapped: TemplateExerciseWithName[] = exercises.map((row) => ({
+    id: row.id,
+    template_id: row.session_id,
+    exercise_id: row.exercise_id,
+    phase: row.phase,
+    sort_order: row.sort_order,
+    notes: row.notes,
+    sets: row.sets.map((set) => ({
+      id: set.id,
+      template_exercise_id: set.session_exercise_id,
+      set_number: set.set_number,
+      prescribed_reps: set.prescribed_reps,
+      prescribed_duration_seconds: set.prescribed_duration_seconds,
+      prescribed_load_kg: set.prescribed_load_kg,
+      rest_after_seconds: set.rest_after_seconds,
+    })),
+    exercise_name: row.exercise_name,
+    exercise_default_metric: row.exercise_default_metric,
+  }));
+
+  return templateExercisesToPhaseEntries(mapped);
 }
 
 function exercisesFromPhaseEntries(phaseEntries: PhaseEntries): CreateWorkoutSessionBody["exercises"] {

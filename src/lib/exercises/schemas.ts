@@ -63,7 +63,11 @@ export const listExercisesQuerySchema = z.object({
 
 export type CreateExerciseBody = z.infer<typeof createExerciseBodySchema>;
 export type UpdateExerciseBody = z.infer<typeof updateExerciseBodySchema>;
-export type ListExercisesQuery = z.infer<typeof listExercisesQuerySchema>;
+export interface ListExercisesQuery {
+  type?: z.infer<typeof exerciseTypeSchema>;
+  muscleGroupId?: string[];
+  q?: string;
+}
 
 export function parseListExercisesQuery(searchParams: URLSearchParams):
   | {

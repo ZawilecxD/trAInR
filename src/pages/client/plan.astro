@@ -1,0 +1,58 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import ClientCalendarHub from "@/components/plans/ClientCalendarHub";
+import { monthRange, toLocalISODate } from "@/lib/dates";
+import { listMySessionsAsClient } from "@/lib/workout-sessions/service";
+import { isoDateSchema } from "@/lib/workout-sessions/schemas";
+import { createClient } from "@/lib/supabase";
+
+const supabase = createClient(Astro.request.headers, Astro.cookies);
+
+if (!supabase || !Astro.locals.user?.id) {
+  return Astro.redirect("/client/dashboard");
+}
+
+const dateParam = Astro.url.searchParams.get("date");
+const parsedDate = isoDateSchema.safeParse(dateParam);
+const selectedDate = parsedDate.success ? parsedDate.data : toLocalISODate(new Date());
+const initialMonth = selectedDate.slice(0, 7);
+const range = monthRange(Number(selectedDate.slice(0, 4)), Number(selectedDate.slice(5, 7)) - 1);
+
+const { data: sessions, error: sessionsError } = await listMySessionsAsClient(
+  supabase,
+  Astro.locals.user.id,
+  range.from,
+  range.to,
+);
+---
+
+<Layout title="My Plan">
+  <div class="bg-cosmic min-h-screen p-4 md:p-8">
+    <div class="mx-auto max-w-6xl space-y-6">
+      <div>
+        <h1 class="bg-gradient-to-r from-blue-200 to-purple-200 bg-clip-text text-3xl font-bold text-transparent">
+          My Plan
+        </h1>
+        <p class="mt-1 text-sm text-blue-100/70">View your assigned workout sessions.</p>
+      </div>
+
+      {
+        sessionsError ? (
+          <div class="rounded-lg border border-red-400/30 bg-red-500/10 px-4 py-3 text-sm text-red-100">
+            Failed to load plan: {sessionsError}
+          </div>
+        ) : (
+          <ClientCalendarHub
+            client:load
+            initialSessions={(sessions ?? []).map((session) => ({
+              ...session,
+              name: session.name ?? "Workout",
+            }))}
+            initialSelectedDate={selectedDate}
+            initialMonth={initialMonth}
+          />
+        )
+      }
+    </div>
+  </div>
+</Layout>

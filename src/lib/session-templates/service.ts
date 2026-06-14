@@ -11,6 +11,19 @@ export type TemplateWithExercises = SessionTemplate & {
   exercises: TemplateExerciseWithName[];
 };
 
+export type SessionTemplateSummary = SessionTemplate & {
+  exercise_count: number;
+  phases: ExercisePhase[];
+};
+
+interface TemplateExercisePhaseRow {
+  phase: ExercisePhase;
+}
+
+type TemplateSummaryJoinRow = SessionTemplate & {
+  template_exercises: TemplateExercisePhaseRow[];
+};
+
 type TemplateExerciseSetRow = TemplateExerciseSet;
 
 interface TemplateExerciseJoinRow {
@@ -28,6 +41,23 @@ type TemplateWithJoinedExercises = SessionTemplate & { template_exercises: Templ
 
 function parseSessionTemplate(raw: unknown): SessionTemplate {
   return raw as SessionTemplate;
+}
+
+function parseTemplateSummary(raw: unknown): SessionTemplateSummary {
+  const row = raw as TemplateSummaryJoinRow;
+  const exercises = Array.isArray(row.template_exercises) ? row.template_exercises : [];
+  const phases = [...new Set(exercises.map((exercise) => exercise.phase))];
+
+  return {
+    id: row.id,
+    trainer_id: row.trainer_id,
+    name: row.name,
+    description: row.description,
+    created_at: row.created_at,
+    updated_at: row.updated_at,
+    exercise_count: exercises.length,
+    phases,
+  };
 }
 
 function parseTemplateWithJoin(raw: unknown): TemplateWithJoinedExercises {
@@ -120,6 +150,23 @@ export async function listTemplates(
   }
 
   return { data: Array.isArray(result.data) ? result.data.map(parseSessionTemplate) : [], error: null };
+}
+
+export async function listTemplateSummaries(
+  supabase: SupabaseClient,
+  trainerId: string,
+): Promise<{ data: SessionTemplateSummary[] | null; error: string | null }> {
+  const result = await supabase
+    .from("session_templates")
+    .select("*, template_exercises(phase)")
+    .eq("trainer_id", trainerId)
+    .order("updated_at", { ascending: false });
+
+  if (result.error) {
+    return { data: null, error: result.error.message };
+  }
+
+  return { data: Array.isArray(result.data) ? result.data.map(parseTemplateSummary) : [], error: null };
 }
 
 export async function getTemplate(

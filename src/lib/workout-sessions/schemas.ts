@@ -5,7 +5,7 @@ export { formatZodIssues };
 
 const uuidSchema = z.uuid({ error: "Invalid UUID" });
 
-const isoDateSchema = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Invalid date (expected YYYY-MM-DD)");
+export const isoDateSchema = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Invalid date (expected YYYY-MM-DD)");
 
 export const sessionExerciseSetInputSchema = z
   .object({
@@ -53,6 +53,16 @@ export const listSessionsQuerySchema = z
     message: "date range cannot exceed 366 days",
   });
 
+export const clientSessionsQuerySchema = z
+  .object({
+    from: isoDateSchema,
+    to: isoDateSchema,
+  })
+  .refine((q) => q.from <= q.to, { message: "from must be on or before to" })
+  .refine((q) => new Date(q.to).getTime() - new Date(q.from).getTime() <= 366 * 24 * 60 * 60 * 1000, {
+    message: "date range cannot exceed 366 days",
+  });
+
 export const sessionIdParamSchema = uuidSchema;
 
 export type CreateWorkoutSessionBody = z.infer<typeof createWorkoutSessionBodySchema>;
@@ -60,3 +70,4 @@ export type UpdateWorkoutSessionBody = z.infer<typeof updateWorkoutSessionBodySc
 export type SessionExerciseInput = z.infer<typeof sessionExerciseInputSchema>;
 export type SessionExerciseSetInput = z.infer<typeof sessionExerciseSetInputSchema>;
 export type ListSessionsQuery = z.infer<typeof listSessionsQuerySchema>;
+export type ClientSessionsQuery = z.infer<typeof clientSessionsQuerySchema>;
