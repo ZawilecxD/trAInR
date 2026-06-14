@@ -1,6 +1,14 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { CreateWorkoutSessionBody, UpdateWorkoutSessionBody } from "@/lib/workout-sessions/schemas";
-import type { ExerciseMetric, ExercisePhase, SessionExercise, SessionExerciseSet, WorkoutSession } from "@/types";
+import type { AssignedTrainer } from "@/types";
+import type {
+  ExerciseMetric,
+  ExercisePhase,
+  SessionExercise,
+  SessionExerciseSet,
+  SetLog,
+  WorkoutSession,
+} from "@/types";
 
 export type SessionListItem = Pick<WorkoutSession, "id" | "name" | "scheduled_date" | "status" | "source_template_id">;
 
@@ -9,6 +17,19 @@ export type SessionExerciseWithName = SessionExercise & {
   exercise_default_metric: ExerciseMetric;
   sets: SessionExerciseSet[];
 };
+
+export type SessionExerciseDetail = SessionExerciseWithName & {
+  logs: SetLog[];
+};
+
+export interface SessionMeta {
+  trainer_display_name: string;
+}
+
+export type ClientSessionDetail = WorkoutSession &
+  SessionMeta & {
+    exercises: SessionExerciseDetail[];
+  };
 
 export type SessionWithExercises = WorkoutSession & {
   exercises: SessionExerciseWithName[];
@@ -27,7 +48,16 @@ interface SessionExerciseJoinRow {
   session_exercise_sets: SessionExerciseSetRow[];
 }
 
+interface SessionExerciseJoinRowWithLogs extends SessionExerciseJoinRow {
+  set_logs: SetLog[];
+}
+
 type WorkoutSessionWithJoinedExercises = WorkoutSession & { session_exercises: SessionExerciseJoinRow[] };
+
+type WorkoutSessionWithJoinedExercisesAndLogs = WorkoutSession & {
+  client_plans: { client_id: string; trainer_id: string } | { client_id: string; trainer_id: string }[];
+  session_exercises: SessionExerciseJoinRowWithLogs[];
+};
 
 function parseWorkoutSession(raw: unknown): WorkoutSession {
   return raw as WorkoutSession;
@@ -67,6 +97,30 @@ function mapSessionExerciseRow(row: SessionExerciseJoinRow): SessionExerciseWith
     exercise_name: row.exercises?.name ?? "",
     exercise_default_metric: row.exercises?.default_metric ?? "reps_weight",
   };
+}
+
+function mapSessionExerciseDetailRow(row: SessionExerciseJoinRowWithLogs): SessionExerciseDetail {
+  const base = mapSessionExerciseRow(row);
+  const logs = [...row.set_logs].sort((a, b) => a.set_number - b.set_number);
+
+  return {
+    ...base,
+    logs,
+  };
+}
+
+function parseWorkoutSessionWithLogs(raw: unknown): WorkoutSessionWithJoinedExercisesAndLogs {
+  return raw as WorkoutSessionWithJoinedExercisesAndLogs;
+}
+
+async function getTrainerDisplayName(supabase: SupabaseClient): Promise<string> {
+  const trainerResult = await supabase.rpc("get_my_assigned_trainer");
+
+  if (!trainerResult.error && trainerResult.data) {
+    return (trainerResult.data as AssignedTrainer).display_name;
+  }
+
+  return "";
 }
 
 export async function listSessionsForClient(
@@ -145,6 +199,92 @@ export async function listMySessionsAsClient(
   const sessions = Array.isArray(sessionsResult.data) ? sessionsResult.data.map(parseSessionListItem) : [];
 
   return { data: sessions, error: null };
+}
+
+export async function getMySessionDetail(
+  supabase: SupabaseClient,
+  userId: string,
+  sessionId: string,
+): Promise<{ data: ClientSessionDetail | null; error: string | null }> {
+  const getResult = await supabase
+    .from("workout_sessions")
+    .select(
+      "*, client_plans!inner(client_id, trainer_id), session_exercises(*, exercises(name, default_metric), session_exercise_sets(*), set_logs(*))",
+    )
+    .eq("id", sessionId)
+    .eq("client_plans.client_id", userId)
+    .maybeSingle();
+
+  if (getResult.error) {
+    return { data: null, error: getResult.error.message };
+  }
+
+  if (!getResult.data) {
+    return { data: null, error: null };
+  }
+
+  const raw = parseWorkoutSessionWithLogs(getResult.data);
+  const exercises = raw.session_exercises.map(mapSessionExerciseDetailRow).sort((a, b) => a.sort_order - b.sort_order);
+  const trainerDisplayName = await getTrainerDisplayName(supabase);
+  const { client_plans: _omitPlan, session_exercises: _omitExercises, ...session } = raw;
+
+  return {
+    data: {
+      ...session,
+      trainer_display_name: trainerDisplayName,
+      exercises,
+    },
+    error: null,
+  };
+}
+
+export type StartMySessionResult =
+  | { ok: true; data: WorkoutSession }
+  | { ok: false; code: "not_found" | "already_started"; message: string };
+
+export async function startMySession(
+  supabase: SupabaseClient,
+  userId: string,
+  sessionId: string,
+): Promise<StartMySessionResult> {
+  const existingResult = await supabase
+    .from("workout_sessions")
+    .select("id, started_at, client_plans!inner(client_id)")
+    .eq("id", sessionId)
+    .eq("client_plans.client_id", userId)
+    .maybeSingle();
+
+  if (existingResult.error) {
+    return { ok: false, code: "not_found", message: existingResult.error.message };
+  }
+
+  if (!existingResult.data) {
+    return { ok: false, code: "not_found", message: "Session not found" };
+  }
+
+  const existing = existingResult.data as { started_at: string | null };
+
+  if (existing.started_at) {
+    return { ok: false, code: "already_started", message: "Session already started" };
+  }
+
+  const updateResult = await supabase
+    .from("workout_sessions")
+    .update({ started_at: new Date().toISOString() })
+    .eq("id", sessionId)
+    .is("started_at", null)
+    .select("*")
+    .maybeSingle();
+
+  if (updateResult.error) {
+    return { ok: false, code: "not_found", message: updateResult.error.message };
+  }
+
+  if (!updateResult.data) {
+    return { ok: false, code: "already_started", message: "Session already started" };
+  }
+
+  return { ok: true, data: parseWorkoutSession(updateResult.data) };
 }
 
 export async function getSessionWithExercises(

@@ -1,0 +1,18 @@
+import { z } from "zod";
+
+const uuidSchema = z.uuid({ error: "Invalid UUID" });
+
+export const upsertSetLogBodySchema = z
+  .object({
+    session_exercise_id: uuidSchema,
+    set_number: z.number().int().min(1, "set_number must be ≥ 1"),
+    reps: z.number().int().nullable(),
+    duration_seconds: z.number().int().nullable(),
+    load_kg: z.number().nullable(),
+    is_complete: z.boolean(),
+  })
+  .refine((body) => !body.is_complete || body.reps !== null || body.duration_seconds !== null, {
+    message: "completed sets require reps or duration",
+  });
+
+export type UpsertSetLogBody = z.infer<typeof upsertSetLogBodySchema>;
