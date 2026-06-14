@@ -4,7 +4,7 @@
 version: 1
 status: draft
 created: 2026-05-25
-updated: 2026-06-13
+updated: 2026-06-14
 prd_version: 1
 main_goal: speed
 top_blocker: time
@@ -35,7 +35,7 @@ Independent personal trainers lose coaching time to admin — hunting across spr
 | S-02 | session-templates          | create and edit reusable session templates from exercises              | F-01, S-01    | FR-010, FR-011                                  | done     |
 | S-03 | client-onboarding          | register via invite link and be auto-assigned to trainer               | F-01          | FR-001, FR-002, FR-003, FR-004, FR-005          | done     |
 | S-04 | plan-assignment            | place a session on a specific day of a client's calendar               | S-02, S-03    | FR-012, US-01                                   | done     |
-| S-05 | client-calendar            | view assigned sessions in month/week view with status colors           | S-04          | FR-013, FR-014                                  | proposed |
+| S-05 | client-calendar            | view assigned sessions in month/week view with status colors           | S-04          | FR-013, FR-014                                  | done     |
 | S-06 | guided-workout-logging     | open a session, step through exercises, log sets, see previous hints   | S-04          | FR-015, FR-016, FR-017, FR-019, FR-020, US-01   | proposed |
 | S-07 | trainer-dashboard          | see client overview and read-only session detail with logged data      | S-04, S-06    | FR-027, FR-028, US-01                           | proposed |
 | S-08 | session-completion-marking | manually mark a session as finished or finished partially              | S-06          | FR-021                                          | proposed |
@@ -172,7 +172,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Blockers:** —
 - **Unknowns:** —
 - **Risk:** Calendar UX on mobile (month + week toggle in a phone browser) may need more iteration than expected to feel usable one-handed.
-- **Status:** proposed
+- **Status:** done
 
 ### S-06: Guided workout + logging
 
@@ -351,5 +351,6 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **S-11: trainer can remove or reject a wrongly-assigned client** — Archived 2026-06-07 → `context/archive/2026-06-05-client-removal/`. Lesson: —.
 - **S-14: trainer can add an exercise to a session template and configure each round separately — e.g. round 1: 10 reps × 50 kg + 2 min rest, round 2: 8 × 60 kg + 2 min rest, round 3: 6 × 70 kg + 3 min rest — instead of a single uniform prescription for all sets** — Archived 2026-06-07 → `context/archive/2026-06-05-exercises-separate-rounds/`. Lesson: —.
 - **S-04: trainer can create a session on a specific day of a client's calendar — from a template or from scratch — and personalize exercises (move/remove/edit)** — Archived 2026-06-13 → `context/archive/2026-06-08-plan-assignment/`. Lesson: —.
+- **S-05: client can view their assigned plan in a month view (default) with the ability to switch to week view; sessions visually distinguished by status (not started / finished / finished partially)** — Merged 2026-06-14 → PR #19.
 - **Q-02: close KNOWN GAP: RPC rejects cross-trainer muscle group replacement; flip integration test** — Archived 2026-06-13 → `context/archive/2026-06-08-harden-replace-exercise-muscle-groups/`. Lesson: —.
 
