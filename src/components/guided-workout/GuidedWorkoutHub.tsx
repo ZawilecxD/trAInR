@@ -1,11 +1,28 @@
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
+import GuidedExerciseView from "@/components/guided-workout/GuidedExerciseView";
 import SessionOverview from "@/components/guided-workout/SessionOverview";
 import { resolveInitialMode, type GuidedWorkoutMode } from "@/lib/guided-workout/session-mode";
-import { phaseLabel } from "@/lib/guided-workout/phase-labels";
 import type { ClientSessionDetail } from "@/lib/workout-sessions/service";
+import type { SetLog } from "@/types";
 
 interface GuidedWorkoutHubProps {
   initialSession: ClientSessionDetail;
+}
+
+function mergeSetLog(exercises: ClientSessionDetail["exercises"], setLog: SetLog) {
+  return exercises.map((exercise) => {
+    if (exercise.id !== setLog.session_exercise_id) {
+      return exercise;
+    }
+
+    const existingIndex = exercise.logs.findIndex((log) => log.set_number === setLog.set_number);
+    const logs =
+      existingIndex === -1
+        ? [...exercise.logs, setLog].sort((a, b) => a.set_number - b.set_number)
+        : exercise.logs.map((log, index) => (index === existingIndex ? setLog : log));
+
+    return { ...exercise, logs };
+  });
 }
 
 export default function GuidedWorkoutHub({ initialSession }: GuidedWorkoutHubProps) {
@@ -19,6 +36,13 @@ export default function GuidedWorkoutHub({ initialSession }: GuidedWorkoutHubPro
     () => [...session.exercises].sort((a, b) => a.sort_order - b.sort_order),
     [session.exercises],
   );
+
+  const handleLogSaved = useCallback((setLog: SetLog) => {
+    setSession((prev) => ({
+      ...prev,
+      exercises: mergeSetLog(prev.exercises, setLog),
+    }));
+  }, []);
 
   async function handleBegin() {
     setBeginPending(true);
@@ -91,59 +115,39 @@ export default function GuidedWorkoutHub({ initialSession }: GuidedWorkoutHubPro
     );
   }
 
-  return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between gap-3">
-        <span className="text-sm text-blue-100/70">
-          {exerciseIndex + 1} of {orderedExercises.length}
-        </span>
-        <button
-          type="button"
-          className="text-sm text-blue-100/70 hover:text-white"
-          onClick={() => {
-            setMode("edit-list");
-          }}
-        >
-          All exercises
-        </button>
-      </div>
-
-      {orderedExercises.length === 0 ? (
+  if (orderedExercises.length === 0) {
+    return (
+      <div className="space-y-4">
         <p className="text-sm text-blue-100/60">No exercises in this session.</p>
-      ) : (
-        <section className="rounded-2xl border border-white/10 bg-white/5 p-5 backdrop-blur-xl">
-          <p className="font-mono text-xs tracking-widest text-blue-200/80">
-            {phaseLabel(orderedExercises[exerciseIndex].phase)}
-          </p>
-          <h2 className="mt-2 text-2xl font-bold text-white">
-            {orderedExercises[exerciseIndex].exercise_name || "Exercise"}
-          </h2>
-          <p className="mt-4 text-sm text-blue-100/60">Guided logging UI ships in Phase 3.</p>
-        </section>
-      )}
-
-      <div className="flex gap-3">
-        <button
-          type="button"
-          className="min-h-11 flex-1 rounded-lg border border-white/20 bg-white/5 px-4 text-white disabled:opacity-40"
-          disabled={exerciseIndex === 0}
-          onClick={() => {
-            setExerciseIndex((index) => Math.max(0, index - 1));
-          }}
-        >
-          Prev
-        </button>
-        <button
-          type="button"
-          className="min-h-11 flex-1 rounded-lg border border-white/20 bg-white/5 px-4 text-white disabled:opacity-40"
-          disabled={exerciseIndex >= orderedExercises.length - 1}
-          onClick={() => {
-            setExerciseIndex((index) => Math.min(orderedExercises.length - 1, index + 1));
-          }}
-        >
-          {exerciseIndex >= orderedExercises.length - 1 ? "Finish" : "Next"}
-        </button>
+        <a href="/client/plan" className="text-sm text-blue-100/70 hover:text-white">
+          ← Calendar
+        </a>
       </div>
-    </div>
+    );
+  }
+
+  const currentExercise = orderedExercises[exerciseIndex] ?? orderedExercises[0];
+
+  return (
+    <GuidedExerciseView
+      key={currentExercise.id}
+      exercise={currentExercise}
+      exerciseIndex={exerciseIndex}
+      totalExercises={orderedExercises.length}
+      startedAt={session.started_at}
+      onBackToOverview={() => {
+        setMode("overview");
+      }}
+      onBackToEditList={() => {
+        setMode("edit-list");
+      }}
+      onPrev={() => {
+        setExerciseIndex((index) => Math.max(0, index - 1));
+      }}
+      onNext={() => {
+        setExerciseIndex((index) => Math.min(orderedExercises.length - 1, index + 1));
+      }}
+      onLogSaved={handleLogSaved}
+    />
   );
 }
