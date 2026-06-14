@@ -413,15 +413,15 @@ Add the exercise list sheet (mockup Screen 3) and the minimal edit-list view for
 
 #### Automated
 
-- [x] 2.1 Type checking passes
-- [x] 2.2 Linting passes
-- [x] 2.3 Build passes
+- [x] 2.1 Type checking passes — 835a6e9
+- [x] 2.2 Linting passes — 835a6e9
+- [x] 2.3 Build passes — 835a6e9
 
 #### Manual
 
-- [x] 2.4 Calendar Open link reaches session overview
-- [x] 2.5 Begin Workout sets started_at and transitions to guided shell
-- [x] 2.6 Unauthorized users cannot access client session route
+- [x] 2.4 Calendar Open link reaches session overview — 835a6e9
+- [x] 2.5 Begin Workout sets started_at and transitions to guided shell — 835a6e9
+- [x] 2.6 Unauthorized users cannot access client session route — 835a6e9
 
 ### Phase 3: Guided logging UI
 
