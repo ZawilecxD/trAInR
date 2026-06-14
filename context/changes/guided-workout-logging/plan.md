@@ -398,30 +398,30 @@ Add the exercise list sheet (mockup Screen 3) and the minimal edit-list view for
 
 #### Automated
 
-- [x] 1.1 Migration applies cleanly
-- [x] 1.2 Type checking passes
-- [x] 1.3 Linting passes
-- [x] 1.4 Unit tests pass
-- [x] 1.5 Build passes
+- [x] 1.1 Migration applies cleanly — e4daeda
+- [x] 1.2 Type checking passes — e4daeda
+- [x] 1.3 Linting passes — e4daeda
+- [x] 1.4 Unit tests pass — e4daeda
+- [x] 1.5 Build passes — e4daeda
 
 #### Manual
 
-- [x] 1.6 RLS verification script confirms client set-log isolation
-- [x] 1.7 Client session GET/start/set-log API manual checks
+- [x] 1.6 RLS verification script confirms client set-log isolation — e4daeda
+- [x] 1.7 Client session GET/start/set-log API manual checks — e4daeda
 
 ### Phase 2: Session overview + calendar entry
 
 #### Automated
 
-- [ ] 2.1 Type checking passes
-- [ ] 2.2 Linting passes
-- [ ] 2.3 Build passes
+- [x] 2.1 Type checking passes
+- [x] 2.2 Linting passes
+- [x] 2.3 Build passes
 
 #### Manual
 
-- [ ] 2.4 Calendar Open link reaches session overview
-- [ ] 2.5 Begin Workout sets started_at and transitions to guided shell
-- [ ] 2.6 Unauthorized users cannot access client session route
+- [x] 2.4 Calendar Open link reaches session overview
+- [x] 2.5 Begin Workout sets started_at and transitions to guided shell
+- [x] 2.6 Unauthorized users cannot access client session route
 
 ### Phase 3: Guided logging UI
 
