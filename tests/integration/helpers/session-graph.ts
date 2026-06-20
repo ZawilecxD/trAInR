@@ -8,6 +8,7 @@ export interface SessionExerciseSetSeed {
   prescribed_duration_seconds?: number | null;
   prescribed_load_kg?: number | null;
   rest_after_seconds?: number | null;
+  is_warmup?: boolean;
 }
 
 export interface SeedSessionExerciseResult {
@@ -58,6 +59,7 @@ export async function seedSessionExerciseWithSets(
         prescribed_duration_seconds: set.prescribed_duration_seconds ?? null,
         prescribed_load_kg: set.prescribed_load_kg ?? null,
         rest_after_seconds: set.rest_after_seconds ?? null,
+        is_warmup: set.is_warmup ?? false,
       })),
     )
     .select("id");

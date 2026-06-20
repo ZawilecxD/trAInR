@@ -15,12 +15,14 @@ const sampleExercises = (exerciseId: string) => [
         prescribed_duration_seconds: null,
         prescribed_load_kg: 50,
         rest_after_seconds: 90,
+        is_warmup: true,
       },
       {
         prescribed_reps: 8,
         prescribed_duration_seconds: null,
         prescribed_load_kg: 55,
         rest_after_seconds: 120,
+        is_warmup: false,
       },
     ],
   },
@@ -170,6 +172,18 @@ describe("create_workout_session", () => {
 
       expect(setCountError).toBeNull();
       expect(setCount).toBe(2);
+
+      const { data: sessionSets, error: sessionSetsError } = await getAdmin()
+        .from("session_exercise_sets")
+        .select("set_number, is_warmup")
+        .eq("session_exercise_id", sessionExercise.id)
+        .order("set_number");
+
+      expect(sessionSetsError).toBeNull();
+      expect(sessionSets).toEqual([
+        { set_number: 1, is_warmup: true },
+        { set_number: 2, is_warmup: false },
+      ]);
     });
 
     it("Trainer B cannot create session for Trainer A client", async () => {
