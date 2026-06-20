@@ -54,6 +54,7 @@ function makeTemplateExercise(overrides: Partial<TemplateExerciseWithName> = {})
         prescribed_duration_seconds: null,
         prescribed_load_kg: 50,
         rest_after_seconds: 120,
+        is_warmup: false,
       },
       {
         id: "a5000001-0000-4000-8000-000000000002",
@@ -63,6 +64,7 @@ function makeTemplateExercise(overrides: Partial<TemplateExerciseWithName> = {})
         prescribed_duration_seconds: null,
         prescribed_load_kg: 60,
         rest_after_seconds: 120,
+        is_warmup: false,
       },
     ],
     ...overrides,
@@ -119,6 +121,7 @@ describe("templateExerciseToFormEntry", () => {
             prescribed_duration_seconds: 45,
             prescribed_load_kg: null,
             rest_after_seconds: 30,
+            is_warmup: false,
           },
         ],
       }),

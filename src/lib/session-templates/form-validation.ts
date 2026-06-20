@@ -57,6 +57,7 @@ function roundToPayload(round: TemplateExerciseSetFormEntry, metricMode: MetricM
     prescribed_duration_seconds: metricMode === "duration" ? round.prescribedDuration : null,
     prescribed_load_kg: round.prescribedLoadKg,
     rest_after_seconds: round.restAfterSeconds,
+    is_warmup: false,
   };
 }
 

@@ -81,6 +81,7 @@ function mapSessionExerciseSetRow(row: SessionExerciseSetRow): SessionExerciseSe
     prescribed_duration_seconds: row.prescribed_duration_seconds,
     prescribed_load_kg: row.prescribed_load_kg,
     rest_after_seconds: row.rest_after_seconds,
+    is_warmup: row.is_warmup,
   };
 }
 

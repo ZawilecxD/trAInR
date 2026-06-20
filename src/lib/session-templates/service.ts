@@ -73,6 +73,7 @@ function mapTemplateExerciseSetRow(row: TemplateExerciseSetRow): TemplateExercis
     prescribed_duration_seconds: row.prescribed_duration_seconds,
     prescribed_load_kg: row.prescribed_load_kg,
     rest_after_seconds: row.rest_after_seconds,
+    is_warmup: row.is_warmup,
   };
 }
 
@@ -123,6 +124,7 @@ async function insertTemplateExercises(
       prescribed_duration_seconds: set.prescribed_duration_seconds ?? null,
       prescribed_load_kg: set.prescribed_load_kg ?? null,
       rest_after_seconds: set.rest_after_seconds ?? null,
+      is_warmup: set.is_warmup,
     }));
 
     const { error: setsError } = await supabase.from("template_exercise_sets").insert(setRows);

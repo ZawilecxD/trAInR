@@ -316,10 +316,10 @@ All existing prescription and log rows default `is_warmup = false` (working). No
 #### Automated
 
 - [ ] 1.1 Migration apply succeeds locally
-- [ ] 1.2 `npm run lint` passes
-- [ ] 1.3 `npx astro check` passes
-- [ ] 1.4 `npm run build` passes
-- [ ] 1.5 `npm run test` passes
+- [x] 1.2 `npm run lint` passes
+- [x] 1.3 `npx astro check` passes
+- [x] 1.4 `npm run build` passes
+- [x] 1.5 `npm run test` passes
 
 #### Manual
 

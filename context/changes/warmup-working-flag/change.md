@@ -1,10 +1,9 @@
 ---
 change_id: warmup-working-flag
 title: Warm-up vs working per prescribed round and logged set
-status: planned
+status: implementing
 created: 2026-06-20
 updated: 2026-06-20
-linear_issue: ZAW-15
 ---
 
 ## Notes
