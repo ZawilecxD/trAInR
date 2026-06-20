@@ -58,10 +58,7 @@ function defaultRound(metricMode: MetricMode, phase: ExercisePhase): TemplateExe
   };
 }
 
-function setToRound(
-  set: TemplateExerciseWithName["sets"][number],
-  phase: ExercisePhase,
-): TemplateExerciseSetFormEntry {
+function setToRound(set: TemplateExerciseWithName["sets"][number], phase: ExercisePhase): TemplateExerciseSetFormEntry {
   return {
     prescribedReps: set.prescribed_reps,
     prescribedDuration: set.prescribed_duration_seconds,
