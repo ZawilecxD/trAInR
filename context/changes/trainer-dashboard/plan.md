@@ -409,13 +409,13 @@ No database migration is planned. The plan deliberately derives readout status f
 
 #### Automated
 
-- [ ] 5.1 Full lint passes: `npm run lint`
-- [ ] 5.2 Full production build passes: `npm run build`
-- [ ] 5.3 New and relevant existing unit tests pass: `npm test -- src/lib/trainer-dashboard/readout.test.ts src/lib/guided-workout/format-prescription.test.ts src/lib/workout-sessions/form-validation.test.ts`
+- [x] 5.1 Full lint passes: `npm run lint`
+- [x] 5.2 Full production build passes: `npm run build`
+- [x] 5.3 New and relevant existing unit tests pass: `npm test -- src/lib/trainer-dashboard/readout.test.ts src/lib/guided-workout/format-prescription.test.ts src/lib/workout-sessions/form-validation.test.ts`
 
 #### Manual
 
-- [ ] 5.4 Dashboard, session review, and clients roster pass desktop and mobile smoke checks.
-- [ ] 5.5 No exercise-library modal redesign was introduced.
-- [ ] 5.6 No missed-session cards or persisted status changes were introduced.
-- [ ] 5.7 The next command `/10x-implement trainer-dashboard phase 1` is ready to run.
+- [x] 5.4 Dashboard, session review, and clients roster pass desktop and mobile smoke checks.
+- [x] 5.5 No exercise-library modal redesign was introduced.
+- [x] 5.6 No missed-session cards or persisted status changes were introduced.
+- [x] 5.7 All plan phases complete — change ready for archive or implementation review.
