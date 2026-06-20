@@ -38,7 +38,7 @@ Independent personal trainers lose coaching time to admin — hunting across spr
 | S-04 | plan-assignment            | place a session on a specific day of a client's calendar                  | S-02, S-03    | FR-012, US-01                                     | done     |
 | S-05 | client-calendar            | view assigned sessions in month/week view with status colors              | S-04          | FR-013, FR-014                                    | done     |
 | S-06 | guided-workout-logging     | open a session, step through exercises, log sets, see previous hints      | S-04          | FR-015, FR-016, FR-017, FR-019, FR-020, US-01     | done     |
-| S-07 | trainer-dashboard          | see client overview and read-only session detail with logged data         | S-04, S-06    | FR-027, FR-028, US-01                             | proposed |
+| S-07 | trainer-dashboard          | see client overview and read-only session detail with logged data         | S-04, S-06    | FR-027, FR-028, US-01                             | done     |
 | S-08 | session-completion-marking | mark a planned session finished, partially finished, or cancelled         | S-06          | FR-021                                            | proposed |
 | S-09 | session-comments           | leave and read comments on a session (client ↔ trainer)                   | S-04          | FR-023                                            | proposed |
 | S-10 | warmup-working-flag        | prescribe and log warm-up vs working per round (client may override)      | S-02, S-04, S-06 | FR-018                                         | proposed |
@@ -200,7 +200,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Blockers:** —
 - **Unknowns:** —
 - **Risk:** Dashboard "clients who need attention" prioritization logic is under-specified in PRD; for MVP, a simple chronological activity feed is sufficient.
-- **Status:** proposed
+- **Status:** done
 
 ### S-08: Session completion marking
 
@@ -404,4 +404,5 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **S-05: client can view their assigned plan in a month view (default) with the ability to switch to week view; sessions visually distinguished by status (not started / finished / finished partially)** — Merged 2026-06-14 → PR #19.
 - **Q-02: close KNOWN GAP: RPC rejects cross-trainer muscle group replacement; flip integration test** — Archived 2026-06-13 → `context/archive/2026-06-08-harden-replace-exercise-muscle-groups/`. Lesson: —.
 - **S-06: client can open a session and step through exercises one at a time (designed for one-handed phone use), navigate via exercise list menu, log each set (reps + weight or time), and see performance data from the last workout containing each exercise** — Archived 2026-06-20 → `context/archive/2026-06-14-guided-workout-logging/`. Lesson: —.
+- **S-07: trainer can see an overview of all their clients, assigned plans, and recent session activity; can view a read-only detail of a client's session showing exercises, sets, weights** — Archived 2026-06-20 → `context/archive/2026-06-20-trainer-dashboard/`. Lesson: —.
 
