@@ -49,6 +49,7 @@ Independent personal trainers lose coaching time to admin — hunting across spr
 | S-15 | exercise-favourites        | mark exercises as favourites and filter exercise lists by favourites only | S-01          | FR-009                                            | proposed |
 | S-16 | ad-hoc-session-logging     | log an unplanned workout not on the calendar                              | S-06          | FR-015, FR-016, FR-017 (extends)                  | parked   |
 | S-17 | starter-exercise-seed      | receive a curated starter exercise library on trainer signup              | S-01, S-03    | FR-007, FR-008 (extends; supersedes Non-Goal #14) | proposed |
+| S-18 | ui-redesign                | use a unified premium dark UI per DESIGN.md with accessible touch targets and Pencil-aligned key flows | S-06          | NFR mobile usability                              | proposed |
 
 
 ### Quality & testing
@@ -70,7 +71,7 @@ Navigation aid — groups items that share a Prerequisites chain. Canonical orde
 | ------ | ------------------------------ | ------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | A      | Trainer authoring → north star | `F-01` → `S-01` → `S-02` → `S-04` → `S-06` → `S-07`                            | Critical path: every link is on the shortest route to validating the async training loop.                                                                                                                                                                                                                                                                                                                  |
 | B      | Client onboarding & calendar   | `S-03` → `S-05`                                                                | Joins Stream A at `S-04` (S-03 is a prerequisite for S-04); `S-05` branches off `S-04` parallel with `S-06`.                                                                                                                                                                                                                                                                                               |
-| C      | Enhancement & polish           | `S-08` / `S-09` / `S-10` / `S-11` / `S-12` / `S-13` / `S-14` / `S-15` / `S-17` | Tier 2+3 items; sequence after core loop completes or when capacity opens. `S-14` extends session template prescription (after S-02). `S-15` extends exercise library browse/filter (after S-01). `S-16` was parked for post-MVP after planning research showed it changes creation ownership, exercise-library access, and trainer dashboard semantics. `S-17` seeds starter exercises on trainer signup. |
+| C      | Enhancement & polish           | `S-08` / `S-09` / `S-10` / `S-11` / `S-12` / `S-13` / `S-14` / `S-15` / `S-17` / `S-18` | Tier 2+3 items; sequence after core loop completes or when capacity opens. `S-14` extends session template prescription (after S-02). `S-15` extends exercise library browse/filter (after S-01). `S-16` was parked for post-MVP after planning research showed it changes creation ownership, exercise-library access, and trainer dashboard semantics. `S-17` seeds starter exercises on trainer signup. `S-18` unifies the dual design-system debt (shadcn tokens vs cosmic palette) per `DESIGN.md`, `context/changes/ui-redesign/research.md`, and Pencil mockups in `docs/pencil/`. |
 | D      | Quality & testing              | `Q-01` / `Q-02` / `Q-03`                                                       | Cross-cutting; selective mutation testing per `test-plan.md` after the integration harness lands. `Q-02`/`Q-03` close SECURITY DEFINER gaps documented by the harness (flip KNOWN GAP tests).                                                                                                                                                                                                              |
 
 
@@ -321,6 +322,18 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Risk:** Copy-on-signup must be a true per-trainer clone (not shared rows) to preserve RLS isolation and allow destructive edits without affecting other trainers. Duplication logic should live in the signup/onboarding path or a SECURITY DEFINER RPC triggered once per trainer.
 - **Status:** proposed
 
+### S-18: UI redesign
+
+- **Outcome:** trainer and client use a unified premium dark interface per `DESIGN.md` — semantic design tokens replace hardcoded cosmic palette classes, Geist typography and WCAG 44px touch targets land globally, and key flows match Pencil mockups in `docs/pencil/` (guided workout logging now; trainer dashboard when S-07 ships)
+- **Change ID:** ui-redesign
+- **PRD refs:** NFR mobile usability (phone-at-the-gym portrait use)
+- **Prerequisites:** S-06
+- **Parallel with:** S-07, S-08, S-09, S-10, S-12, S-13, S-15, S-17
+- **Blockers:** —
+- **Unknowns:** Whether to adopt a trainer sidebar at `lg:` breakpoints; dark-only vs future light mode; whether amber achievement accent fits brand — see `context/changes/ui-redesign/research.md` Open Questions
+- **Risk:** Token injection alone changes ~20% of visible UI; the bulk of work is replacing hardcoded `purple-500` / `text-white` / `bg-white/10` classes across ~30 files. Trainer dashboard screen polish depends on S-07 landing first (`docs/pencil/trainer_dashboard.pen` is ready ahead of implementation).
+- **Status:** proposed
+
 ## Backlog Handoff
 
 
@@ -344,6 +357,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 | S-15       | exercise-favourites                   | Mark exercises as favourites and filter exercise lists                      | yes                   | Run `/10x-plan exercise-favourites`; extends FR-009 browse/filter                                                           |
 | S-16       | ad-hoc-session-logging                | Log an unplanned custom workout not on the calendar                         | no                    | Parked post-MVP; see `context/changes/ad-hoc-session-logging/research.md`                                                   |
 | S-17       | starter-exercise-seed                 | Copy curated starter exercises to each trainer on signup                    | no                    | Needs S-01 + S-03; supersedes PRD Non-Goal #14; per-trainer clone required for RLS                                          |
+| S-18       | ui-redesign                           | Unify design tokens and apply DESIGN.md + Pencil mockups to key flows       | yes                   | Run `/10x-plan ui-redesign`; spec in `DESIGN.md`; research in `context/changes/ui-redesign/research.md`; screens in `docs/pencil/` |
 | Q-01       | add-stryker-mutation-testing          | Run Stryker on risk-critical modules                                        | no                    | Needs test-plan Phase 1 complete                                                                                            |
 | Q-02       | harden-replace-exercise-muscle-groups | Add auth.uid() ownership check to replace_exercise_muscle_groups RPC        | yes                   | Run `/10x-plan harden-replace-exercise-muscle-groups`; flip KNOWN GAP test in `tests/integration/security-definer/`         |
 | Q-03       | harden-complete-client-invite         | Harden complete_client_invite p_client_id binding for authenticated callers | no                    | Run `/10x-frame harden-complete-client-invite` first (anon vs authenticated design); then `/10x-plan`                       |
@@ -356,6 +370,8 @@ Foundations below assume these are present and do NOT re-scaffold them.
 2. ~~**Ad-hoc session exercise scope:** Can clients pick only from their trainer's library when logging an unplanned session, or can they add arbitrary exercise names? (S-16)~~ — **Parked with S-16:** revisit post-MVP.
 3. **Cancelled session reopen:** Can a client reopen a cancelled planned session and start logging, or is cancel permanent? (S-08)
 4. **Starter seed backfill:** Should existing trainers receive the starter exercise library retroactively, or only new signups? (S-17)
+5. **Trainer sidebar vs top nav:** Should the trainer area adopt a collapsible sidebar at `lg:` breakpoints, or keep the horizontal topbar? (S-18)
+6. **Dark-only vs light/dark toggle:** The app is always dark today; should a light mode ever be supported? (S-18)
 
 ## Parked
 
