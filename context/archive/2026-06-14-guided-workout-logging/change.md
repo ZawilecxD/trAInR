@@ -1,9 +1,10 @@
 ---
 change_id: guided-workout-logging
 title: Guided workout logging (S-06)
-status: implemented
+status: archived
 created: 2026-06-14
-updated: 2026-06-14
+updated: 2026-06-20
+archived_at: 2026-06-20T07:34:44Z
 linear_issue: ZAW-11
 ---
 
