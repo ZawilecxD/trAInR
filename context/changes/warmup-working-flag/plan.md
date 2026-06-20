@@ -353,8 +353,8 @@ All existing prescription and log rows default `is_warmup = false` (working). No
 
 #### Automated
 
-- [x] 4.1 `npm run test` passes including integration
-- [x] 4.2 `npm run lint` and `npm run build` pass
+- [x] 4.1 `npm run test` passes including integration — c18e175
+- [x] 4.2 `npm run lint` and `npm run build` pass — c18e175
 
 #### Manual
 
