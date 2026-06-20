@@ -13,7 +13,7 @@ S-14 per-round prescription exists on `template_exercise_sets` and `session_exer
 
 ## Desired End State
 
-Trainer toggles warm-up/working on each round in template builder and session personalization. Assignment RPCs snapshot the flag. Guided workout rows show muted warm-up vs full-strength working styling; new logs default from prescription; client can flip the toggle. Extra client-added rounds default to working. Lint, typecheck, build, and tests pass.
+Trainer toggles warm-up/working on each round in the **main** phase only (template builder and session personalization). Warm-up-phase exercises always prescribe `is_warmup = true`; cool-down always `false`. Assignment RPCs snapshot the flag. Guided workout rows show muted warm-up vs full-strength working styling; new logs default from prescription; client can flip the toggle. Extra client-added rounds default to working. Lint, typecheck, build, and tests pass.
 
 ## Key Decisions Made
 
@@ -25,6 +25,8 @@ Trainer toggles warm-up/working on each round in template builder and session pe
 | Stats contract | `set_logs.is_warmup` only | Prescription alone must not affect 1RM/hints | PRD |
 | Trainer readout | Defer to S-07 | Dashboard not built yet | Roadmap |
 | UX pattern | Toggle per round / per log row | Matches existing OK-toggle and round editor patterns | Plan |
+| Phase-scoped prescription | Toggle in **main** only; warm_up → always warm-up; cool_down → always working | Phase already segments session structure; per-round flag only matters where working sets are programmed | Implementation |
+| Client toggle layout | Full "Warm-up" / "Working" labels; `text-[11px]` + min button width | Prevents label wrap in narrow set-log table cells | Implementation |
 
 ## Scope
 

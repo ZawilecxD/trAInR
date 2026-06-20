@@ -10,6 +10,7 @@ import {
   emptyPhaseEntries,
   exerciseToFormEntry,
   removeRound,
+  showsWarmupWorkingToggle,
   templateExercisesToPhaseEntries,
   updateRound,
   type PhaseEntries,
@@ -463,12 +464,14 @@ export default function SessionForm({
                                     Round {roundIndex + 1}
                                   </p>
                                   <div className="flex items-center gap-2">
-                                    <RoundWarmupToggle
-                                      isWarmup={round.isWarmup}
-                                      onChange={(isWarmup) => {
-                                        updateExerciseRound(phase, index, roundIndex, { isWarmup });
-                                      }}
-                                    />
+                                    {showsWarmupWorkingToggle(phase) ? (
+                                      <RoundWarmupToggle
+                                        isWarmup={round.isWarmup}
+                                        onChange={(isWarmup) => {
+                                          updateExerciseRound(phase, index, roundIndex, { isWarmup });
+                                        }}
+                                      />
+                                    ) : null}
                                     <Button
                                       type="button"
                                       variant="outline"

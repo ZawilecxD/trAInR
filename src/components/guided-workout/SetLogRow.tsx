@@ -194,8 +194,8 @@ export default function SetLogRow({
         </td>
       ) : null}
 
-      <td className="px-2 py-2">
-        <div className="flex min-h-11 items-center justify-center">
+      <td className="px-2 py-2 whitespace-nowrap">
+        <div className="flex min-h-11 shrink-0 items-center justify-center">
           <RoundWarmupToggle
             isWarmup={values.is_warmup}
             onChange={(isWarmup) => {

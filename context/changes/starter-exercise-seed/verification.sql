@@ -4,7 +4,7 @@
 -- Runs as a single transaction; all setup rows are rolled back at the end.
 --
 -- Prerequisites:
---   npx supabase db reset   (includes 20260620140000_starter_exercise_seed.sql + muscle_groups seed)
+--   npx supabase db reset   (includes 20260620140200_starter_exercise_seed.sql + muscle_groups seed)
 --
 -- Expected: every row in the "check" result sets shows status = PASS.
 

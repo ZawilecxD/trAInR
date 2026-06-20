@@ -33,7 +33,8 @@ Trainer creates/edits a template or session with rounds 1–2 marked warm-up and
 - FR-019 previous-performance hint filtering (hints deferred).
 - S-12 exercise statistics / 1RM calculations.
 - S-13 sealed-state UI beyond existing lock check on upsert.
-- Changing session **phase** semantics (`warm_up` / `main` / `cool_down`).
+- Changing session **phase** semantics (`warm_up` / `main` / `cool_down`) or allowing exercises outside those phases.
+- Per-round warm-up toggle in warm-up or cool-down **phases** (flags are derived from phase instead).
 - Bulk "mark all rounds working/warm-up" shortcuts.
 
 ## Implementation Approach
@@ -45,6 +46,8 @@ Four phases bottom-up: schema and RPC write path first (unblocks API), trainer p
 - **RPC backward compat:** when parsing exercise JSON in RPCs, use `coalesce((v_set->>'is_warmup')::boolean, false)` so older clients omitting the field still work.
 - **Autosave:** `is_warmup` changes must flow through `useDebouncedSetLogSave` like `is_complete` — debounced PUT includes the flag.
 - **Stats contract:** no new stats in this slice; document that future consumers filter `set_logs` where `is_warmup = false` only.
+- **Phase-scoped prescription:** `resolveRoundIsWarmup(phase, isWarmup)` in `form-validation.ts` forces `true` for `warm_up`, `false` for `cool_down`, and preserves trainer choice in `main`. `showsWarmupWorkingToggle(phase)` gates the round toggle in trainer forms. Enforced on load, update, add-round, and payload assembly so stale DB values cannot leak through.
+- **Client toggle sizing:** `RoundWarmupToggle` uses full labels with `whitespace-nowrap`, `text-[11px]`, and `min-w-[4.25rem]` per button so the set-log table column does not wrap "Warm-up".
 
 ## Phase 1: Schema and RPC snapshot
 
@@ -108,7 +111,7 @@ Add `is_warmup` to prescription tables and teach workout session RPCs to persist
 
 ### Overview
 
-Let trainers toggle warm-up vs working on each round in template builder and session personalization forms.
+Let trainers toggle warm-up vs working on each round in the **main** phase of template builder and session personalization forms. Warm-up- and cool-down-phase exercises omit the toggle; their rounds always persist `is_warmup = true` and `false` respectively.
 
 ### Changes Required:
 
@@ -118,7 +121,7 @@ Let trainers toggle warm-up vs working on each round in template builder and ses
 
 **Intent**: Carry warm-up flag through round editor state and API payload assembly.
 
-**Contract**: Extend `TemplateExerciseSetFormEntry` with `isWarmup: boolean`. `defaultRound()` → `isWarmup: false`. `setToRound` / `roundToPayload` map `is_warmup` ↔ `isWarmup`. `addRound` copies prior round's `isWarmup` (same as load/rest copy pattern).
+**Contract**: Extend `TemplateExerciseSetFormEntry` with `isWarmup: boolean`. Export `showsWarmupWorkingToggle(phase)` and `resolveRoundIsWarmup(phase, isWarmup)`. `defaultRound(metricMode, phase)` → phase-aware default. `setToRound` / `roundToPayload` map `is_warmup` ↔ `isWarmup` through `resolveRoundIsWarmup`. `addRound` copies prior round and re-applies phase rule. `updateRound` re-applies phase rule after patch.
 
 #### 2. Session form mapping
 
@@ -134,7 +137,7 @@ Let trainers toggle warm-up vs working on each round in template builder and ses
 
 **Intent**: Per-round warm-up/working control in template builder.
 
-**Contract**: Add toggle or segmented control on each round card (label: "Warm-up" / "Working"). Wire to `updateExerciseRound(..., { isWarmup })`. Warm-up rounds may use muted border/text per `DESIGN.md` / stitch prompt (desaturated vs full-strength).
+**Contract**: Add toggle or segmented control on each round card in **main** phase only (label: "Warm-up" / "Working"). Wire to `updateExerciseRound(..., { isWarmup })`. Warm-up rounds may use muted border/text per `DESIGN.md` / stitch prompt (desaturated vs full-strength). Warm-up- and cool-down-phase round cards omit the toggle but keep muted styling where `isWarmup` is true.
 
 #### 4. Session round UI
 
@@ -198,7 +201,7 @@ Wire guided workout to default `is_warmup` from prescription, allow client overr
 
 **Intent**: Show warm-up toggle; apply muted styling for warm-up rows.
 
-**Contract**: `ExerciseSetLogTable` looks up `exercise.sets.find(s => s.set_number === setNumber)` and passes `prescribedSet` + `defaultIsWarmup` from helper. `SetLogRow` adds warm-up/working toggle (mirror OK button pattern); row `className` uses `cn()` with muted tokens for `is_warmup` per design system. Initialize `values.is_warmup` from `resolveLogIsWarmup`; toggling updates state and triggers debounced save.
+**Contract**: `ExerciseSetLogTable` looks up `exercise.sets.find(s => s.set_number === setNumber)` and passes `prescribedSet` + `defaultIsWarmup` from helper. `SetLogRow` adds warm-up/working toggle via shared `RoundWarmupToggle` (full labels, nowrap, smaller type); row `className` uses `cn()` with muted tokens for `is_warmup` per design system. Initialize `values.is_warmup` from `resolveLogIsWarmup`; toggling updates state and triggers debounced save.
 
 #### 5. Prescription display (optional polish)
 
@@ -276,7 +279,7 @@ Prove RPC snapshot and RLS paths; align ERD TypeScript interfaces with mermaid.
 ### Unit Tests:
 
 - `warmup-default.ts` — existing log wins; prescribed inherit; extra round → false
-- Form validation — round payload includes `is_warmup`
+- Form validation — round payload includes `is_warmup`; phase rules for warm_up / main / cool_down
 - Set-log schema — rejects missing boolean when required
 
 ### Integration Tests:
@@ -286,10 +289,11 @@ Prove RPC snapshot and RLS paths; align ERD TypeScript interfaces with mermaid.
 
 ### Manual Testing Steps:
 
-1. Template: 3 rounds, first warm-up — save, reload, assign to client session
-2. Client guided workout: verify default + override + autosave
-3. Add extra round — defaults working
-4. Mobile: toggle thumb-reachable, muted warm-up readable in gym lighting
+1. Template: in **main** phase, 3 rounds with first warm-up — save, reload, assign to client session
+2. Template: warm-up-phase exercise saves with all rounds `is_warmup = true` without toggle
+3. Client guided workout: verify default + override + autosave
+4. Add extra round — defaults working
+5. Mobile: toggle labels stay on one line; muted warm-up readable in gym lighting
 
 ## Performance Considerations
 
