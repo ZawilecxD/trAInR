@@ -317,7 +317,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Prerequisites:** S-01, S-03
 - **Parallel with:** S-02, S-15
 - **Blockers:** —
-- **Unknowns:** Seed source (static SQL migration vs seed script vs admin-maintained catalog table); whether existing trainers get a one-time backfill; initial exercise count and muscle-group coverage; whether muscle groups from the seed are global or trainer-scoped copies
+- **Unknowns:** ~~Seed source (static SQL migration vs seed script vs admin-maintained catalog table); whether existing trainers get a one-time backfill; initial exercise count and muscle-group coverage; whether muscle groups from the seed are global or trainer-scoped copies~~ — **Resolved in plan:** static SQL catalog inside a DB seeding function; new trainer signups only (no backfill); 15-25 starter exercises; reuse global `muscle_groups`; guard idempotency with `profiles.starter_exercises_seeded_at`.
 - **Risk:** Copy-on-signup must be a true per-trainer clone (not shared rows) to preserve RLS isolation and allow destructive edits without affecting other trainers. Duplication logic should live in the signup/onboarding path or a SECURITY DEFINER RPC triggered once per trainer.
 - **Status:** proposed
 
@@ -355,7 +355,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 1. ~~**What happens to client data when a trainer removes a client?**~~ — **Resolved:** Sever the trainer-client link (soft-delete relationship); retain all client data. Removed client is no longer visible to the trainer. Retention period TBD in the future. Future enhancement: allow trainer to browse archived client data for insights.
 2. ~~**Ad-hoc session exercise scope:** Can clients pick only from their trainer's library when logging an unplanned session, or can they add arbitrary exercise names? (S-16)~~ — **Parked with S-16:** revisit post-MVP.
 3. **Cancelled session reopen:** Can a client reopen a cancelled planned session and start logging, or is cancel permanent? (S-08)
-4. **Starter seed backfill:** Should existing trainers receive the starter exercise library retroactively, or only new signups? (S-17)
+4. ~~**Starter seed backfill:** Should existing trainers receive the starter exercise library retroactively, or only new signups? (S-17)~~ — **Resolved:** new trainer signups only; existing trainers are not backfilled.
 
 ## Parked
 

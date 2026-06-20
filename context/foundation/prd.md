@@ -87,7 +87,7 @@ Existing tools (Trainerize, TrueCoach) solve parts of this, but they're built fo
 ### Exercise Library
 
 - FR-007: Trainer can create exercises (name, type, muscle groups, notes, optional video/photo link). Priority: must-have
-  > Socrates: Counter-argument considered: "A pre-populated exercise database would save trainers from entering common exercises." Resolution: kept as manual-only for MVP; pre-populated library is a future enhancement.
+  > Socrates: Counter-argument considered: "A pre-populated exercise database would save trainers from entering common exercises." Resolution: kept as manual-only for MVP; pre-populated library is a future enhancement. Update: roadmap S-17 promotes this enhancement into a planned starter exercise seed copied per trainer on signup.
 - FR-008: Trainer can edit exercises. Priority: must-have
   > Socrates: Counter-argument considered: "Archiving exercises for existing plans vs. deletion." Resolution: revised — archiving removed from MVP. Edit only. Archiving with plan-preservation logic deferred to post-MVP.
 - FR-009: Trainer can browse and filter their exercise library by type and muscle group. Priority: must-have
@@ -196,7 +196,7 @@ The domain rule consumes three inputs: (1) the trainer's exercise definitions (n
 11. **No audit logging** — no compliance event log.
 12. **No plan templates (multi-week programs)** — sessions are placed on the calendar one-by-one from single-session templates or from scratch. Grouping session templates into reusable multi-week programs is post-MVP.
 13. **No offline mode** — requires internet connection. Offline resilience is post-MVP.
-14. **No pre-populated exercise database** — trainers build their library from scratch. Starter exercise packs are post-MVP.
+14. ~~**No pre-populated exercise database** — trainers build their library from scratch. Starter exercise packs are post-MVP.~~ Update: superseded by roadmap S-17 (`starter-exercise-seed`), which plans a curated starter library copied as trainer-owned exercises on new trainer signup.
 
 ## Open Questions
 
