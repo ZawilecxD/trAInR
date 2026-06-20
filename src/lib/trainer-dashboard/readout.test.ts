@@ -21,6 +21,7 @@ function makePrescribedSet(
     prescribed_duration_seconds: null,
     prescribed_load_kg: 80,
     rest_after_seconds: 120,
+    is_warmup: false,
     ...overrides,
   };
 }
