@@ -169,8 +169,8 @@ Existing tools (Trainerize, TrueCoach) solve parts of this, but they're built fo
   > Socrates: No counter-argument; it stands as written. The menu serves both as navigation and as an overview for users who want to see the full session.
 - FR-017: Client can log each set individually: reps + weight in kg (or time for timed exercises). Negative values for assisted exercises, zero/null for bodyweight. Priority: must-have
   > Socrates: No counter-argument; it stands as written. Set-by-set logging matches real gym behavior.
-- FR-018: Client can flag each logged set as warm-up or working (only working sets count toward stats and hints). Priority: must-have [Tier 2]
-  > Socrates: No counter-argument; it stands as written. The flag is tied to stats accuracy — if stats are Tier 3, the flag's value is reduced but still useful for performance hints (FR-019).
+- FR-018: Trainer can mark each prescribed round as warm-up or working when building session templates and assigning sessions. Client can flag each logged set as warm-up or working; when a log matches a prescribed round, it inherits that round's default and the client may override at log time. Only working logged sets count toward stats and hints. Priority: must-have [Tier 2]
+  > Socrates: Counter-argument considered: "Client-only flagging is simpler and matches gym reality where warm-up volume varies." Resolution: revised — trainer prescribes intent to reduce client tap burden; client override preserves flexibility. Stats and hints use logged sets only.
 - FR-019: Client sees performance data from the last workout containing this exercise (previous performance hints — raw data, not averaged). Priority: must-have
   > Socrates: Counter-argument considered: "Averaging across different rep ranges is misleading." Resolution: revised — show raw data from the last session containing this exercise (what weight/reps they did last time), not a computed average.
 - FR-020: Starting a new session uses the guided one-exercise-at-a-time view; editing a previously logged session (if not yet locked) uses a list view showing all exercises. Priority: must-have
