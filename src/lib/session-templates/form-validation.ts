@@ -15,6 +15,7 @@ export interface TemplateExerciseSetFormEntry {
   prescribedDuration: number | null;
   prescribedLoadKg: number | null;
   restAfterSeconds: number | null;
+  isWarmup: boolean;
 }
 
 export interface TemplateExerciseFormEntry {
@@ -33,30 +34,47 @@ export type TemplateFormFieldErrors = Partial<Record<"name" | "description" | "f
 
 const PHASES: ExercisePhase[] = ["warm_up", "main", "cool_down"];
 
-function defaultRound(metricMode: MetricMode): TemplateExerciseSetFormEntry {
+export function showsWarmupWorkingToggle(phase: ExercisePhase): boolean {
+  return phase === "main";
+}
+
+export function resolveRoundIsWarmup(phase: ExercisePhase, isWarmup: boolean): boolean {
+  if (phase === "warm_up") {
+    return true;
+  }
+  if (phase === "cool_down") {
+    return false;
+  }
+  return isWarmup;
+}
+
+function defaultRound(metricMode: MetricMode, phase: ExercisePhase): TemplateExerciseSetFormEntry {
   return {
     prescribedReps: metricMode === "reps" ? 10 : null,
     prescribedDuration: metricMode === "duration" ? 30 : null,
     prescribedLoadKg: null,
     restAfterSeconds: null,
+    isWarmup: resolveRoundIsWarmup(phase, false),
   };
 }
 
-function setToRound(set: TemplateExerciseWithName["sets"][number]): TemplateExerciseSetFormEntry {
+function setToRound(set: TemplateExerciseWithName["sets"][number], phase: ExercisePhase): TemplateExerciseSetFormEntry {
   return {
     prescribedReps: set.prescribed_reps,
     prescribedDuration: set.prescribed_duration_seconds,
     prescribedLoadKg: set.prescribed_load_kg,
     restAfterSeconds: set.rest_after_seconds,
+    isWarmup: resolveRoundIsWarmup(phase, set.is_warmup),
   };
 }
 
-function roundToPayload(round: TemplateExerciseSetFormEntry, metricMode: MetricMode) {
+function roundToPayload(round: TemplateExerciseSetFormEntry, metricMode: MetricMode, phase: ExercisePhase) {
   return {
     prescribed_reps: metricMode === "reps" ? round.prescribedReps : null,
     prescribed_duration_seconds: metricMode === "duration" ? round.prescribedDuration : null,
     prescribed_load_kg: round.prescribedLoadKg,
     rest_after_seconds: round.restAfterSeconds,
+    is_warmup: resolveRoundIsWarmup(phase, round.isWarmup),
   };
 }
 
@@ -86,7 +104,7 @@ export function exerciseToFormEntry(
     exerciseDefaultMetric: exercise.default_metric,
     phase,
     metricMode,
-    rounds: [defaultRound(metricMode)],
+    rounds: [defaultRound(metricMode, phase)],
     notes: "",
   };
 }
@@ -109,7 +127,8 @@ export function templateExerciseToFormEntry(row: TemplateExerciseWithName): Temp
               : defaultMetricMode({ default_metric: row.exercise_default_metric })
           : defaultMetricMode({ default_metric: row.exercise_default_metric });
 
-  const rounds = sortedSets.length > 0 ? sortedSets.map(setToRound) : [defaultRound(metricMode)];
+  const rounds =
+    sortedSets.length > 0 ? sortedSets.map((set) => setToRound(set, row.phase)) : [defaultRound(metricMode, row.phase)];
 
   return {
     exerciseId: row.exercise_id,
@@ -135,7 +154,11 @@ export function templateExercisesToPhaseEntries(exercises: TemplateExerciseWithN
 
 export function addRound(entry: TemplateExerciseFormEntry): TemplateExerciseFormEntry {
   const lastRound = entry.rounds.at(-1);
-  const nextRound = lastRound ? { ...lastRound } : defaultRound(entry.metricMode);
+  const baseRound = lastRound ? { ...lastRound } : defaultRound(entry.metricMode, entry.phase);
+  const nextRound = {
+    ...baseRound,
+    isWarmup: resolveRoundIsWarmup(entry.phase, baseRound.isWarmup),
+  };
 
   return {
     ...entry,
@@ -161,7 +184,17 @@ export function updateRound(
 ): TemplateExerciseFormEntry {
   return {
     ...entry,
-    rounds: entry.rounds.map((round, index) => (index === roundIndex ? { ...round, ...patch } : round)),
+    rounds: entry.rounds.map((round, index) => {
+      if (index !== roundIndex) {
+        return round;
+      }
+
+      const merged = { ...round, ...patch };
+      return {
+        ...merged,
+        isWarmup: resolveRoundIsWarmup(entry.phase, merged.isWarmup),
+      };
+    }),
   };
 }
 
@@ -170,7 +203,7 @@ export function exerciseEntryToPayload(entry: TemplateExerciseFormEntry, sortOrd
     exercise_id: entry.exerciseId,
     phase: entry.phase,
     sort_order: sortOrder,
-    sets: entry.rounds.map((round) => roundToPayload(round, entry.metricMode)),
+    sets: entry.rounds.map((round) => roundToPayload(round, entry.metricMode, entry.phase)),
     notes: entry.notes.trim().length > 0 ? entry.notes.trim() : null,
   };
 }

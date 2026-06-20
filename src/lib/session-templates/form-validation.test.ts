@@ -7,6 +7,8 @@ import {
   exerciseEntryToPayload,
   exerciseToFormEntry,
   removeRound,
+  resolveRoundIsWarmup,
+  showsWarmupWorkingToggle,
   templateExerciseToFormEntry,
   updateRound,
   type TemplateExerciseFormEntry,
@@ -28,6 +30,7 @@ function makeEntry(overrides: Partial<TemplateExerciseFormEntry> = {}): Template
         prescribedDuration: null,
         prescribedLoadKg: null,
         restAfterSeconds: null,
+        isWarmup: false,
       },
     ],
     notes: "",
@@ -54,6 +57,7 @@ function makeTemplateExercise(overrides: Partial<TemplateExerciseWithName> = {})
         prescribed_duration_seconds: null,
         prescribed_load_kg: 50,
         rest_after_seconds: 120,
+        is_warmup: false,
       },
       {
         id: "a5000001-0000-4000-8000-000000000002",
@@ -63,11 +67,35 @@ function makeTemplateExercise(overrides: Partial<TemplateExerciseWithName> = {})
         prescribed_duration_seconds: null,
         prescribed_load_kg: 60,
         rest_after_seconds: 120,
+        is_warmup: false,
       },
     ],
     ...overrides,
   };
 }
+
+describe("resolveRoundIsWarmup", () => {
+  it("forces true for warm_up phase", () => {
+    expect(resolveRoundIsWarmup("warm_up", false)).toBe(true);
+  });
+
+  it("forces false for cool_down phase", () => {
+    expect(resolveRoundIsWarmup("cool_down", true)).toBe(false);
+  });
+
+  it("preserves value for main phase", () => {
+    expect(resolveRoundIsWarmup("main", true)).toBe(true);
+    expect(resolveRoundIsWarmup("main", false)).toBe(false);
+  });
+});
+
+describe("showsWarmupWorkingToggle", () => {
+  it("is visible only in main phase", () => {
+    expect(showsWarmupWorkingToggle("main")).toBe(true);
+    expect(showsWarmupWorkingToggle("warm_up")).toBe(false);
+    expect(showsWarmupWorkingToggle("cool_down")).toBe(false);
+  });
+});
 
 describe("defaultMetricMode", () => {
   it('returns "reps" for reps_weight', () => {
@@ -94,6 +122,32 @@ describe("exerciseToFormEntry", () => {
     expect(entry.rounds[0]?.prescribedReps).toBe(10);
     expect(entry.rounds[0]?.prescribedDuration).toBeNull();
   });
+
+  it("defaults warm_up rounds to isWarmup true", () => {
+    const entry = exerciseToFormEntry(
+      {
+        id: exerciseId,
+        name: "Jump Rope",
+        default_metric: "reps_weight",
+      } as never,
+      "warm_up",
+    );
+
+    expect(entry.rounds[0]?.isWarmup).toBe(true);
+  });
+
+  it("defaults cool_down rounds to isWarmup false", () => {
+    const entry = exerciseToFormEntry(
+      {
+        id: exerciseId,
+        name: "Stretch",
+        default_metric: "time",
+      } as never,
+      "cool_down",
+    );
+
+    expect(entry.rounds[0]?.isWarmup).toBe(false);
+  });
 });
 
 describe("templateExerciseToFormEntry", () => {
@@ -119,6 +173,7 @@ describe("templateExerciseToFormEntry", () => {
             prescribed_duration_seconds: 45,
             prescribed_load_kg: null,
             rest_after_seconds: 30,
+            is_warmup: false,
           },
         ],
       }),
@@ -126,6 +181,80 @@ describe("templateExerciseToFormEntry", () => {
 
     expect(entry.metricMode).toBe("duration");
     expect(entry.rounds[0]?.prescribedDuration).toBe(45);
+  });
+
+  it("preserves is_warmup on main phase rounds", () => {
+    const entry = templateExerciseToFormEntry(
+      makeTemplateExercise({
+        phase: "main",
+        sets: [
+          {
+            id: "a5000001-0000-4000-8000-000000000001",
+            template_exercise_id: "a4000001-0000-4000-8000-000000000001",
+            set_number: 1,
+            prescribed_reps: 10,
+            prescribed_duration_seconds: null,
+            prescribed_load_kg: 40,
+            rest_after_seconds: 60,
+            is_warmup: true,
+          },
+          {
+            id: "a5000001-0000-4000-8000-000000000002",
+            template_exercise_id: "a4000001-0000-4000-8000-000000000001",
+            set_number: 2,
+            prescribed_reps: 8,
+            prescribed_duration_seconds: null,
+            prescribed_load_kg: 60,
+            rest_after_seconds: 120,
+            is_warmup: false,
+          },
+        ],
+      }),
+    );
+
+    expect(entry.rounds[0]?.isWarmup).toBe(true);
+    expect(entry.rounds[1]?.isWarmup).toBe(false);
+  });
+
+  it("normalizes is_warmup from stored rows by phase", () => {
+    const warmUpEntry = templateExerciseToFormEntry(
+      makeTemplateExercise({
+        phase: "warm_up",
+        sets: [
+          {
+            id: "a5000001-0000-4000-8000-000000000001",
+            template_exercise_id: "a4000001-0000-4000-8000-000000000001",
+            set_number: 1,
+            prescribed_reps: 10,
+            prescribed_duration_seconds: null,
+            prescribed_load_kg: null,
+            rest_after_seconds: 60,
+            is_warmup: false,
+          },
+        ],
+      }),
+    );
+
+    const coolDownEntry = templateExerciseToFormEntry(
+      makeTemplateExercise({
+        phase: "cool_down",
+        sets: [
+          {
+            id: "a5000001-0000-4000-8000-000000000001",
+            template_exercise_id: "a4000001-0000-4000-8000-000000000001",
+            set_number: 1,
+            prescribed_reps: null,
+            prescribed_duration_seconds: 45,
+            prescribed_load_kg: null,
+            rest_after_seconds: null,
+            is_warmup: true,
+          },
+        ],
+      }),
+    );
+
+    expect(warmUpEntry.rounds[0]?.isWarmup).toBe(true);
+    expect(coolDownEntry.rounds[0]?.isWarmup).toBe(false);
   });
 });
 
@@ -140,12 +269,14 @@ describe("exerciseEntryToPayload", () => {
             prescribedDuration: 45,
             prescribedLoadKg: 20,
             restAfterSeconds: 60,
+            isWarmup: true,
           },
           {
             prescribedReps: null,
             prescribedDuration: 30,
             prescribedLoadKg: null,
             restAfterSeconds: 45,
+            isWarmup: false,
           },
         ],
         notes: "  hold steady  ",
@@ -156,8 +287,48 @@ describe("exerciseEntryToPayload", () => {
     expect(payload.sets).toHaveLength(2);
     expect(payload.sets[0]?.prescribed_reps).toBeNull();
     expect(payload.sets[0]?.prescribed_duration_seconds).toBe(45);
+    expect(payload.sets[0]?.is_warmup).toBe(true);
     expect(payload.sets[1]?.prescribed_duration_seconds).toBe(30);
+    expect(payload.sets[1]?.is_warmup).toBe(false);
     expect(payload.notes).toBe("hold steady");
+  });
+
+  it("forces is_warmup by phase when emitting payload", () => {
+    const warmUpPayload = exerciseEntryToPayload(
+      makeEntry({
+        phase: "warm_up",
+        rounds: [
+          {
+            prescribedReps: 10,
+            prescribedDuration: null,
+            prescribedLoadKg: null,
+            restAfterSeconds: null,
+            isWarmup: false,
+          },
+        ],
+      }),
+      0,
+    );
+
+    const coolDownPayload = exerciseEntryToPayload(
+      makeEntry({
+        phase: "cool_down",
+        metricMode: "duration",
+        rounds: [
+          {
+            prescribedReps: null,
+            prescribedDuration: 45,
+            prescribedLoadKg: null,
+            restAfterSeconds: null,
+            isWarmup: true,
+          },
+        ],
+      }),
+      0,
+    );
+
+    expect(warmUpPayload.sets[0]?.is_warmup).toBe(true);
+    expect(coolDownPayload.sets[0]?.is_warmup).toBe(false);
   });
 });
 
@@ -170,6 +341,7 @@ describe("round helpers", () => {
           prescribedDuration: null,
           prescribedLoadKg: 50,
           restAfterSeconds: 120,
+          isWarmup: true,
         },
       ],
     });
@@ -191,12 +363,14 @@ describe("round helpers", () => {
           prescribedDuration: null,
           prescribedLoadKg: null,
           restAfterSeconds: null,
+          isWarmup: false,
         },
         {
           prescribedReps: 8,
           prescribedDuration: null,
           prescribedLoadKg: null,
           restAfterSeconds: null,
+          isWarmup: false,
         },
       ],
     });
@@ -210,6 +384,11 @@ describe("round helpers", () => {
     const entry = updateRound(makeEntry(), 0, { prescribedReps: 12, prescribedLoadKg: 40 });
     expect(entry.rounds[0]?.prescribedReps).toBe(12);
     expect(entry.rounds[0]?.prescribedLoadKg).toBe(40);
+  });
+
+  it("updateRound enforces phase isWarmup even when toggling in warm_up", () => {
+    const entry = updateRound(makeEntry({ phase: "warm_up" }), 0, { isWarmup: false });
+    expect(entry.rounds[0]?.isWarmup).toBe(true);
   });
 });
 

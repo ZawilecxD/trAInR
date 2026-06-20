@@ -5,7 +5,7 @@
 version: 1
 status: draft
 created: 2026-05-25
-updated: 2026-06-20
+updated: 2026-06-21
 prd_version: 1
 main_goal: speed
 top_blocker: time
@@ -38,7 +38,7 @@ Independent personal trainers lose coaching time to admin — hunting across spr
 | S-04 | plan-assignment            | place a session on a specific day of a client's calendar                  | S-02, S-03    | FR-012, US-01                                     | done     |
 | S-05 | client-calendar            | view assigned sessions in month/week view with status colors              | S-04          | FR-013, FR-014                                    | done     |
 | S-06 | guided-workout-logging     | open a session, step through exercises, log sets, see previous hints      | S-04          | FR-015, FR-016, FR-017, FR-019, FR-020, US-01     | done     |
-| S-07 | trainer-dashboard          | see client overview and read-only session detail with logged data         | S-04, S-06    | FR-027, FR-028, US-01                             | proposed |
+| S-07 | trainer-dashboard          | see client overview and read-only session detail with logged data         | S-04, S-06    | FR-027, FR-028, US-01                             | done     |
 | S-08 | session-completion-marking | mark a planned session finished, partially finished, or cancelled         | S-06          | FR-021                                            | proposed |
 | S-09 | session-comments           | leave and read comments on a session (client ↔ trainer)                   | S-04          | FR-023                                            | proposed |
 | S-10 | warmup-working-flag        | prescribe and log warm-up vs working per round (client may override)      | S-02, S-04, S-06 | FR-018                                         | proposed |
@@ -50,6 +50,7 @@ Independent personal trainers lose coaching time to admin — hunting across spr
 | S-16 | ad-hoc-session-logging     | log an unplanned workout not on the calendar                              | S-06          | FR-015, FR-016, FR-017 (extends)                  | parked   |
 | S-17 | starter-exercise-seed      | receive a curated starter exercise library on trainer signup              | S-01, S-03    | FR-007, FR-008 (extends; supersedes Non-Goal #14) | proposed |
 | S-18 | ui-redesign                | use a unified premium dark UI per DESIGN.md with accessible touch targets and Pencil-aligned key flows | S-06          | NFR mobile usability                              | proposed |
+| S-19 | prescription-fill-logging  | one-click fill a round with prescribed reps and load; no per-set completed toggle | S-06          | FR-015, FR-017 (extends)                          | proposed |
 
 
 ### Quality & testing
@@ -71,7 +72,7 @@ Navigation aid — groups items that share a Prerequisites chain. Canonical orde
 | ------ | ------------------------------ | ------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | A      | Trainer authoring → north star | `F-01` → `S-01` → `S-02` → `S-04` → `S-06` → `S-07`                            | Critical path: every link is on the shortest route to validating the async training loop.                                                                                                                                                                                                                                                                                                                  |
 | B      | Client onboarding & calendar   | `S-03` → `S-05`                                                                | Joins Stream A at `S-04` (S-03 is a prerequisite for S-04); `S-05` branches off `S-04` parallel with `S-06`.                                                                                                                                                                                                                                                                                               |
-| C      | Enhancement & polish           | `S-08` / `S-09` / `S-10` / `S-11` / `S-12` / `S-13` / `S-14` / `S-15` / `S-17` / `S-18` | Tier 2+3 items; sequence after core loop completes or when capacity opens. `S-14` extends session template prescription (after S-02). `S-15` extends exercise library browse/filter (after S-01). `S-16` was parked for post-MVP after planning research showed it changes creation ownership, exercise-library access, and trainer dashboard semantics. `S-17` seeds starter exercises on trainer signup. `S-18` unifies the dual design-system debt (shadcn tokens vs cosmic palette) per `DESIGN.md`, `context/changes/ui-redesign/research.md`, and Pencil mockups in `docs/pencil/`. |
+| C      | Enhancement & polish           | `S-08` / `S-09` / `S-10` / `S-11` / `S-12` / `S-13` / `S-14` / `S-15` / `S-17` / `S-18` / `S-19` | Tier 2+3 items; sequence after core loop completes or when capacity opens. `S-14` extends session template prescription (after S-02). `S-15` extends exercise library browse/filter (after S-01). `S-16` was parked for post-MVP after planning research showed it changes creation ownership, exercise-library access, and trainer dashboard semantics. `S-17` seeds starter exercises on trainer signup. `S-18` unifies the dual design-system debt (shadcn tokens vs cosmic palette) per `DESIGN.md`, `context/changes/ui-redesign/research.md`, and Pencil mockups in `docs/pencil/`. `S-19` replaces the per-set OK/completed toggle with one-click prescription fill and defers completion semantics to session level (S-08). |
 | D      | Quality & testing              | `Q-01` / `Q-02` / `Q-03`                                                       | Cross-cutting; selective mutation testing per `test-plan.md` after the integration harness lands. `Q-02`/`Q-03` close SECURITY DEFINER gaps documented by the harness (flip KNOWN GAP tests).                                                                                                                                                                                                              |
 
 
@@ -200,7 +201,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Blockers:** —
 - **Unknowns:** —
 - **Risk:** Dashboard "clients who need attention" prioritization logic is under-specified in PRD; for MVP, a simple chronological activity feed is sufficient.
-- **Status:** proposed
+- **Status:** done
 
 ### S-08: Session completion marking
 
@@ -208,10 +209,10 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Change ID:** session-completion-marking
 - **PRD refs:** FR-021 (extends with cancelled status — add at `/10x-plan` if scope needs contract lock-in)
 - **Prerequisites:** S-06
-- **Parallel with:** S-07, S-10, S-12, S-13
+- **Parallel with:** S-07, S-10, S-12, S-13, S-19
 - **Blockers:** —
 - **Unknowns:** Whether a cancelled session can be reopened and started later, or is permanently closed; whether partial logging before cancel is retained
-- **Risk:** Calendar status colors (S-05) need a fourth state; trainer dashboard (S-07) must surface cancelled vs not-started clearly.
+- **Risk:** Calendar status colors (S-05) need a fourth state; trainer dashboard (S-07) must surface cancelled vs not-started clearly. Per-set `is_complete` from S-06 should not drive session status once S-19 lands — session finished/partial/cancelled stays session-scoped (FR-021).
 - **Status:** proposed
 
 ### S-09: Session comments
@@ -328,10 +329,22 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Change ID:** ui-redesign
 - **PRD refs:** NFR mobile usability (phone-at-the-gym portrait use)
 - **Prerequisites:** S-06
-- **Parallel with:** S-07, S-08, S-09, S-10, S-12, S-13, S-15, S-17
+- **Parallel with:** S-07, S-08, S-09, S-10, S-12, S-13, S-15, S-17, S-19
 - **Blockers:** —
 - **Unknowns:** Whether to adopt a trainer sidebar at `lg:` breakpoints; dark-only vs future light mode; whether amber achievement accent fits brand — see `context/changes/ui-redesign/research.md` Open Questions
 - **Risk:** Token injection alone changes ~20% of visible UI; the bulk of work is replacing hardcoded `purple-500` / `text-white` / `bg-white/10` classes across ~30 files. Trainer dashboard screen polish depends on S-07 landing first (`docs/pencil/trainer_dashboard.pen` is ready ahead of implementation).
+- **Status:** proposed
+
+### S-19: Prescription fill logging
+
+- **Outcome:** client can one-click fill a round's log with prescribed reps and load (or duration) instead of retyping each time; the per-set OK/completed toggle is removed; exercise nav progress is inferred from logged values, not an explicit round-completed flag; session finished/partial/cancelled remains session-level only (S-08)
+- **Change ID:** prescription-fill-logging
+- **PRD refs:** FR-015, FR-017 (extends set logging UX; dedicated FR not yet in PRD — add at `/10x-plan` if scope needs contract lock-in)
+- **Prerequisites:** S-06
+- **Parallel with:** S-08, S-10, S-12, S-13, S-18
+- **Blockers:** —
+- **Unknowns:** Whether to drop `set_logs.is_complete` from the schema or stop using it in UI while keeping the column for existing rows; whether fill copies prescription exactly or pre-fills editable fields the client can still change before save
+- **Risk:** S-06 shipped the OK toggle and `is_complete`-driven exercise progress (`SetLogRow`, `exercise-progress.ts`, trainer readout in S-07); this slice must redefine progress/readout heuristics (e.g. logged reps/load present) without reintroducing per-exercise completion state the product no longer needs
 - **Status:** proposed
 
 ## Backlog Handoff
@@ -358,6 +371,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 | S-16       | ad-hoc-session-logging                | Log an unplanned custom workout not on the calendar                         | no                    | Parked post-MVP; see `context/changes/ad-hoc-session-logging/research.md`                                                   |
 | S-17       | starter-exercise-seed                 | Copy curated starter exercises to each trainer on signup                    | no                    | Needs S-01 + S-03; supersedes PRD Non-Goal #14; per-trainer clone required for RLS                                          |
 | S-18       | ui-redesign                           | Unify design tokens and apply DESIGN.md + Pencil mockups to key flows       | yes                   | Run `/10x-plan ui-redesign`; spec in `DESIGN.md`; research in `context/changes/ui-redesign/research.md`; screens in `docs/pencil/` |
+| S-19       | prescription-fill-logging             | Replace per-set OK toggle with one-click prescription fill                  | yes                   | Run `/10x-plan prescription-fill-logging`; removes `is_complete` UX from S-06; session status stays in S-08                    |
 | Q-01       | add-stryker-mutation-testing          | Run Stryker on risk-critical modules                                        | no                    | Needs test-plan Phase 1 complete                                                                                            |
 | Q-02       | harden-replace-exercise-muscle-groups | Add auth.uid() ownership check to replace_exercise_muscle_groups RPC        | yes                   | Run `/10x-plan harden-replace-exercise-muscle-groups`; flip KNOWN GAP test in `tests/integration/security-definer/`         |
 | Q-03       | harden-complete-client-invite         | Harden complete_client_invite p_client_id binding for authenticated callers | no                    | Run `/10x-frame harden-complete-client-invite` first (anon vs authenticated design); then `/10x-plan`                       |
@@ -373,6 +387,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 5. **Trainer sidebar vs top nav:** Should the trainer area adopt a collapsible sidebar at `lg:` breakpoints, or keep the horizontal topbar? (S-18)
 6. **Dark-only vs light/dark toggle:** The app is always dark today; should a light mode ever be supported? (S-18)
 7. **Warm-up default on extra rounds:** Client-added rounds beyond prescription default to working — confirm at `/10x-plan` (S-10)
+8. **`set_logs.is_complete` column:** Drop from schema after S-19, or keep unused for backward compatibility? (S-19)
 
 ## Parked
 
@@ -404,4 +419,5 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **S-05: client can view their assigned plan in a month view (default) with the ability to switch to week view; sessions visually distinguished by status (not started / finished / finished partially)** — Merged 2026-06-14 → PR #19.
 - **Q-02: close KNOWN GAP: RPC rejects cross-trainer muscle group replacement; flip integration test** — Archived 2026-06-13 → `context/archive/2026-06-08-harden-replace-exercise-muscle-groups/`. Lesson: —.
 - **S-06: client can open a session and step through exercises one at a time (designed for one-handed phone use), navigate via exercise list menu, log each set (reps + weight or time), and see performance data from the last workout containing each exercise** — Archived 2026-06-20 → `context/archive/2026-06-14-guided-workout-logging/`. Lesson: —.
+- **S-07: trainer can see an overview of all their clients, assigned plans, and recent session activity; can view a read-only detail of a client's session showing exercises, sets, weights** — Archived 2026-06-20 → `context/archive/2026-06-20-trainer-dashboard/`. Lesson: —.
 

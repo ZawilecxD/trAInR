@@ -2,12 +2,14 @@ import { useMemo, useState } from "react";
 import { ChevronDown, ChevronUp, CircleAlert, Loader2, Plus, Save, Trash2, ArrowDown, ArrowUp } from "lucide-react";
 import DeleteConfirmDialog from "@/components/DeleteConfirmDialog";
 import ExercisePickerModal from "@/components/session-templates/ExercisePickerModal";
+import RoundWarmupToggle from "@/components/session-templates/RoundWarmupToggle";
 import { Button } from "@/components/ui/button";
 import {
   addRound,
   emptyPhaseEntries,
   exerciseToFormEntry,
   removeRound,
+  showsWarmupWorkingToggle,
   templateExercisesToPhaseEntries,
   updateRound,
   validateCreateTemplateForm,
@@ -428,23 +430,43 @@ export default function TemplateForm({
                             {entry.rounds.map((round, roundIndex) => (
                               <div
                                 key={`${entry.exerciseId}-round-${roundIndex}`}
-                                className="rounded-lg border border-white/10 bg-white/5 p-3"
+                                className={cn(
+                                  "rounded-lg border p-3",
+                                  round.isWarmup ? "border-white/10 bg-white/[0.03]" : "border-white/10 bg-white/5",
+                                )}
                               >
-                                <div className="mb-2 flex items-center justify-between gap-2">
-                                  <p className="text-xs font-medium text-blue-100/80">Round {roundIndex + 1}</p>
-                                  <Button
-                                    type="button"
-                                    variant="outline"
-                                    size="sm"
-                                    className="border-white/20 bg-transparent text-red-200 hover:bg-red-500/10"
-                                    disabled={entry.rounds.length <= 1}
-                                    onClick={() => {
-                                      updateExerciseEntry(phase, index, removeRound(entry, roundIndex));
-                                    }}
-                                    aria-label={`Remove round ${roundIndex + 1}`}
+                                <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
+                                  <p
+                                    className={cn(
+                                      "text-xs font-medium",
+                                      round.isWarmup ? "text-blue-100/50" : "text-blue-100/80",
+                                    )}
                                   >
-                                    <Trash2 className="size-4" />
-                                  </Button>
+                                    Round {roundIndex + 1}
+                                  </p>
+                                  <div className="flex items-center gap-2">
+                                    {showsWarmupWorkingToggle(phase) ? (
+                                      <RoundWarmupToggle
+                                        isWarmup={round.isWarmup}
+                                        onChange={(isWarmup) => {
+                                          updateExerciseRound(phase, index, roundIndex, { isWarmup });
+                                        }}
+                                      />
+                                    ) : null}
+                                    <Button
+                                      type="button"
+                                      variant="outline"
+                                      size="sm"
+                                      className="border-white/20 bg-transparent text-red-200 hover:bg-red-500/10"
+                                      disabled={entry.rounds.length <= 1}
+                                      onClick={() => {
+                                        updateExerciseEntry(phase, index, removeRound(entry, roundIndex));
+                                      }}
+                                      aria-label={`Remove round ${roundIndex + 1}`}
+                                    >
+                                      <Trash2 className="size-4" />
+                                    </Button>
+                                  </div>
                                 </div>
 
                                 <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">

@@ -15,6 +15,7 @@ function makeSet(overrides: Partial<SessionExerciseSet> & Pick<SessionExerciseSe
     prescribed_duration_seconds: null,
     prescribed_load_kg: 80,
     rest_after_seconds: 120,
+    is_warmup: false,
     ...overrides,
   };
 }
@@ -84,6 +85,11 @@ describe("formatExercisePrescriptionDetail", () => {
       makeSet({ set_number: 2, prescribed_reps: null, prescribed_duration_seconds: 60, prescribed_load_kg: null }),
     ];
     expect(formatExercisePrescriptionDetail(sets, "time")).toBe("45s · 60s");
+  });
+
+  it("prefixes warm-up rounds with WU", () => {
+    const sets = [makeSet({ set_number: 1, is_warmup: true }), makeSet({ set_number: 2, prescribed_reps: 10 })];
+    expect(formatExercisePrescriptionDetail(sets, "reps_weight")).toBe("WU · 8 reps @ 80 kg · 10 reps @ 80 kg");
   });
 });
 

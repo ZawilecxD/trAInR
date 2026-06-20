@@ -129,6 +129,10 @@ describe("starter exercise seed", () => {
         .single<{ id: string }>();
 
       expect(trainerAError).toBeNull();
+      expect(trainerAExercise).not.toBeNull();
+      if (!trainerAExercise) {
+        throw new Error("expected trainer A exercise");
+      }
 
       const { data, error } = await trainerB.client
         .from("exercises")
@@ -148,6 +152,10 @@ describe("starter exercise seed", () => {
         .single<{ id: string }>();
 
       expect(trainerAError).toBeNull();
+      expect(trainerAExercise).not.toBeNull();
+      if (!trainerAExercise) {
+        throw new Error("expected trainer A exercise");
+      }
 
       const { data, error } = await trainerB.client
         .from("exercises")

@@ -94,6 +94,7 @@ export interface TemplateExerciseSet {
   prescribed_duration_seconds: number | null;
   prescribed_load_kg: number | null;
   rest_after_seconds: number | null;
+  is_warmup: boolean;
 }
 
 export interface TemplateExercise {
@@ -142,6 +143,7 @@ export interface SessionExerciseSet {
   prescribed_duration_seconds: number | null;
   prescribed_load_kg: number | null;
   rest_after_seconds: number | null;
+  is_warmup: boolean;
 }
 
 export interface SessionExercise {

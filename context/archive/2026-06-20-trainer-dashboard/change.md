@@ -1,11 +1,11 @@
 ---
 change_id: trainer-dashboard
 title: Trainer dashboard (S-07)
-status: implemented
+status: archived
 linear_issue: ZAW-12
 created: 2026-06-20
 updated: 2026-06-20
-archived_at: null
+archived_at: 2026-06-20T17:39:48Z
 ---
 
 ## Notes

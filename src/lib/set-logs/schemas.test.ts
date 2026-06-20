@@ -12,6 +12,7 @@ describe("upsertSetLogBodySchema", () => {
       duration_seconds: null,
       load_kg: 80,
       is_complete: true,
+      is_warmup: false,
     });
 
     expect(parsed.success).toBe(true);
@@ -25,6 +26,7 @@ describe("upsertSetLogBodySchema", () => {
       duration_seconds: null,
       load_kg: -20,
       is_complete: false,
+      is_warmup: true,
     });
 
     expect(parsed.success).toBe(true);
@@ -38,6 +40,7 @@ describe("upsertSetLogBodySchema", () => {
       duration_seconds: 60,
       load_kg: null,
       is_complete: true,
+      is_warmup: false,
     });
 
     expect(parsed.success).toBe(true);
@@ -51,6 +54,7 @@ describe("upsertSetLogBodySchema", () => {
       duration_seconds: null,
       load_kg: 50,
       is_complete: true,
+      is_warmup: false,
     });
 
     expect(parsed.success).toBe(false);
@@ -64,6 +68,7 @@ describe("upsertSetLogBodySchema", () => {
       duration_seconds: null,
       load_kg: null,
       is_complete: false,
+      is_warmup: false,
     });
 
     expect(parsed.success).toBe(false);
@@ -73,6 +78,20 @@ describe("upsertSetLogBodySchema", () => {
     const parsed = upsertSetLogBodySchema.safeParse({
       session_exercise_id: validSessionExerciseId,
       set_number: 0,
+      reps: 10,
+      duration_seconds: null,
+      load_kg: null,
+      is_complete: false,
+      is_warmup: false,
+    });
+
+    expect(parsed.success).toBe(false);
+  });
+
+  it("rejects payloads missing is_warmup", () => {
+    const parsed = upsertSetLogBodySchema.safeParse({
+      session_exercise_id: validSessionExerciseId,
+      set_number: 1,
       reps: 10,
       duration_seconds: null,
       load_kg: null,

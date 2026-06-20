@@ -117,7 +117,7 @@ export async function upsertSetLog(
         duration_seconds: body.duration_seconds,
         load_kg: body.load_kg,
         is_complete: body.is_complete,
-        is_warmup: false,
+        is_warmup: body.is_warmup,
       },
       { onConflict: "session_exercise_id,set_number" },
     )

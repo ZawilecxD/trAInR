@@ -142,6 +142,7 @@ erDiagram
         integer prescribed_duration_seconds
         decimal prescribed_load_kg
         integer rest_after_seconds
+        boolean is_warmup
     }
 
     set_logs {
@@ -311,6 +312,7 @@ interface TemplateExerciseSet {
   prescribed_duration_seconds: number | null; // null if reps-based
   prescribed_load_kg: number | null; // null = unspecified, 0 = bodyweight, neg = assisted
   rest_after_seconds: number | null; // data field; rest timer UI is post-MVP
+  is_warmup: boolean; // trainer prescribes warm-up vs working; snapshots to session on assign
 }
 ```
 
@@ -370,6 +372,7 @@ interface SessionExerciseSet {
   prescribed_duration_seconds: number | null; // null if reps-based
   prescribed_load_kg: number | null; // null = unspecified, 0 = bodyweight, neg = assisted
   rest_after_seconds: number | null; // data field; rest timer UI is post-MVP
+  is_warmup: boolean; // trainer prescribes warm-up vs working; client may override at log time
 }
 ```
 

@@ -30,6 +30,7 @@ export function sessionExercisesToPhaseEntries(exercises: SessionExerciseWithNam
       prescribed_duration_seconds: set.prescribed_duration_seconds,
       prescribed_load_kg: set.prescribed_load_kg,
       rest_after_seconds: set.rest_after_seconds,
+      is_warmup: set.is_warmup,
     })),
     exercise_name: row.exercise_name,
     exercise_default_metric: row.exercise_default_metric,

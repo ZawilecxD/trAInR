@@ -88,7 +88,7 @@ export default function GuidedExerciseView({
         <ExerciseSetLogTable exercise={exercise} onLogSaved={onLogSaved} onLogDeleted={onLogDeleted} />
       </div>
 
-      <div className="fixed inset-x-0 bottom-0 border-t border-white/10 bg-slate-950/90 p-4 backdrop-blur-xl lg:static lg:mt-6 lg:border-t lg:bg-transparent lg:p-0 lg:backdrop-blur-none">
+      <div className="fixed inset-x-0 bottom-0 bg-slate-950/90 p-4 backdrop-blur-xl lg:static lg:mt-6 lg:bg-transparent lg:p-0 lg:backdrop-blur-none">
         <div className="mx-auto flex max-w-2xl gap-3 lg:max-w-none">
           <Button
             type="button"

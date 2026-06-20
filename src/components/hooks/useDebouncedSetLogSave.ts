@@ -8,6 +8,7 @@ export interface SetLogValues {
   duration_seconds: number | null;
   load_kg: number | null;
   is_complete: boolean;
+  is_warmup: boolean;
 }
 
 interface UseDebouncedSetLogSaveOptions {
