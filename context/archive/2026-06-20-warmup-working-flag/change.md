@@ -1,9 +1,10 @@
 ---
 change_id: warmup-working-flag
 title: Warm-up vs working per prescribed round and logged set
-status: implementing
+status: archived
 created: 2026-06-20
-updated: 2026-06-21
+updated: 2026-06-20
+archived_at: 2026-06-20T18:27:06Z
 ---
 
 ## Notes
