@@ -1,0 +1,269 @@
+---
+import { formatSessionOverviewDate } from "@/lib/guided-workout/format-session-date";
+import type { TrainerActivityItem, TrainerDashboard, TrainerDashboardClient } from "@/lib/trainer-dashboard/service";
+import type { ReadoutStatus } from "@/lib/trainer-dashboard/readout";
+
+interface Props {
+  dashboard: TrainerDashboard;
+}
+
+const { dashboard } = Astro.props;
+const { clients, summary, recentActivity } = dashboard;
+const hasClients = clients.length > 0;
+const firstClient = clients.at(0);
+const scheduleHref = firstClient ? `/trainer/clients/${firstClient.clientId}/plan` : "/trainer/clients";
+
+function readoutBadgeClass(status: ReadoutStatus): string {
+  switch (status) {
+    case "fully_logged":
+      return "border-emerald-400/40 bg-emerald-500/15 text-emerald-200";
+    case "in_progress":
+      return "border-amber-400/40 bg-amber-500/15 text-amber-100";
+    case "not_logged":
+      return "border-white/15 bg-white/5 text-blue-100/70";
+  }
+}
+
+function formatActivityTimestamp(iso: string): string {
+  return new Date(iso).toLocaleString(undefined, {
+    dateStyle: "medium",
+    timeStyle: "short",
+  });
+}
+
+function formatAssignedDate(iso: string): string {
+  return new Date(iso).toLocaleDateString(undefined, {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
+}
+
+function clientInitials(name: string): string {
+  const parts = name.trim().split(/\s+/).filter(Boolean);
+  if (parts.length === 0) {
+    return "?";
+  }
+
+  if (parts.length === 1) {
+    return parts[0].slice(0, 2).toUpperCase();
+  }
+
+  return (parts[0].charAt(0) + parts[1].charAt(0)).toUpperCase();
+}
+
+const setupSteps = [
+  {
+    title: "Invite a client",
+    description: "Generate an invite link and share it with your first client.",
+    href: "/trainer/clients",
+    cta: "Manage clients",
+  },
+  {
+    title: "Add exercises to your library",
+    description: "Define the movements you program most often.",
+    href: "/trainer/exercises",
+    cta: "Browse exercises",
+  },
+  {
+    title: "Create a session template",
+    description: "Build a reusable workout structure you can assign quickly.",
+    href: "/trainer/templates",
+    cta: "Open templates",
+  },
+  {
+    title: "Schedule a session",
+    description: firstClient
+      ? `Open ${firstClient.displayName}'s calendar and add a workout.`
+      : "Once a client joins, schedule their first session on their plan calendar.",
+    href: scheduleHref,
+    cta: firstClient ? "Open calendar" : "Invite a client first",
+  },
+];
+
+const quickActions = [
+  { label: "Manage clients", href: "/trainer/clients", description: "Invites and roster" },
+  { label: "Session templates", href: "/trainer/templates", description: "Reusable workouts" },
+  { label: "Exercise library", href: "/trainer/exercises", description: "Your movement catalog" },
+  { label: "Schedule session", href: scheduleHref, description: "Client plan calendar" },
+];
+---
+
+<div class="space-y-8">
+  <header>
+    <h1 class="bg-gradient-to-r from-blue-200 to-purple-200 bg-clip-text text-3xl font-bold text-transparent">
+      Dashboard
+    </h1>
+    <p class="mt-1 text-sm text-blue-100/70">Active clients, recent logged activity, and quick next steps.</p>
+  </header>
+
+  <section aria-label="Summary">
+    <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <div class="rounded-2xl border border-white/10 bg-white/5 p-5 backdrop-blur-xl">
+        <p class="text-xs tracking-wide text-blue-100/60 uppercase">Active clients</p>
+        <p class="mt-2 text-3xl font-bold text-white">{summary.activeClientCount}</p>
+      </div>
+      <div class="rounded-2xl border border-white/10 bg-white/5 p-5 backdrop-blur-xl">
+        <p class="text-xs tracking-wide text-blue-100/60 uppercase">Clients with active plan</p>
+        <p class="mt-2 text-3xl font-bold text-white">{summary.clientsWithActivePlanCount}</p>
+      </div>
+      <div class="rounded-2xl border border-white/10 bg-white/5 p-5 backdrop-blur-xl sm:col-span-2 lg:col-span-1">
+        <p class="text-xs tracking-wide text-blue-100/60 uppercase">Recent logged sessions</p>
+        <p class="mt-2 text-3xl font-bold text-white">{summary.recentLoggedSessionCount}</p>
+      </div>
+    </div>
+  </section>
+
+  {
+    !hasClients ? (
+      <section class="rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-xl" aria-label="Setup checklist">
+        <h2 class="text-lg font-semibold text-white">Get started</h2>
+        <p class="mt-1 text-sm text-blue-100/70">Complete these steps to start coaching asynchronously with trAInR.</p>
+        <ol class="mt-5 space-y-4">
+          {setupSteps.map((step, index) => (
+            <li class="rounded-xl border border-white/10 bg-white/5 p-4">
+              <div class="flex flex-wrap items-start justify-between gap-3">
+                <div class="min-w-0 flex-1">
+                  <p class="font-mono text-xs tracking-widest text-blue-200/70">STEP {index + 1}</p>
+                  <h3 class="mt-1 text-sm font-medium text-white">{step.title}</h3>
+                  <p class="mt-1 text-sm text-blue-100/60">{step.description}</p>
+                </div>
+                <a
+                  href={step.href}
+                  class="inline-flex shrink-0 items-center rounded-lg border border-white/20 px-3 py-2 text-sm text-white transition-colors hover:bg-white/10"
+                >
+                  {step.cta}
+                </a>
+              </div>
+            </li>
+          ))}
+        </ol>
+      </section>
+    ) : null
+  }
+
+  <div class="grid gap-6 lg:grid-cols-3">
+    <div class="space-y-6 lg:col-span-2">
+      {
+        hasClients ? (
+          <section
+            class="rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-xl"
+            aria-label="Active clients"
+          >
+            <div class="flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <h2 class="text-lg font-semibold text-white">Active clients</h2>
+                <p class="mt-1 text-sm text-blue-100/60">Clients currently assigned to you.</p>
+              </div>
+              <a
+                href="/trainer/clients"
+                class="text-sm text-purple-300 transition-colors hover:text-purple-200 hover:underline"
+              >
+                View all
+              </a>
+            </div>
+            <ul class="mt-4 space-y-3">
+              {clients.map((client: TrainerDashboardClient) => (
+                <li>
+                  <a
+                    href={`/trainer/clients/${client.clientId}/plan`}
+                    class="flex items-center gap-3 rounded-xl border border-white/10 bg-white/5 p-4 transition-colors hover:border-white/20 hover:bg-white/10"
+                  >
+                    <span
+                      class="flex size-10 shrink-0 items-center justify-center rounded-full border border-white/15 bg-white/10 text-sm font-semibold text-white"
+                      aria-hidden="true"
+                    >
+                      {clientInitials(client.displayName)}
+                    </span>
+                    <span class="min-w-0 flex-1">
+                      <span class="block truncate text-sm font-medium text-white">{client.displayName}</span>
+                      <span class="mt-0.5 block text-xs text-blue-100/60">
+                        Joined {formatAssignedDate(client.assignedAt)}
+                        {client.activePlan ? ` · ${client.activePlan.name}` : " · No active plan"}
+                      </span>
+                    </span>
+                    <span class="shrink-0 text-xs text-blue-100/50">Open calendar →</span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </section>
+        ) : null
+      }
+
+      <section
+        class="rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-xl"
+        aria-label="Recent logged activity"
+      >
+        <h2 class="text-lg font-semibold text-white">Recent logged activity</h2>
+        <p class="mt-1 text-sm text-blue-100/60">Sessions where clients have started or logged sets.</p>
+
+        {
+          recentActivity.length === 0 ? (
+            <div class="mt-4 rounded-xl border border-dashed border-white/15 bg-white/5 px-4 py-8 text-center">
+              <p class="text-sm font-medium text-white">No logged activity yet</p>
+              <p class="mt-1 text-sm text-blue-100/60">
+                {hasClients
+                  ? "When clients start sessions and log sets, their activity will appear here."
+                  : "Invite a client and schedule a session to begin tracking logged work."}
+              </p>
+            </div>
+          ) : (
+            <ul class="mt-4 space-y-3">
+              {recentActivity.map((item: TrainerActivityItem) => (
+                <li>
+                  <a
+                    href={`/trainer/clients/${item.clientId}/sessions/${item.sessionId}`}
+                    class="block rounded-xl border border-white/10 bg-white/5 p-4 transition-colors hover:border-white/20 hover:bg-white/10"
+                  >
+                    <div class="flex flex-wrap items-start justify-between gap-3">
+                      <div class="min-w-0">
+                        <p class="truncate text-sm font-medium text-white">{item.sessionName}</p>
+                        <p class="mt-0.5 text-xs text-blue-100/60">
+                          {item.clientDisplayName} · {formatSessionOverviewDate(item.scheduledDate)}
+                        </p>
+                        <p class="mt-1 text-xs text-blue-100/50">
+                          Last activity {formatActivityTimestamp(item.lastActivityAt)}
+                        </p>
+                      </div>
+                      <span
+                        class:list={[
+                          "inline-flex shrink-0 rounded-full border px-2.5 py-0.5 text-xs font-medium",
+                          readoutBadgeClass(item.readoutStatus),
+                        ]}
+                      >
+                        {item.readoutLabel}
+                      </span>
+                    </div>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          )
+        }
+      </section>
+    </div>
+
+    <aside class="space-y-6">
+      <section class="rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-xl" aria-label="Quick actions">
+        <h2 class="text-lg font-semibold text-white">Quick actions</h2>
+        <p class="mt-1 text-sm text-blue-100/60">Common trainer workflows.</p>
+        <ul class="mt-4 space-y-2">
+          {
+            quickActions.map((action) => (
+              <li>
+                <a
+                  href={action.href}
+                  class="block rounded-xl border border-white/10 bg-white/5 px-4 py-3 transition-colors hover:border-white/20 hover:bg-white/10"
+                >
+                  <span class="block text-sm font-medium text-white">{action.label}</span>
+                  <span class="mt-0.5 block text-xs text-blue-100/60">{action.description}</span>
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </section>
+    </aside>
+  </div>
+</div>

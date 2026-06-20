@@ -1,4 +1,4 @@
-import type { ExerciseMetric, SessionExerciseSet } from "@/types";
+import type { ExerciseMetric, SessionExerciseSet, SetLog } from "@/types";
 
 function formatRest(seconds: number): string {
   if (seconds < 60) {
@@ -122,4 +122,48 @@ export function formatExercisePrescriptionDetail(sets: SessionExerciseSet[], def
 
   const sortedSets = [...sets].sort((a, b) => a.set_number - b.set_number);
   return sortedSets.map((set) => formatPrescriptionRound(set, defaultMetric)).join(" · ");
+}
+
+export function formatPrescribedSetDetail(set: SessionExerciseSet | null, defaultMetric: ExerciseMetric): string {
+  if (!set) {
+    return "—";
+  }
+
+  const round = formatPrescriptionRound(set, defaultMetric);
+
+  if (set.rest_after_seconds !== null && set.rest_after_seconds > 0) {
+    return `${round} · Rest ${formatRest(set.rest_after_seconds)}`;
+  }
+
+  return round;
+}
+
+function hasLoggedValues(log: SetLog): boolean {
+  return log.reps !== null || log.duration_seconds !== null || log.load_kg !== null;
+}
+
+export function formatSetActual(log: SetLog | null, defaultMetric: ExerciseMetric): string {
+  if (!log || (!hasLoggedValues(log) && !log.is_complete)) {
+    return "Not logged";
+  }
+
+  if (defaultMetric === "time") {
+    return log.duration_seconds !== null ? `${log.duration_seconds}s` : log.is_complete ? "Completed" : "—";
+  }
+
+  const parts: string[] = [];
+
+  if (log.reps !== null) {
+    parts.push(`${log.reps} reps`);
+  }
+
+  if (defaultMetric === "reps_weight" && log.load_kg !== null) {
+    parts.push(`${log.load_kg} kg`);
+  }
+
+  if (parts.length > 0) {
+    return parts.join(" @ ");
+  }
+
+  return log.is_complete ? "Completed" : "—";
 }
