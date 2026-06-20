@@ -67,4 +67,9 @@ describe("formatExercisePrescriptionDetail", () => {
     ];
     expect(formatExercisePrescriptionDetail(sets, "time")).toBe("45s · 60s");
   });
+
+  it("prefixes warm-up rounds with WU", () => {
+    const sets = [makeSet({ set_number: 1, is_warmup: true }), makeSet({ set_number: 2, prescribed_reps: 10 })];
+    expect(formatExercisePrescriptionDetail(sets, "reps_weight")).toBe("WU · 8 reps @ 80 kg · 10 reps @ 80 kg");
+  });
 });

@@ -94,8 +94,11 @@ export function formatPrescription(sets: SessionExerciseSet[], defaultMetric: Ex
 }
 
 export function formatPrescriptionRound(set: SessionExerciseSet, defaultMetric: ExerciseMetric): string {
+  const warmupPrefix = set.is_warmup ? "WU · " : "";
+
   if (defaultMetric === "time") {
-    return set.prescribed_duration_seconds !== null ? `${set.prescribed_duration_seconds}s` : "—";
+    const duration = set.prescribed_duration_seconds !== null ? `${set.prescribed_duration_seconds}s` : "—";
+    return `${warmupPrefix}${duration}`;
   }
 
   const parts: string[] = [];
@@ -108,7 +111,8 @@ export function formatPrescriptionRound(set: SessionExerciseSet, defaultMetric: 
     parts.push(`${set.prescribed_load_kg} kg`);
   }
 
-  return parts.length > 0 ? parts.join(" @ ") : "—";
+  const detail = parts.length > 0 ? parts.join(" @ ") : "—";
+  return `${warmupPrefix}${detail}`;
 }
 
 export function formatExercisePrescriptionDetail(sets: SessionExerciseSet[], defaultMetric: ExerciseMetric): string {

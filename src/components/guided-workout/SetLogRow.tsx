@@ -1,14 +1,17 @@
 import { Check, Loader2, RotateCcw, Trash2 } from "lucide-react";
 import { useState, type ComponentProps } from "react";
 import { useDebouncedSetLogSave, type SetLogValues } from "@/components/hooks/useDebouncedSetLogSave";
+import RoundWarmupToggle from "@/components/session-templates/RoundWarmupToggle";
 import { Input } from "@/components/ui/input";
+import { resolveLogIsWarmup } from "@/lib/guided-workout/warmup-default";
 import { cn } from "@/lib/utils";
-import type { ExerciseMetric, SetLog } from "@/types";
+import type { ExerciseMetric, SessionExerciseSet, SetLog } from "@/types";
 
 interface SetLogRowProps {
   sessionExerciseId: string;
   setNumber: number;
   existingLog: SetLog | undefined;
+  prescribedSet: SessionExerciseSet | undefined;
   defaultMetric: ExerciseMetric;
   isPrescribed: boolean;
   isActive: boolean;
@@ -32,12 +35,17 @@ function parseOptionalFloat(raw: string): number | null {
   return Number.isNaN(parsed) ? null : parsed;
 }
 
-function emptyValues(existingLog: SetLog | undefined): SetLogValues {
+function initialValues(
+  existingLog: SetLog | undefined,
+  prescribedSet: SessionExerciseSet | undefined,
+  isPrescribed: boolean,
+): SetLogValues {
   return {
     reps: existingLog?.reps ?? null,
     duration_seconds: existingLog?.duration_seconds ?? null,
     load_kg: existingLog?.load_kg ?? null,
     is_complete: existingLog?.is_complete ?? false,
+    is_warmup: resolveLogIsWarmup({ existingLog, prescribedSet, isPrescribed }),
   };
 }
 
@@ -60,6 +68,7 @@ export default function SetLogRow({
   sessionExerciseId,
   setNumber,
   existingLog,
+  prescribedSet,
   defaultMetric,
   isPrescribed,
   isActive,
@@ -68,7 +77,7 @@ export default function SetLogRow({
   onDeleted,
   onRowRemoved,
 }: SetLogRowProps) {
-  const [values, setValues] = useState(() => emptyValues(existingLog));
+  const [values, setValues] = useState(() => initialValues(existingLog, prescribedSet, isPrescribed));
   const [deletePending, setDeletePending] = useState(false);
   const [deleteError, setDeleteError] = useState<string | null>(null);
   const { status, error, retry, cancelPendingSave } = useDebouncedSetLogSave({
@@ -114,7 +123,7 @@ export default function SetLogRow({
     }
 
     cancelPendingSave();
-    setValues(emptyValues(undefined));
+    setValues(initialValues(undefined, prescribedSet, isPrescribed));
 
     if (!isPrescribed) {
       onRowRemoved?.();
@@ -125,11 +134,14 @@ export default function SetLogRow({
     <tr
       className={cn(
         "border-b border-white/5 transition-colors",
+        values.is_warmup && "text-blue-100/60",
         isActive && "bg-blue-500/10 ring-1 ring-blue-400/40 ring-inset",
       )}
       onFocusCapture={onFocus}
     >
-      <td className="px-3 py-3 text-sm font-medium text-white">Set {setNumber}</td>
+      <td className={cn("px-3 py-3 text-sm font-medium", values.is_warmup ? "text-blue-100/60" : "text-white")}>
+        Set {setNumber}
+      </td>
 
       {showReps ? (
         <td className="px-2 py-2">
@@ -181,6 +193,18 @@ export default function SetLogRow({
           />
         </td>
       ) : null}
+
+      <td className="px-2 py-2">
+        <div className="flex min-h-11 items-center justify-center">
+          <RoundWarmupToggle
+            isWarmup={values.is_warmup}
+            onChange={(isWarmup) => {
+              onFocus();
+              setValues((prev) => ({ ...prev, is_warmup: isWarmup }));
+            }}
+          />
+        </div>
+      </td>
 
       <td className="px-2 py-2">
         <div className="flex min-h-11 items-center justify-center">

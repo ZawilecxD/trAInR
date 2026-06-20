@@ -38,6 +38,7 @@ export default function ExerciseSetLogTable({ exercise, onLogSaved, onLogDeleted
         <tbody>
           {setNumbers.map((setNumber) => {
             const isPrescribed = isPrescribedSetNumber(exercise.sets, setNumber);
+            const prescribedSet = exercise.sets.find((set) => set.set_number === setNumber);
 
             return (
               <SetLogRow
@@ -45,6 +46,7 @@ export default function ExerciseSetLogTable({ exercise, onLogSaved, onLogDeleted
                 sessionExerciseId={exercise.id}
                 setNumber={setNumber}
                 existingLog={logsBySetNumber.get(setNumber)}
+                prescribedSet={prescribedSet}
                 defaultMetric={exercise.exercise_default_metric}
                 isPrescribed={isPrescribed}
                 isActive={activeSetNumber === setNumber}

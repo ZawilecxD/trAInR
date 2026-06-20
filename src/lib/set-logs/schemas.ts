@@ -10,6 +10,7 @@ export const upsertSetLogBodySchema = z
     duration_seconds: z.number().int().nullable(),
     load_kg: z.number().nullable(),
     is_complete: z.boolean(),
+    is_warmup: z.boolean(),
   })
   .refine((body) => !body.is_complete || body.reps !== null || body.duration_seconds !== null, {
     message: "completed sets require reps or duration",

@@ -329,8 +329,8 @@ All existing prescription and log rows default `is_warmup = false` (working). No
 
 #### Automated
 
-- [ ] 2.1 `npm run test` passes (form/schema tests)
-- [ ] 2.2 `npm run lint` and `npm run build` pass
+- [x] 2.1 `npm run test` passes (form/schema tests) — aa35216
+- [x] 2.2 `npm run lint` and `npm run build` pass — aa35216
 
 #### Manual
 
@@ -341,8 +341,8 @@ All existing prescription and log rows default `is_warmup = false` (working). No
 
 #### Automated
 
-- [ ] 3.1 `npm run test` passes (warmup-default, schemas, logging)
-- [ ] 3.2 `npm run lint`, `npx astro check`, `npm run build` pass
+- [x] 3.1 `npm run test` passes (warmup-default, schemas, logging)
+- [x] 3.2 `npm run lint`, `npx astro check`, `npm run build` pass
 
 #### Manual
 
