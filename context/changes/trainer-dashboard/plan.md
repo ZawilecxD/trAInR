@@ -351,14 +351,14 @@ No database migration is planned. The plan deliberately derives readout status f
 
 #### Automated
 
-- [x] 1.1 Readout unit tests pass for the new helper: `npm test -- src/lib/trainer-dashboard/readout.test.ts`
-- [x] 1.2 Type-aware lint passes for touched files: `npm run lint`
-- [x] 1.3 Production build still succeeds: `npm run build`
+- [x] 1.1 Readout unit tests pass for the new helper: `npm test -- src/lib/trainer-dashboard/readout.test.ts` — 1c3462f
+- [x] 1.2 Type-aware lint passes for touched files: `npm run lint` — 1c3462f
+- [x] 1.3 Production build still succeeds: `npm run build` — 1c3462f
 
 #### Manual
 
-- [x] 1.4 Service contract can be inspected from TypeScript without ambiguous `any` shapes leaking into page code.
-- [x] 1.5 Removed clients are not represented in the service output.
+- [x] 1.4 Service contract can be inspected from TypeScript without ambiguous `any` shapes leaking into page code. — 1c3462f
+- [x] 1.5 Removed clients are not represented in the service output. — 1c3462f
 
 ### Phase 2: Read-Only Session Actuals Review
 
