@@ -98,6 +98,7 @@ erDiagram
         integer prescribed_duration_seconds
         decimal prescribed_load_kg
         integer rest_after_seconds
+        boolean is_warmup
     }
 
     client_plans {
