@@ -1,10 +1,11 @@
 ---
 import Layout from "@/layouts/Layout.astro";
+import SessionActualsReview from "@/components/workout-sessions/SessionActualsReview";
 import SessionForm from "@/components/workout-sessions/SessionForm";
 import { getActivePlanForClient, isTrainerAssignedToClient } from "@/lib/client-plans/service";
 import { listExercises } from "@/lib/exercises/service";
 import { isSessionEditable } from "@/lib/workout-sessions/form-validation";
-import { getSessionWithExercises } from "@/lib/workout-sessions/service";
+import { getSessionDetailForTrainer, getSessionWithExercises } from "@/lib/workout-sessions/service";
 import { createClient } from "@/lib/supabase";
 import { z } from "zod";
 
@@ -32,18 +33,16 @@ let loadError: string | null = null;
 let notFound = false;
 let editable = false;
 let session: Awaited<ReturnType<typeof getSessionWithExercises>>["data"] = null;
+let reviewSession: Awaited<ReturnType<typeof getSessionDetailForTrainer>>["data"] = null;
 let availableExercises: Awaited<ReturnType<typeof listExercises>>["data"] = [];
 
-const [{ data: sessionData, error: sessionError }, { data: plan }, { data: exercises, error: exercisesError }] =
-  await Promise.all([
-    getSessionWithExercises(supabase, sessionId),
-    getActivePlanForClient(supabase, userId, clientId),
-    listExercises(supabase, {}),
-  ]);
+const [{ data: sessionData, error: sessionError }, { data: plan }] = await Promise.all([
+  getSessionWithExercises(supabase, sessionId),
+  getActivePlanForClient(supabase, userId, clientId),
+]);
 
 session = sessionData;
-availableExercises = exercises ?? [];
-loadError = sessionError ?? exercisesError;
+loadError = sessionError;
 
 if (session?.client_plan_id !== plan?.id) {
   notFound = true;
@@ -51,12 +50,38 @@ if (session?.client_plan_id !== plan?.id) {
   editable = isSessionEditable(session);
 }
 
+if (!notFound && session && editable) {
+  const { data: exercises, error: exercisesError } = await listExercises(supabase, {});
+  availableExercises = exercises ?? [];
+  loadError = loadError ?? exercisesError;
+} else if (!notFound && session && !editable) {
+  const { data: trainerDetail, error: detailError } = await getSessionDetailForTrainer(
+    supabase,
+    userId,
+    clientId,
+    sessionId,
+  );
+
+  if (!trainerDetail) {
+    notFound = true;
+  } else {
+    reviewSession = trainerDetail;
+  }
+
+  loadError = loadError ?? detailError;
+}
+
 const profileResult = await supabase.from("profiles").select("display_name").eq("id", clientId).maybeSingle();
 const clientName = typeof profileResult.data?.display_name === "string" ? profileResult.data.display_name : "Client";
 const scheduledDate = session?.scheduled_date ?? "";
+const pageTitle = notFound
+  ? "Session not found"
+  : editable
+    ? `Edit ${session?.name ?? "session"}`
+    : `Review ${session?.name ?? "session"}`;
 ---
 
-<Layout title={session ? `Edit ${session.name}` : "Session not found"}>
+<Layout title={pageTitle}>
   <div class="bg-cosmic min-h-screen p-4 md:p-8">
     <div class="mx-auto max-w-4xl space-y-6">
       <div>
@@ -67,14 +92,14 @@ const scheduledDate = session?.scheduled_date ?? "";
           ← Back to plan
         </a>
         <h1 class="mt-3 bg-gradient-to-r from-blue-200 to-purple-200 bg-clip-text text-3xl font-bold text-transparent">
-          {notFound ? "Session not found" : editable ? "Edit session" : "Session (read-only)"}
+          {notFound ? "Session not found" : editable ? "Edit session" : "Session review"}
         </h1>
         {
           session ? (
             <p class="mt-1 text-sm text-blue-100/70">
               {editable
                 ? `Update ${session.name} for ${clientName}.`
-                : `${session.name} can no longer be edited — the client has started this session.`}
+                : `Prescribed vs actual for ${session.name ?? "this session"} — ${clientName}.`}
             </p>
           ) : null
         }
@@ -96,23 +121,8 @@ const scheduledDate = session?.scheduled_date ?? "";
           <div class="rounded-lg border border-red-400/30 bg-red-500/10 px-4 py-3 text-sm text-red-100">
             Failed to load session: {loadError}
           </div>
-        ) : !editable && session ? (
-          <div class="rounded-2xl border border-amber-400/30 bg-amber-500/10 px-6 py-5 text-sm text-amber-100">
-            <p class="font-medium text-white">Editing is locked</p>
-            <p class="mt-2">
-              Sessions can only be changed before the client starts them. This session is{" "}
-              {session.status === "not_started" && session.started_at !== null
-                ? "in progress"
-                : session.status.replace("_", " ")}
-              .
-            </p>
-            <a
-              href={`/trainer/clients/${clientId}/plan?date=${scheduledDate}`}
-              class="mt-4 inline-block rounded-lg border border-white/20 px-4 py-2 text-sm text-white transition-colors hover:bg-white/10"
-            >
-              Return to calendar
-            </a>
-          </div>
+        ) : reviewSession ? (
+          <SessionActualsReview client:load session={reviewSession} />
         ) : session ? (
           <div class="rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-xl">
             <SessionForm

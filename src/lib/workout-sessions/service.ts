@@ -1,5 +1,7 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { isTrainerAssignedToClient } from "@/lib/client-plans/service";
 import { sortByPhaseThenSortOrder } from "@/lib/guided-workout/phase-labels";
+import { deriveSessionReadout, type SessionReadoutSummary } from "@/lib/trainer-dashboard/readout";
 import type { CreateWorkoutSessionBody, UpdateWorkoutSessionBody } from "@/lib/workout-sessions/schemas";
 import type { AssignedTrainer } from "@/types";
 import type {
@@ -34,6 +36,13 @@ export type ClientSessionDetail = WorkoutSession &
 
 export type SessionWithExercises = WorkoutSession & {
   exercises: SessionExerciseWithName[];
+};
+
+export type TrainerSessionDetail = WorkoutSession & {
+  client_id: string;
+  client_display_name: string;
+  exercises: SessionExerciseDetail[];
+  readout: SessionReadoutSummary;
 };
 
 type SessionExerciseSetRow = SessionExerciseSet;
@@ -376,6 +385,81 @@ export async function getSessionWithExercises(
     data: {
       ...session,
       exercises,
+    },
+    error: null,
+  };
+}
+
+export async function getSessionDetailForTrainer(
+  supabase: SupabaseClient,
+  trainerId: string,
+  clientId: string,
+  sessionId: string,
+): Promise<{ data: TrainerSessionDetail | null; error: string | null }> {
+  const { assigned, error: assignmentError } = await isTrainerAssignedToClient(supabase, trainerId, clientId);
+
+  if (assignmentError) {
+    return { data: null, error: assignmentError };
+  }
+
+  if (!assigned) {
+    return { data: null, error: null };
+  }
+
+  const getResult = await supabase
+    .from("workout_sessions")
+    .select(
+      "*, client_plans!inner(client_id, trainer_id, status), session_exercises(*, exercises(name, default_metric), session_exercise_sets(*), set_logs(*))",
+    )
+    .eq("id", sessionId)
+    .eq("client_plans.client_id", clientId)
+    .eq("client_plans.trainer_id", trainerId)
+    .eq("client_plans.status", "active")
+    .maybeSingle();
+
+  if (getResult.error) {
+    return { data: null, error: getResult.error.message };
+  }
+
+  if (!getResult.data) {
+    return { data: null, error: null };
+  }
+
+  const raw = parseWorkoutSessionWithLogs(getResult.data);
+  const exercises = sortByPhaseThenSortOrder(raw.session_exercises.map(mapSessionExerciseDetailRow));
+  const readout = deriveSessionReadout(
+    exercises.map((exercise) => ({
+      id: exercise.id,
+      exercise_id: exercise.exercise_id,
+      phase: exercise.phase,
+      sort_order: exercise.sort_order,
+      exercise_name: exercise.exercise_name,
+      exercise_default_metric: exercise.exercise_default_metric,
+      sets: exercise.sets,
+      logs: exercise.logs,
+    })),
+  );
+
+  const profileResult = await supabase.from("profiles").select("display_name").eq("id", clientId).maybeSingle();
+
+  if (profileResult.error) {
+    return { data: null, error: profileResult.error.message };
+  }
+
+  const clientDisplayName =
+    typeof profileResult.data?.display_name === "string" ? profileResult.data.display_name : "Client";
+
+  const clientPlans = raw.client_plans;
+  const clientPlan = Array.isArray(clientPlans) ? clientPlans[0] : clientPlans;
+  const { client_plans: _omitPlan, session_exercises: _omitExercises, ...session } = raw;
+
+  return {
+    data: {
+      ...session,
+      client_id: clientPlan.client_id,
+      client_display_name: clientDisplayName,
+      exercises,
+      readout,
     },
     error: null,
   };

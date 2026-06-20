@@ -1,31 +1,38 @@
 ---
 import Layout from "@/layouts/Layout.astro";
+import TrainerDashboardOverview from "@/components/trainer/TrainerDashboardOverview.astro";
+import { getTrainerDashboard } from "@/lib/trainer-dashboard/service";
+import { createClient } from "@/lib/supabase";
 
-const { user } = Astro.locals;
+const userId = Astro.locals.user?.id;
+const supabase = createClient(Astro.request.headers, Astro.cookies);
+
+let loadError: string | null = null;
+let dashboard: Awaited<ReturnType<typeof getTrainerDashboard>>["data"] = null;
+
+if (!supabase) {
+  loadError = "Dashboard is unavailable. Check Supabase configuration.";
+} else if (!userId) {
+  loadError = "You must be signed in to view the dashboard.";
+} else {
+  const result = await getTrainerDashboard(supabase, userId);
+  loadError = result.error;
+  dashboard = result.data;
+}
 ---
 
 <Layout title="Dashboard">
-  <div class="bg-cosmic flex min-h-screen items-center justify-center p-4">
-    <div
-      class="w-full max-w-md rounded-2xl border border-white/10 bg-white/10 p-8 text-center text-white backdrop-blur-xl"
-    >
-      <h1 class="mb-4 bg-gradient-to-r from-blue-200 to-purple-200 bg-clip-text text-3xl font-bold text-transparent">
-        Welcome
-      </h1>
-      <p class="text-blue-100/80">
-        Signed in as <span class="font-semibold text-white">{user?.email}</span>
-      </p>
-      <p class="mt-4 text-sm text-blue-100/50">
-        Your trainer dashboard will grow with client plans, sessions, and analytics in future updates.
-      </p>
-      <div class="mt-6 space-y-2 text-sm text-blue-100/60">
-        <p>
-          <a href="/trainer/clients" class="text-purple-300 hover:underline"> Manage clients and invites </a>
-        </p>
-        <p>
-          <a href="/trainer/templates" class="text-purple-300 hover:underline"> Build session templates </a>
-        </p>
-      </div>
+  <div class="bg-cosmic min-h-screen p-4 md:p-8">
+    <div class="mx-auto max-w-6xl">
+      {
+        loadError ? (
+          <div class="rounded-lg border border-red-400/30 bg-red-500/10 px-4 py-3 text-sm text-red-100">
+            Failed to load dashboard: {loadError}
+          </div>
+        ) : dashboard ? (
+          <TrainerDashboardOverview dashboard={dashboard} />
+        ) : null
+      }
     </div>
   </div>
 </Layout>

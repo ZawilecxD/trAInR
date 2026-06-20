@@ -1,6 +1,8 @@
 ---
 import Layout from "@/layouts/Layout.astro";
 import InviteClientPanel from "@/components/trainer/InviteClientPanel";
+import type { ActiveClientPlan } from "@/lib/client-plans/service";
+import { mapAssignmentsToRoster } from "@/lib/trainer/clients-roster";
 import { createClient } from "@/lib/supabase";
 import type { InviteLink, Profile, TrainerClient } from "@/types";
 
@@ -36,9 +38,18 @@ if (supabase && userId) {
 
 const clientIds = assignments.map((row) => row.client_id);
 let profileById: Record<string, Pick<Profile, "display_name">> = {};
+let planByClientId = new Map<string, ActiveClientPlan>();
 
-if (supabase && clientIds.length > 0) {
-  const profilesResult = await supabase.from("profiles").select("id, display_name").in("id", clientIds);
+if (supabase && userId && clientIds.length > 0) {
+  const [profilesResult, plansResult] = await Promise.all([
+    supabase.from("profiles").select("id, display_name").in("id", clientIds),
+    supabase
+      .from("client_plans")
+      .select("id, client_id, name, start_date")
+      .eq("trainer_id", userId)
+      .eq("status", "active")
+      .in("client_id", clientIds),
+  ]);
 
   if (!profilesResult.error) {
     const profiles = profilesResult.data as Pick<Profile, "id" | "display_name">[];
@@ -46,26 +57,34 @@ if (supabase && clientIds.length > 0) {
       profileById[profile.id] = { display_name: profile.display_name };
     }
   }
+
+  if (!plansResult.error) {
+    const plans = plansResult.data as (ActiveClientPlan & { client_id: string })[];
+    for (const plan of plans) {
+      planByClientId.set(plan.client_id, {
+        id: plan.id,
+        name: plan.name,
+        start_date: plan.start_date,
+      });
+    }
+  }
 }
 
-type ClientWithProfile = TrainerClient & {
-  client: Pick<Profile, "display_name">;
-};
-
-const clients: ClientWithProfile[] = assignments.map((row) => ({
-  ...row,
-  client: profileById[row.client_id] ?? { display_name: "Unknown client" },
-}));
+const clients = mapAssignmentsToRoster(assignments, profileById, planByClientId);
 ---
 
 <Layout title="Clients">
-  <div class="bg-cosmic flex min-h-screen justify-center p-4">
-    <div class="w-full max-w-2xl rounded-2xl border border-white/10 bg-white/10 p-8 text-white backdrop-blur-xl">
+  <div class="bg-cosmic min-h-screen p-4 md:p-8">
+    <div
+      class="mx-auto w-full max-w-4xl rounded-2xl border border-white/10 bg-white/10 p-6 text-white backdrop-blur-xl md:p-8"
+    >
       <div class="mb-8">
-        <h1 class="bg-gradient-to-r from-blue-200 to-purple-200 bg-clip-text text-2xl font-bold text-transparent">
+        <h1
+          class="bg-gradient-to-r from-blue-200 to-purple-200 bg-clip-text text-2xl font-bold text-transparent md:text-3xl"
+        >
           Clients
         </h1>
-        <p class="mt-1 text-sm text-blue-100/70">Manage invites and view assigned clients.</p>
+        <p class="mt-1 text-sm text-blue-100/70">Manage invites, view assigned clients, and open plan calendars.</p>
       </div>
 
       <InviteClientPanel invites={invites} clients={clients} origin={origin} client:load />
