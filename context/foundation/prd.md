@@ -87,7 +87,7 @@ Existing tools (Trainerize, TrueCoach) solve parts of this, but they're built fo
 ### Exercise Library
 
 - FR-007: Trainer can create exercises (name, type, muscle groups, notes, optional video/photo link). Priority: must-have
-  > Socrates: Counter-argument considered: "A pre-populated exercise database would save trainers from entering common exercises." Resolution: kept as manual-only for MVP; pre-populated library is a future enhancement.
+  > Socrates: Counter-argument considered: "A pre-populated exercise database would save trainers from entering common exercises." Resolution: kept as manual-only for MVP; pre-populated library is a future enhancement. Update: roadmap S-17 promotes this enhancement into a planned starter exercise seed copied per trainer on signup.
 - FR-008: Trainer can edit exercises. Priority: must-have
   > Socrates: Counter-argument considered: "Archiving exercises for existing plans vs. deletion." Resolution: revised — archiving removed from MVP. Edit only. Archiving with plan-preservation logic deferred to post-MVP.
 - FR-009: Trainer can browse and filter their exercise library by type and muscle group. Priority: must-have
@@ -120,8 +120,8 @@ Existing tools (Trainerize, TrueCoach) solve parts of this, but they're built fo
   > Socrates: No counter-argument; it stands as written. The menu serves both as navigation and as an overview for users who want to see the full session.
 - FR-017: Client can log each set individually: reps + weight in kg (or time for timed exercises). Negative values for assisted exercises, zero/null for bodyweight. Priority: must-have
   > Socrates: No counter-argument; it stands as written. Set-by-set logging matches real gym behavior.
-- FR-018: Client can flag each logged set as warm-up or working (only working sets count toward stats and hints). Priority: must-have [Tier 2]
-  > Socrates: No counter-argument; it stands as written. The flag is tied to stats accuracy — if stats are Tier 3, the flag's value is reduced but still useful for performance hints (FR-019).
+- FR-018: Trainer can mark each prescribed round as warm-up or working when building session templates and assigning sessions. Client can flag each logged set as warm-up or working; when a log matches a prescribed round, it inherits that round's default and the client may override at log time. Only working logged sets count toward stats and hints. Priority: must-have [Tier 2]
+  > Socrates: Counter-argument considered: "Client-only flagging is simpler and matches gym reality where warm-up volume varies." Resolution: revised — trainer prescribes intent to reduce client tap burden; client override preserves flexibility when they do extra or fewer warm-up sets. Stats and hints use `set_logs.is_warmup` only, not prescription alone.
 - FR-019: Client sees performance data from the last workout containing this exercise (previous performance hints — raw data, not averaged). Priority: must-have
   > Socrates: Counter-argument considered: "Averaging across different rep ranges is misleading." Resolution: revised — show raw data from the last session containing this exercise (what weight/reps they did last time), not a computed average.
 - FR-020: Starting a new session uses the guided one-exercise-at-a-time view; editing a previously logged session (if not yet locked) uses a list view showing all exercises. Priority: must-have
@@ -196,7 +196,7 @@ The domain rule consumes three inputs: (1) the trainer's exercise definitions (n
 11. **No audit logging** — no compliance event log.
 12. **No plan templates (multi-week programs)** — sessions are placed on the calendar one-by-one from single-session templates or from scratch. Grouping session templates into reusable multi-week programs is post-MVP.
 13. **No offline mode** — requires internet connection. Offline resilience is post-MVP.
-14. **No pre-populated exercise database** — trainers build their library from scratch. Starter exercise packs are post-MVP.
+14. ~~**No pre-populated exercise database** — trainers build their library from scratch. Starter exercise packs are post-MVP.~~ Update: superseded by roadmap S-17 (`starter-exercise-seed`), which plans a curated starter library copied as trainer-owned exercises on new trainer signup.
 
 ## Open Questions
 

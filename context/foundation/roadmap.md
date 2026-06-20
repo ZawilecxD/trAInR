@@ -41,7 +41,7 @@ Independent personal trainers lose coaching time to admin — hunting across spr
 | S-07 | trainer-dashboard          | see client overview and read-only session detail with logged data         | S-04, S-06    | FR-027, FR-028, US-01                             | proposed |
 | S-08 | session-completion-marking | mark a planned session finished, partially finished, or cancelled         | S-06          | FR-021                                            | proposed |
 | S-09 | session-comments           | leave and read comments on a session (client ↔ trainer)                   | S-04          | FR-023                                            | proposed |
-| S-10 | warmup-working-flag        | flag each logged set as warm-up or working                                | S-06          | FR-018                                            | proposed |
+| S-10 | warmup-working-flag        | prescribe and log warm-up vs working per round (client may override)      | S-02, S-04, S-06 | FR-018                                         | proposed |
 | S-11 | client-removal             | remove or reject a wrongly-assigned client                                | S-03          | FR-006                                            | done     |
 | S-12 | exercise-statistics        | view per-exercise history, estimated 1RM, and volume/tonnage              | S-06          | FR-024, FR-025, FR-026                            | proposed |
 | S-13 | data-edit-window           | edit logged data for 24 hours, then sealed                                | S-06          | FR-022                                            | proposed |
@@ -228,14 +228,14 @@ Foundations below assume these are present and do NOT re-scaffold them.
 
 ### S-10: Warm-up/working set flag
 
-- **Outcome:** client can flag each logged set as warm-up or working (only working sets count toward stats and performance hints)
+- **Outcome:** trainer marks each prescribed round as warm-up or working when building session templates and personalizing assigned sessions; client logs each set with a warm-up/working flag that **inherits the prescribed default** when a matching round exists and **may be overridden** at log time; only working logged sets (`set_logs.is_warmup = false`) count toward stats and performance hints (FR-019, FR-025). Session **phase** warm-up/main/cool-down (whole exercises) is unchanged — this slice is per-round within an exercise.
 - **Change ID:** warmup-working-flag
 - **PRD refs:** FR-018
-- **Prerequisites:** S-06
+- **Prerequisites:** S-02, S-04, S-06 (extends per-round prescription from S-14 on templates and sessions, plus guided logging)
 - **Parallel with:** S-07, S-08, S-12, S-13
 - **Blockers:** —
-- **Unknowns:** —
-- **Risk:** Minimal — one boolean per set row; main question is UX (toggle vs default).
+- **Unknowns:** Client-added rounds beyond prescription default to working; whether S-07 trainer readout should surface prescribed vs logged warm-up mismatch (likely yes when S-07 ships)
+- **Risk:** Moderate — same boolean on three row types (`template_exercise_sets`, `session_exercise_sets`, `set_logs`); assignment RPCs must snapshot the flag; default-inherit + client-override rules must stay consistent for hints/stats consumers
 - **Status:** proposed
 
 ### S-11: Client removal
@@ -318,7 +318,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Prerequisites:** S-01, S-03
 - **Parallel with:** S-02, S-15
 - **Blockers:** —
-- **Unknowns:** Seed source (static SQL migration vs seed script vs admin-maintained catalog table); whether existing trainers get a one-time backfill; initial exercise count and muscle-group coverage; whether muscle groups from the seed are global or trainer-scoped copies
+- **Unknowns:** ~~Seed source (static SQL migration vs seed script vs admin-maintained catalog table); whether existing trainers get a one-time backfill; initial exercise count and muscle-group coverage; whether muscle groups from the seed are global or trainer-scoped copies~~ — **Resolved in plan:** static SQL catalog inside a DB seeding function; new trainer signups only (no backfill); 15-25 starter exercises; reuse global `muscle_groups`; guard idempotency with `profiles.starter_exercises_seeded_at`.
 - **Risk:** Copy-on-signup must be a true per-trainer clone (not shared rows) to preserve RLS isolation and allow destructive edits without affecting other trainers. Duplication logic should live in the signup/onboarding path or a SECURITY DEFINER RPC triggered once per trainer.
 - **Status:** proposed
 
@@ -349,7 +349,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 | S-07       | trainer-dashboard                     | Build trainer dashboard with client overview and session detail             | no                    | Needs S-04 + S-06                                                                                                           |
 | S-08       | session-completion-marking            | Add session status: finished, partial, or cancelled                         | no                    | Needs S-06; extends FR-021 with cancelled state; update S-05 calendar colors                                                |
 | S-09       | session-comments                      | Add bidirectional session comments (client ↔ trainer)                       | no                    | Needs S-04                                                                                                                  |
-| S-10       | warmup-working-flag                   | Add warm-up/working set flag per logged set                                 | no                    | Needs S-06                                                                                                                  |
+| S-10       | warmup-working-flag                   | Prescribe warm-up/working per round; log with inherit + client override     | yes                   | Run `/10x-plan warmup-working-flag`; extends S-14 round rows + S-06 logging; update ZAW-15 scope                             |
 | S-11       | client-removal                        | Implement trainer can remove/reject client                                  | no                    | Needs S-03                                                                                                                  |
 | S-12       | exercise-statistics                   | Build per-exercise history with 1RM and volume stats                        | no                    | Needs S-06                                                                                                                  |
 | S-13       | data-edit-window                      | Implement 24h edit window then seal logged data                             | no                    | Needs S-06                                                                                                                  |
@@ -369,9 +369,10 @@ Foundations below assume these are present and do NOT re-scaffold them.
 1. ~~**What happens to client data when a trainer removes a client?**~~ — **Resolved:** Sever the trainer-client link (soft-delete relationship); retain all client data. Removed client is no longer visible to the trainer. Retention period TBD in the future. Future enhancement: allow trainer to browse archived client data for insights.
 2. ~~**Ad-hoc session exercise scope:** Can clients pick only from their trainer's library when logging an unplanned session, or can they add arbitrary exercise names? (S-16)~~ — **Parked with S-16:** revisit post-MVP.
 3. **Cancelled session reopen:** Can a client reopen a cancelled planned session and start logging, or is cancel permanent? (S-08)
-4. **Starter seed backfill:** Should existing trainers receive the starter exercise library retroactively, or only new signups? (S-17)
+4. ~~**Starter seed backfill:** Should existing trainers receive the starter exercise library retroactively, or only new signups? (S-17)~~ — **Resolved:** new trainer signups only; existing trainers are not backfilled.
 5. **Trainer sidebar vs top nav:** Should the trainer area adopt a collapsible sidebar at `lg:` breakpoints, or keep the horizontal topbar? (S-18)
 6. **Dark-only vs light/dark toggle:** The app is always dark today; should a light mode ever be supported? (S-18)
+7. **Warm-up default on extra rounds:** Client-added rounds beyond prescription default to working — confirm at `/10x-plan` (S-10)
 
 ## Parked
 
