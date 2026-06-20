@@ -5,7 +5,7 @@
 version: 1
 status: draft
 created: 2026-05-25
-updated: 2026-06-21
+updated: 2026-06-20
 prd_version: 1
 main_goal: speed
 top_blocker: time
@@ -41,7 +41,7 @@ Independent personal trainers lose coaching time to admin — hunting across spr
 | S-07 | trainer-dashboard          | see client overview and read-only session detail with logged data         | S-04, S-06    | FR-027, FR-028, US-01                             | done     |
 | S-08 | session-completion-marking | mark a planned session finished, partially finished, or cancelled         | S-06          | FR-021                                            | proposed |
 | S-09 | session-comments           | leave and read comments on a session (client ↔ trainer)                   | S-04          | FR-023                                            | proposed |
-| S-10 | warmup-working-flag        | prescribe and log warm-up vs working per round (client may override)      | S-02, S-04, S-06 | FR-018                                         | proposed |
+| S-10 | warmup-working-flag        | prescribe and log warm-up vs working per round (client may override)      | S-02, S-04, S-06 | FR-018                                         | done     |
 | S-11 | client-removal             | remove or reject a wrongly-assigned client                                | S-03          | FR-006                                            | done     |
 | S-12 | exercise-statistics        | view per-exercise history, estimated 1RM, and volume/tonnage              | S-06          | FR-024, FR-025, FR-026                            | proposed |
 | S-13 | data-edit-window           | edit logged data for 24 hours, then sealed                                | S-06          | FR-022                                            | proposed |
@@ -237,7 +237,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Blockers:** —
 - **Unknowns:** Client-added rounds beyond prescription default to working; whether S-07 trainer readout should surface prescribed vs logged warm-up mismatch (likely yes when S-07 ships)
 - **Risk:** Moderate — same boolean on three row types (`template_exercise_sets`, `session_exercise_sets`, `set_logs`); assignment RPCs must snapshot the flag; default-inherit + client-override rules must stay consistent for hints/stats consumers
-- **Status:** proposed
+- **Status:** done
 
 ### S-11: Client removal
 
@@ -420,4 +420,5 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Q-02: close KNOWN GAP: RPC rejects cross-trainer muscle group replacement; flip integration test** — Archived 2026-06-13 → `context/archive/2026-06-08-harden-replace-exercise-muscle-groups/`. Lesson: —.
 - **S-06: client can open a session and step through exercises one at a time (designed for one-handed phone use), navigate via exercise list menu, log each set (reps + weight or time), and see performance data from the last workout containing each exercise** — Archived 2026-06-20 → `context/archive/2026-06-14-guided-workout-logging/`. Lesson: —.
 - **S-07: trainer can see an overview of all their clients, assigned plans, and recent session activity; can view a read-only detail of a client's session showing exercises, sets, weights** — Archived 2026-06-20 → `context/archive/2026-06-20-trainer-dashboard/`. Lesson: —.
+- **S-10: trainer marks each prescribed round as warm-up or working when building session templates and personalizing assigned sessions; client logs each set with a warm-up/working flag that inherits the prescribed default when a matching round exists and may be overridden at log time; only working logged sets (`set_logs.is_warmup = false`) count toward stats and performance hints (FR-019, FR-025). Session phase warm-up/main/cool-down (whole exercises) is unchanged — this slice is per-round within an exercise.** — Archived 2026-06-20 → `context/archive/2026-06-20-warmup-working-flag/`. Lesson: —.
 
