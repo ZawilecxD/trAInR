@@ -1,0 +1,33 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import GuidedWorkoutHub from "@/components/guided-workout/GuidedWorkoutHub";
+import { getMySessionDetail } from "@/lib/workout-sessions/service";
+import { createClient } from "@/lib/supabase";
+import { z } from "zod";
+
+export const prerender = false;
+
+const sessionIdSchema = z.uuid();
+
+const userId = Astro.locals.user?.id;
+const parsedSessionId = sessionIdSchema.safeParse(Astro.params.sessionId);
+const supabase = createClient(Astro.request.headers, Astro.cookies);
+
+if (!parsedSessionId.success || !supabase || !userId) {
+  return Astro.redirect("/client/plan");
+}
+
+const { data: session, error: sessionError } = await getMySessionDetail(supabase, userId, parsedSessionId.data);
+
+if (sessionError || !session) {
+  return Astro.redirect("/client/plan");
+}
+---
+
+<Layout title={session.name ?? "Workout"}>
+  <div class="bg-cosmic min-h-screen p-4 md:p-8">
+    <div class="mx-auto max-w-2xl lg:max-w-6xl">
+      <GuidedWorkoutHub client:load initialSession={session} />
+    </div>
+  </div>
+</Layout>

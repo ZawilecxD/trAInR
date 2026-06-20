@@ -162,11 +162,11 @@ describe("set_logs", () => {
   });
 
   describe("DELETE", () => {
-    it("Client cannot DELETE own set log (no DELETE grant)", async () => {
+    it("Client can DELETE own set log on assigned session", async () => {
       const { data, error } = await clientA.client.from("set_logs").delete().eq("id", setLogId).select("id");
 
       expect(error).toBeNull();
-      expect(data).toEqual([]);
+      expect(data).toEqual([{ id: setLogId }]);
 
       const { data: stillThere, error: selectError } = await clientA.client
         .from("set_logs")
@@ -174,7 +174,29 @@ describe("set_logs", () => {
         .eq("id", setLogId);
 
       expect(selectError).toBeNull();
-      expect(stillThere).toEqual([{ id: setLogId }]);
+      expect(stillThere).toEqual([]);
+    });
+
+    it("Trainer A cannot DELETE client set log", async () => {
+      const { data: inserted, error: insertError } = await clientA.client
+        .from("set_logs")
+        .insert({
+          session_exercise_id: sessionExerciseAId,
+          set_number: 4,
+          reps: 10,
+        })
+        .select("id")
+        .single<{ id: string }>();
+
+      expect(insertError).toBeNull();
+      if (!inserted?.id) {
+        throw new Error("Expected set log id after insert");
+      }
+
+      const { data, error } = await trainerA.client.from("set_logs").delete().eq("id", inserted.id).select("id");
+
+      expect(error).toBeNull();
+      expect(data).toEqual([]);
     });
   });
 });

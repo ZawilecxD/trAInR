@@ -38,11 +38,19 @@ export default function ClientWeekView({ sessions, weekStart }: ClientWeekViewPr
             ) : (
               <ul className="space-y-2">
                 {day.sessions.map((session) => (
-                  <li key={session.id} className="rounded-lg border border-white/10 bg-white/5 px-4 py-3">
-                    <span className="block truncate font-medium text-white">{session.name}</span>
-                    <Badge variant="outline" className={cn("mt-1", sessionStatusBadgeClass(session.status))}>
-                      {sessionStatusLabel(session.status)}
-                    </Badge>
+                  <li key={session.id}>
+                    <a
+                      href={`/client/sessions/${session.id}`}
+                      className="flex min-h-11 items-center justify-between gap-3 rounded-lg border border-white/10 bg-white/5 px-4 py-3 transition-colors hover:bg-white/10"
+                    >
+                      <div className="min-w-0">
+                        <span className="block truncate font-medium text-white">{session.name}</span>
+                        <Badge variant="outline" className={cn("mt-1", sessionStatusBadgeClass(session.status))}>
+                          {sessionStatusLabel(session.status)}
+                        </Badge>
+                      </div>
+                      <span className="shrink-0 text-sm font-medium text-blue-200">Open</span>
+                    </a>
                   </li>
                 ))}
               </ul>

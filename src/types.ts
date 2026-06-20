@@ -159,6 +159,7 @@ export interface SetLog {
   session_exercise_id: string;
   set_number: number;
   is_warmup: boolean;
+  is_complete: boolean;
   reps: number | null;
   duration_seconds: number | null;
   load_kg: number | null;

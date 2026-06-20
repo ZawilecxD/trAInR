@@ -1,6 +1,7 @@
 ---
 
 ## project: "trAInR"
+
 version: 1
 status: draft
 created: 2026-05-25
@@ -28,24 +29,26 @@ Independent personal trainers lose coaching time to admin — hunting across spr
 ## At a glance
 
 
-| ID   | Change ID                  | Outcome (user can …)                                                   | Prerequisites | PRD refs                                        | Status   |
-| ---- | -------------------------- | ---------------------------------------------------------------------- | ------------- | ----------------------------------------------- | -------- |
-| F-01 | database-schema-and-rls    | (foundation) Supabase schema with RLS and role-aware middleware landed | —             | NFR privacy, NFR data integrity, Access Control | done     |
-| S-01 | exercise-library           | create, edit, and browse/filter exercises                              | F-01          | FR-007, FR-008, FR-009                          | done     |
-| S-02 | session-templates          | create and edit reusable session templates from exercises              | F-01, S-01    | FR-010, FR-011                                  | done     |
-| S-03 | client-onboarding          | register via invite link and be auto-assigned to trainer               | F-01          | FR-001, FR-002, FR-003, FR-004, FR-005          | done     |
-| S-04 | plan-assignment            | place a session on a specific day of a client's calendar               | S-02, S-03    | FR-012, US-01                                   | done     |
-| S-05 | client-calendar            | view assigned sessions in month/week view with status colors           | S-04          | FR-013, FR-014                                  | done     |
-| S-06 | guided-workout-logging     | open a session, step through exercises, log sets, see previous hints   | S-04          | FR-015, FR-016, FR-017, FR-019, FR-020, US-01   | done |
-| S-07 | trainer-dashboard          | see client overview and read-only session detail with logged data      | S-04, S-06    | FR-027, FR-028, US-01                           | proposed |
-| S-08 | session-completion-marking | manually mark a session as finished or finished partially              | S-06          | FR-021                                          | proposed |
-| S-09 | session-comments           | comment on a session (bidirectional)                                   | S-04          | FR-023                                          | proposed |
-| S-10 | warmup-working-flag        | flag each logged set as warm-up or working                             | S-06          | FR-018                                          | proposed |
-| S-11 | client-removal             | remove or reject a wrongly-assigned client                             | S-03          | FR-006                                          | done     |
-| S-12 | exercise-statistics        | view per-exercise history, estimated 1RM, and volume/tonnage           | S-06          | FR-024, FR-025, FR-026                          | proposed |
-| S-13 | data-edit-window           | edit logged data for 24 hours, then sealed                             | S-06          | FR-022                                          | proposed |
-| S-14 | exercises-separate-rounds  | prescribe each exercise round separately (reps, load, rest per round)  | S-02          | FR-010, FR-011                                  | done     |
-| S-15 | exercise-favourites        | mark exercises as favourites and filter exercise lists by favourites only | S-01          | FR-009                                          | proposed |
+| ID   | Change ID                  | Outcome (user can …)                                                      | Prerequisites | PRD refs                                          | Status      |
+| ---- | -------------------------- | ------------------------------------------------------------------------- | ------------- | ------------------------------------------------- | ----------- |
+| F-01 | database-schema-and-rls    | (foundation) Supabase schema with RLS and role-aware middleware landed    | —             | NFR privacy, NFR data integrity, Access Control   | done        |
+| S-01 | exercise-library           | create, edit, and browse/filter exercises                                 | F-01          | FR-007, FR-008, FR-009                            | done        |
+| S-02 | session-templates          | create and edit reusable session templates from exercises                 | F-01, S-01    | FR-010, FR-011                                    | done        |
+| S-03 | client-onboarding          | register via invite link and be auto-assigned to trainer                  | F-01          | FR-001, FR-002, FR-003, FR-004, FR-005            | done        |
+| S-04 | plan-assignment            | place a session on a specific day of a client's calendar                  | S-02, S-03    | FR-012, US-01                                     | done        |
+| S-05 | client-calendar            | view assigned sessions in month/week view with status colors              | S-04          | FR-013, FR-014                                    | done        |
+| S-06 | guided-workout-logging     | open a session, step through exercises, log sets, see previous hints      | S-04          | FR-015, FR-016, FR-017, FR-019, FR-020, US-01     | in progress |
+| S-07 | trainer-dashboard          | see client overview and read-only session detail with logged data         | S-04, S-06    | FR-027, FR-028, US-01                             | proposed    |
+| S-08 | session-completion-marking | mark a planned session finished, partially finished, or cancelled         | S-06          | FR-021                                            | proposed    |
+| S-09 | session-comments           | leave and read comments on a session (client ↔ trainer)                   | S-04          | FR-023                                            | proposed    |
+| S-10 | warmup-working-flag        | flag each logged set as warm-up or working                                | S-06          | FR-018                                            | proposed    |
+| S-11 | client-removal             | remove or reject a wrongly-assigned client                                | S-03          | FR-006                                            | done        |
+| S-12 | exercise-statistics        | view per-exercise history, estimated 1RM, and volume/tonnage              | S-06          | FR-024, FR-025, FR-026                            | proposed    |
+| S-13 | data-edit-window           | edit logged data for 24 hours, then sealed                                | S-06          | FR-022                                            | proposed    |
+| S-14 | exercises-separate-rounds  | prescribe each exercise round separately (reps, load, rest per round)     | S-02          | FR-010, FR-011                                    | done        |
+| S-15 | exercise-favourites        | mark exercises as favourites and filter exercise lists by favourites only | S-01          | FR-009                                            | proposed    |
+| S-16 | ad-hoc-session-logging     | log an unplanned workout not on the calendar                              | S-06          | FR-015, FR-016, FR-017 (extends)                  | proposed    |
+| S-17 | starter-exercise-seed      | receive a curated starter exercise library on trainer signup              | S-01, S-03    | FR-007, FR-008 (extends; supersedes Non-Goal #14) | proposed    |
 
 
 ### Quality & testing
@@ -63,12 +66,12 @@ Independent personal trainers lose coaching time to admin — hunting across spr
 Navigation aid — groups items that share a Prerequisites chain. Canonical ordering still lives in the dependency graph below; this table is the proposed reading order across parallel tracks.
 
 
-| Stream | Theme                          | Chain                                                        | Note                                                                                                                                                                                          |
-| ------ | ------------------------------ | ------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| A      | Trainer authoring → north star | `F-01` → `S-01` → `S-02` → `S-04` → `S-06` → `S-07`          | Critical path: every link is on the shortest route to validating the async training loop.                                                                                                     |
-| B      | Client onboarding & calendar   | `S-03` → `S-05`                                              | Joins Stream A at `S-04` (S-03 is a prerequisite for S-04); `S-05` branches off `S-04` parallel with `S-06`.                                                                                  |
-| C      | Enhancement & polish           | `S-08` / `S-09` / `S-10` / `S-11` / `S-12` / `S-13` / `S-14` / `S-15` | Tier 2+3 items; sequence after core loop completes or when capacity opens. `S-14` extends session template prescription (after S-02). `S-15` extends exercise library browse/filter (after S-01). |
-| D      | Quality & testing              | `Q-01` / `Q-02` / `Q-03`                                     | Cross-cutting; selective mutation testing per `test-plan.md` after the integration harness lands. `Q-02`/`Q-03` close SECURITY DEFINER gaps documented by the harness (flip KNOWN GAP tests). |
+| Stream | Theme                          | Chain                                                                                   | Note                                                                                                                                                                                                                                                                                           |
+| ------ | ------------------------------ | --------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| A      | Trainer authoring → north star | `F-01` → `S-01` → `S-02` → `S-04` → `S-06` → `S-07`                                     | Critical path: every link is on the shortest route to validating the async training loop.                                                                                                                                                                                                      |
+| B      | Client onboarding & calendar   | `S-03` → `S-05`                                                                         | Joins Stream A at `S-04` (S-03 is a prerequisite for S-04); `S-05` branches off `S-04` parallel with `S-06`.                                                                                                                                                                                   |
+| C      | Enhancement & polish           | `S-08` / `S-09` / `S-10` / `S-11` / `S-12` / `S-13` / `S-14` / `S-15` / `S-16` / `S-17` | Tier 2+3 items; sequence after core loop completes or when capacity opens. `S-14` extends session template prescription (after S-02). `S-15` extends exercise library browse/filter (after S-01). `S-16` lets clients log off-plan workouts. `S-17` seeds starter exercises on trainer signup. |
+| D      | Quality & testing              | `Q-01` / `Q-02` / `Q-03`                                                                | Cross-cutting; selective mutation testing per `test-plan.md` after the integration harness lands. `Q-02`/`Q-03` close SECURITY DEFINER gaps documented by the harness (flip KNOWN GAP tests).                                                                                                  |
 
 
 ## Baseline
@@ -184,7 +187,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Blockers:** —
 - **Unknowns:** —
 - **Risk:** One-handed phone UX for set-by-set logging is the hardest UI challenge in the product; previous-performance hints (FR-019) need a query pattern that scales as session history grows.
-- **Status:** done
+- **Status:** in progress
 
 ### S-07: Trainer dashboard
 
@@ -200,25 +203,25 @@ Foundations below assume these are present and do NOT re-scaffold them.
 
 ### S-08: Session completion marking
 
-- **Outcome:** client manually marks a session as "finished" or "finished partially"
+- **Outcome:** client can mark a planned session as "finished", "finished partially", or "cancelled" (did not attempt / chose not to do it); cancelled sessions remain visible on the calendar with distinct status
 - **Change ID:** session-completion-marking
-- **PRD refs:** FR-021
+- **PRD refs:** FR-021 (extends with cancelled status — add at `/10x-plan` if scope needs contract lock-in)
 - **Prerequisites:** S-06
 - **Parallel with:** S-07, S-10, S-12, S-13
 - **Blockers:** —
-- **Unknowns:** —
-- **Risk:** Minimal — simple status toggle on an already-logged session.
+- **Unknowns:** Whether a cancelled session can be reopened and started later, or is permanently closed; whether partial logging before cancel is retained
+- **Risk:** Calendar status colors (S-05) need a fourth state; trainer dashboard (S-07) must surface cancelled vs not-started clearly.
 - **Status:** proposed
 
 ### S-09: Session comments
 
-- **Outcome:** both client and trainer can comment on a session (bidirectional)
+- **Outcome:** client and trainer can each leave comments on a training session and read the other's comments (bidirectional thread per session)
 - **Change ID:** session-comments
 - **PRD refs:** FR-023
 - **Prerequisites:** S-04
-- **Parallel with:** S-05, S-06
+- **Parallel with:** S-05, S-06, S-08
 - **Blockers:** —
-- **Unknowns:** —
+- **Unknowns:** Whether comments are allowed on cancelled sessions and ad-hoc sessions (S-16); chronological vs threaded display
 - **Risk:** Users may expect real-time notification on new comments; notifications are out of scope (Non-Goal #5), so comments are pull-only.
 - **Status:** proposed
 
@@ -279,7 +282,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Parallel with:** S-03, S-04 (once S-02 is done)
 - **Blockers:** —
 - **Unknowns:** ~~Whether per-round rows live on template exercises only or also on assigned session exercises~~ — **Resolved:** both; session mirror deferred to S-04 (`session_exercise_sets`). Metric variants (time/distance) per round remain per-exercise (S-14).
-- **Risk:** Data model shift from flat `prescribed_`* fields to round rows cascades to S-04 (assignment), S-06 (guided logging), and S-07 (trainer readout); plan should define migration/backfill for templates created with uniform prescriptions
+- **Risk:** Data model shift from flat `prescribed`_* fields to round rows cascades to S-04 (assignment), S-06 (guided logging), and S-07 (trainer readout); plan should define migration/backfill for templates created with uniform prescriptions
 - **Status:** done
 
 ### S-15: Exercise favourites
@@ -292,6 +295,30 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Blockers:** —
 - **Unknowns:** Whether favourite toggle appears inline on list rows only, or also on exercise detail/edit; whether template builder exercise picker shares the same filter component as the library page
 - **Risk:** Minimal — per-trainer boolean flag; main work is consistent filter UX across exercise pickers (library, template builder, session personalization)
+- **Status:** proposed
+
+### S-16: Ad-hoc session logging
+
+- **Outcome:** client can log a custom training session that was not on their calendar — pick date, add exercises (from their trainer's library or free-form where allowed), log sets/metrics through the same guided flow as planned sessions, and save it as a completed session visible to the trainer
+- **Change ID:** ad-hoc-session-logging
+- **PRD refs:** FR-015, FR-016, FR-017 (extends guided logging to off-plan sessions; dedicated FR not yet in PRD — add at `/10x-plan`)
+- **Prerequisites:** S-06
+- **Parallel with:** S-07, S-08, S-09, S-12, S-13
+- **Blockers:** —
+- **Unknowns:** Whether ad-hoc sessions appear on the client calendar retroactively; whether the trainer can convert an ad-hoc log into a reusable template; exercise picker scope (trainer library only vs client can add arbitrary exercise names)
+- **Risk:** Blurs the line between "assigned plan" and "client self-directed training"; trainer dashboard needs a clear visual distinction from planned sessions. Reuses S-06 logging UX but needs a separate creation entry point and possibly a lighter-weight exercise picker.
+- **Status:** proposed
+
+### S-17: Starter exercise library seed
+
+- **Outcome:** every new trainer receives a copy of a curated collection of popular exercises on signup; seeded exercises behave like trainer-owned exercises (editable, deletable, usable in templates) with no read-only or "system" lock
+- **Change ID:** starter-exercise-seed
+- **PRD refs:** FR-007, FR-008 (extends exercise library; supersedes PRD Non-Goal #14 — pre-populated library promoted from post-MVP to proposed slice)
+- **Prerequisites:** S-01, S-03
+- **Parallel with:** S-02, S-15
+- **Blockers:** —
+- **Unknowns:** Seed source (static SQL migration vs seed script vs admin-maintained catalog table); whether existing trainers get a one-time backfill; initial exercise count and muscle-group coverage; whether muscle groups from the seed are global or trainer-scoped copies
+- **Risk:** Copy-on-signup must be a true per-trainer clone (not shared rows) to preserve RLS isolation and allow destructive edits without affecting other trainers. Duplication logic should live in the signup/onboarding path or a SECURITY DEFINER RPC triggered once per trainer.
 - **Status:** proposed
 
 ## Backlog Handoff
@@ -307,14 +334,16 @@ Foundations below assume these are present and do NOT re-scaffold them.
 | S-05       | client-calendar                       | Build client calendar view (month/week + status colors)                     | no                    | Needs S-04                                                                                                                  |
 | S-06       | guided-workout-logging                | Build guided workout view with set-by-set logging                           | no                    | Needs S-04                                                                                                                  |
 | S-07       | trainer-dashboard                     | Build trainer dashboard with client overview and session detail             | no                    | Needs S-04 + S-06                                                                                                           |
-| S-08       | session-completion-marking            | Add manual session completion status (finished/partial)                     | no                    | Needs S-06                                                                                                                  |
-| S-09       | session-comments                      | Add bidirectional session comments                                          | no                    | Needs S-04                                                                                                                  |
+| S-08       | session-completion-marking            | Add session status: finished, partial, or cancelled                         | no                    | Needs S-06; extends FR-021 with cancelled state; update S-05 calendar colors                                                |
+| S-09       | session-comments                      | Add bidirectional session comments (client ↔ trainer)                       | no                    | Needs S-04                                                                                                                  |
 | S-10       | warmup-working-flag                   | Add warm-up/working set flag per logged set                                 | no                    | Needs S-06                                                                                                                  |
 | S-11       | client-removal                        | Implement trainer can remove/reject client                                  | no                    | Needs S-03                                                                                                                  |
 | S-12       | exercise-statistics                   | Build per-exercise history with 1RM and volume stats                        | no                    | Needs S-06                                                                                                                  |
 | S-13       | data-edit-window                      | Implement 24h edit window then seal logged data                             | no                    | Needs S-06                                                                                                                  |
 | S-14       | exercises-separate-rounds             | Per-round prescription (reps, load, rest) in session templates              | no                    | Needs S-02                                                                                                                  |
 | S-15       | exercise-favourites                   | Mark exercises as favourites and filter exercise lists                      | yes                   | Run `/10x-plan exercise-favourites`; extends FR-009 browse/filter                                                           |
+| S-16       | ad-hoc-session-logging                | Log an unplanned custom workout not on the calendar                         | no                    | Needs S-06; reuses guided logging UX with new creation flow                                                                 |
+| S-17       | starter-exercise-seed                 | Copy curated starter exercises to each trainer on signup                    | no                    | Needs S-01 + S-03; supersedes PRD Non-Goal #14; per-trainer clone required for RLS                                          |
 | Q-01       | add-stryker-mutation-testing          | Run Stryker on risk-critical modules                                        | no                    | Needs test-plan Phase 1 complete                                                                                            |
 | Q-02       | harden-replace-exercise-muscle-groups | Add auth.uid() ownership check to replace_exercise_muscle_groups RPC        | yes                   | Run `/10x-plan harden-replace-exercise-muscle-groups`; flip KNOWN GAP test in `tests/integration/security-definer/`         |
 | Q-03       | harden-complete-client-invite         | Harden complete_client_invite p_client_id binding for authenticated callers | no                    | Run `/10x-frame harden-complete-client-invite` first (anon vs authenticated design); then `/10x-plan`                       |
@@ -324,6 +353,9 @@ Foundations below assume these are present and do NOT re-scaffold them.
 ## Open Roadmap Questions
 
 1. ~~**What happens to client data when a trainer removes a client?**~~ — **Resolved:** Sever the trainer-client link (soft-delete relationship); retain all client data. Removed client is no longer visible to the trainer. Retention period TBD in the future. Future enhancement: allow trainer to browse archived client data for insights.
+2. **Ad-hoc session exercise scope:** Can clients pick only from their trainer's library when logging an unplanned session, or can they add arbitrary exercise names? (S-16)
+3. **Cancelled session reopen:** Can a client reopen a cancelled planned session and start logging, or is cancel permanent? (S-08)
+4. **Starter seed backfill:** Should existing trainers receive the starter exercise library retroactively, or only new signups? (S-17)
 
 ## Parked
 
@@ -340,7 +372,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Audit logging** — Why parked: PRD §Non-Goals #11. No compliance event log.
 - **Plan templates (multi-week programs)** — Why parked: PRD §Non-Goals #12. Sessions placed one-by-one.
 - **Offline mode** — Why parked: PRD §Non-Goals #13. Requires internet.
-- **Pre-populated exercise database** — Why parked: PRD §Non-Goals #14. Trainers build from scratch.
+- ~~**Pre-populated exercise database**~~ — **Promoted to S-17** (`starter-exercise-seed`): curated starter library copied per trainer on signup; trainers edit/delete like their own exercises.
 
 ## Done
 

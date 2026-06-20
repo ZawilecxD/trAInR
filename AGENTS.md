@@ -21,7 +21,7 @@ trAInR is an Astro 6 SSR application with React 19 islands, Tailwind CSS 4, Supa
 - `npm run lint:fix` — auto-fix lint issues
 - `npm run format` — Prettier (prettier-plugin-astro + prettier-plugin-tailwindcss)
 
-Pre-commit hook (husky + lint-staged) runs `eslint --fix` on `*.{ts,tsx,astro}` and `prettier --write` on `*.{json,css,md}` automatically.
+Pre-commit hook (husky + lint-staged) runs `eslint --fix` on `*.{ts,tsx,astro}`, related Vitest tests on staged `*.{ts,tsx}` via `scripts/vitest-staged.cjs`, and `prettier --write` on `*.{json,css,md}` automatically.
 
 ## Project Structure
 

@@ -1,5 +1,5 @@
 import { addDays, differenceInCalendarDays } from "date-fns";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, ChevronRight as OpenIcon } from "lucide-react";
 import { useMemo, useRef, useState } from "react";
 import ClientWeekView from "@/components/plans/ClientWeekView";
 import PlanCalendar, { type PlanCalendarSession } from "@/components/plans/PlanCalendar";
@@ -218,11 +218,22 @@ export default function ClientCalendarHub({
             ) : (
               <ul className="space-y-2">
                 {sessionsOnSelectedDay.map((session) => (
-                  <li key={session.id} className="rounded-lg border border-white/10 bg-white/5 px-4 py-3">
-                    <span className="block truncate font-medium text-white">{session.name}</span>
-                    <Badge variant="outline" className={cn("mt-1", sessionStatusBadgeClass(session.status))}>
-                      {sessionStatusLabel(session.status)}
-                    </Badge>
+                  <li key={session.id}>
+                    <a
+                      href={`/client/sessions/${session.id}`}
+                      className="flex min-h-11 items-center justify-between gap-3 rounded-lg border border-white/10 bg-white/5 px-4 py-3 transition-colors hover:bg-white/10"
+                    >
+                      <div className="min-w-0">
+                        <span className="block truncate font-medium text-white">{session.name}</span>
+                        <Badge variant="outline" className={cn("mt-1", sessionStatusBadgeClass(session.status))}>
+                          {sessionStatusLabel(session.status)}
+                        </Badge>
+                      </div>
+                      <span className="inline-flex shrink-0 items-center gap-1 text-sm font-medium text-blue-200">
+                        Open
+                        <OpenIcon className="size-4" aria-hidden="true" />
+                      </span>
+                    </a>
                   </li>
                 ))}
               </ul>
