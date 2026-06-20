@@ -379,16 +379,16 @@ No database migration is planned. The plan deliberately derives readout status f
 
 #### Automated
 
-- [ ] 3.1 Readout unit tests pass: `npm test -- src/lib/trainer-dashboard/readout.test.ts`
-- [ ] 3.2 Lint passes: `npm run lint`
-- [ ] 3.3 Production build passes: `npm run build`
+- [x] 3.1 Readout unit tests pass: `npm test -- src/lib/trainer-dashboard/readout.test.ts`
+- [x] 3.2 Lint passes: `npm run lint`
+- [x] 3.3 Production build passes: `npm run build`
 
 #### Manual
 
-- [ ] 3.4 Trainer with no clients sees the setup checklist and invite/template/exercise links.
-- [ ] 3.5 Trainer with clients but no logged activity sees active client summary and a calm "no logged activity yet" state.
-- [ ] 3.6 Trainer with logged sessions sees recent activity linking to session review.
-- [ ] 3.7 Mobile width stacks stats, client summary, quick actions, and feed without horizontal overflow.
+- [x] 3.4 Trainer with no clients sees the setup checklist and invite/template/exercise links.
+- [x] 3.5 Trainer with clients but no logged activity sees active client summary and a calm "no logged activity yet" state.
+- [x] 3.6 Trainer with logged sessions sees recent activity linking to session review.
+- [x] 3.7 Mobile width stacks stats, client summary, quick actions, and feed without horizontal overflow.
 
 ### Phase 4: Rich Trainer Clients Roster
 
