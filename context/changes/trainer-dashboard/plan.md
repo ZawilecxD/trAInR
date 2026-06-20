@@ -364,16 +364,16 @@ No database migration is planned. The plan deliberately derives readout status f
 
 #### Automated
 
-- [x] 2.1 Existing workout-session and guided-workout unit tests pass: `npm test -- src/lib/workout-sessions/form-validation.test.ts src/lib/guided-workout/format-prescription.test.ts`
-- [x] 2.2 New readout tests remain green: `npm test -- src/lib/trainer-dashboard/readout.test.ts`
-- [x] 2.3 Lint passes: `npm run lint`
+- [x] 2.1 Existing workout-session and guided-workout unit tests pass: `npm test -- src/lib/workout-sessions/form-validation.test.ts src/lib/guided-workout/format-prescription.test.ts` — ca2c5a3
+- [x] 2.2 New readout tests remain green: `npm test -- src/lib/trainer-dashboard/readout.test.ts` — ca2c5a3
+- [x] 2.3 Lint passes: `npm run lint` — ca2c5a3
 
 #### Manual
 
-- [x] 2.4 A not-started trainer session still opens the existing editable session form.
-- [x] 2.5 A started/logged trainer session opens the same URL and shows read-only prescribed vs actual rows.
-- [x] 2.6 The review page has no edit, save, delete, or archive controls when the session is not editable.
-- [x] 2.7 Back navigation returns to the client plan date when `scheduled_date` exists.
+- [x] 2.4 A not-started trainer session still opens the existing editable session form. — ca2c5a3
+- [x] 2.5 A started/logged trainer session opens the same URL and shows read-only prescribed vs actual rows. — ca2c5a3
+- [x] 2.6 The review page has no edit, save, delete, or archive controls when the session is not editable. — ca2c5a3
+- [x] 2.7 Back navigation returns to the client plan date when `scheduled_date` exists. — ca2c5a3
 
 ### Phase 3: Trainer Dashboard Overview
 
