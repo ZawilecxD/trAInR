@@ -409,13 +409,13 @@ No database migration is planned. The plan deliberately derives readout status f
 
 #### Automated
 
-- [x] 5.1 Full lint passes: `npm run lint`
-- [x] 5.2 Full production build passes: `npm run build`
-- [x] 5.3 New and relevant existing unit tests pass: `npm test -- src/lib/trainer-dashboard/readout.test.ts src/lib/guided-workout/format-prescription.test.ts src/lib/workout-sessions/form-validation.test.ts`
+- [x] 5.1 Full lint passes: `npm run lint` — b2c0e3f
+- [x] 5.2 Full production build passes: `npm run build` — b2c0e3f
+- [x] 5.3 New and relevant existing unit tests pass: `npm test -- src/lib/trainer-dashboard/readout.test.ts src/lib/guided-workout/format-prescription.test.ts src/lib/workout-sessions/form-validation.test.ts` — b2c0e3f
 
 #### Manual
 
-- [x] 5.4 Dashboard, session review, and clients roster pass desktop and mobile smoke checks.
-- [x] 5.5 No exercise-library modal redesign was introduced.
-- [x] 5.6 No missed-session cards or persisted status changes were introduced.
-- [x] 5.7 All plan phases complete — change ready for archive or implementation review.
+- [x] 5.4 Dashboard, session review, and clients roster pass desktop and mobile smoke checks. — b2c0e3f
+- [x] 5.5 No exercise-library modal redesign was introduced. — b2c0e3f
+- [x] 5.6 No missed-session cards or persisted status changes were introduced. — b2c0e3f
+- [x] 5.7 All plan phases complete — change ready for archive or implementation review. — b2c0e3f

@@ -1,7 +1,7 @@
 ---
 change_id: trainer-dashboard
 title: Trainer dashboard (S-07)
-status: implementing
+status: implemented
 linear_issue: ZAW-12
 created: 2026-06-20
 updated: 2026-06-20
