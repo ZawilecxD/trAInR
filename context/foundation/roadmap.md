@@ -78,13 +78,14 @@ Navigation aid — groups items that share a Prerequisites chain. Canonical orde
 
 ## Baseline
 
-What's already in place in the codebase as of 2026-05-25 (auto-researched + user-confirmed).
+What's already in place in the codebase as of 2026-06-20 (auto-researched + shipped slices through S-17).
 Foundations below assume these are present and do NOT re-scaffold them.
 
 - **Frontend:** present — Astro 6 + React 19 islands, shadcn/ui (new-york), Tailwind 4, file-based routing (`src/pages/`), Vite build
-- **Backend / API:** present — Astro SSR with Vercel adapter, 3 auth API routes (`src/pages/api/auth/`), middleware (`src/middleware.ts`)
-- **Data:** partial — Supabase JS client wired (`src/lib/supabase.ts`), but no migrations or schema (proposed ERD in `docs/ERD.md` only), no seeds
-- **Auth:** present — Supabase Auth via `@supabase/ssr`, cookie sessions, route-level middleware guards for `/dashboard`
+- **Backend / API:** present — Astro SSR with Vercel adapter, auth + domain API routes under `src/pages/api/`, middleware (`src/middleware.ts`)
+- **Data:** present — Supabase migrations with RLS (`supabase/migrations/`), local seed data (`supabase/seed.sql`), starter exercise catalog on trainer signup (S-17)
+- **Auth:** present — Supabase Auth via `@supabase/ssr`, cookie sessions, role-aware middleware guards for trainer/client routes
+- **Testing:** present — Vitest unit + integration tests; RLS isolation harness (`tests/integration/`); CI runs lint + build (see `context/foundation/test-plan.md` for phased rollout)
 - **Deploy / infra:** present — Vercel via `@astrojs/vercel`, GitHub Actions CI (`.github/workflows/ci.yml`: lint + build + deploy)
 - **Observability:** absent — no logging, error tracking, metrics, or structured logging
 
@@ -235,7 +236,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Prerequisites:** S-02, S-04, S-06 (extends per-round prescription from S-14 on templates and sessions, plus guided logging)
 - **Parallel with:** S-07, S-08, S-12, S-13
 - **Blockers:** —
-- **Unknowns:** Client-added rounds beyond prescription default to working; whether S-07 trainer readout should surface prescribed vs logged warm-up mismatch (likely yes when S-07 ships)
+- **Unknowns:** ~~Client-added rounds beyond prescription default to working; whether S-07 trainer readout should surface prescribed vs logged warm-up mismatch~~ — **Resolved:** client-added rounds default to working at log time; S-07 trainer readout surfaces warm-up/working flags.
 - **Risk:** Moderate — same boolean on three row types (`template_exercise_sets`, `session_exercise_sets`, `set_logs`); assignment RPCs must snapshot the flag; default-inherit + client-override rules must stay consistent for hints/stats consumers
 - **Status:** done
 
@@ -325,14 +326,14 @@ Foundations below assume these are present and do NOT re-scaffold them.
 
 ### S-18: UI redesign
 
-- **Outcome:** trainer and client use a unified premium dark interface per `DESIGN.md` — semantic design tokens replace hardcoded cosmic palette classes, Geist typography and WCAG 44px touch targets land globally, and key flows match Pencil mockups in `docs/pencil/` (guided workout logging now; trainer dashboard when S-07 ships)
+- **Outcome:** trainer and client use a unified premium dark interface per `DESIGN.md` — semantic design tokens replace hardcoded cosmic palette classes, Geist typography and WCAG 44px touch targets land globally, and key flows match Pencil mockups in `docs/pencil/` (guided workout logging and trainer dashboard)
 - **Change ID:** ui-redesign
 - **PRD refs:** NFR mobile usability (phone-at-the-gym portrait use)
 - **Prerequisites:** S-06
 - **Parallel with:** S-07, S-08, S-09, S-10, S-12, S-13, S-15, S-17, S-19
 - **Blockers:** —
 - **Unknowns:** Whether to adopt a trainer sidebar at `lg:` breakpoints; dark-only vs future light mode; whether amber achievement accent fits brand — see `context/changes/ui-redesign/research.md` Open Questions
-- **Risk:** Token injection alone changes ~20% of visible UI; the bulk of work is replacing hardcoded `purple-500` / `text-white` / `bg-white/10` classes across ~30 files. Trainer dashboard screen polish depends on S-07 landing first (`docs/pencil/trainer_dashboard.pen` is ready ahead of implementation).
+- **Risk:** Token injection alone changes ~20% of visible UI; the bulk of work is replacing hardcoded `purple-500` / `text-white` / `bg-white/10` classes across ~30 files. Trainer dashboard screen polish can proceed now that S-07 is done (`docs/pencil/trainer_dashboard.pen`).
 - **Status:** proposed
 
 ### S-19: Prescription fill logging
@@ -352,30 +353,29 @@ Foundations below assume these are present and do NOT re-scaffold them.
 
 | Roadmap ID | Change ID                             | Suggested issue title                                                       | Ready for `/10x-plan` | Notes                                                                                                                       |
 | ---------- | ------------------------------------- | --------------------------------------------------------------------------- | --------------------- | --------------------------------------------------------------------------------------------------------------------------- |
-| F-01       | database-schema-and-rls               | Create Supabase schema with RLS policies and role-aware middleware          | yes                   | Run `/10x-plan database-schema-and-rls`                                                                                     |
-| S-01       | exercise-library                      | Build exercise library CRUD (create, edit, browse/filter)                   | —                     | done                                                                                                                        |
-| S-02       | session-templates                     | Build session template builder with phase structure                         | no                    | Needs F-01                                                                                                                  |
-| S-03       | client-onboarding                     | Implement invite-link client registration and auto-assignment               | no                    | Needs F-01                                                                                                                  |
-| S-04       | plan-assignment                       | Build plan assignment: place session on client calendar                     | no                    | Needs S-02 + S-03; must include `session_exercise_sets` mirror (S-14 follow-up), load semantics, and DB prescription checks |
-| S-05       | client-calendar                       | Build client calendar view (month/week + status colors)                     | no                    | Needs S-04                                                                                                                  |
-| S-06       | guided-workout-logging                | Build guided workout view with set-by-set logging                           | no                    | Needs S-04                                                                                                                  |
-| S-07       | trainer-dashboard                     | Build trainer dashboard with client overview and session detail             | no                    | Needs S-04 + S-06                                                                                                           |
-| S-08       | session-completion-marking            | Add session status: finished, partial, or cancelled                         | no                    | Needs S-06; extends FR-021 with cancelled state; update S-05 calendar colors                                                |
-| S-09       | session-comments                      | Add bidirectional session comments (client ↔ trainer)                       | no                    | Needs S-04                                                                                                                  |
-| S-10       | warmup-working-flag                   | Prescribe warm-up/working per round; log with inherit + client override     | yes                   | Run `/10x-plan warmup-working-flag`; extends S-14 round rows + S-06 logging; update ZAW-15 scope                             |
-| S-11       | client-removal                        | Implement trainer can remove/reject client                                  | no                    | Needs S-03                                                                                                                  |
-| S-12       | exercise-statistics                   | Build per-exercise history with 1RM and volume stats                        | no                    | Needs S-06                                                                                                                  |
-| S-13       | data-edit-window                      | Implement 24h edit window then seal logged data                             | no                    | Needs S-06                                                                                                                  |
-| S-14       | exercises-separate-rounds             | Per-round prescription (reps, load, rest) in session templates              | no                    | Needs S-02                                                                                                                  |
+| F-01       | database-schema-and-rls               | Create Supabase schema with RLS policies and role-aware middleware          | —                     | done → `context/archive/2026-05-26-database-schema-and-rls/`                                                                |
+| S-01       | exercise-library                      | Build exercise library CRUD (create, edit, browse/filter)                   | —                     | done → `context/archive/2026-05-28-exercise-library/`                                                                       |
+| S-02       | session-templates                     | Build session template builder with phase structure                         | —                     | done → `context/archive/2026-06-05-session-templates/`                                                                      |
+| S-03       | client-onboarding                     | Implement invite-link client registration and auto-assignment               | —                     | done → `context/archive/2026-05-30-client-onboarding/`                                                                      |
+| S-04       | plan-assignment                       | Build plan assignment: place session on client calendar                     | —                     | done → `context/archive/2026-06-08-plan-assignment/`                                                                        |
+| S-05       | client-calendar                       | Build client calendar view (month/week + status colors)                     | —                     | done → `context/archive/2026-06-13-client-calendar/`                                                                        |
+| S-06       | guided-workout-logging                | Build guided workout view with set-by-set logging                           | —                     | done → `context/archive/2026-06-14-guided-workout-logging/`                                                                 |
+| S-07       | trainer-dashboard                     | Build trainer dashboard with client overview and session detail             | —                     | done → `context/archive/2026-06-20-trainer-dashboard/`                                                                       |
+| S-08       | session-completion-marking            | Add session status: finished, partial, or cancelled                         | yes                   | Prerequisites met (S-06); extends FR-021 with cancelled state; update S-05 calendar colors                                    |
+| S-09       | session-comments                      | Add bidirectional session comments (client ↔ trainer)                       | yes                   | Prerequisites met (S-04)                                                                                                    |
+| S-10       | warmup-working-flag                   | Prescribe warm-up/working per round; log with inherit + client override     | —                     | done → `context/archive/2026-06-20-warmup-working-flag/`                                                                    |
+| S-11       | client-removal                        | Implement trainer can remove/reject client                                  | —                     | done → `context/archive/2026-06-05-client-removal/`                                                                         |
+| S-12       | exercise-statistics                   | Build per-exercise history with 1RM and volume stats                        | yes                   | Prerequisites met (S-06)                                                                                                    |
+| S-13       | data-edit-window                      | Implement 24h edit window then seal logged data                             | yes                   | Prerequisites met (S-06)                                                                                                    |
+| S-14       | exercises-separate-rounds             | Per-round prescription (reps, load, rest) in session templates              | —                     | done → `context/archive/2026-06-05-exercises-separate-rounds/`                                                              |
 | S-15       | exercise-favourites                   | Mark exercises as favourites and filter exercise lists                      | yes                   | Run `/10x-plan exercise-favourites`; extends FR-009 browse/filter                                                           |
-| S-16       | ad-hoc-session-logging                | Log an unplanned custom workout not on the calendar                         | no                    | Parked post-MVP; see `context/changes/ad-hoc-session-logging/research.md`                                                   |
-| S-17       | starter-exercise-seed                 | Copy curated starter exercises to each trainer on signup                    | no                    | Needs S-01 + S-03; supersedes PRD Non-Goal #14; per-trainer clone required for RLS                                          |
+| S-16       | ad-hoc-session-logging                | Log an unplanned custom workout not on the calendar                         | —                     | Parked post-MVP; see `context/changes/ad-hoc-session-logging/research.md`                                                   |
+| S-17       | starter-exercise-seed                 | Copy curated starter exercises to each trainer on signup                    | —                     | done → `context/archive/2026-06-20-starter-exercise-seed/`                                                                 |
 | S-18       | ui-redesign                           | Unify design tokens and apply DESIGN.md + Pencil mockups to key flows       | yes                   | Run `/10x-plan ui-redesign`; spec in `DESIGN.md`; research in `context/changes/ui-redesign/research.md`; screens in `docs/pencil/` |
 | S-19       | prescription-fill-logging             | Replace per-set OK toggle with one-click prescription fill                  | yes                   | Run `/10x-plan prescription-fill-logging`; removes `is_complete` UX from S-06; session status stays in S-08                    |
-| Q-01       | add-stryker-mutation-testing          | Run Stryker on risk-critical modules                                        | no                    | Needs test-plan Phase 1 complete                                                                                            |
-| Q-02       | harden-replace-exercise-muscle-groups | Add auth.uid() ownership check to replace_exercise_muscle_groups RPC        | yes                   | Run `/10x-plan harden-replace-exercise-muscle-groups`; flip KNOWN GAP test in `tests/integration/security-definer/`         |
-| Q-03       | harden-complete-client-invite         | Harden complete_client_invite p_client_id binding for authenticated callers | no                    | Run `/10x-frame harden-complete-client-invite` first (anon vs authenticated design); then `/10x-plan`                       |
 | Q-01       | add-stryker-mutation-testing          | Add Stryker mutation testing as a selective quality gate                    | yes                   | Run `/10x-research add-stryker-mutation-testing`; see `context/changes/add-stryker-mutation-testing/`                       |
+| Q-02       | harden-replace-exercise-muscle-groups | Add auth.uid() ownership check to replace_exercise_muscle_groups RPC        | —                     | done → `context/archive/2026-06-08-harden-replace-exercise-muscle-groups/`                                                  |
+| Q-03       | harden-complete-client-invite         | Harden complete_client_invite p_client_id binding for authenticated callers | no                    | Run `/10x-frame harden-complete-client-invite` first (anon vs authenticated design); then `/10x-plan`                       |
 
 
 ## Open Roadmap Questions
@@ -386,7 +386,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 4. ~~**Starter seed backfill:** Should existing trainers receive the starter exercise library retroactively, or only new signups? (S-17)~~ — **Resolved:** new trainer signups only; existing trainers are not backfilled.
 5. **Trainer sidebar vs top nav:** Should the trainer area adopt a collapsible sidebar at `lg:` breakpoints, or keep the horizontal topbar? (S-18)
 6. **Dark-only vs light/dark toggle:** The app is always dark today; should a light mode ever be supported? (S-18)
-7. **Warm-up default on extra rounds:** Client-added rounds beyond prescription default to working — confirm at `/10x-plan` (S-10)
+7. ~~**Warm-up default on extra rounds:** Client-added rounds beyond prescription default to working — confirm at `/10x-plan` (S-10)~~ — **Resolved:** client-added rounds default to working at log time (S-10 shipped).
 8. **`set_logs.is_complete` column:** Drop from schema after S-19, or keep unused for backward compatibility? (S-19)
 
 ## Parked
@@ -406,6 +406,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Offline mode** — Why parked: PRD §Non-Goals #13. Requires internet.
 - ~~**Pre-populated exercise database**~~ — **Promoted to S-17** (`starter-exercise-seed`): curated starter library copied per trainer on signup; trainers edit/delete like their own exercises.
 - **Ad-hoc session logging (S-16)** — Why parked: post-MVP scope. Initial planning research found it requires client-created session provenance, client-safe trainer exercise-library access, a new create RPC/API, calendar semantics, and trainer-dashboard distinction before it is safe to implement.
+- **Static invite link + trainer approval** — Why parked: research spike complete (`context/archive/2026-06-07-static-invite-link-approval/`). Recommends Everfit-style reusable link + optional approval queue, but departs from locked S-03 contract (auto-assign, no pending state). Needs explicit product decision before a roadmap slice.
 
 ## Done
 
@@ -416,9 +417,10 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **S-11: trainer can remove or reject a wrongly-assigned client** — Archived 2026-06-07 → `context/archive/2026-06-05-client-removal/`. Lesson: —.
 - **S-14: trainer can add an exercise to a session template and configure each round separately — e.g. round 1: 10 reps × 50 kg + 2 min rest, round 2: 8 × 60 kg + 2 min rest, round 3: 6 × 70 kg + 3 min rest — instead of a single uniform prescription for all sets** — Archived 2026-06-07 → `context/archive/2026-06-05-exercises-separate-rounds/`. Lesson: —.
 - **S-04: trainer can create a session on a specific day of a client's calendar — from a template or from scratch — and personalize exercises (move/remove/edit)** — Archived 2026-06-13 → `context/archive/2026-06-08-plan-assignment/`. Lesson: —.
-- **S-05: client can view their assigned plan in a month view (default) with the ability to switch to week view; sessions visually distinguished by status (not started / finished / finished partially)** — Merged 2026-06-14 → PR #19.
+- **S-05: client can view their assigned plan in a month view (default) with the ability to switch to week view; sessions visually distinguished by status (not started / finished / finished partially)** — Archived 2026-06-14 → `context/archive/2026-06-13-client-calendar/`. Lesson: —.
 - **Q-02: close KNOWN GAP: RPC rejects cross-trainer muscle group replacement; flip integration test** — Archived 2026-06-13 → `context/archive/2026-06-08-harden-replace-exercise-muscle-groups/`. Lesson: —.
 - **S-06: client can open a session and step through exercises one at a time (designed for one-handed phone use), navigate via exercise list menu, log each set (reps + weight or time), and see performance data from the last workout containing each exercise** — Archived 2026-06-20 → `context/archive/2026-06-14-guided-workout-logging/`. Lesson: —.
 - **S-07: trainer can see an overview of all their clients, assigned plans, and recent session activity; can view a read-only detail of a client's session showing exercises, sets, weights** — Archived 2026-06-20 → `context/archive/2026-06-20-trainer-dashboard/`. Lesson: —.
 - **S-10: trainer marks each prescribed round as warm-up or working when building session templates and personalizing assigned sessions; client logs each set with a warm-up/working flag that inherits the prescribed default when a matching round exists and may be overridden at log time; only working logged sets (`set_logs.is_warmup = false`) count toward stats and performance hints (FR-019, FR-025). Session phase warm-up/main/cool-down (whole exercises) is unchanged — this slice is per-round within an exercise.** — Archived 2026-06-20 → `context/archive/2026-06-20-warmup-working-flag/`. Lesson: —.
+- **S-17: every new trainer receives a copy of a curated collection of popular exercises on signup; seeded exercises behave like trainer-owned exercises (editable, deletable, usable in templates) with no read-only or "system" lock** — Archived 2026-06-20 → `context/archive/2026-06-20-starter-exercise-seed/`. Lesson: —.
 
