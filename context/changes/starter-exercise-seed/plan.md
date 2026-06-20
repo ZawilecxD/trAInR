@@ -282,10 +282,10 @@ This is a forward-only migration. Existing trainers are intentionally not backfi
 
 #### Automated
 
-- [x] 1.1 Migration applies cleanly with `npx supabase db reset` or the repo's local Supabase migration flow.
-- [x] 1.2 New trainer auth-user creation inserts a profile, starter exercises, and muscle-group links in one transaction.
-- [x] 1.3 Client auth-user creation inserts a profile but no starter exercises.
-- [x] 1.4 Re-invoking `seed_starter_exercises_for_trainer` for the same trainer does not duplicate starter rows.
+- [x] 1.1 Migration applies cleanly with `npx supabase db reset` or the repo's local Supabase migration flow. — 8a2a1eb
+- [x] 1.2 New trainer auth-user creation inserts a profile, starter exercises, and muscle-group links in one transaction. — 8a2a1eb
+- [x] 1.3 Client auth-user creation inserts a profile but no starter exercises. — 8a2a1eb
+- [x] 1.4 Re-invoking `seed_starter_exercises_for_trainer` for the same trainer does not duplicate starter rows. — 8a2a1eb
 
 #### Manual
 
@@ -297,9 +297,9 @@ This is a forward-only migration. Existing trainers are intentionally not backfi
 
 #### Automated
 
-- [x] 2.1 `npm run test:integration -- tests/integration/starter-exercise-seed.test.ts` passes against local Supabase.
-- [x] 2.2 `npm run test:integration` passes or documented local DB prerequisites are satisfied.
-- [x] 2.3 `npm run lint` passes.
+- [x] 2.1 `npm run test:integration -- tests/integration/starter-exercise-seed.test.ts` passes against local Supabase. — 8a2a1eb
+- [x] 2.2 `npm run test:integration` passes or documented local DB prerequisites are satisfied. — 8a2a1eb
+- [x] 2.3 `npm run lint` passes. — 8a2a1eb
 
 #### Manual
 
@@ -311,9 +311,9 @@ This is a forward-only migration. Existing trainers are intentionally not backfi
 
 #### Automated
 
-- [x] 3.1 `context/changes/starter-exercise-seed/plan.md` and `context/changes/starter-exercise-seed/plan-brief.md` exist.
-- [x] 3.2 `change.md` has `status: planned` and `linear_issue: ZAW-34`.
-- [x] 3.3 Markdown formatting is readable and links/references point to existing files.
+- [x] 3.1 `context/changes/starter-exercise-seed/plan.md` and `context/changes/starter-exercise-seed/plan-brief.md` exist. — 8a2a1eb
+- [x] 3.2 `change.md` has `status: planned` and `linear_issue: ZAW-34`. — 8a2a1eb
+- [x] 3.3 Markdown formatting is readable and links/references point to existing files. — 8a2a1eb
 
 #### Manual
 
