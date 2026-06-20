@@ -394,16 +394,16 @@ No database migration is planned. The plan deliberately derives readout status f
 
 #### Automated
 
-- [ ] 4.1 Lint passes for the updated React island and Astro page: `npm run lint`
-- [ ] 4.2 Production build passes: `npm run build`
+- [x] 4.1 Lint passes for the updated React island and Astro page: `npm run lint`
+- [x] 4.2 Production build passes: `npm run build`
 
 #### Manual
 
-- [ ] 4.3 Pending invite generation/copying still works.
-- [ ] 4.4 Existing active clients render as metadata cards.
-- [ ] 4.5 Clients without an active plan show a clear no-plan state and a calendar/deep-link path where appropriate.
-- [ ] 4.6 Remove-client confirmation and success behavior still works.
-- [ ] 4.7 `/trainer/clients` remains usable on mobile with stacked cards.
+- [x] 4.3 Pending invite generation/copying still works.
+- [x] 4.4 Existing active clients render as metadata cards.
+- [x] 4.5 Clients without an active plan show a clear no-plan state and a calendar/deep-link path where appropriate.
+- [x] 4.6 Remove-client confirmation and success behavior still works.
+- [x] 4.7 `/trainer/clients` remains usable on mobile with stacked cards.
 
 ### Phase 5: Final Verification And Workflow Handoff
 
