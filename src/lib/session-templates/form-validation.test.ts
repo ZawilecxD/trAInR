@@ -28,6 +28,7 @@ function makeEntry(overrides: Partial<TemplateExerciseFormEntry> = {}): Template
         prescribedDuration: null,
         prescribedLoadKg: null,
         restAfterSeconds: null,
+        isWarmup: false,
       },
     ],
     notes: "",
@@ -130,6 +131,38 @@ describe("templateExerciseToFormEntry", () => {
     expect(entry.metricMode).toBe("duration");
     expect(entry.rounds[0]?.prescribedDuration).toBe(45);
   });
+
+  it("preserves is_warmup on rounds", () => {
+    const entry = templateExerciseToFormEntry(
+      makeTemplateExercise({
+        sets: [
+          {
+            id: "a5000001-0000-4000-8000-000000000001",
+            template_exercise_id: "a4000001-0000-4000-8000-000000000001",
+            set_number: 1,
+            prescribed_reps: 10,
+            prescribed_duration_seconds: null,
+            prescribed_load_kg: 40,
+            rest_after_seconds: 60,
+            is_warmup: true,
+          },
+          {
+            id: "a5000001-0000-4000-8000-000000000002",
+            template_exercise_id: "a4000001-0000-4000-8000-000000000001",
+            set_number: 2,
+            prescribed_reps: 8,
+            prescribed_duration_seconds: null,
+            prescribed_load_kg: 60,
+            rest_after_seconds: 120,
+            is_warmup: false,
+          },
+        ],
+      }),
+    );
+
+    expect(entry.rounds[0]?.isWarmup).toBe(true);
+    expect(entry.rounds[1]?.isWarmup).toBe(false);
+  });
 });
 
 describe("exerciseEntryToPayload", () => {
@@ -143,12 +176,14 @@ describe("exerciseEntryToPayload", () => {
             prescribedDuration: 45,
             prescribedLoadKg: 20,
             restAfterSeconds: 60,
+            isWarmup: true,
           },
           {
             prescribedReps: null,
             prescribedDuration: 30,
             prescribedLoadKg: null,
             restAfterSeconds: 45,
+            isWarmup: false,
           },
         ],
         notes: "  hold steady  ",
@@ -159,7 +194,9 @@ describe("exerciseEntryToPayload", () => {
     expect(payload.sets).toHaveLength(2);
     expect(payload.sets[0]?.prescribed_reps).toBeNull();
     expect(payload.sets[0]?.prescribed_duration_seconds).toBe(45);
+    expect(payload.sets[0]?.is_warmup).toBe(true);
     expect(payload.sets[1]?.prescribed_duration_seconds).toBe(30);
+    expect(payload.sets[1]?.is_warmup).toBe(false);
     expect(payload.notes).toBe("hold steady");
   });
 });
@@ -173,6 +210,7 @@ describe("round helpers", () => {
           prescribedDuration: null,
           prescribedLoadKg: 50,
           restAfterSeconds: 120,
+          isWarmup: true,
         },
       ],
     });
@@ -194,12 +232,14 @@ describe("round helpers", () => {
           prescribedDuration: null,
           prescribedLoadKg: null,
           restAfterSeconds: null,
+          isWarmup: false,
         },
         {
           prescribedReps: 8,
           prescribedDuration: null,
           prescribedLoadKg: null,
           restAfterSeconds: null,
+          isWarmup: false,
         },
       ],
     });

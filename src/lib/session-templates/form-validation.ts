@@ -15,6 +15,7 @@ export interface TemplateExerciseSetFormEntry {
   prescribedDuration: number | null;
   prescribedLoadKg: number | null;
   restAfterSeconds: number | null;
+  isWarmup: boolean;
 }
 
 export interface TemplateExerciseFormEntry {
@@ -39,6 +40,7 @@ function defaultRound(metricMode: MetricMode): TemplateExerciseSetFormEntry {
     prescribedDuration: metricMode === "duration" ? 30 : null,
     prescribedLoadKg: null,
     restAfterSeconds: null,
+    isWarmup: false,
   };
 }
 
@@ -48,6 +50,7 @@ function setToRound(set: TemplateExerciseWithName["sets"][number]): TemplateExer
     prescribedDuration: set.prescribed_duration_seconds,
     prescribedLoadKg: set.prescribed_load_kg,
     restAfterSeconds: set.rest_after_seconds,
+    isWarmup: set.is_warmup,
   };
 }
 
@@ -57,7 +60,7 @@ function roundToPayload(round: TemplateExerciseSetFormEntry, metricMode: MetricM
     prescribed_duration_seconds: metricMode === "duration" ? round.prescribedDuration : null,
     prescribed_load_kg: round.prescribedLoadKg,
     rest_after_seconds: round.restAfterSeconds,
-    is_warmup: false,
+    is_warmup: round.isWarmup,
   };
 }
 

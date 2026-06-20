@@ -95,6 +95,36 @@ describe("createTemplateBodySchema", () => {
     expect(parsed.success).toBe(true);
   });
 
+  it("accepts is_warmup on rounds and defaults missing flag to false", () => {
+    const withWarmup = createTemplateBodySchema.safeParse({
+      name: "Test",
+      exercises: [
+        {
+          ...validExercise,
+          sets: [
+            { ...validRound, is_warmup: true },
+            { ...validRound, prescribed_reps: 8, is_warmup: false },
+          ],
+        },
+      ],
+    });
+
+    const withoutWarmup = createTemplateBodySchema.safeParse({
+      name: "Test",
+      exercises: [{ ...validExercise, sets: [validRound] }],
+    });
+
+    expect(withWarmup.success).toBe(true);
+    if (withWarmup.success) {
+      expect(withWarmup.data.exercises[0]?.sets[0]?.is_warmup).toBe(true);
+      expect(withWarmup.data.exercises[0]?.sets[1]?.is_warmup).toBe(false);
+    }
+    expect(withoutWarmup.success).toBe(true);
+    if (withoutWarmup.success) {
+      expect(withoutWarmup.data.exercises[0]?.sets[0]?.is_warmup).toBe(false);
+    }
+  });
+
   it("rejects empty sets array", () => {
     const parsed = createTemplateBodySchema.safeParse({
       name: "Test",
