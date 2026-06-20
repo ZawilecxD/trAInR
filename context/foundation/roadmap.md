@@ -48,7 +48,7 @@ Independent personal trainers lose coaching time to admin — hunting across spr
 | S-14 | exercises-separate-rounds  | prescribe each exercise round separately (reps, load, rest per round)     | S-02          | FR-010, FR-011                                    | done     |
 | S-15 | exercise-favourites        | mark exercises as favourites and filter exercise lists by favourites only | S-01          | FR-009                                            | proposed |
 | S-16 | ad-hoc-session-logging     | log an unplanned workout not on the calendar                              | S-06          | FR-015, FR-016, FR-017 (extends)                  | parked   |
-| S-17 | starter-exercise-seed      | receive a curated starter exercise library on trainer signup              | S-01, S-03    | FR-007, FR-008 (extends; supersedes Non-Goal #14) | proposed |
+| S-17 | starter-exercise-seed      | receive a curated starter exercise library on trainer signup              | S-01, S-03    | FR-007, FR-008 (extends; supersedes Non-Goal #14) | done     |
 | S-18 | ui-redesign                | use a unified premium dark UI per DESIGN.md with accessible touch targets and Pencil-aligned key flows | S-06          | NFR mobile usability                              | proposed |
 | S-19 | prescription-fill-logging  | one-click fill a round with prescribed reps and load; no per-set completed toggle | S-06          | FR-015, FR-017 (extends)                          | proposed |
 
@@ -321,7 +321,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Blockers:** —
 - **Unknowns:** ~~Seed source (static SQL migration vs seed script vs admin-maintained catalog table); whether existing trainers get a one-time backfill; initial exercise count and muscle-group coverage; whether muscle groups from the seed are global or trainer-scoped copies~~ — **Resolved in plan:** static SQL catalog inside a DB seeding function; new trainer signups only (no backfill); 15-25 starter exercises; reuse global `muscle_groups`; guard idempotency with `profiles.starter_exercises_seeded_at`.
 - **Risk:** Copy-on-signup must be a true per-trainer clone (not shared rows) to preserve RLS isolation and allow destructive edits without affecting other trainers. Duplication logic should live in the signup/onboarding path or a SECURITY DEFINER RPC triggered once per trainer.
-- **Status:** proposed
+- **Status:** done
 
 ### S-18: UI redesign
 

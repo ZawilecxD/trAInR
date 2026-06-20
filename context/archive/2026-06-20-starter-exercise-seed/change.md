@@ -1,10 +1,10 @@
 ---
 change_id: starter-exercise-seed
 title: Starter exercise seed
-status: implemented
+status: archived
 created: 2026-06-20
 updated: 2026-06-20
-archived_at: null
+archived_at: 2026-06-20T18:35:38Z
 linear_issue: ZAW-34
 ---
 
