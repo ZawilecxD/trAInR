@@ -231,35 +231,35 @@ No data or application migration is needed. RTK setup is local-machine configura
 
 #### Automated
 
-- [x] 1.1 `docs/token-efficiency.md` exists.
-- [x] 1.2 `rg "rtk gain|cargo install --git https://github.com/rtk-ai/rtk|caveman" docs/token-efficiency.md` returns matches.
-- [x] 1.3 `npm run lint` passes.
+- [x] 1.1 `docs/token-efficiency.md` exists. — 1d50288
+- [x] 1.2 `rg "rtk gain|cargo install --git https://github.com/rtk-ai/rtk|caveman" docs/token-efficiency.md` returns matches. — 1d50288
+- [x] 1.3 `npm run lint` passes. — 1d50288
 
 #### Manual
 
-- [x] 1.4 Human can follow the guide from a clean shell and decide whether to install RTK.
-- [x] 1.5 Human can tell the difference between correct RTK Token Killer and wrong `rtk` package by using `rtk gain`.
+- [x] 1.4 Human can follow the guide from a clean shell and decide whether to install RTK. — 1d50288
+- [x] 1.5 Human can tell the difference between correct RTK Token Killer and wrong `rtk` package by using `rtk gain`. — 1d50288
 
 ### Phase 2: Wire the Workflow into Agent Onboarding
 
 #### Automated
 
-- [x] 2.1 `rg "token-efficiency|rtk gain|caveman" AGENTS.md README.md` returns matches.
-- [x] 2.2 `npm run lint` passes.
+- [x] 2.1 `rg "token-efficiency|rtk gain|caveman" AGENTS.md README.md` returns matches. — 1d50288
+- [x] 2.2 `npm run lint` passes. — 1d50288
 
 #### Manual
 
-- [x] 2.3 A new agent reading `AGENTS.md` can find the workflow.
-- [x] 2.4 A human reading `README.md` can find RTK setup instructions without scanning `context/changes/`.
+- [x] 2.3 A new agent reading `AGENTS.md` can find the workflow. — 1d50288
+- [x] 2.4 A human reading `README.md` can find RTK setup instructions without scanning `context/changes/`. — 1d50288
 
 ### Phase 3: Sync Linear and Verify the Workflow
 
 #### Automated
 
-- [x] 3.1 Linear `ZAW-39` contains a comment linking the plan and brief.
-- [x] 3.2 `npm run lint` passes after doc edits.
+- [x] 3.1 Linear `ZAW-39` contains a comment linking the plan and brief. — 1d50288
+- [x] 3.2 `npm run lint` passes after doc edits. — 1d50288
 
 #### Manual
 
-- [x] 3.3 User confirms whether to install RTK globally if it is missing.
-- [x] 3.4 User confirms Linear acceptance criteria match the desired outcome.
+- [x] 3.3 User confirms whether to install RTK globally if it is missing. — 1d50288
+- [x] 3.4 User confirms Linear acceptance criteria match the desired outcome. — 1d50288
