@@ -41,19 +41,20 @@ test.describe("Risk #2 — multi-step exercise save integrity", () => {
 
     // Setup: open the create form.
     await page.goto("/trainer/exercises/new");
-    await page.getByRole("textbox", { name: "Name" }).fill(exerciseName);
 
     // Select a muscle group — this is the second half of the multi-step write.
+    // The role combobox is also our hydration signal for this React island.
     await page.getByRole("checkbox", { name: "Chest" }).check();
+    await expect(page.getByRole("combobox", { name: "Role for Chest" })).toBeVisible();
+    await page.getByRole("textbox", { name: "Name" }).fill(exerciseName);
 
     // Action: submit, and capture the created id from the API response (also a
     // wait-for-state — we proceed only once the write is confirmed).
-    const createResponse = page.waitForResponse(
-      (res) => res.url().includes("/api/exercises") && res.request().method() === "POST" && res.status() === 201,
-    );
-    await page.getByRole("button", { name: "Create exercise" }).click();
-    const payload = (await (await createResponse).json()) as { exercise: { id: string } };
-    createdExerciseId = payload.exercise.id;
+    const [response] = await Promise.all([
+      page.waitForResponse((res) => res.url().includes("/api/exercises") && res.request().method() === "POST"),
+      page.getByRole("button", { name: "Create exercise" }).click(),
+    ]);
+    expect(response.status()).toBe(201);
 
     // The form redirects to the library on success.
     await page.waitForURL("**/trainer/exercises**");
@@ -63,6 +64,10 @@ test.describe("Risk #2 — multi-step exercise save integrity", () => {
     const row = page.getByRole("row", { name: exerciseName });
     await expect(row).toBeVisible();
     await expect(row.getByRole("cell", { name: "Chest (primary)" })).toBeVisible();
+    const editHref = await row.getByRole("link", { name: "Edit" }).getAttribute("href");
+    if (!editHref) throw new Error(`Created exercise row for ${exerciseName} has no edit link`);
+    createdExerciseId = editHref.split("/").pop() ?? null;
+    expect(createdExerciseId).toBeTruthy();
 
     // The real check: survive an SSR reload (data is read back from the DB).
     await page.reload();

@@ -7,9 +7,13 @@ import { TRAINER_STORAGE_STATE, trainerCredentials } from "./auth";
 setup("authenticate as trainer", async ({ page }) => {
   await page.goto("/auth/signin");
 
-  // getByLabel because a password input is not exposed with the "textbox" role.
-  await page.getByLabel("Email").fill(trainerCredentials.email);
-  await page.getByLabel("Password").fill(trainerCredentials.password);
+  await page.getByRole("button", { name: "Show password" }).click();
+  await expect(page.getByRole("button", { name: "Hide password" })).toBeVisible();
+  await page.getByRole("button", { name: "Hide password" }).click();
+
+  // exact: true so "Password" doesn't also match the "Show password" toggle button.
+  await page.getByLabel("Email", { exact: true }).fill(trainerCredentials.email);
+  await page.getByLabel("Password", { exact: true }).fill(trainerCredentials.password);
   await page.getByRole("button", { name: "Sign in" }).click();
 
   // Wait for the post-login state, not a timeout: a trainer lands on their dashboard.
