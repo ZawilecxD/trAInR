@@ -227,6 +227,7 @@ GitHub Actions runs `npm run lint` and `npm run build` on every push and PR to `
 ## Workflow Docs
 
 - [Linear implementation workflow](docs/linear-implementation-workflow.md) — how to run `/10x-plan` + `/10x-implement` with automatic Linear sync (phases, pre-PR review, PR transitions).
+- [Token efficiency for AI agents](docs/token-efficiency.md) — opt-in caveman mode and RTK CLI setup to reduce agent token usage; verify RTK with `rtk gain` after install.
 
 ## License
 
