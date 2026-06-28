@@ -4,7 +4,6 @@ import PhaseBreakdown from "@/components/guided-workout/PhaseBreakdown";
 import { Button } from "@/components/ui/button";
 import { formatSessionOverviewDate } from "@/lib/guided-workout/format-session-date";
 import type { ClientSessionDetail } from "@/lib/workout-sessions/service";
-import type { UserRole } from "@/types";
 
 interface SessionOverviewProps {
   session: ClientSessionDetail;
@@ -12,7 +11,6 @@ interface SessionOverviewProps {
   beginError: string | null;
   onBegin: () => void;
   currentUserId: string;
-  currentUserRole: UserRole;
 }
 
 export default function SessionOverview({
@@ -21,7 +19,6 @@ export default function SessionOverview({
   beginError,
   onBegin,
   currentUserId,
-  currentUserRole,
 }: SessionOverviewProps) {
   const trainerNote = session.exercises.find((exercise) => exercise.notes)?.notes ?? null;
 
@@ -68,7 +65,7 @@ export default function SessionOverview({
           <PhaseBreakdown exercises={session.exercises} />
         </section>
 
-        <SessionCommentsThread sessionId={session.id} currentUserId={currentUserId} currentUserRole={currentUserRole} />
+        <SessionCommentsThread sessionId={session.id} currentUserId={currentUserId} />
 
         {beginError ? (
           <p className="rounded-lg border border-red-400/30 bg-red-500/10 px-4 py-3 text-sm text-red-100">

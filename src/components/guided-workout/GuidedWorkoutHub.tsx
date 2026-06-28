@@ -7,12 +7,11 @@ import SessionOverview from "@/components/guided-workout/SessionOverview";
 import { sortByPhaseThenSortOrder } from "@/lib/guided-workout/phase-labels";
 import { resolveInitialMode, type GuidedWorkoutMode } from "@/lib/guided-workout/session-mode";
 import type { ClientSessionDetail } from "@/lib/workout-sessions/service";
-import type { SetLog, UserRole } from "@/types";
+import type { SetLog } from "@/types";
 
 interface GuidedWorkoutHubProps {
   initialSession: ClientSessionDetail;
   currentUserId: string;
-  currentUserRole: UserRole;
 }
 
 function mergeSetLog(exercises: ClientSessionDetail["exercises"], setLog: SetLog) {
@@ -44,7 +43,7 @@ function removeSetLog(exercises: ClientSessionDetail["exercises"], sessionExerci
   });
 }
 
-export default function GuidedWorkoutHub({ initialSession, currentUserId, currentUserRole }: GuidedWorkoutHubProps) {
+export default function GuidedWorkoutHub({ initialSession, currentUserId }: GuidedWorkoutHubProps) {
   const [session, setSession] = useState(initialSession);
   const [mode, setMode] = useState<GuidedWorkoutMode>(() => resolveInitialMode(initialSession));
   const [exerciseIndex, setExerciseIndex] = useState(0);
@@ -128,7 +127,6 @@ export default function GuidedWorkoutHub({ initialSession, currentUserId, curren
           void handleBegin();
         }}
         currentUserId={currentUserId}
-        currentUserRole={currentUserRole}
       />
     );
   }

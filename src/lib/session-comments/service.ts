@@ -12,6 +12,13 @@ interface CommentRow {
   profiles: { display_name: string; role: string } | null;
 }
 
+function safeRole(raw: string | null | undefined): UserRole {
+  // FK constraints make this null case extremely unlikely in practice.
+  // Fallback to "client" ensures the UI renders rather than throws.
+  if (raw === "trainer") return "trainer";
+  return "client";
+}
+
 function mapRow(row: CommentRow): SessionCommentWithAuthor {
   return {
     id: row.id,
@@ -21,7 +28,7 @@ function mapRow(row: CommentRow): SessionCommentWithAuthor {
     created_at: row.created_at,
     updated_at: row.updated_at,
     author_display_name: row.profiles?.display_name ?? "Unknown",
-    author_role: (row.profiles?.role ?? "client") as UserRole,
+    author_role: safeRole(row.profiles?.role),
   };
 }
 
@@ -42,7 +49,7 @@ export async function listSessionComments(
   return { data: (data as CommentRow[]).map(mapRow), error: null };
 }
 
-type CreateSessionCommentErrorCode = "not_found" | "validation_error";
+type CreateSessionCommentErrorCode = "not_found" | "db_error" | "validation_error";
 
 export type CreateSessionCommentResult =
   | { ok: true; data: SessionCommentWithAuthor }
@@ -56,7 +63,11 @@ export async function createSessionComment(
 ): Promise<CreateSessionCommentResult> {
   const sessionCheck = await supabase.from("workout_sessions").select("id").eq("id", sessionId).maybeSingle();
 
-  if (sessionCheck.error || !sessionCheck.data) {
+  if (sessionCheck.error) {
+    return { ok: false, code: "db_error", message: sessionCheck.error.message };
+  }
+
+  if (!sessionCheck.data) {
     return { ok: false, code: "not_found", message: "Session not found" };
   }
 

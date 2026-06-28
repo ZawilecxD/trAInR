@@ -74,6 +74,9 @@ export const POST: APIRoute = async (context) => {
     if (result.code === "not_found") {
       return jsonError("not_found", 404);
     }
+    if (result.code === "db_error") {
+      return jsonError("fetch_failed", 500, { message: result.message });
+    }
     return jsonError("validation_error", 400, { message: result.message });
   }
 

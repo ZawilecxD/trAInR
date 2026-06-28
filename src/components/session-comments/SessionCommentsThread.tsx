@@ -2,12 +2,11 @@ import { type SyntheticEvent, useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
-import type { SessionCommentWithAuthor, UserRole } from "@/types";
+import type { SessionCommentWithAuthor } from "@/types";
 
 interface SessionCommentsThreadProps {
   sessionId: string;
   currentUserId: string;
-  currentUserRole: UserRole;
 }
 
 function formatTimestamp(iso: string): string {
@@ -75,11 +74,7 @@ function CommentItem({ comment, currentUserId }: CommentItemProps) {
   );
 }
 
-export default function SessionCommentsThread({
-  sessionId,
-  currentUserId,
-  currentUserRole,
-}: SessionCommentsThreadProps) {
+export default function SessionCommentsThread({ sessionId, currentUserId }: SessionCommentsThreadProps) {
   const [comments, setComments] = useState<SessionCommentWithAuthor[]>([]);
   const [loading, setLoading] = useState(true);
   const [fetchError, setFetchError] = useState<string | null>(null);
@@ -152,8 +147,6 @@ export default function SessionCommentsThread({
     }
   }
 
-  void currentUserRole;
-
   return (
     <section className="rounded-2xl border border-white/10 bg-white/5 p-5 backdrop-blur-xl">
       <h2 className="mb-4 text-sm font-medium text-blue-100/80">Comments</h2>
@@ -174,8 +167,6 @@ export default function SessionCommentsThread({
           <div ref={bottomRef} />
         </div>
       )}
-
-      {!loading && !fetchError && comments.length > 0 ? <div ref={bottomRef} /> : null}
 
       <form
         onSubmit={(e) => {

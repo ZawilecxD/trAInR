@@ -27,7 +27,7 @@ if (sessionError || !session) {
 <Layout title={session.name ?? "Workout"}>
   <div class="bg-cosmic min-h-screen p-4 md:p-8">
     <div class="mx-auto max-w-2xl lg:max-w-6xl">
-      <GuidedWorkoutHub client:load initialSession={session} currentUserId={userId} currentUserRole="client" />
+      <GuidedWorkoutHub client:load initialSession={session} currentUserId={userId} />
     </div>
   </div>
 </Layout>

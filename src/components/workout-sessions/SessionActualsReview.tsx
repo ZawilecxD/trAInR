@@ -6,13 +6,12 @@ import { formatSessionOverviewDate } from "@/lib/guided-workout/format-session-d
 import { readoutStatusLabel, type ExerciseReadout, type ReadoutStatus } from "@/lib/trainer-dashboard/readout";
 import type { TrainerSessionDetail } from "@/lib/workout-sessions/service";
 import { cn } from "@/lib/utils";
-import type { ExercisePhase, UserRole } from "@/types";
+import type { ExercisePhase } from "@/types";
 
 interface SessionActualsReviewProps {
   session: TrainerSessionDetail;
   sessionId: string;
   currentUserId: string;
-  currentUserRole: UserRole;
 }
 
 function readoutBadgeClass(status: ReadoutStatus): string {
@@ -136,12 +135,7 @@ function ExerciseActualsCard({ exercise, notes }: { exercise: ExerciseReadout; n
   );
 }
 
-export default function SessionActualsReview({
-  session,
-  sessionId,
-  currentUserId,
-  currentUserRole,
-}: SessionActualsReviewProps) {
+export default function SessionActualsReview({ session, sessionId, currentUserId }: SessionActualsReviewProps) {
   const groups = groupExercisesByPhase(session.readout.exercises);
   const notesByExerciseId = new Map(session.exercises.map((exercise) => [exercise.id, exercise.notes]));
 
@@ -212,7 +206,7 @@ export default function SessionActualsReview({
         </div>
       )}
 
-      <SessionCommentsThread sessionId={sessionId} currentUserId={currentUserId} currentUserRole={currentUserRole} />
+      <SessionCommentsThread sessionId={sessionId} currentUserId={currentUserId} />
     </div>
   );
 }
