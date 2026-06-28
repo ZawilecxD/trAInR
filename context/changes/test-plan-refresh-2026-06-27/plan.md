@@ -228,26 +228,26 @@ No schema or data migration.
 
 #### Automated
 
-- [x] 1.1 Stale stack/status grep returns no stale matches
-- [x] 1.2 Prettier check passes for refreshed guide and plan artifacts
+- [x] 1.1 Stale stack/status grep returns no stale matches — fb572f2
+- [x] 1.2 Prettier check passes for refreshed guide and plan artifacts — fb572f2
 
 #### Manual
 
-- [x] 1.3 §3 status table accurately reflects complete, open, and partial rollout work
-- [x] 1.4 §4 and §5 accurately describe current test layers and CI gates
+- [x] 1.3 §3 status table accurately reflects complete, open, and partial rollout work — fb572f2
+- [x] 1.4 §4 and §5 accurately describe current test layers and CI gates — fb572f2
 
 ### Phase 2: Refresh Risk Map and Risk Response Guidance
 
 #### Automated
 
-- [ ] 2.1 §2 file-line anchor scan is reviewed and cleaned
-- [ ] 2.2 Prettier check passes for the refreshed guide
+- [x] 2.1 §2 file-line anchor scan is reviewed and cleaned
+- [x] 2.2 Prettier check passes for the refreshed guide
 
 #### Manual
 
-- [ ] 2.3 Risk rows remain scenario-based and evidence-based
-- [ ] 2.4 Guided-workout and session-template concerns are visible in the risk map
-- [ ] 2.5 shadcn/ui primitives remain explicitly out of scope
+- [x] 2.3 Risk rows remain scenario-based and evidence-based
+- [x] 2.4 Guided-workout and session-template concerns are visible in the risk map
+- [x] 2.5 shadcn/ui primitives remain explicitly out of scope
 
 ### Phase 3: Refresh Cookbook, Freshness Ledger, and Handoff Guidance
 
