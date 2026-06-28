@@ -11,6 +11,7 @@ import type { SetLog } from "@/types";
 
 interface GuidedWorkoutHubProps {
   initialSession: ClientSessionDetail;
+  currentUserId: string;
 }
 
 function mergeSetLog(exercises: ClientSessionDetail["exercises"], setLog: SetLog) {
@@ -42,7 +43,7 @@ function removeSetLog(exercises: ClientSessionDetail["exercises"], sessionExerci
   });
 }
 
-export default function GuidedWorkoutHub({ initialSession }: GuidedWorkoutHubProps) {
+export default function GuidedWorkoutHub({ initialSession, currentUserId }: GuidedWorkoutHubProps) {
   const [session, setSession] = useState(initialSession);
   const [mode, setMode] = useState<GuidedWorkoutMode>(() => resolveInitialMode(initialSession));
   const [exerciseIndex, setExerciseIndex] = useState(0);
@@ -120,6 +121,7 @@ export default function GuidedWorkoutHub({ initialSession }: GuidedWorkoutHubPro
     return (
       <SessionOverview
         session={session}
+        currentUserId={currentUserId}
         beginPending={beginPending}
         beginError={beginError}
         onBegin={() => {

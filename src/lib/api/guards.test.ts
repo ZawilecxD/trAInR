@@ -1,6 +1,6 @@
 import type { APIContext } from "astro";
 import { describe, expect, it } from "vitest";
-import { requireClient, requireTrainer } from "@/lib/api/guards";
+import { requireAuthenticated, requireClient, requireTrainer } from "@/lib/api/guards";
 
 function makeContext(overrides: Partial<APIContext["locals"]>): APIContext {
   return {
@@ -80,6 +80,40 @@ describe("requireClient", () => {
     expect(result.ok).toBe(true);
     if (result.ok) {
       expect(result.userId).toBe("client-1");
+    }
+  });
+});
+
+describe("requireAuthenticated", () => {
+  it("returns 401 when unauthenticated", () => {
+    const result = requireAuthenticated(makeContext({ user: null, role: null }));
+    expect(result.ok).toBe(false);
+    if (!result.ok) {
+      expect(result.response.status).toBe(401);
+    }
+  });
+
+  it("allows any authenticated user regardless of role", () => {
+    const trainerResult = requireAuthenticated(
+      makeContext({
+        user: { id: "trainer-1" } as APIContext["locals"]["user"],
+        role: "trainer",
+      }),
+    );
+    expect(trainerResult.ok).toBe(true);
+    if (trainerResult.ok) {
+      expect(trainerResult.userId).toBe("trainer-1");
+    }
+
+    const clientResult = requireAuthenticated(
+      makeContext({
+        user: { id: "client-1" } as APIContext["locals"]["user"],
+        role: "client",
+      }),
+    );
+    expect(clientResult.ok).toBe(true);
+    if (clientResult.ok) {
+      expect(clientResult.userId).toBe("client-1");
     }
   });
 });

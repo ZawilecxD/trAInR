@@ -1,17 +1,25 @@
 import { ArrowLeft } from "lucide-react";
 import PhaseBreakdown from "@/components/guided-workout/PhaseBreakdown";
+import SessionCommentsPanel from "@/components/session-comments/SessionCommentsPanel";
 import { Button } from "@/components/ui/button";
 import { formatSessionOverviewDate } from "@/lib/guided-workout/format-session-date";
 import type { ClientSessionDetail } from "@/lib/workout-sessions/service";
 
 interface SessionOverviewProps {
   session: ClientSessionDetail;
+  currentUserId: string;
   beginPending: boolean;
   beginError: string | null;
   onBegin: () => void;
 }
 
-export default function SessionOverview({ session, beginPending, beginError, onBegin }: SessionOverviewProps) {
+export default function SessionOverview({
+  session,
+  currentUserId,
+  beginPending,
+  beginError,
+  onBegin,
+}: SessionOverviewProps) {
   const trainerNote = session.exercises.find((exercise) => exercise.notes)?.notes ?? null;
 
   return (
@@ -27,7 +35,7 @@ export default function SessionOverview({ session, beginPending, beginError, onB
         <h1 className="mt-4 text-3xl font-bold text-white">{session.name ?? "Workout"}</h1>
       </header>
 
-      <div className="space-y-4 pb-28">
+      <div className="space-y-4 pb-40">
         <section className="rounded-2xl border border-white/10 bg-white/5 p-5 backdrop-blur-xl">
           <dl className="grid gap-3 text-sm">
             <div className="flex justify-between gap-4">
@@ -56,6 +64,8 @@ export default function SessionOverview({ session, beginPending, beginError, onB
           <h2 className="mb-3 text-sm font-medium text-blue-100/80">Phase breakdown</h2>
           <PhaseBreakdown exercises={session.exercises} />
         </section>
+
+        <SessionCommentsPanel sessionId={session.id} currentUserId={currentUserId} />
 
         {beginError ? (
           <p className="rounded-lg border border-red-400/30 bg-red-500/10 px-4 py-3 text-sm text-red-100">

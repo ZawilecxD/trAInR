@@ -5,6 +5,16 @@ export type TrainerGuardResult = { ok: true; userId: string } | { ok: false; res
 
 export type ClientGuardResult = { ok: true; userId: string } | { ok: false; response: Response };
 
+export type AuthenticatedGuardResult = { ok: true; userId: string } | { ok: false; response: Response };
+
+export function requireAuthenticated(context: APIContext): AuthenticatedGuardResult {
+  if (!context.locals.user) {
+    return { ok: false, response: jsonError("unauthorized", 401) };
+  }
+
+  return { ok: true, userId: context.locals.user.id };
+}
+
 export function requireTrainer(context: APIContext): TrainerGuardResult {
   if (!context.locals.user) {
     return { ok: false, response: jsonError("unauthorized", 401) };

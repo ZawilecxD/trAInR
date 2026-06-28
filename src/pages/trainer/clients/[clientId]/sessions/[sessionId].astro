@@ -122,7 +122,7 @@ const pageTitle = notFound
             Failed to load session: {loadError}
           </div>
         ) : reviewSession ? (
-          <SessionActualsReview client:load session={reviewSession} />
+          <SessionActualsReview client:load session={reviewSession} currentUserId={userId} />
         ) : session ? (
           <div class="rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-xl">
             <SessionForm
