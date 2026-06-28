@@ -1,7 +1,7 @@
 ---
 id: session-comments
 title: "Session comments: bidirectional session commenting"
-status: implementing
+status: implemented
 created: 2026-06-28
 updated: 2026-06-28
 roadmap_id: S-09

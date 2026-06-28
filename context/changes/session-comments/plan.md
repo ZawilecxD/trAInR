@@ -342,8 +342,8 @@ No migration. Database schema, RLS policies, and integration tests for `session_
 
 #### Automated
 
-- [x] 1.1 npm run build passes with new types and service
-- [x] 1.2 npm run lint passes
+- [x] 1.1 npm run build passes with new types and service — 36fb3b2
+- [x] 1.2 npm run lint passes — 36fb3b2
 
 #### Manual
 
@@ -353,8 +353,8 @@ No migration. Database schema, RLS policies, and integration tests for `session_
 
 #### Automated
 
-- [x] 2.1 npm run lint passes
-- [x] 2.2 npm run build passes (routes resolve, types match)
+- [x] 2.1 npm run lint passes — 64ef728
+- [x] 2.2 npm run build passes (routes resolve, types match) — 64ef728
 
 #### Manual
 
@@ -366,8 +366,8 @@ No migration. Database schema, RLS policies, and integration tests for `session_
 
 #### Automated
 
-- [x] 3.1 npm run lint passes
-- [x] 3.2 npm run build passes
+- [x] 3.1 npm run lint passes — 827eb7d
+- [x] 3.2 npm run build passes — 827eb7d
 
 #### Manual
 
