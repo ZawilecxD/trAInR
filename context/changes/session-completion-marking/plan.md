@@ -330,7 +330,7 @@ The new `cancelled` value is only written by the new completion API — no exist
 
 #### Automated
 
-- [ ] 1.1 `npm run lint` passes with no type errors on SessionStatus switch branches
+- [x] 1.1 `npm run lint` passes with no type errors on SessionStatus switch branches — c32c64b
 - [ ] 1.2 `npm run build` succeeds
 
 #### Manual
@@ -341,7 +341,7 @@ The new `cancelled` value is only written by the new completion API — no exist
 
 #### Automated
 
-- [ ] 2.1 `npm run lint` passes with no type errors in service + route
+- [x] 2.1 `npm run lint` passes with no type errors in service + route
 - [ ] 2.2 `npm run build` succeeds
 
 #### Manual
