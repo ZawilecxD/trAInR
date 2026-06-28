@@ -176,3 +176,8 @@ export interface SessionComment {
   created_at: string;
   updated_at: string | null;
 }
+
+export interface SessionCommentWithAuthor extends SessionComment {
+  author_display_name: string;
+  author_role: UserRole;
+}
