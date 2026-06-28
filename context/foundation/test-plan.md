@@ -6,7 +6,7 @@
 >
 > Refresh: re-run `/10x-test-plan --refresh` when stale (see §8).
 >
-> Last updated: 2026-06-07 (Phase 1 change opened)
+> Last updated: 2026-06-28 (stack, gates, and rollout status refresh)
 
 ## 1. Strategy
 
@@ -27,7 +27,7 @@ Tests follow three non-negotiable principles for this project:
    research disagree about where the failure lives, research is the
    ground truth.
 
-Hot-spot scope used for likelihood weighting: `src/`, `supabase/` (excludes docs, build output, and existing `*.test.ts`).
+Hot-spot scope used for likelihood weighting: `src/`, `supabase/`, `tests/` (excludes docs, build output, lockfiles, and generated output).
 
 ## 2. Risk Map
 
@@ -61,12 +61,13 @@ Each row is a discrete rollout phase that will open its own change folder
 via `/10x-new`. Status moves left-to-right through the values below; the
 orchestrator updates Status as artifacts appear on disk.
 
-| #   | Phase name                   | Goal (one line)                                                                                                        | Risks covered | Test types          | Status        | Change folder                                  |
-| --- | ---------------------------- | ---------------------------------------------------------------------------------------------------------------------- | ------------- | ------------------- | ------------- | ---------------------------------------------- |
-| 1   | RLS isolation harness        | Stand up the integration/DB test harness and prove Trainer A ≠ Trainer B for read, write, delete, and RPC access       | #1            | integration / pgTAP | change opened | context/changes/testing-rls-isolation-harness/ |
-| 2   | Route authorization coverage | Every protected API route returns 401 (no session) and 403 (wrong role) before any data work                           | #3            | integration         | not started   | —                                              |
-| 3   | Service write-path integrity | A forced mid-write failure leaves no partial rows and surfaces an explicit error (pattern extends to S-06 set-logging) | #2            | integration         | not started   | —                                              |
-| 4   | Invite + validation parity   | Expired/used/malformed invite tokens are rejected; Zod and DB constraints agree on loads and rounds                    | #4, #5        | integration + unit  | not started   | —                                              |
+| #   | Phase name                    | Goal (one line)                                                                                                             | Risks covered | Test types         | Status      | Change folder                                             |
+| --- | ----------------------------- | --------------------------------------------------------------------------------------------------------------------------- | ------------- | ------------------ | ----------- | --------------------------------------------------------- |
+| 1   | RLS isolation harness         | Stand up the integration/DB test harness and prove Trainer A ≠ Trainer B for read, write, delete, and RPC access            | #1            | integration        | complete    | context/archive/2026-06-07-testing-rls-isolation-harness/ |
+| 2   | Route authorization coverage  | Every protected API route returns 401 (no session) and 403 (wrong role) before any data work                                | #3            | integration        | not started | —                                                         |
+| 3   | Service write-path integrity  | A forced mid-write failure leaves no partial rows and surfaces an explicit error, especially for session-template writes    | #2            | integration        | not started | —                                                         |
+| 4   | Invite + validation parity    | Expired/used/malformed invite tokens are rejected; Zod and DB constraints agree on loads and rounds                         | #4, #5        | integration + unit | not started | —                                                         |
+| 5   | Guided-workout E2E confidence | Prove critical guided-workout autosave/mobile and trainer session/template form flows where lower layers cannot give signal | TBD in §2     | e2e + unit         | not started | —                                                         |
 
 **Status vocabulary** (fixed — parser literals): `not started` → `change opened` → `researched` → `planned` → `implementing` → `complete`.
 
@@ -75,20 +76,20 @@ orchestrator updates Status as artifacts appear on disk.
 The classic test base for this project. AI-native tools (if any) carry a
 `checked:` date so future readers can see which lines need re-verification.
 
-| Layer                  | Tool                      | Version | Notes                                                                                                                          |
-| ---------------------- | ------------------------- | ------- | ------------------------------------------------------------------------------------------------------------------------------ |
-| unit                   | Vitest                    | 4.x     | wired; `node` env, `include: src/**/*.test.ts`. 6 unit tests, all in `src/lib/` (schemas, form-validation, filter-url, guards) |
-| integration (DB / RLS) | none yet — see §3 Phase 1 | —       | requires a real Postgres/Supabase identity-aware harness (local Supabase or pgTAP); choice grounded in Phase 1 research        |
-| API route / handler    | none yet — see §3 Phase 2 | —       | fabricate unauth / wrong-role Astro request context; reuses the Phase 1 harness                                                |
-| e2e                    | none                      | —       | deliberately deferred; no critical-flow e2e planned in this rollout (see §7)                                                   |
-| accessibility          | none                      | —       | out of scope for this rollout (see §7)                                                                                         |
+| Layer                  | Tool       | Version | Notes                                                                                                                                                 |
+| ---------------------- | ---------- | ------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| unit                   | Vitest     | 4.x     | wired; `node` env via `vitest.config.ts`, `include: src/**/*.test.ts`; meaningful suite across `src/lib/` domains                                     |
+| integration (DB / RLS) | Vitest     | 4.x     | wired via `vitest.integration.config.ts`, `include: tests/integration/**/*.test.ts`, Supabase env setup, and CI `test-integration` job                |
+| API route / handler    | Vitest     | 4.x     | planned for §3 Phase 2; guard helpers have unit coverage, but route-level 401/403 inventory is still open                                             |
+| e2e                    | Playwright | 1.x     | wired via `playwright.config.ts` and `npm run test:e2e`; `tests/e2e/seed.spec.ts` is the current exemplar; local-only, not CI-gated today             |
+| accessibility          | none       | —       | out of scope for this rollout unless a future guided-workout/mobile phase identifies a behavior that cannot be proven by cheaper deterministic checks |
 
 **Stack grounding tools (current session):**
 
-- Docs: Context7 — available; can ground Astro endpoint testing, Vitest config, and Supabase local/pgTAP RLS testing. Not queried yet; defer to Phase 1 research. checked: 2026-06-07
-- Search: Exa.ai — available; for current RLS-testing approaches and tool status. Not queried yet. checked: 2026-06-07
-- Runtime/browser: none — not used (no e2e/visual layer in this rollout). checked: 2026-06-07
-- Provider/platform: GitHub (CI gate wiring) + Linear (issue linking) — available; Supabase CLI present in devDependencies for a local test DB. checked: 2026-06-07
+- Docs: Context7 — available; use for current Astro, Vitest, Playwright, and Supabase testing APIs when planning new rollout phases. checked: 2026-06-28
+- Search: Exa.ai — available; use only for current tool discovery/status, then prefer official docs as evidence. checked: 2026-06-28
+- Runtime/browser: Playwright config exists in-repo; use the local E2E layer only when lower layers cannot prove the user-visible failure. checked: 2026-06-28
+- Provider/platform: GitHub (CI gate wiring) + Linear (issue linking) are available; Supabase CLI backs the local/CI integration harness. checked: 2026-06-28
 
 Use docs MCPs for current framework/library APIs and setup details. Use
 search MCPs for discovery or current status only, then prefer official docs
@@ -101,14 +102,17 @@ The full set of gates that must pass before a change reaches production.
 "Required for §3 Phase <N>" means the gate is enforced once that rollout
 phase lands; before that, the gate is `planned`.
 
-| Gate                          | Where      | Required?                 | Catches                                                         |
-| ----------------------------- | ---------- | ------------------------- | --------------------------------------------------------------- |
-| lint + typecheck              | local + CI | required                  | syntactic / type drift                                          |
-| unit                          | local + CI | required (in place)       | validation/logic regressions in `src/lib/`                      |
-| integration (RLS isolation)   | local + CI | required after §3 Phase 1 | cross-tenant leaks, broken isolation                            |
-| integration (route authz)     | local + CI | required after §3 Phase 2 | unauthenticated / wrong-role access                             |
-| integration (write integrity) | local + CI | required after §3 Phase 3 | partial-write corruption                                        |
-| `npm test` step in CI         | CI on PR   | required after §3 Phase 1 | regressions reaching `master` (CI runs lint + build only today) |
+| Gate                          | Where      | Required?                   | Catches                                                            |
+| ----------------------------- | ---------- | --------------------------- | ------------------------------------------------------------------ |
+| lint + typecheck              | local + CI | required                    | syntactic / type drift                                             |
+| unit                          | local + CI | required (in place)         | validation/logic regressions in `src/lib/`                         |
+| integration (RLS isolation)   | local + CI | required (Phase 1 complete) | cross-tenant leaks, broken isolation                               |
+| integration (route authz)     | local + CI | required after §3 Phase 2   | unauthenticated / wrong-role access                                |
+| integration (write integrity) | local + CI | required after §3 Phase 3   | partial-write corruption                                           |
+| E2E critical flows            | local      | planned / selective         | full browser regressions that lower layers cannot prove            |
+| `npm test` step in CI         | CI on PR   | required (in place)         | unit regressions reaching `main`                                   |
+| `npm run test:integration`    | CI on PR   | required (in place)         | Supabase-backed RLS/RPC regressions reaching `main`                |
+| `npm run test:e2e`            | local      | not CI-gated today          | trainer/client browser flows that need cookies, navigation, reload |
 
 ## 6. Cookbook Patterns
 
