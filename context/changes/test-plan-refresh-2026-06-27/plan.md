@@ -253,11 +253,11 @@ No schema or data migration.
 
 #### Automated
 
-- [x] 3.1 Research, plan, and plan brief artifacts exist
-- [x] 3.2 Prettier check passes for guide and change-folder markdown
+- [x] 3.1 Research, plan, and plan brief artifacts exist — 1f6b60b
+- [x] 3.2 Prettier check passes for guide and change-folder markdown — 1f6b60b
 
 #### Manual
 
-- [x] 3.3 §6 gives usable integration and E2E cookbook guidance
-- [x] 3.4 §8 dates and refresh triggers match the 2026-06-28 review
-- [x] 3.5 Refreshed guide stays concise enough to remain a source of truth
+- [x] 3.3 §6 gives usable integration and E2E cookbook guidance — 1f6b60b
+- [x] 3.4 §8 dates and refresh triggers match the 2026-06-28 review — 1f6b60b
+- [x] 3.5 Refreshed guide stays concise enough to remain a source of truth — 1f6b60b
