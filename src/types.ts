@@ -120,7 +120,7 @@ export interface ClientPlan {
   updated_at: string;
 }
 
-export type SessionStatus = "not_started" | "finished" | "finished_partially";
+export type SessionStatus = "not_started" | "finished" | "finished_partially" | "cancelled";
 
 export interface WorkoutSession {
   id: string;
