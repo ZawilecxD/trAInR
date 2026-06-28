@@ -1,7 +1,7 @@
 ---
 change_id: session-comments
 title: Bidirectional session comments (client ↔ trainer)
-status: implemented
+status: impl_reviewed
 created: 2026-06-28
 updated: 2026-06-28
 archived_at: null

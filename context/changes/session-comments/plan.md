@@ -241,25 +241,25 @@ None — schema already deployed.
 
 #### Automated
 
-- [x] 1.1 Unit tests pass: `npm test -- src/lib/session-comments src/lib/api/guards.test.ts`
-- [x] 1.2 Linting passes: `npm run lint`
-- [x] 1.3 Production build passes: `npm run build`
+- [x] 1.1 Unit tests pass: `npm test -- src/lib/session-comments src/lib/api/guards.test.ts` — bbf07c6
+- [x] 1.2 Linting passes: `npm run lint` — bbf07c6
+- [x] 1.3 Production build passes: `npm run build` — bbf07c6
 
 #### Manual
 
-- [x] 1.4 `GET/POST/PATCH/DELETE` against `/api/sessions/{id}/comments` return expected JSON with authenticated client or trainer cookie session
+- [x] 1.4 `GET/POST/PATCH/DELETE` against `/api/sessions/{id}/comments` return expected JSON with authenticated client or trainer cookie session — bbf07c6
 
 ### Phase 2: Session Comments UI
 
 #### Automated
 
-- [x] 2.1 Linting passes: `npm run lint`
-- [x] 2.2 Production build passes: `npm run build`
-- [x] 2.3 Integration tests pass: `npm test` (full suite including existing RLS harness)
+- [x] 2.1 Linting passes: `npm run lint` — bbf07c6
+- [x] 2.2 Production build passes: `npm run build` — bbf07c6
+- [x] 2.3 Integration tests pass: `npm test` (full suite including existing RLS harness) — bbf07c6
 
 #### Manual
 
-- [x] 2.4 Client opens session overview → sees empty thread → posts comment → sees it with own name
-- [x] 2.5 Trainer opens same session review → sees client comment → replies
-- [x] 2.6 Client refreshes → sees trainer reply
-- [x] 2.7 User can edit and delete own comment; cannot modify other's comment
+- [x] 2.4 Client opens session overview → sees empty thread → posts comment → sees it with own name — bbf07c6
+- [x] 2.5 Trainer opens same session review → sees client comment → replies — bbf07c6
+- [x] 2.6 Client refreshes → sees trainer reply — bbf07c6
+- [x] 2.7 User can edit and delete own comment; cannot modify other's comment — bbf07c6
