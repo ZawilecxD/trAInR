@@ -240,24 +240,24 @@ No schema or data migration.
 
 #### Automated
 
-- [x] 2.1 §2 file-line anchor scan is reviewed and cleaned
-- [x] 2.2 Prettier check passes for the refreshed guide
+- [x] 2.1 §2 file-line anchor scan is reviewed and cleaned — 7a6365f
+- [x] 2.2 Prettier check passes for the refreshed guide — 7a6365f
 
 #### Manual
 
-- [x] 2.3 Risk rows remain scenario-based and evidence-based
-- [x] 2.4 Guided-workout and session-template concerns are visible in the risk map
-- [x] 2.5 shadcn/ui primitives remain explicitly out of scope
+- [x] 2.3 Risk rows remain scenario-based and evidence-based — 7a6365f
+- [x] 2.4 Guided-workout and session-template concerns are visible in the risk map — 7a6365f
+- [x] 2.5 shadcn/ui primitives remain explicitly out of scope — 7a6365f
 
 ### Phase 3: Refresh Cookbook, Freshness Ledger, and Handoff Guidance
 
 #### Automated
 
-- [ ] 3.1 Research, plan, and plan brief artifacts exist
-- [ ] 3.2 Prettier check passes for guide and change-folder markdown
+- [x] 3.1 Research, plan, and plan brief artifacts exist
+- [x] 3.2 Prettier check passes for guide and change-folder markdown
 
 #### Manual
 
-- [ ] 3.3 §6 gives usable integration and E2E cookbook guidance
-- [ ] 3.4 §8 dates and refresh triggers match the 2026-06-28 review
-- [ ] 3.5 Refreshed guide stays concise enough to remain a source of truth
+- [x] 3.3 §6 gives usable integration and E2E cookbook guidance
+- [x] 3.4 §8 dates and refresh triggers match the 2026-06-28 review
+- [x] 3.5 Refreshed guide stays concise enough to remain a source of truth

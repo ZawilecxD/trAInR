@@ -131,7 +131,11 @@ the relevant rollout phase ships; before that, the sub-section reads
 
 ### 6.2 Adding an integration test (DB / RLS)
 
-- TBD — see §3 Phase 1 (the isolation harness and its conventions are established there: two-trainer fixtures, RLS-bound client, mid-write failure injection).
+- **Location**: `tests/integration/<area>/<scenario>.test.ts`.
+- **Config**: `npm run test:integration` uses `vitest.integration.config.ts`, `tests/integration/setup.ts`, and `INTEGRATION_SUPABASE_URL`, `INTEGRATION_SUPABASE_ANON_KEY`, `INTEGRATION_SUPABASE_SERVICE_ROLE_KEY`.
+- **Fixture pattern**: use helpers from `tests/integration/helpers/`; seed with the admin/service-role helper, then assert behavior through anon/RLS-bound authenticated clients.
+- **Reference tests**: `tests/integration/rls/*.test.ts`, `tests/integration/security-definer/*.test.ts`, `tests/integration/starter-exercise-seed.test.ts`.
+- **Run locally**: start Supabase first, then run `npm run test:integration`.
 
 ### 6.3 Adding a route authorization test
 
@@ -141,13 +145,21 @@ the relevant rollout phase ships; before that, the sub-section reads
 
 - **Test type**: integration (preferred) — assert request → response shape AND the persisted side-effect, then 401/403 for unauth/wrong-role.
 - **Pattern**: TBD — see §3 Phase 2.
-- **When to add e2e instead**: only if the failure mode requires the full deployed shape (cookie + middleware + handler crossing). Not planned in this rollout.
+- **When to add e2e instead**: only if the failure mode requires the full browser shape (cookie + middleware + handler crossing, navigation, reload, or mobile layout). Risk #6 is the primary E2E target; Risk #2 template/session form persistence is secondary.
 
 ### 6.5 Adding a validation/DB-parity test
 
 - TBD — see §3 Phase 4 (asserting Zod and the DB `check` constraint agree on the same boundary inputs).
 
-### 6.6 Per-rollout-phase notes
+### 6.6 Adding an E2E test
+
+- **Location**: `tests/e2e/<flow>.spec.ts`.
+- **Config**: `npm run test:e2e` uses `playwright.config.ts`, starts `npm run dev`, and currently runs locally rather than in CI.
+- **Reference test**: `tests/e2e/seed.spec.ts` for role-based locators, API response waits, unique names, reload assertion, and cleanup.
+- **Best first target**: Risk #6 guided-workout mobile autosave/reload. Prove a client logs a set, navigates or reloads, and sees persisted data. Do not test shadcn primitives or every UI detail.
+- **Secondary target**: Risk #2 trainer template/session form persistence. Prove multi-round template or session creation survives submit + reload; keep failure-injection and rollback assertions in integration tests.
+
+### 6.7 Per-rollout-phase notes
 
 (Optional. After each phase lands, `/10x-implement` appends a 2–3 line note
 here capturing anything surprising the rollout phase taught.)
@@ -163,13 +175,15 @@ contributors should respect these unless the underlying assumption changes.
 
 ## 8. Freshness Ledger
 
-- Strategy (§1–§5) last reviewed: 2026-06-07
-- Stack versions last verified: 2026-06-07
-- AI-native tool references last verified: 2026-06-07
+- Strategy (§1–§5) last reviewed: 2026-06-28
+- Stack versions last verified: 2026-06-28
+- AI-native tool references last verified: 2026-06-28
 
 Refresh (`/10x-test-plan --refresh`) when:
 
 - a new top-3 risk surfaces from the roadmap or archive (e.g. S-06 guided logging lands and set-logging integrity becomes the live #1),
 - a recommended tool's `checked:` date is older than three months,
 - the project's tech stack changes (new framework, new test runner),
+- E2E moves from local-only to CI-gated, or the Playwright project matrix changes,
+- guided-workout autosave/mobile confidence changes enough to alter Risk #6 priority,
 - §7 negative-space no longer matches what the team believes.
