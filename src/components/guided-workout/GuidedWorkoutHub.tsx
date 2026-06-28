@@ -2,12 +2,13 @@ import { useCallback, useMemo, useState } from "react";
 import ExerciseNavList from "@/components/guided-workout/ExerciseNavList";
 import ExerciseNavMenu from "@/components/guided-workout/ExerciseNavMenu";
 import GuidedExerciseView from "@/components/guided-workout/GuidedExerciseView";
+import SessionCompletedView from "@/components/guided-workout/SessionCompletedView";
 import SessionEditList from "@/components/guided-workout/SessionEditList";
 import SessionOverview from "@/components/guided-workout/SessionOverview";
 import { sortByPhaseThenSortOrder } from "@/lib/guided-workout/phase-labels";
 import { resolveInitialMode, type GuidedWorkoutMode } from "@/lib/guided-workout/session-mode";
 import type { ClientSessionDetail } from "@/lib/workout-sessions/service";
-import type { SetLog } from "@/types";
+import type { SessionStatus, SetLog } from "@/types";
 
 interface GuidedWorkoutHubProps {
   initialSession: ClientSessionDetail;
@@ -87,6 +88,28 @@ export default function GuidedWorkoutHub({ initialSession }: GuidedWorkoutHubPro
     setMode("overview");
   }
 
+  async function handleComplete(status: "finished" | "finished_partially" | "cancelled") {
+    const response = await fetch(`/api/client/sessions/${session.id}/complete`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ status }),
+    });
+
+    const body = (await response.json()) as {
+      session?: { status: SessionStatus };
+      error?: string;
+      details?: { message?: string };
+    };
+
+    if (!response.ok) {
+      throw new Error(body.details?.message ?? body.error ?? `Failed to save session status (${response.status})`);
+    }
+
+    const newStatus = body.session?.status ?? status;
+    setSession((prev) => ({ ...prev, status: newStatus }));
+    setMode("completed");
+  }
+
   async function handleBegin() {
     setBeginPending(true);
     setBeginError(null);
@@ -116,6 +139,10 @@ export default function GuidedWorkoutHub({ initialSession }: GuidedWorkoutHubPro
     }
   }
 
+  if (mode === "completed") {
+    return <SessionCompletedView session={session} />;
+  }
+
   if (mode === "overview") {
     return (
       <SessionOverview
@@ -125,6 +152,7 @@ export default function GuidedWorkoutHub({ initialSession }: GuidedWorkoutHubPro
         onBegin={() => {
           void handleBegin();
         }}
+        onCancel={handleComplete.bind(null, "cancelled")}
       />
     );
   }
@@ -145,6 +173,7 @@ export default function GuidedWorkoutHub({ initialSession }: GuidedWorkoutHubPro
         onLogSaved={handleLogSaved}
         onLogDeleted={handleLogDeleted}
         onRestart={handleRestart}
+        onComplete={handleComplete}
       />
     );
   }

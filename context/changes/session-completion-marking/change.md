@@ -1,7 +1,7 @@
 ---
 id: session-completion-marking
 title: "S-08: Session completion marking"
-status: planned
+status: implementing
 created: 2026-06-28
 updated: 2026-06-28
 roadmap_id: S-08
