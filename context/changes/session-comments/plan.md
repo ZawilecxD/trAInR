@@ -366,8 +366,8 @@ No migration. Database schema, RLS policies, and integration tests for `session_
 
 #### Automated
 
-- [ ] 3.1 npm run lint passes
-- [ ] 3.2 npm run build passes
+- [x] 3.1 npm run lint passes
+- [x] 3.2 npm run build passes
 
 #### Manual
 

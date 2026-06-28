@@ -1,17 +1,28 @@
 import { ArrowLeft } from "lucide-react";
+import SessionCommentsThread from "@/components/session-comments/SessionCommentsThread";
 import PhaseBreakdown from "@/components/guided-workout/PhaseBreakdown";
 import { Button } from "@/components/ui/button";
 import { formatSessionOverviewDate } from "@/lib/guided-workout/format-session-date";
 import type { ClientSessionDetail } from "@/lib/workout-sessions/service";
+import type { UserRole } from "@/types";
 
 interface SessionOverviewProps {
   session: ClientSessionDetail;
   beginPending: boolean;
   beginError: string | null;
   onBegin: () => void;
+  currentUserId: string;
+  currentUserRole: UserRole;
 }
 
-export default function SessionOverview({ session, beginPending, beginError, onBegin }: SessionOverviewProps) {
+export default function SessionOverview({
+  session,
+  beginPending,
+  beginError,
+  onBegin,
+  currentUserId,
+  currentUserRole,
+}: SessionOverviewProps) {
   const trainerNote = session.exercises.find((exercise) => exercise.notes)?.notes ?? null;
 
   return (
@@ -56,6 +67,8 @@ export default function SessionOverview({ session, beginPending, beginError, onB
           <h2 className="mb-3 text-sm font-medium text-blue-100/80">Phase breakdown</h2>
           <PhaseBreakdown exercises={session.exercises} />
         </section>
+
+        <SessionCommentsThread sessionId={session.id} currentUserId={currentUserId} currentUserRole={currentUserRole} />
 
         {beginError ? (
           <p className="rounded-lg border border-red-400/30 bg-red-500/10 px-4 py-3 text-sm text-red-100">
