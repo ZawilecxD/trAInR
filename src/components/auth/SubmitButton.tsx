@@ -6,13 +6,16 @@ interface SubmitButtonProps {
   pendingText: string;
   icon: ReactNode;
   children: ReactNode;
+  /** Test-only selector hook; stripped from production builds (see astro.config.mjs). */
+  testId?: string;
 }
 
-export function SubmitButton({ pending, pendingText, icon, children }: SubmitButtonProps) {
+export function SubmitButton({ pending, pendingText, icon, children, testId }: SubmitButtonProps) {
   return (
     <Button
       type="submit"
       disabled={pending}
+      data-testid={testId}
       className="w-full rounded-lg bg-purple-600 px-4 py-2 font-medium text-white transition-colors hover:bg-purple-500"
     >
       {pending ? (
