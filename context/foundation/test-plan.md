@@ -6,7 +6,7 @@
 >
 > Refresh: re-run `/10x-test-plan --refresh` when stale (see §8).
 >
-> Last updated: 2026-06-07 (Phase 1 change opened)
+> Last updated: 2026-06-29 (cross-reference roadmap `Q-04: add-e2e-ci-gate` for E2E CI promotion)
 
 ## 1. Strategy
 
@@ -17,7 +17,7 @@ Tests follow three non-negotiable principles for this project:
    vision model on top of a deterministic visual diff that already catches
    the regression.
 2. **User concerns are first-class evidence.** Risks anchored in "the team
-   is worried about X, and the failure would surface somewhere in <area>"
+   is worried about X, and the failure would surface somewhere in `area`"
    carry the same weight as PRD lines or hot-spot data.
 3. **Risks are scenarios, not code locations.** This plan documents _what
    could fail_ and _why we believe it's likely_ — drawn from documents,
@@ -27,7 +27,7 @@ Tests follow three non-negotiable principles for this project:
    research disagree about where the failure lives, research is the
    ground truth.
 
-Hot-spot scope used for likelihood weighting: `src/`, `supabase/` (excludes docs, build output, and existing `*.test.ts`).
+Hot-spot scope used for likelihood weighting: `src/`, `supabase/`, `tests/` (excludes docs, build output, lockfiles, and generated output).
 
 ## 2. Risk Map
 
@@ -37,23 +37,25 @@ terms, not test names. The Source column cites the _evidence that surfaced
 this risk_ — never a specific file as "where the failure lives" (that is
 research's job, see §1 principle #3).
 
-| #   | Risk (failure scenario)                                                                                                                                                                                                                                                            | Impact | Likelihood | Source (evidence — not anchor)                                                                                                                                                                                                                      |
-| --- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------ | ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 1   | **Cross-tenant isolation breach** — Trainer A reads OR writes/deletes Trainer B's clients, templates, exercises, or session logs (or a client sees another client's data), because RLS is the sole enforcement and several service operations query by `id` alone                  | High   | High       | PRD §Non-Functional ("never visible to other trainers", "no cross-tenant data leakage"), §Access Control; interview Q1, Q2 ("can't review RLS SQL"), Q3 ("change a query, hope RLS holds"), Q4; hot-spot dir `supabase/migrations/` (3 commits/30d) |
-| 2   | **Partial-write corruption on multi-step saves** — a template create/edit inserts exercises then per-round sets with no real transaction; a mid-sequence failure leaves orphaned/partial rows or wipes exercises on edit. Same pattern will own client set-logging when S-06 ships | High   | High       | PRD §Non-Functional ("never silently disappears, corrupts, or partially saves… explicit error and can retry"); interview Q1, Q2 ("multi-step write failed halfway, no transaction"), Q4; hot-spot dir `src/lib/session-templates/` (14 commits/30d) |
-| 3   | **Missing or drifted route authorization** — an API route omits or diverges from the auth/role guard and returns a 200 to an unauthenticated or wrong-role caller                                                                                                                  | High   | Medium     | interview Q3 ("copy-paste the guard, hope I didn't miss one"), Q4; two divergent guard patterns observed across routes; existing unit coverage stops at the guard helper, not the routes                                                            |
-| 4   | **Invite-link abuse** — a leaked, expired, or already-consumed invite token still completes registration and auto-assigns the registrant to a trainer                                                                                                                              | Medium | Medium     | PRD FR-003, FR-004 (Socrates: "if the link leaks, the wrong person gets assigned"); roadmap S-03; hot-spot dir `supabase/migrations/`; partially mitigated by FR-006 removal                                                                        |
-| 5   | **Validation ↔ DB-constraint parity** — server-side Zod rules diverge from database checks (load `0`=bodyweight, negative=assisted; each round requires reps OR duration), so valid input is rejected or invalid input is persisted                                                | Medium | Medium     | roadmap §S-04 risk note ("template schema currently rejects negative" vs ERD); hot-spot dir `src/lib/session-templates/` (14 commits/30d)                                                                                                           |
+| #   | Risk (failure scenario)                                                                                                                                                                                                                                                 | Impact | Likelihood | Source (evidence — not anchor)                                                                                                                                                                                                                                                                            |
+| --- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------ | ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1   | **Cross-tenant isolation breach** — Trainer A reads OR writes/deletes Trainer B's clients, templates, exercises, session logs, or invite/RPC-owned rows (or a client sees another client's data), despite the shipped RLS harness                                       | High   | Medium     | PRD §Non-Functional ("never visible to other trainers", "no cross-tenant data leakage"), §Access Control; archived Phase 1 harness complete; Q-02 hardening complete; Q-03 invite RPC gap still open; hot-spot dirs `supabase/`, `tests/integration/`                                                     |
+| 2   | **Session-template write corruption or wrong prescription** — template create/edit inserts exercises then per-round sets without a proven transaction; a mid-sequence failure or round-form drift leaves partial rows, wipes exercises, or saves the wrong prescription | High   | High       | PRD §Non-Functional ("never silently disappears, corrupts, or partially saves… explicit error and can retry"); original interview concern about multi-step write failure; refresh hot-spot dir `src/lib/session-templates/`; user concern: session-template/round-form confidence                         |
+| 3   | **Missing or drifted route authorization** — an API route omits or diverges from the auth/role guard and returns a 200 to an unauthenticated or wrong-role caller                                                                                                       | High   | Medium     | interview Q3 ("copy-paste the guard, hope I didn't miss one"), Q4; existing unit coverage stops at the guard helper, not the route inventory                                                                                                                                                              |
+| 4   | **Invite-link abuse** — a leaked, expired, already-consumed, or wrong-client invite token still completes registration and auto-assigns the registrant to a trainer                                                                                                     | Medium | Medium     | PRD FR-003, FR-004 (Socrates: "if the link leaks, the wrong person gets assigned"); roadmap S-03; archived Phase 1 known-gap workflow; open Q-03 hardening change; hot-spot dir `supabase/`                                                                                                               |
+| 5   | **Validation ↔ DB-constraint parity** — server-side Zod rules diverge from database checks (load `0`=bodyweight, negative=assisted; each round requires reps OR duration), so valid input is rejected or invalid input is persisted                                     | Medium | Medium     | roadmap §S-04 risk note ("template schema currently rejects negative" vs ERD); refresh research found stronger cross-domain divergence signal; hot-spot dirs `src/lib/session-templates/`, `src/lib/set-logs/`                                                                                            |
+| 6   | **Guided-workout false safety on client logging** — a client believes set logs were saved, especially on mobile or quick navigation, but debounced autosave never persisted or failed silently; reload later shows missing data                                         | High   | Medium     | S-06 guided logging shipped; refresh hot-spot dirs `src/components/guided-workout/`, `src/lib/set-logs/`, `tests/e2e/`; user concerns: mobile guided-workout flow, autosave false-safety, E2E for session/template creation; §7 re-evaluation trigger for non-trivial client-side logging state has fired |
 
 ### Risk Response Guidance
 
-| Risk | What would prove protection                                                                                                                          | Must challenge                                                                                                                                                | Context `/10x-research` must ground                                                                                                                | Likely cheapest layer                                                                 | Anti-pattern to avoid                                                                     |
-| ---- | ---------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
-| #1   | Acting as Trainer B, every read, update, and delete of Trainer A's rows — direct table access, by-id access, and via RPC — returns empty or denied   | "logged-in ⇒ allowed"; **verify the server Supabase client uses the anon / RLS-bound key, not `service_role`** (a service-role key silently bypasses all RLS) | actual RLS policies per table; whether removal/assignment RPCs are `SECURITY DEFINER`; how to run two real authenticated identities against the DB | integration (DB seeded with two trainers) or pgTAP — no unit test can prove isolation | mocking Supabase (mocks cannot prove RLS); testing reads only and not writes/deletes      |
-| #2   | After a forced mid-write failure, the DB holds either the complete record or nothing — never a partial record; the caller receives an explicit error | "the happy-path insert succeeding means rollback works"; "FK cascade is intentional cleanup"                                                                  | whether a DB transaction/RPC exists or cleanup is app-level; what failure injection is possible; FK `ON DELETE` behavior                           | integration (real DB, inject failure mid-sequence)                                    | asserting only the happy path; copying the service's own cleanup logic as the test oracle |
-| #3   | Each protected route returns 401 with no session and 403 for the wrong role, before any data work happens                                            | "the guard is on the route I looked at ⇒ it's on every route"; an enumerated route inventory is required, not assumed                                         | the full protected-route inventory; how to fabricate unauthenticated and wrong-role request context in Astro SSR                                   | integration or handler-level test per route                                           | re-testing the guard helper in isolation (already covered) and assuming routes call it    |
-| #4   | An expired, already-consumed, or malformed token cannot complete registration or trainer assignment                                                  | "happy-path signup working ⇒ expiry and single-use are enforced"; where is expiry actually checked — RPC or app code?                                         | invite RPC logic, the expiry/consumption enforcement point, token uniqueness guarantees                                                            | integration (DB + RPC)                                                                | testing only the valid-token signup; trusting client-supplied token state                 |
-| #5   | Boundary loads (`0`, negative, null) and reps-XOR-duration rounds are accepted or rejected identically by Zod and by the DB check constraint         | "the schema unit test passing ⇒ the DB agrees"; the known roadmap divergence is real and must be reconciled                                                   | the exact DB `check` constraints vs current Zod schema; the S-04 load-semantics gap                                                                | unit (schema) + a thin integration assertion against the DB constraint                | a schema-only test that never confirms the DB actually agrees                             |
+| Risk | What would prove protection                                                                                                                                                            | Must challenge                                                                                                                                | Context `/10x-research` must ground                                                                                                       | Likely cheapest layer                                                                             | Anti-pattern to avoid                                                                      |
+| ---- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
+| #1   | Acting as the wrong trainer/client, every read, update, delete, and RPC-owned operation returns empty or denied                                                                        | "the RLS harness is complete ⇒ every ownership edge is safe"; verify production-facing code uses anon / RLS-bound clients, not `service_role` | current RLS/RPC coverage, Q-03 invite gap, whether new tables/RPCs landed after Phase 1, how two real authenticated identities are seeded | integration (DB seeded with two trainers/clients)                                                 | mocking Supabase; testing reads only and not writes/deletes/RPCs                           |
+| #2   | After a forced session-template create/edit failure, the DB holds either the complete intended template or the prior valid state; round counts and warmup/load fields reload correctly | "the happy-path template save or form unit test proves persistence"; "delete-then-reinsert is safe because FK cascade exists"                 | whether template writes are transactional, what failure injection is possible, how round-form payloads map to persisted rows              | integration for failure integrity; secondary E2E for critical template/session form reload        | asserting only the happy path; copying the service's cleanup logic as the test oracle      |
+| #3   | Each protected route returns 401 with no session and 403 for the wrong role, before any data work happens                                                                              | "the guard helper has tests ⇒ every route calls it correctly"; an enumerated route inventory is required, not assumed                         | the full protected-route inventory; how to fabricate unauthenticated and wrong-role request context in Astro SSR                          | integration or handler-level test per route                                                       | re-testing the guard helper in isolation and assuming routes call it                       |
+| #4   | Expired, already-consumed, malformed, or wrong-client invite tokens cannot complete registration or trainer assignment                                                                 | "valid-token signup works ⇒ expiry, single-use, and client ownership are enforced"; where is enforcement actually checked — RPC or app code?  | invite RPC logic, expiry/consumption enforcement point, token uniqueness, client identity binding, open Q-03 hardening scope              | integration (DB + RPC)                                                                            | testing only the valid-token signup; trusting client-supplied token state                  |
+| #5   | Boundary loads (`0`, negative, null) and reps-XOR-duration rounds are accepted or rejected identically by Zod and by the DB check constraint                                           | "the schema unit test passing ⇒ the DB agrees"; the known roadmap divergence is real and must be reconciled                                   | DB constraints vs current Zod schemas across templates, workout sessions, and set logs; S-04 load semantics                               | unit (schema) + a thin integration assertion against DB constraints                               | a schema-only test that never confirms the DB actually agrees                              |
+| #6   | A client can log a guided-workout set on mobile, navigate quickly, reload, and see the saved value; failed autosave is visible and retryable rather than silently lost                 | "debounce eventually fires ⇒ user data is safe"; "desktop happy path proves mobile"; "no visible error means save succeeded"                  | autosave lifecycle, navigation/unmount behavior, API failure handling, mobile-only navigation, current auth fixture shape                 | primary E2E target: narrow Playwright mobile/reload flow, backed by hook/component autosave tests | e2e for every UI detail; asserting spinner presence instead of persisted data after reload |
 
 ## 3. Phased Rollout
 
@@ -61,12 +63,13 @@ Each row is a discrete rollout phase that will open its own change folder
 via `/10x-new`. Status moves left-to-right through the values below; the
 orchestrator updates Status as artifacts appear on disk.
 
-| #   | Phase name                   | Goal (one line)                                                                                                        | Risks covered | Test types          | Status        | Change folder                                  |
-| --- | ---------------------------- | ---------------------------------------------------------------------------------------------------------------------- | ------------- | ------------------- | ------------- | ---------------------------------------------- |
-| 1   | RLS isolation harness        | Stand up the integration/DB test harness and prove Trainer A ≠ Trainer B for read, write, delete, and RPC access       | #1            | integration / pgTAP | change opened | context/changes/testing-rls-isolation-harness/ |
-| 2   | Route authorization coverage | Every protected API route returns 401 (no session) and 403 (wrong role) before any data work                           | #3            | integration         | not started   | —                                              |
-| 3   | Service write-path integrity | A forced mid-write failure leaves no partial rows and surfaces an explicit error (pattern extends to S-06 set-logging) | #2            | integration         | not started   | —                                              |
-| 4   | Invite + validation parity   | Expired/used/malformed invite tokens are rejected; Zod and DB constraints agree on loads and rounds                    | #4, #5        | integration + unit  | not started   | —                                              |
+| #   | Phase name                           | Goal (one line)                                                                                                                           | Risks covered | Test types         | Status      | Change folder                                             |
+| --- | ------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------- | ------------- | ------------------ | ----------- | --------------------------------------------------------- |
+| 1   | RLS isolation harness                | Stand up the integration/DB test harness and prove Trainer A ≠ Trainer B for read, write, delete, and RPC access                          | #1            | integration        | complete    | context/archive/2026-06-07-testing-rls-isolation-harness/ |
+| 2   | Route authorization coverage         | Every protected API route returns 401 (no session) and 403 (wrong role) before any data work                                              | #3            | integration        | not started | —                                                         |
+| 3   | Service write-path integrity         | A forced mid-write failure leaves no partial rows and surfaces an explicit error, especially for session-template writes                  | #2            | integration        | not started | —                                                         |
+| 4   | Invite + validation parity           | Expired/used/malformed invite tokens are rejected; Zod and DB constraints agree on loads and rounds                                       | #4, #5        | integration + unit | not started | —                                                         |
+| 5   | Guided-workout + form E2E confidence | Prove guided-workout autosave/mobile first, then session-template/session creation form persistence where lower layers cannot give signal | #6, #2        | e2e + unit         | not started | —                                                         |
 
 **Status vocabulary** (fixed — parser literals): `not started` → `change opened` → `researched` → `planned` → `implementing` → `complete`.
 
@@ -75,20 +78,20 @@ orchestrator updates Status as artifacts appear on disk.
 The classic test base for this project. AI-native tools (if any) carry a
 `checked:` date so future readers can see which lines need re-verification.
 
-| Layer                  | Tool                      | Version | Notes                                                                                                                          |
-| ---------------------- | ------------------------- | ------- | ------------------------------------------------------------------------------------------------------------------------------ |
-| unit                   | Vitest                    | 4.x     | wired; `node` env, `include: src/**/*.test.ts`. 6 unit tests, all in `src/lib/` (schemas, form-validation, filter-url, guards) |
-| integration (DB / RLS) | none yet — see §3 Phase 1 | —       | requires a real Postgres/Supabase identity-aware harness (local Supabase or pgTAP); choice grounded in Phase 1 research        |
-| API route / handler    | none yet — see §3 Phase 2 | —       | fabricate unauth / wrong-role Astro request context; reuses the Phase 1 harness                                                |
-| e2e                    | none                      | —       | deliberately deferred; no critical-flow e2e planned in this rollout (see §7)                                                   |
-| accessibility          | none                      | —       | out of scope for this rollout (see §7)                                                                                         |
+| Layer                  | Tool       | Version | Notes                                                                                                                                                 |
+| ---------------------- | ---------- | ------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| unit                   | Vitest     | 4.x     | wired; `node` env via `vitest.config.ts`, `include: src/**/*.test.ts`; meaningful suite across `src/lib/` domains                                     |
+| integration (DB / RLS) | Vitest     | 4.x     | wired via `vitest.integration.config.ts`, `include: tests/integration/**/*.test.ts`, Supabase env setup, and CI `test-integration` job                |
+| API route / handler    | Vitest     | 4.x     | planned for §3 Phase 2; guard helpers have unit coverage, but route-level 401/403 inventory is still open                                             |
+| e2e                    | Playwright | 1.x     | wired via `playwright.config.ts` and `npm run test:e2e`; `tests/e2e/seed.spec.ts` is the current exemplar; local-only, not CI-gated today (roadmap `Q-04: add-e2e-ci-gate` tracks promoting it to a PR gate) |
+| accessibility          | none       | —       | out of scope for this rollout unless a future guided-workout/mobile phase identifies a behavior that cannot be proven by cheaper deterministic checks |
 
 **Stack grounding tools (current session):**
 
-- Docs: Context7 — available; can ground Astro endpoint testing, Vitest config, and Supabase local/pgTAP RLS testing. Not queried yet; defer to Phase 1 research. checked: 2026-06-07
-- Search: Exa.ai — available; for current RLS-testing approaches and tool status. Not queried yet. checked: 2026-06-07
-- Runtime/browser: none — not used (no e2e/visual layer in this rollout). checked: 2026-06-07
-- Provider/platform: GitHub (CI gate wiring) + Linear (issue linking) — available; Supabase CLI present in devDependencies for a local test DB. checked: 2026-06-07
+- Docs: Context7 — available; use for current Astro, Vitest, Playwright, and Supabase testing APIs when planning new rollout phases. checked: 2026-06-28
+- Search: Exa.ai — available; use only for current tool discovery/status, then prefer official docs as evidence. checked: 2026-06-28
+- Runtime/browser: Playwright config exists in-repo; use the local E2E layer only when lower layers cannot prove the user-visible failure. checked: 2026-06-28
+- Provider/platform: GitHub (CI gate wiring) + Linear (issue linking) are available; Supabase CLI backs the local/CI integration harness. checked: 2026-06-28
 
 Use docs MCPs for current framework/library APIs and setup details. Use
 search MCPs for discovery or current status only, then prefer official docs
@@ -98,23 +101,26 @@ those belong in per-phase `/10x-research`.
 ## 5. Quality Gates
 
 The full set of gates that must pass before a change reaches production.
-"Required for §3 Phase <N>" means the gate is enforced once that rollout
+"Required for §3 Phase `N`" means the gate is enforced once that rollout
 phase lands; before that, the gate is `planned`.
 
-| Gate                          | Where      | Required?                 | Catches                                                         |
-| ----------------------------- | ---------- | ------------------------- | --------------------------------------------------------------- |
-| lint + typecheck              | local + CI | required                  | syntactic / type drift                                          |
-| unit                          | local + CI | required (in place)       | validation/logic regressions in `src/lib/`                      |
-| integration (RLS isolation)   | local + CI | required after §3 Phase 1 | cross-tenant leaks, broken isolation                            |
-| integration (route authz)     | local + CI | required after §3 Phase 2 | unauthenticated / wrong-role access                             |
-| integration (write integrity) | local + CI | required after §3 Phase 3 | partial-write corruption                                        |
-| `npm test` step in CI         | CI on PR   | required after §3 Phase 1 | regressions reaching `master` (CI runs lint + build only today) |
+| Gate                          | Where      | Required?                   | Catches                                                            |
+| ----------------------------- | ---------- | --------------------------- | ------------------------------------------------------------------ |
+| lint + typecheck              | local + CI | required                    | syntactic / type drift                                             |
+| unit                          | local + CI | required (in place)         | validation/logic regressions in `src/lib/`                         |
+| integration (RLS isolation)   | local + CI | required (Phase 1 complete) | cross-tenant leaks, broken isolation                               |
+| integration (route authz)     | local + CI | required after §3 Phase 2   | unauthenticated / wrong-role access                                |
+| integration (write integrity) | local + CI | required after §3 Phase 3   | partial-write corruption                                           |
+| E2E critical flows            | local      | planned / selective         | full browser regressions that lower layers cannot prove (CI promotion tracked by roadmap `Q-04: add-e2e-ci-gate`) |
+| `npm test` step in CI         | CI on PR   | required (in place)         | unit regressions reaching `main`                                   |
+| `npm run test:integration`    | CI on PR   | required (in place)         | Supabase-backed RLS/RPC regressions reaching `main`                |
+| `npm run test:e2e`            | local      | not CI-gated today (see roadmap `Q-04`) | trainer/client browser flows that need cookies, navigation, reload |
 
 ## 6. Cookbook Patterns
 
 How to add new tests in this project. Each sub-section is filled in once
 the relevant rollout phase ships; before that, the sub-section reads
-"TBD — see §3 Phase <N>."
+"TBD — see §3 Phase `N`."
 
 ### 6.1 Adding a unit test
 
@@ -125,7 +131,11 @@ the relevant rollout phase ships; before that, the sub-section reads
 
 ### 6.2 Adding an integration test (DB / RLS)
 
-- TBD — see §3 Phase 1 (the isolation harness and its conventions are established there: two-trainer fixtures, RLS-bound client, mid-write failure injection).
+- **Location**: `tests/integration/<area>/<scenario>.test.ts`.
+- **Config**: `npm run test:integration` uses `vitest.integration.config.ts`, `tests/integration/setup.ts`, and `INTEGRATION_SUPABASE_URL`, `INTEGRATION_SUPABASE_ANON_KEY`, `INTEGRATION_SUPABASE_SERVICE_ROLE_KEY`.
+- **Fixture pattern**: use helpers from `tests/integration/helpers/`; seed with the admin/service-role helper, then assert behavior through anon/RLS-bound authenticated clients.
+- **Reference tests**: `tests/integration/rls/*.test.ts`, `tests/integration/security-definer/*.test.ts`, `tests/integration/starter-exercise-seed.test.ts`.
+- **Run locally**: start Supabase first, then run `npm run test:integration`.
 
 ### 6.3 Adding a route authorization test
 
@@ -135,13 +145,21 @@ the relevant rollout phase ships; before that, the sub-section reads
 
 - **Test type**: integration (preferred) — assert request → response shape AND the persisted side-effect, then 401/403 for unauth/wrong-role.
 - **Pattern**: TBD — see §3 Phase 2.
-- **When to add e2e instead**: only if the failure mode requires the full deployed shape (cookie + middleware + handler crossing). Not planned in this rollout.
+- **When to add e2e instead**: only if the failure mode requires the full browser shape (cookie + middleware + handler crossing, navigation, reload, or mobile layout). Risk #6 is the primary E2E target; Risk #2 template/session form persistence is secondary.
 
 ### 6.5 Adding a validation/DB-parity test
 
 - TBD — see §3 Phase 4 (asserting Zod and the DB `check` constraint agree on the same boundary inputs).
 
-### 6.6 Per-rollout-phase notes
+### 6.6 Adding an E2E test
+
+- **Location**: `tests/e2e/<flow>.spec.ts`.
+- **Config**: `npm run test:e2e` uses `playwright.config.ts`, starts `npm run dev`, and currently runs locally rather than in CI (roadmap `Q-04: add-e2e-ci-gate` covers wiring it into CI against an ephemeral Supabase).
+- **Reference test**: `tests/e2e/seed.spec.ts` for role-based locators, API response waits, unique names, reload assertion, and cleanup.
+- **Best first target**: Risk #6 guided-workout mobile autosave/reload. Prove a client logs a set, navigates or reloads, and sees persisted data. Do not test shadcn primitives or every UI detail.
+- **Secondary target**: Risk #2 trainer template/session form persistence. Prove multi-round template or session creation survives submit + reload; keep failure-injection and rollback assertions in integration tests.
+
+### 6.7 Per-rollout-phase notes
 
 (Optional. After each phase lands, `/10x-implement` appends a 2–3 line note
 here capturing anything surprising the rollout phase taught.)
@@ -153,17 +171,19 @@ contributors should respect these unless the underlying assumption changes.
 
 - **shadcn/ui primitives** (`button`, `input`, `badge`, `alert-dialog`, etc.) — vendored; the library is the test. Re-evaluate only if a primitive is forked and customized. (Source: Phase 2 interview Q5.)
 - **Pixel-perfect / snapshot tests of `.astro` layout and marketing pages** — brittle, catch nothing real. Re-evaluate if a page encodes critical conditional logic. (Source: Phase 2 interview Q5.)
-- **Detailed UI / component rendering** — only the most critical UI path warrants a test, and none rises to that bar in this rollout. Re-evaluate if a client-facing logging interaction (S-06) ships with non-trivial client-side state. (Source: Phase 2 interview Q5.)
+- **Generic UI / component rendering** — do not test components just because they render. The narrow exception is behavior that lower layers cannot prove: guided-workout autosave/mobile persistence and critical trainer form flows called out in §2 and §3. (Source: Phase 2 interview Q5 + 2026-06-28 refresh concerns.)
 
 ## 8. Freshness Ledger
 
-- Strategy (§1–§5) last reviewed: 2026-06-07
-- Stack versions last verified: 2026-06-07
-- AI-native tool references last verified: 2026-06-07
+- Strategy (§1–§5) last reviewed: 2026-06-28
+- Stack versions last verified: 2026-06-28
+- AI-native tool references last verified: 2026-06-28
 
 Refresh (`/10x-test-plan --refresh`) when:
 
 - a new top-3 risk surfaces from the roadmap or archive (e.g. S-06 guided logging lands and set-logging integrity becomes the live #1),
 - a recommended tool's `checked:` date is older than three months,
 - the project's tech stack changes (new framework, new test runner),
+- E2E moves from local-only to CI-gated (tracked by roadmap `Q-04: add-e2e-ci-gate`), or the Playwright project matrix changes,
+- guided-workout autosave/mobile confidence changes enough to alter Risk #6 priority,
 - §7 negative-space no longer matches what the team believes.

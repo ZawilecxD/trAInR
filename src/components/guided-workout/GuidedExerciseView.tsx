@@ -1,4 +1,4 @@
-import { ArrowLeft, Menu } from "lucide-react";
+import { ArrowLeft, Loader2, Menu } from "lucide-react";
 import ExerciseSetLogTable from "@/components/guided-workout/ExerciseSetLogTable";
 import { Button } from "@/components/ui/button";
 import { formatExercisePrescriptionDetail } from "@/lib/guided-workout/format-prescription";
@@ -11,6 +11,7 @@ interface GuidedExerciseViewProps {
   exerciseIndex: number;
   totalExercises: number;
   startedAt: string | null;
+  isNavigating?: boolean;
   onBackToOverview: () => void;
   onBackToEditList: () => void;
   onOpenMenu?: () => void;
@@ -25,6 +26,7 @@ export default function GuidedExerciseView({
   exerciseIndex,
   totalExercises,
   startedAt,
+  isNavigating = false,
   onBackToOverview,
   onBackToEditList,
   onOpenMenu,
@@ -94,7 +96,7 @@ export default function GuidedExerciseView({
             type="button"
             variant="outline"
             className="min-h-12 flex-1 border-white/20 bg-white/5 text-base text-white hover:bg-white/10"
-            disabled={isFirstExercise}
+            disabled={isFirstExercise || isNavigating}
             onClick={onPrev}
           >
             Prev
@@ -102,9 +104,19 @@ export default function GuidedExerciseView({
           <Button
             type="button"
             className="min-h-12 flex-1 text-base"
+            disabled={isNavigating}
             onClick={isLastExercise ? onBackToEditList : onNext}
           >
-            {isLastExercise ? "Finish" : "Next"}
+            {isNavigating ? (
+              <>
+                <Loader2 className="size-4 animate-spin" aria-hidden="true" />
+                Saving…
+              </>
+            ) : isLastExercise ? (
+              "Finish"
+            ) : (
+              "Next"
+            )}
           </Button>
         </div>
       </div>

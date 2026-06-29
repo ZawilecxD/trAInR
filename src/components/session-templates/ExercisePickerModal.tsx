@@ -63,6 +63,7 @@ export default function ExercisePickerModal({ open, onClose, onPick, availableEx
           <div className="relative">
             <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-blue-100/50" />
             <input
+              aria-label="Search exercises"
               type="search"
               value={query}
               onChange={(event) => {
