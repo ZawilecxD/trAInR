@@ -23,6 +23,15 @@ describe("filtersToSearchParams", () => {
     expect(params.get("q")).toBe("bench");
   });
 
+  it("serializes favourites-only filter", () => {
+    const params = filtersToSearchParams({
+      muscleGroupIds: [],
+      favouritesOnly: true,
+    });
+
+    expect(params.get("favourites")).toBe("1");
+  });
+
   it("omits empty filter values", () => {
     const params = filtersToSearchParams({ muscleGroupIds: [] });
     expect(params.toString()).toBe("");
@@ -40,6 +49,17 @@ describe("searchParamsToFilters", () => {
       type: "cardio",
       muscleGroupIds: [chestId],
       q: "run",
+      favouritesOnly: undefined,
+    });
+  });
+
+  it("deserializes favourites-only param", () => {
+    const params = new URLSearchParams();
+    params.set("favourites", "1");
+
+    expect(searchParamsToFilters(params)).toEqual({
+      muscleGroupIds: [],
+      favouritesOnly: true,
     });
   });
 });

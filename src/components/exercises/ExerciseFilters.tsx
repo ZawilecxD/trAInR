@@ -58,8 +58,18 @@ export default function ExerciseFilters({ muscleGroups, initialFilters }: Exerci
     applyFilters({ muscleGroupIds: [] });
   }
 
+  function toggleFavouritesOnly() {
+    applyFilters({
+      ...initialFilters,
+      favouritesOnly: initialFilters.favouritesOnly ? undefined : true,
+    });
+  }
+
   const hasActiveFilters =
-    initialFilters.type !== undefined || initialFilters.q !== undefined || initialFilters.muscleGroupIds.length > 0;
+    initialFilters.type !== undefined ||
+    initialFilters.q !== undefined ||
+    initialFilters.muscleGroupIds.length > 0 ||
+    initialFilters.favouritesOnly === true;
 
   return (
     <div className="space-y-4 rounded-xl border border-white/10 bg-white/5 p-4">
@@ -110,6 +120,25 @@ export default function ExerciseFilters({ muscleGroups, initialFilters }: Exerci
             Clear filters
           </button>
         ) : null}
+      </div>
+
+      <div>
+        <p className="mb-2 text-sm text-blue-100/80">Quick filters</p>
+        <div className="flex flex-wrap gap-2">
+          <button
+            type="button"
+            aria-pressed={initialFilters.favouritesOnly === true}
+            onClick={toggleFavouritesOnly}
+            className={cn(
+              "rounded-full border px-3 py-1 text-xs transition-colors",
+              initialFilters.favouritesOnly
+                ? "border-amber-300/60 bg-amber-500/20 text-amber-100"
+                : "border-white/20 bg-white/5 text-blue-100/80 hover:bg-white/10",
+            )}
+          >
+            Favourites only
+          </button>
+        </div>
       </div>
 
       <div>

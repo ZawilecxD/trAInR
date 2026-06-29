@@ -25,6 +25,7 @@ interface ExerciseFormProps {
     default_metric: ExerciseMetric;
     notes: string | null;
     video_url: string | null;
+    is_favourite?: boolean;
     muscle_groups: { muscle_group_id: string; role: MuscleRole }[];
   };
 }
@@ -312,6 +313,23 @@ export default function ExerciseForm({ mode, muscleGroups, exerciseId, initialEx
           className={inputClass}
         />
       </div>
+
+      {mode === "edit" ? (
+        <div>
+          <label className="flex items-center gap-2 text-sm text-white">
+            <input
+              type="checkbox"
+              checked={values.is_favourite}
+              onChange={(event) => {
+                updateField("is_favourite", event.target.checked);
+              }}
+              className="size-4 rounded border-white/20 bg-white/10"
+            />
+            Mark as favourite
+          </label>
+          <p className="mt-1 text-xs text-blue-100/60">Favourites appear when filtering exercise lists.</p>
+        </div>
+      ) : null}
 
       <div>
         <p className="mb-2 text-sm text-blue-100/80">Muscle groups</p>
