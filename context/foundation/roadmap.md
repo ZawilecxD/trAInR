@@ -5,7 +5,7 @@
 version: 1
 status: draft
 created: 2026-05-25
-updated: 2026-06-20
+updated: 2026-06-29
 prd_version: 1
 main_goal: speed
 top_blocker: time
@@ -46,7 +46,7 @@ Independent personal trainers lose coaching time to admin — hunting across spr
 | S-12 | exercise-statistics        | view per-exercise history, estimated 1RM, and volume/tonnage              | S-06          | FR-024, FR-025, FR-026                            | proposed |
 | S-13 | data-edit-window           | edit logged data for 24 hours, then sealed                                | S-06          | FR-022                                            | proposed |
 | S-14 | exercises-separate-rounds  | prescribe each exercise round separately (reps, load, rest per round)     | S-02          | FR-010, FR-011                                    | done     |
-| S-15 | exercise-favourites        | mark exercises as favourites and filter exercise lists by favourites only | S-01          | FR-009                                            | proposed |
+| S-15 | exercise-favourites        | mark exercises as favourites and filter exercise lists by favourites only | S-01          | FR-009                                            | done     |
 | S-16 | ad-hoc-session-logging     | log an unplanned workout not on the calendar                              | S-06          | FR-015, FR-016, FR-017 (extends)                  | parked   |
 | S-17 | starter-exercise-seed      | receive a curated starter exercise library on trainer signup              | S-01, S-03    | FR-007, FR-008 (extends; supersedes Non-Goal #14) | done     |
 | S-18 | ui-redesign                | use a unified premium dark UI per DESIGN.md with accessible touch targets and Pencil-aligned key flows | S-06          | NFR mobile usability                              | proposed |
@@ -298,7 +298,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Blockers:** —
 - **Unknowns:** ~~Whether favourite toggle appears inline on list rows only, or also on exercise detail/edit; whether template builder exercise picker shares the same filter component as the library page~~ — **Resolved:** inline star on library rows + checkbox on edit form; picker uses client-side favourites filter via `filterExercises` helper (same semantics, not shared URL component).
 - **Risk:** Minimal — per-trainer boolean flag; main work is consistent filter UX across exercise pickers (library, template builder, session personalization)
-- **Status:** proposed
+- **Status:** done
 
 ### S-16: Ad-hoc session logging
 
@@ -423,4 +423,5 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **S-07: trainer can see an overview of all their clients, assigned plans, and recent session activity; can view a read-only detail of a client's session showing exercises, sets, weights** — Archived 2026-06-20 → `context/archive/2026-06-20-trainer-dashboard/`. Lesson: —.
 - **S-10: trainer marks each prescribed round as warm-up or working when building session templates and personalizing assigned sessions; client logs each set with a warm-up/working flag that inherits the prescribed default when a matching round exists and may be overridden at log time; only working logged sets (`set_logs.is_warmup = false`) count toward stats and performance hints (FR-019, FR-025). Session phase warm-up/main/cool-down (whole exercises) is unchanged — this slice is per-round within an exercise.** — Archived 2026-06-20 → `context/archive/2026-06-20-warmup-working-flag/`. Lesson: —.
 - **S-17: every new trainer receives a copy of a curated collection of popular exercises on signup; seeded exercises behave like trainer-owned exercises (editable, deletable, usable in templates) with no read-only or "system" lock** — Archived 2026-06-20 → `context/archive/2026-06-20-starter-exercise-seed/`. Lesson: —.
+- **S-15: trainer can mark exercises as favourites and filter exercise lists to show favourites only (exercise library and anywhere else exercises are browsed for selection)** — Archived 2026-06-29 → `context/archive/2026-06-29-exercise-favourites/`. Lesson: —.
 
