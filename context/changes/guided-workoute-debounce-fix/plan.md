@@ -194,20 +194,20 @@ None — client-only behavior change, no data or schema migration.
 
 #### Automated
 
-- [x] 1.1 Type checking passes: `npx tsc --noEmit`
-- [x] 1.2 Linting passes: `npm run lint`
-- [x] 1.3 Production build passes: `npm run build`
+- [x] 1.1 Type checking passes: `npx tsc --noEmit` — 8639f86
+- [x] 1.2 Linting passes: `npm run lint` — 8639f86
+- [x] 1.3 Production build passes: `npm run build` — 8639f86
 
 #### Manual
 
-- [x] 1.4 Without a flush provider, `SetLogRow` still autosaves on debounce (no standalone-hook regression)
+- [x] 1.4 Without a flush provider, `SetLogRow` still autosaves on debounce (no standalone-hook regression) — 8639f86
 
 ### Phase 2: Gate guided navigation on flush + verify
 
 #### Automated
 
-- [ ] 2.1 Linting passes: `npm run lint`
-- [ ] 2.2 Production build passes: `npm run build`
+- [x] 2.1 Linting passes: `npm run lint`
+- [x] 2.2 Production build passes: `npm run build`
 - [ ] 2.3 Guided-workout E2E passes: `npx playwright test tests/e2e/guided-workout-quick-navigation-persistence.spec.ts --project=chromium --reporter=list`
 
 #### Manual
