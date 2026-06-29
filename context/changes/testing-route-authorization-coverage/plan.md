@@ -177,19 +177,19 @@ No database or persisted data migrations are required.
 
 #### Automated
 
-- [x] 1.1 Guard-helper route inventory has 20 handler entries
-- [x] 1.2 Guard-helper tests assert 401 and 403 response bodies and status codes for every entry
-- [x] 1.3 Guard-helper tests assert `createClient` is not called for every auth-failure case
-- [x] 1.4 Targeted unit test passes: `npm run test -- src/pages/api/route-authorization.test.ts`
+- [x] 1.1 Guard-helper route inventory has 20 handler entries — 81078dc
+- [x] 1.2 Guard-helper tests assert 401 and 403 response bodies and status codes for every entry — 81078dc
+- [x] 1.3 Guard-helper tests assert `createClient` is not called for every auth-failure case — 81078dc
+- [x] 1.4 Targeted unit test passes: `npm run test -- src/pages/api/route-authorization.test.ts` — 81078dc
 
 ### Phase 2: Inline route coverage and test-plan cookbook
 
 #### Automated
 
-- [x] 2.1 Inline route tests assert 401 and 403 response bodies and status codes for both inline routes
-- [x] 2.2 Inline route tests assert protected insert/RPC work is not reached on auth failure
-- [x] 2.3 Route authorization cookbook is updated in `context/foundation/test-plan.md`
-- [x] 2.4 Full unit test suite passes: `npm run test`
-- [x] 2.5 Lint passes: `npm run lint`
-- [x] 2.6 Astro check passes: `npm run check`
-- [x] 2.7 Production build passes: `npm run build`
+- [x] 2.1 Inline route tests assert 401 and 403 response bodies and status codes for both inline routes — 81078dc
+- [x] 2.2 Inline route tests assert protected insert/RPC work is not reached on auth failure — 81078dc
+- [x] 2.3 Route authorization cookbook is updated in `context/foundation/test-plan.md` — 81078dc
+- [x] 2.4 Full unit test suite passes: `npm run test` — 81078dc
+- [x] 2.5 Lint passes: `npm run lint` — 81078dc
+- [x] 2.6 Astro check passes: `npm run check` — 81078dc
+- [x] 2.7 Production build passes: `npm run build` — 81078dc
