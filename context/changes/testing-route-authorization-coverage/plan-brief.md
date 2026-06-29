@@ -9,7 +9,7 @@ This change implements test-plan rollout phase 2: protected API route authorizat
 
 ## Starting Point
 
-`src/lib/api/guards.test.ts` proves `requireTrainer` and `requireClient` return 401/403/ok correctly, but no test imports API route handlers to prove each route actually calls a guard. The protected route inventory contains 21 guard-helper handlers plus two inline trainer-only routes.
+`src/lib/api/guards.test.ts` proves `requireTrainer` and `requireClient` return 401/403/ok correctly, but no test imports API route handlers to prove each route actually calls a guard. The protected route inventory contains 20 guard-helper handlers plus two inline trainer-only routes.
 
 ## Desired End State
 
@@ -29,7 +29,7 @@ Every protected API handler returns 401 for no session and 403 for the wrong rol
 
 **In scope:**
 
-- 401/403 tests for all 21 guard-helper protected handlers.
+- 401/403 tests for all 20 guard-helper protected handlers.
 - 401/403 tests for `POST /api/invites` and `DELETE /api/trainer-clients/:id`.
 - Assertions that protected data work is not reached on auth failure.
 - Test-plan cookbook/status updates for rollout phase 2.

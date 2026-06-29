@@ -1,7 +1,7 @@
 ---
 change_id: testing-route-authorization-coverage
 title: Route authorization coverage
-status: planned
+status: implementing
 created: 2026-06-29
 updated: 2026-06-29
 archived_at: null

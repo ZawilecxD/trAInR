@@ -68,7 +68,7 @@ Add the reusable route-handler test harness and cover all `requireTrainer` / `re
 
 **Intent**: Enumerate every `requireTrainer` protected route handler and assert unauthenticated callers receive 401 while client-role callers receive 403.
 
-**Contract**: The inventory must cover 15 trainer handlers: `GET`/`POST /api/exercises`, `GET`/`PATCH /api/exercises/:id`, `GET`/`POST /api/session-templates`, `GET`/`PATCH`/`DELETE /api/session-templates/:id`, `GET`/`POST /api/workout-sessions`, and `GET`/`PATCH`/`DELETE /api/workout-sessions/:id`.
+**Contract**: The inventory must cover 14 trainer handlers: `GET`/`POST /api/exercises`, `GET`/`PATCH /api/exercises/:id`, `GET`/`POST /api/session-templates`, `GET`/`PATCH`/`DELETE /api/session-templates/:id`, `GET`/`POST /api/workout-sessions`, and `GET`/`PATCH`/`DELETE /api/workout-sessions/:id`.
 
 #### 4. Client route inventory tests
 
@@ -82,7 +82,7 @@ Add the reusable route-handler test harness and cover all `requireTrainer` / `re
 
 #### Automated Verification:
 
-- Guard-helper route inventory has 21 handler entries.
+- Guard-helper route inventory has 20 handler entries.
 - Guard-helper tests assert 401 and 403 response bodies and status codes for every entry.
 - Guard-helper tests assert `createClient` is not called for every auth-failure case.
 - Targeted unit test passes: `npm run test -- src/pages/api/route-authorization.test.ts`.
@@ -177,19 +177,19 @@ No database or persisted data migrations are required.
 
 #### Automated
 
-- [ ] 1.1 Guard-helper route inventory has 21 handler entries
-- [ ] 1.2 Guard-helper tests assert 401 and 403 response bodies and status codes for every entry
-- [ ] 1.3 Guard-helper tests assert `createClient` is not called for every auth-failure case
-- [ ] 1.4 Targeted unit test passes: `npm run test -- src/pages/api/route-authorization.test.ts`
+- [x] 1.1 Guard-helper route inventory has 20 handler entries
+- [x] 1.2 Guard-helper tests assert 401 and 403 response bodies and status codes for every entry
+- [x] 1.3 Guard-helper tests assert `createClient` is not called for every auth-failure case
+- [x] 1.4 Targeted unit test passes: `npm run test -- src/pages/api/route-authorization.test.ts`
 
 ### Phase 2: Inline route coverage and test-plan cookbook
 
 #### Automated
 
-- [ ] 2.1 Inline route tests assert 401 and 403 response bodies and status codes for both inline routes
-- [ ] 2.2 Inline route tests assert protected insert/RPC work is not reached on auth failure
-- [ ] 2.3 Route authorization cookbook is updated in `context/foundation/test-plan.md`
-- [ ] 2.4 Full unit test suite passes: `npm run test`
-- [ ] 2.5 Lint passes: `npm run lint`
-- [ ] 2.6 Astro check passes: `npm run check`
-- [ ] 2.7 Production build passes: `npm run build`
+- [x] 2.1 Inline route tests assert 401 and 403 response bodies and status codes for both inline routes
+- [x] 2.2 Inline route tests assert protected insert/RPC work is not reached on auth failure
+- [x] 2.3 Route authorization cookbook is updated in `context/foundation/test-plan.md`
+- [x] 2.4 Full unit test suite passes: `npm run test`
+- [x] 2.5 Lint passes: `npm run lint`
+- [x] 2.6 Astro check passes: `npm run check`
+- [x] 2.7 Production build passes: `npm run build`

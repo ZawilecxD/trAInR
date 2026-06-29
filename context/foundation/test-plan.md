@@ -6,7 +6,7 @@
 >
 > Refresh: re-run `/10x-test-plan --refresh` when stale (see §8).
 >
-> Last updated: 2026-06-07 (Phase 1 change opened)
+> Last updated: 2026-06-29 (Phase 2 complete)
 
 ## 1. Strategy
 
@@ -64,7 +64,7 @@ orchestrator updates Status as artifacts appear on disk.
 | #   | Phase name                   | Goal (one line)                                                                                                        | Risks covered | Test types          | Status        | Change folder                                  |
 | --- | ---------------------------- | ---------------------------------------------------------------------------------------------------------------------- | ------------- | ------------------- | ------------- | ---------------------------------------------- |
 | 1   | RLS isolation harness        | Stand up the integration/DB test harness and prove Trainer A ≠ Trainer B for read, write, delete, and RPC access       | #1            | integration / pgTAP | change opened | context/changes/testing-rls-isolation-harness/ |
-| 2   | Route authorization coverage | Every protected API route returns 401 (no session) and 403 (wrong role) before any data work                           | #3            | integration         | not started   | —                                              |
+| 2   | Route authorization coverage | Every protected API route returns 401 (no session) and 403 (wrong role) before any data work                           | #3            | integration         | complete      | context/changes/testing-route-authorization-coverage/ |
 | 3   | Service write-path integrity | A forced mid-write failure leaves no partial rows and surfaces an explicit error (pattern extends to S-06 set-logging) | #2            | integration         | not started   | —                                              |
 | 4   | Invite + validation parity   | Expired/used/malformed invite tokens are rejected; Zod and DB constraints agree on loads and rounds                    | #4, #5        | integration + unit  | not started   | —                                              |
 
@@ -79,7 +79,7 @@ The classic test base for this project. AI-native tools (if any) carry a
 | ---------------------- | ------------------------- | ------- | ------------------------------------------------------------------------------------------------------------------------------ |
 | unit                   | Vitest                    | 4.x     | wired; `node` env, `include: src/**/*.test.ts`. 6 unit tests, all in `src/lib/` (schemas, form-validation, filter-url, guards) |
 | integration (DB / RLS) | none yet — see §3 Phase 1 | —       | requires a real Postgres/Supabase identity-aware harness (local Supabase or pgTAP); choice grounded in Phase 1 research        |
-| API route / handler    | none yet — see §3 Phase 2 | —       | fabricate unauth / wrong-role Astro request context; reuses the Phase 1 harness                                                |
+| API route / handler    | Vitest handler tests      | 4.x     | `src/pages/api/route-authorization.test.ts` — fabricates `APIContext`, mocks `@/lib/supabase`, table-driven 401/403 per route |
 | e2e                    | none                      | —       | deliberately deferred; no critical-flow e2e planned in this rollout (see §7)                                                   |
 | accessibility          | none                      | —       | out of scope for this rollout (see §7)                                                                                         |
 
@@ -129,12 +129,19 @@ the relevant rollout phase ships; before that, the sub-section reads
 
 ### 6.3 Adding a route authorization test
 
-- TBD — see §3 Phase 2 (how to fabricate unauthenticated and wrong-role request context for an Astro SSR endpoint).
+- **Location**: `src/pages/api/route-authorization.test.ts` — keep the protected-route inventory in this single auditable file.
+- **Pattern**:
+  1. Add a `GuardHelperRouteEntry` (or inline-route `describe` block) for the new handler.
+  2. Build context with `makeContext({ user, role, method, url, params, body })` — stubs `request`, `url`, `params`, `locals`, and `cookies`.
+  3. Mock `@/lib/supabase` via `vi.mock("@/lib/supabase")`. For guard-helper routes, set `createClient` to throw and assert it is **not** called on 401/403. For inline auth routes (trainer-only Supabase checks), return a fake client and assert protected `insert` / `rpc` calls are not reached.
+  4. Assert status and body: guard-helper routes use lowercase `{ error: "unauthorized" }` / `{ error: "forbidden" }`; inline routes use capitalized `{ error: "Unauthorized" }` / `{ error: "Forbidden" }`.
+- **Reference test**: `src/pages/api/route-authorization.test.ts`.
+- **Run locally**: `npm run test -- src/pages/api/route-authorization.test.ts`.
 
 ### 6.4 Adding a test for a new API endpoint
 
-- **Test type**: integration (preferred) — assert request → response shape AND the persisted side-effect, then 401/403 for unauth/wrong-role.
-- **Pattern**: TBD — see §3 Phase 2.
+- **Test type**: handler-level route auth (required) + integration for persisted side-effects when the endpoint mutates data.
+- **Pattern**: add the handler to the route inventory in `src/pages/api/route-authorization.test.ts` (see §6.3) before shipping. For happy-path / DB assertions, follow the integration harness from §6.2 when available.
 - **When to add e2e instead**: only if the failure mode requires the full deployed shape (cookie + middleware + handler crossing). Not planned in this rollout.
 
 ### 6.5 Adding a validation/DB-parity test
@@ -143,8 +150,7 @@ the relevant rollout phase ships; before that, the sub-section reads
 
 ### 6.6 Per-rollout-phase notes
 
-(Optional. After each phase lands, `/10x-implement` appends a 2–3 line note
-here capturing anything surprising the rollout phase taught.)
+**Phase 2 (route authorization coverage):** Handler-level Vitest tests beat integration for this risk because the failure mode is missing guard wiring, not RLS. Guard-helper routes reject before `createClient`; inline trainer routes (`/api/invites`, `/api/trainer-clients/:id`) need a chained Supabase mock because they call `createClient` first. Inventory is 20 guard-helper handlers (14 trainer + 6 client) plus 2 inline routes — update the table when adding endpoints.
 
 ## 7. What We Deliberately Don't Test
 
