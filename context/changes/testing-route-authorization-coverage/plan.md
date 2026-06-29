@@ -208,33 +208,33 @@ Session-based 401/403 tests for inline-guard routes; CI astro sync; update test-
 
 #### Automated
 
-- [x] 1.1 `npm run lint` passes
-- [x] 1.2 Inventory exports 22 protected handler entries
-- [x] 1.3 Helpers compile and are importable from integration config
+- [x] 1.1 `npm run lint` passes — 8b34d29
+- [x] 1.2 Inventory exports 22 protected handler entries — 8b34d29
+- [x] 1.3 Helpers compile and are importable from integration config — 8b34d29
 
 #### Manual
 
-- [x] 1.4 Inventory paths match `src/pages/api/` tree
+- [x] 1.4 Inventory paths match `src/pages/api/` tree — 8b34d29
 
 ### Phase 2: Pattern A handler authorization tests
 
 #### Automated
 
-- [x] 2.1 `npx astro sync && npm run test:integration` passes Pattern A tests
-- [x] 2.2 `npm run lint` passes
+- [x] 2.1 `npx astro sync && npm run test:integration` passes Pattern A tests — 8b34d29
+- [x] 2.2 `npm run lint` passes — 8b34d29
 
 #### Manual
 
-- [x] 2.3 Spot-check one trainer and one client route
+- [x] 2.3 Spot-check one trainer and one client route — 8b34d29
 
 ### Phase 3: Pattern B tests and test-plan closure
 
 #### Automated
 
-- [x] 3.1 Full `npm run test:integration` suite passes
-- [x] 3.2 `npm run test` (unit) still passes
-- [x] 3.3 CI workflow includes `astro sync` in test-integration job
+- [x] 3.1 Full `npm run test:integration` suite passes — 8b34d29
+- [x] 3.2 `npm run test` (unit) still passes — 8b34d29
+- [x] 3.3 CI workflow includes `astro sync` in test-integration job — 8b34d29
 
 #### Manual
 
-- [x] 3.4 Confirm test-plan §3 Phase 2 status and §6.3 cookbook updated
+- [x] 3.4 Confirm test-plan §3 Phase 2 status and §6.3 cookbook updated — 8b34d29
