@@ -12,6 +12,7 @@ export default defineConfig({
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
+      "astro:env/server": path.resolve(__dirname, "./tests/integration/route-auth/helpers/astro-env-server.ts"),
     },
   },
 });

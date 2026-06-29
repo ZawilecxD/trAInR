@@ -6,7 +6,7 @@
 >
 > Refresh: re-run `/10x-test-plan --refresh` when stale (see §8).
 >
-> Last updated: 2026-06-07 (Phase 1 change opened)
+> Last updated: 2026-06-29 (Phase 2 complete)
 
 ## 1. Strategy
 
@@ -64,7 +64,7 @@ orchestrator updates Status as artifacts appear on disk.
 | #   | Phase name                   | Goal (one line)                                                                                                        | Risks covered | Test types          | Status        | Change folder                                  |
 | --- | ---------------------------- | ---------------------------------------------------------------------------------------------------------------------- | ------------- | ------------------- | ------------- | ---------------------------------------------- |
 | 1   | RLS isolation harness        | Stand up the integration/DB test harness and prove Trainer A ≠ Trainer B for read, write, delete, and RPC access       | #1            | integration / pgTAP | change opened | context/changes/testing-rls-isolation-harness/ |
-| 2   | Route authorization coverage | Every protected API route returns 401 (no session) and 403 (wrong role) before any data work                           | #3            | integration         | not started   | —                                              |
+| 2   | Route authorization coverage | Every protected API route returns 401 (no session) and 403 (wrong role) before any data work                           | #3            | integration         | complete      | context/changes/testing-route-authorization-coverage/ |
 | 3   | Service write-path integrity | A forced mid-write failure leaves no partial rows and surfaces an explicit error (pattern extends to S-06 set-logging) | #2            | integration         | not started   | —                                              |
 | 4   | Invite + validation parity   | Expired/used/malformed invite tokens are rejected; Zod and DB constraints agree on loads and rounds                    | #4, #5        | integration + unit  | not started   | —                                              |
 
@@ -78,8 +78,8 @@ The classic test base for this project. AI-native tools (if any) carry a
 | Layer                  | Tool                      | Version | Notes                                                                                                                          |
 | ---------------------- | ------------------------- | ------- | ------------------------------------------------------------------------------------------------------------------------------ |
 | unit                   | Vitest                    | 4.x     | wired; `node` env, `include: src/**/*.test.ts`. 6 unit tests, all in `src/lib/` (schemas, form-validation, filter-url, guards) |
-| integration (DB / RLS) | none yet — see §3 Phase 1 | —       | requires a real Postgres/Supabase identity-aware harness (local Supabase or pgTAP); choice grounded in Phase 1 research        |
-| API route / handler    | none yet — see §3 Phase 2 | —       | fabricate unauth / wrong-role Astro request context; reuses the Phase 1 harness                                                |
+| integration (DB / RLS) | Vitest + local Supabase   | 4.x     | `tests/integration/rls/` — two-trainer fixtures, anon-key clients; see §6.2                          |
+| API route / handler    | Vitest integration        | 4.x     | `tests/integration/route-auth/` — handler-level 401/403 per protected route; see §6.3                |
 | e2e                    | none                      | —       | deliberately deferred; no critical-flow e2e planned in this rollout (see §7)                                                   |
 | accessibility          | none                      | —       | out of scope for this rollout (see §7)                                                                                         |
 
@@ -129,12 +129,17 @@ the relevant rollout phase ships; before that, the sub-section reads
 
 ### 6.3 Adding a route authorization test
 
-- TBD — see §3 Phase 2 (how to fabricate unauthenticated and wrong-role request context for an Astro SSR endpoint).
+- **Location**: `tests/integration/route-auth/`.
+- **Inventory**: add the handler to `inventory.ts` (`PROTECTED_ROUTE_HANDLERS`) — CI fails if a protected route is missing.
+- **Pattern A** (`requireTrainer` / `requireClient`): `pattern-a-handlers.test.ts` uses `makeApiContext()` from `helpers/api-context.ts` with fabricated `locals` — no DB for 401/403 cases.
+- **Pattern B** (inline `getUser()` + profile): `pattern-b-inline.test.ts` uses `buildAuthenticatedRequest()` with Phase 1 fixtures and session cookies.
+- **Guard-before-data**: pass `invalidBody: "{not-json"` in inventory for body-parsing routes; unauthenticated callers must still get 401/403, not 400.
+- **Run locally**: `npx astro sync && npm run test:integration` (requires local Supabase — see §6.2).
 
 ### 6.4 Adding a test for a new API endpoint
 
 - **Test type**: integration (preferred) — assert request → response shape AND the persisted side-effect, then 401/403 for unauth/wrong-role.
-- **Pattern**: TBD — see §3 Phase 2.
+- **Pattern**: add to `tests/integration/route-auth/inventory.ts`; Pattern A routes are covered automatically by `pattern-a-handlers.test.ts`.
 - **When to add e2e instead**: only if the failure mode requires the full deployed shape (cookie + middleware + handler crossing). Not planned in this rollout.
 
 ### 6.5 Adding a validation/DB-parity test
@@ -143,8 +148,7 @@ the relevant rollout phase ships; before that, the sub-section reads
 
 ### 6.6 Per-rollout-phase notes
 
-(Optional. After each phase lands, `/10x-implement` appends a 2–3 line note
-here capturing anything surprising the rollout phase taught.)
+**Phase 2 (route authorization):** Handler-level tests import Astro route exports directly; `astro:env/server` is aliased to a Vitest stub in `vitest.integration.config.ts`. Pattern B inline-guard routes need real session cookies — reuse `buildAuthenticatedRequest()` rather than only mocking `locals`.
 
 ## 7. What We Deliberately Don't Test
 
