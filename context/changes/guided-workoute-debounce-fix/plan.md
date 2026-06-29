@@ -206,13 +206,13 @@ None — client-only behavior change, no data or schema migration.
 
 #### Automated
 
-- [x] 2.1 Linting passes: `npm run lint`
-- [x] 2.2 Production build passes: `npm run build`
-- [ ] 2.3 Guided-workout E2E passes: `npx playwright test tests/e2e/guided-workout-quick-navigation-persistence.spec.ts --project=chromium --reporter=list`
+- [x] 2.1 Linting passes: `npm run lint` — 7325d1f
+- [x] 2.2 Production build passes: `npm run build` — 7325d1f
+- [x] 2.3 Guided-workout E2E passes: `npx playwright test tests/e2e/guided-workout-quick-navigation-persistence.spec.ts --project=chromium --reporter=list` — 7325d1f
 
 #### Manual
 
-- [ ] 2.4 Type + immediate Next + reload persists values; verified for Prev, nav-menu jump, back-to-list, back-to-overview
-- [ ] 2.5 Failing save keeps the user on the exercise with a retry control; retry then allows navigation
-- [ ] 2.6 Leaving an untouched exercise is not perceptibly blocked
-- [ ] 2.7 Normal debounce autosave still works with no regression
+- [x] 2.4 Type + immediate Next + reload persists values; verified for Prev, nav-menu jump, back-to-list, back-to-overview — 7325d1f
+- [x] 2.5 Failing save keeps the user on the exercise with a retry control; retry then allows navigation — 7325d1f
+- [x] 2.6 Leaving an untouched exercise is not perceptibly blocked — 7325d1f
+- [x] 2.7 Normal debounce autosave still works with no regression — 7325d1f

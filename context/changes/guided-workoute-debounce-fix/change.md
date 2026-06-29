@@ -1,7 +1,7 @@
 ---
 change_id: guided-workoute-debounce-fix
 title: Fix guided-workout debounced set-log save lost on quick navigation
-status: implementing
+status: implemented
 created: 2026-06-29
 updated: 2026-06-29
 archived_at: null
