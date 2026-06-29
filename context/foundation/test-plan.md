@@ -6,7 +6,7 @@
 >
 > Refresh: re-run `/10x-test-plan --refresh` when stale (see §8).
 >
-> Last updated: 2026-06-28 (stack, gates, and rollout status refresh)
+> Last updated: 2026-06-29 (cross-reference roadmap `Q-04: add-e2e-ci-gate` for E2E CI promotion)
 
 ## 1. Strategy
 
@@ -83,7 +83,7 @@ The classic test base for this project. AI-native tools (if any) carry a
 | unit                   | Vitest     | 4.x     | wired; `node` env via `vitest.config.ts`, `include: src/**/*.test.ts`; meaningful suite across `src/lib/` domains                                     |
 | integration (DB / RLS) | Vitest     | 4.x     | wired via `vitest.integration.config.ts`, `include: tests/integration/**/*.test.ts`, Supabase env setup, and CI `test-integration` job                |
 | API route / handler    | Vitest     | 4.x     | planned for §3 Phase 2; guard helpers have unit coverage, but route-level 401/403 inventory is still open                                             |
-| e2e                    | Playwright | 1.x     | wired via `playwright.config.ts` and `npm run test:e2e`; `tests/e2e/seed.spec.ts` is the current exemplar; local-only, not CI-gated today             |
+| e2e                    | Playwright | 1.x     | wired via `playwright.config.ts` and `npm run test:e2e`; `tests/e2e/seed.spec.ts` is the current exemplar; local-only, not CI-gated today (roadmap `Q-04: add-e2e-ci-gate` tracks promoting it to a PR gate) |
 | accessibility          | none       | —       | out of scope for this rollout unless a future guided-workout/mobile phase identifies a behavior that cannot be proven by cheaper deterministic checks |
 
 **Stack grounding tools (current session):**
@@ -111,10 +111,10 @@ phase lands; before that, the gate is `planned`.
 | integration (RLS isolation)   | local + CI | required (Phase 1 complete) | cross-tenant leaks, broken isolation                               |
 | integration (route authz)     | local + CI | required after §3 Phase 2   | unauthenticated / wrong-role access                                |
 | integration (write integrity) | local + CI | required after §3 Phase 3   | partial-write corruption                                           |
-| E2E critical flows            | local      | planned / selective         | full browser regressions that lower layers cannot prove            |
+| E2E critical flows            | local      | planned / selective         | full browser regressions that lower layers cannot prove (CI promotion tracked by roadmap `Q-04: add-e2e-ci-gate`) |
 | `npm test` step in CI         | CI on PR   | required (in place)         | unit regressions reaching `main`                                   |
 | `npm run test:integration`    | CI on PR   | required (in place)         | Supabase-backed RLS/RPC regressions reaching `main`                |
-| `npm run test:e2e`            | local      | not CI-gated today          | trainer/client browser flows that need cookies, navigation, reload |
+| `npm run test:e2e`            | local      | not CI-gated today (see roadmap `Q-04`) | trainer/client browser flows that need cookies, navigation, reload |
 
 ## 6. Cookbook Patterns
 
@@ -154,7 +154,7 @@ the relevant rollout phase ships; before that, the sub-section reads
 ### 6.6 Adding an E2E test
 
 - **Location**: `tests/e2e/<flow>.spec.ts`.
-- **Config**: `npm run test:e2e` uses `playwright.config.ts`, starts `npm run dev`, and currently runs locally rather than in CI.
+- **Config**: `npm run test:e2e` uses `playwright.config.ts`, starts `npm run dev`, and currently runs locally rather than in CI (roadmap `Q-04: add-e2e-ci-gate` covers wiring it into CI against an ephemeral Supabase).
 - **Reference test**: `tests/e2e/seed.spec.ts` for role-based locators, API response waits, unique names, reload assertion, and cleanup.
 - **Best first target**: Risk #6 guided-workout mobile autosave/reload. Prove a client logs a set, navigates or reloads, and sees persisted data. Do not test shadcn primitives or every UI detail.
 - **Secondary target**: Risk #2 trainer template/session form persistence. Prove multi-round template or session creation survives submit + reload; keep failure-injection and rollback assertions in integration tests.
@@ -184,6 +184,6 @@ Refresh (`/10x-test-plan --refresh`) when:
 - a new top-3 risk surfaces from the roadmap or archive (e.g. S-06 guided logging lands and set-logging integrity becomes the live #1),
 - a recommended tool's `checked:` date is older than three months,
 - the project's tech stack changes (new framework, new test runner),
-- E2E moves from local-only to CI-gated, or the Playwright project matrix changes,
+- E2E moves from local-only to CI-gated (tracked by roadmap `Q-04: add-e2e-ci-gate`), or the Playwright project matrix changes,
 - guided-workout autosave/mobile confidence changes enough to alter Risk #6 priority,
 - §7 negative-space no longer matches what the team believes.
