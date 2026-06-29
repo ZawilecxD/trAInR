@@ -248,32 +248,32 @@ Existing rows default `is_favourite = false`. No backfill.
 
 #### Automated
 
-- [x] 1.1 `npm run lint` passes
-- [x] 1.2 Unit tests for schemas and filter-url pass
+- [x] 1.1 `npm run lint` passes — 7945951
+- [x] 1.2 Unit tests for schemas and filter-url pass — 7945951
 
 #### Manual
 
-- [x] 1.3 Migration applies on local Supabase
+- [x] 1.3 Migration applies on local Supabase — 7945951
 
 ### Phase 2: Library UI
 
 #### Automated
 
-- [x] 2.1 `npm run lint` passes
-- [x] 2.2 `npm run build` passes
+- [x] 2.1 `npm run lint` passes — 7945951
+- [x] 2.2 `npm run build` passes — 7945951
 
 #### Manual
 
-- [x] 2.3 Library star toggle and favourites filter work in browser
+- [x] 2.3 Library star toggle and favourites filter work in browser — 7945951
 
 ### Phase 3: Picker Filter and Integration Test
 
 #### Automated
 
-- [x] 3.1 Client-filter unit tests pass
-- [x] 3.2 `npm run lint` passes
-- [x] 3.3 `npm run build` passes
+- [x] 3.1 Client-filter unit tests pass — 7945951
+- [x] 3.2 `npm run lint` passes — 7945951
+- [x] 3.3 `npm run build` passes — 7945951
 
 #### Manual
 
-- [x] 3.4 Exercise picker favourites filter works in template/session flows
+- [x] 3.4 Exercise picker favourites filter works in template/session flows — 7945951
