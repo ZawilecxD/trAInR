@@ -13,6 +13,7 @@ export interface ExerciseFormValues {
   muscle_groups: { muscle_group_id: string; role: MuscleRole }[];
   notes: string;
   video_url: string;
+  is_favourite: boolean;
 }
 
 export type FormFieldErrors = Partial<Record<keyof ExerciseFormValues | "form", string>>;
@@ -25,6 +26,7 @@ export function emptyExerciseFormValues(): ExerciseFormValues {
     muscle_groups: [],
     notes: "",
     video_url: "",
+    is_favourite: false,
   };
 }
 
@@ -59,6 +61,10 @@ function toUpdatePayload(values: ExerciseFormValues, initial: ExerciseFormValues
 
   if (serializeMuscleGroups(values.muscle_groups) !== serializeMuscleGroups(initial.muscle_groups)) {
     payload.muscle_groups = values.muscle_groups;
+  }
+
+  if (values.is_favourite !== initial.is_favourite) {
+    payload.is_favourite = values.is_favourite;
   }
 
   return payload;
@@ -138,6 +144,7 @@ export function exerciseToFormValues(exercise: {
   default_metric: ExerciseMetric;
   notes: string | null;
   video_url: string | null;
+  is_favourite?: boolean;
   muscle_groups: { muscle_group_id: string; role: MuscleRole }[];
 }): ExerciseFormValues {
   return {
@@ -150,5 +157,6 @@ export function exerciseToFormValues(exercise: {
     })),
     notes: exercise.notes ?? "",
     video_url: exercise.video_url ?? "",
+    is_favourite: exercise.is_favourite ?? false,
   };
 }

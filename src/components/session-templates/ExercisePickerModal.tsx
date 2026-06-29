@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { Search, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { filterExercises } from "@/lib/exercises/client-filter";
 import type { ExerciseWithMuscleGroups } from "@/lib/exercises/service";
 import { cn } from "@/lib/utils";
 
@@ -16,14 +17,22 @@ const inputClass =
 
 export default function ExercisePickerModal({ open, onClose, onPick, availableExercises }: ExercisePickerModalProps) {
   const [query, setQuery] = useState("");
+  const [favouritesOnly, setFavouritesOnly] = useState(false);
 
-  const filteredExercises = useMemo(() => {
-    const normalized = query.trim().toLowerCase();
-    if (!normalized) {
-      return availableExercises;
-    }
-    return availableExercises.filter((exercise) => exercise.name.toLowerCase().includes(normalized));
-  }, [availableExercises, query]);
+  function resetFilters() {
+    setQuery("");
+    setFavouritesOnly(false);
+  }
+
+  function handleClose() {
+    resetFilters();
+    onClose();
+  }
+
+  const filteredExercises = useMemo(
+    () => filterExercises(availableExercises, { q: query, favouritesOnly: favouritesOnly || undefined }),
+    [availableExercises, query, favouritesOnly],
+  );
 
   if (!open) {
     return null;
@@ -35,7 +44,7 @@ export default function ExercisePickerModal({ open, onClose, onPick, availableEx
         type="button"
         className="absolute inset-0 bg-slate-950/70 backdrop-blur-sm"
         aria-label="Close exercise picker"
-        onClick={onClose}
+        onClick={handleClose}
       />
       <div
         role="dialog"
@@ -52,14 +61,30 @@ export default function ExercisePickerModal({ open, onClose, onPick, availableEx
             variant="outline"
             size="sm"
             className="border-white/20 bg-transparent text-white hover:bg-white/10"
-            onClick={onClose}
+            onClick={handleClose}
             aria-label="Close"
           >
             <X className="size-4" />
           </Button>
         </div>
 
-        <div className="border-b border-white/10 px-4 py-3">
+        <div className="space-y-3 border-b border-white/10 px-4 py-3">
+          <button
+            type="button"
+            aria-pressed={favouritesOnly}
+            onClick={() => {
+              setFavouritesOnly((current) => !current);
+            }}
+            className={cn(
+              "rounded-full border px-3 py-1 text-xs transition-colors",
+              favouritesOnly
+                ? "border-amber-300/60 bg-amber-500/20 text-amber-100"
+                : "border-white/20 bg-white/5 text-blue-100/80 hover:bg-white/10",
+            )}
+          >
+            Favourites only
+          </button>
+
           <div className="relative">
             <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-blue-100/50" />
             <input
@@ -77,7 +102,7 @@ export default function ExercisePickerModal({ open, onClose, onPick, availableEx
 
         <ul className="flex-1 overflow-y-auto p-2">
           {filteredExercises.length === 0 ? (
-            <li className="px-3 py-6 text-center text-sm text-blue-100/60">No exercises match your search.</li>
+            <li className="px-3 py-6 text-center text-sm text-blue-100/60">No exercises match your filters.</li>
           ) : (
             filteredExercises.map((exercise) => (
               <li key={exercise.id}>
@@ -86,7 +111,7 @@ export default function ExercisePickerModal({ open, onClose, onPick, availableEx
                   className="w-full rounded-lg px-3 py-2 text-left text-sm text-white transition-colors hover:bg-white/10"
                   onClick={() => {
                     onPick(exercise);
-                    setQuery("");
+                    resetFilters();
                     onClose();
                   }}
                 >

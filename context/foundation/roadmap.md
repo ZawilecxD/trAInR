@@ -296,7 +296,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Prerequisites:** S-01
 - **Parallel with:** S-02, S-03, S-04, S-05, S-06, S-07, S-08, S-09, S-10, S-12, S-13
 - **Blockers:** —
-- **Unknowns:** Whether favourite toggle appears inline on list rows only, or also on exercise detail/edit; whether template builder exercise picker shares the same filter component as the library page
+- **Unknowns:** ~~Whether favourite toggle appears inline on list rows only, or also on exercise detail/edit; whether template builder exercise picker shares the same filter component as the library page~~ — **Resolved:** inline star on library rows + checkbox on edit form; picker uses client-side favourites filter via `filterExercises` helper (same semantics, not shared URL component).
 - **Risk:** Minimal — per-trainer boolean flag; main work is consistent filter UX across exercise pickers (library, template builder, session personalization)
 - **Status:** proposed
 

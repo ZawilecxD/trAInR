@@ -93,6 +93,10 @@ export async function listExercises(
     query = query.ilike("name", `%${filters.q}%`);
   }
 
+  if (filters.favouritesOnly) {
+    query = query.eq("is_favourite", true);
+  }
+
   if (exerciseIdsForMuscleFilter) {
     query = query.in("id", exerciseIdsForMuscleFilter);
   }
@@ -180,6 +184,7 @@ export async function updateExercise(
   if (patch.notes !== undefined) exercisePatch.notes = patch.notes;
   if (patch.video_url !== undefined) exercisePatch.video_url = patch.video_url;
   if (patch.is_archived !== undefined) exercisePatch.is_archived = patch.is_archived;
+  if (patch.is_favourite !== undefined) exercisePatch.is_favourite = patch.is_favourite;
 
   if (Object.keys(exercisePatch).length > 0) {
     const { error: updateError } = await supabase.from("exercises").update(exercisePatch).eq("id", exerciseId);
