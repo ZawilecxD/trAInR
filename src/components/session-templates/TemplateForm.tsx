@@ -448,6 +448,7 @@ export default function TemplateForm({
                                     {showsWarmupWorkingToggle(phase) ? (
                                       <RoundWarmupToggle
                                         isWarmup={round.isWarmup}
+                                        labelPrefix={`${entry.exerciseName} round ${roundIndex + 1}`}
                                         onChange={(isWarmup) => {
                                           updateExerciseRound(phase, index, roundIndex, { isWarmup });
                                         }}
@@ -474,6 +475,7 @@ export default function TemplateForm({
                                     <div>
                                       <label className="mb-1 block text-xs text-blue-100/70">Reps</label>
                                       <input
+                                        aria-label={`${entry.exerciseName} round ${roundIndex + 1} reps`}
                                         type="number"
                                         min={1}
                                         value={round.prescribedReps ?? ""}
@@ -490,6 +492,7 @@ export default function TemplateForm({
                                     <div>
                                       <label className="mb-1 block text-xs text-blue-100/70">Duration (s)</label>
                                       <input
+                                        aria-label={`${entry.exerciseName} round ${roundIndex + 1} duration seconds`}
                                         type="number"
                                         min={1}
                                         value={round.prescribedDuration ?? ""}
@@ -507,6 +510,7 @@ export default function TemplateForm({
                                   <div>
                                     <label className="mb-1 block text-xs text-blue-100/70">Load (kg, optional)</label>
                                     <input
+                                      aria-label={`${entry.exerciseName} round ${roundIndex + 1} load kg`}
                                       type="number"
                                       min={0}
                                       step="0.5"
@@ -524,6 +528,7 @@ export default function TemplateForm({
                                   <div>
                                     <label className="mb-1 block text-xs text-blue-100/70">Rest (s, optional)</label>
                                     <input
+                                      aria-label={`${entry.exerciseName} round ${roundIndex + 1} rest seconds`}
                                       type="number"
                                       min={0}
                                       value={round.restAfterSeconds ?? ""}
@@ -546,6 +551,7 @@ export default function TemplateForm({
                                 variant="outline"
                                 size="sm"
                                 className="border-white/20 bg-transparent text-white hover:bg-white/10"
+                                aria-label={`Add round to ${entry.exerciseName}`}
                                 disabled={entry.rounds.length >= 20}
                                 onClick={() => {
                                   updateExerciseEntry(phase, index, addRound(entry));
@@ -560,6 +566,7 @@ export default function TemplateForm({
                           <div className="mt-3">
                             <label className="mb-1 block text-xs text-blue-100/70">Notes (optional)</label>
                             <input
+                              aria-label={`${entry.exerciseName} notes`}
                               type="text"
                               value={entry.notes}
                               onChange={(event) => {
@@ -576,6 +583,7 @@ export default function TemplateForm({
                       type="button"
                       variant="outline"
                       className="border-white/20 bg-transparent text-white hover:bg-white/10"
+                      aria-label={`Add exercise to ${label}`}
                       onClick={() => {
                         setPickerPhase(phase);
                       }}
