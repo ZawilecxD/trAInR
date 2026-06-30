@@ -360,6 +360,60 @@ export async function restartMySession(
   return { ok: true, data: parseWorkoutSession(updateResult.data) };
 }
 
+export type MarkSessionCompleteResult =
+  | { ok: true; data: WorkoutSession }
+  | { ok: false; code: "not_found" | "already_completed"; message: string };
+
+export async function markSessionComplete(
+  supabase: SupabaseClient,
+  userId: string,
+  sessionId: string,
+  status: "finished" | "finished_partially" | "cancelled",
+): Promise<MarkSessionCompleteResult> {
+  const sessionResult = await supabase
+    .from("workout_sessions")
+    .select("id, status, client_plans!inner(client_id)")
+    .eq("id", sessionId)
+    .eq("client_plans.client_id", userId)
+    .maybeSingle();
+
+  if (sessionResult.error) {
+    return { ok: false, code: "not_found", message: sessionResult.error.message };
+  }
+
+  if (!sessionResult.data) {
+    return { ok: false, code: "not_found", message: "Session not found" };
+  }
+
+  const existing = sessionResult.data as { id: string; status: string };
+
+  if (existing.status !== "not_started") {
+    return { ok: false, code: "already_completed", message: "Session has already been completed or cancelled" };
+  }
+
+  const updatePayload: Record<string, string | null> = { status };
+  if (status === "finished" || status === "finished_partially") {
+    updatePayload.completed_at = new Date().toISOString();
+  }
+
+  const updateResult = await supabase
+    .from("workout_sessions")
+    .update(updatePayload)
+    .eq("id", sessionId)
+    .select("*")
+    .maybeSingle();
+
+  if (updateResult.error) {
+    return { ok: false, code: "not_found", message: updateResult.error.message };
+  }
+
+  if (!updateResult.data) {
+    return { ok: false, code: "not_found", message: "Session not found" };
+  }
+
+  return { ok: true, data: parseWorkoutSession(updateResult.data) };
+}
+
 export async function getSessionWithExercises(
   supabase: SupabaseClient,
   sessionId: string,
