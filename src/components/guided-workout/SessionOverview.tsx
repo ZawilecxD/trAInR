@@ -1,6 +1,8 @@
 import { ArrowLeft } from "lucide-react";
-import SessionCommentsThread from "@/components/session-comments/SessionCommentsThread";
+import { useState } from "react";
+import DeleteConfirmDialog from "@/components/DeleteConfirmDialog";
 import PhaseBreakdown from "@/components/guided-workout/PhaseBreakdown";
+import SessionCommentsThread from "@/components/session-comments/SessionCommentsThread";
 import { Button } from "@/components/ui/button";
 import { formatSessionOverviewDate } from "@/lib/guided-workout/format-session-date";
 import type { ClientSessionDetail } from "@/lib/workout-sessions/service";
@@ -11,6 +13,7 @@ interface SessionOverviewProps {
   beginError: string | null;
   onBegin: () => void;
   currentUserId: string;
+  onCancel: () => Promise<void>;
 }
 
 export default function SessionOverview({
@@ -19,8 +22,26 @@ export default function SessionOverview({
   beginError,
   onBegin,
   currentUserId,
+  onCancel,
 }: SessionOverviewProps) {
   const trainerNote = session.exercises.find((exercise) => exercise.notes)?.notes ?? null;
+  const [cancelOpen, setCancelOpen] = useState(false);
+  const [cancelPending, setCancelPending] = useState(false);
+  const [cancelError, setCancelError] = useState<string | null>(null);
+
+  async function handleCancelConfirm() {
+    setCancelPending(true);
+    setCancelError(null);
+
+    try {
+      await onCancel();
+      setCancelOpen(false);
+    } catch (err) {
+      setCancelError(err instanceof Error ? err.message : "Failed to cancel session");
+    } finally {
+      setCancelPending(false);
+    }
+  }
 
   return (
     <div className="flex min-h-[calc(100vh-2rem)] flex-col">
@@ -75,7 +96,12 @@ export default function SessionOverview({
       </div>
 
       <div className="fixed inset-x-0 bottom-0 border-t border-white/10 bg-slate-950/90 p-4 backdrop-blur-xl">
-        <div className="mx-auto max-w-2xl">
+        <div className="mx-auto max-w-2xl space-y-2">
+          {cancelError ? (
+            <p className="rounded-lg border border-red-400/30 bg-red-500/10 px-4 py-2 text-sm text-red-100">
+              {cancelError}
+            </p>
+          ) : null}
           <Button
             type="button"
             className="min-h-12 w-full text-base"
@@ -84,6 +110,28 @@ export default function SessionOverview({
           >
             {beginPending ? "Starting…" : "Begin Workout"}
           </Button>
+          <Button
+            type="button"
+            variant="outline"
+            className="min-h-11 w-full border-slate-500/30 bg-slate-500/10 text-slate-300 hover:bg-slate-500/20"
+            disabled={cancelPending}
+            onClick={() => {
+              setCancelOpen(true);
+            }}
+          >
+            Cancel Session
+          </Button>
+          <DeleteConfirmDialog
+            open={cancelOpen}
+            onOpenChange={setCancelOpen}
+            title="Cancel this session?"
+            description="The session will be marked as cancelled and you won't be able to log it later."
+            confirmLabel="Cancel session"
+            loading={cancelPending}
+            onConfirm={() => {
+              void handleCancelConfirm();
+            }}
+          />
         </div>
       </div>
     </div>

@@ -22,6 +22,7 @@ const STATUS_PRIORITY: Record<SessionStatus, number> = {
   not_started: 3,
   finished_partially: 2,
   finished: 1,
+  cancelled: 4,
 };
 
 function isoToLocalDate(iso: string): Date {
@@ -62,6 +63,7 @@ export default function PlanCalendar({
     const sessionNotStarted: Date[] = [];
     const sessionPartial: Date[] = [];
     const sessionFinished: Date[] = [];
+    const sessionCancelled: Date[] = [];
 
     for (const [iso, daySessions] of sessionsByDate) {
       const date = isoToLocalDate(iso);
@@ -77,10 +79,13 @@ export default function PlanCalendar({
         case "finished":
           sessionFinished.push(date);
           break;
+        case "cancelled":
+          sessionCancelled.push(date);
+          break;
       }
     }
 
-    return { sessionNotStarted, sessionPartial, sessionFinished };
+    return { sessionNotStarted, sessionPartial, sessionFinished, sessionCancelled };
   }, [sessionsByDate]);
 
   return (
@@ -95,6 +100,7 @@ export default function PlanCalendar({
         sessionNotStarted: cn(sessionDotBase, "after:bg-blue-400"),
         sessionPartial: cn(sessionDotBase, "after:bg-amber-400"),
         sessionFinished: cn(sessionDotBase, "after:bg-emerald-400"),
+        sessionCancelled: cn(sessionDotBase, "after:bg-red-400"),
       }}
       className="w-full max-w-full rounded-xl border border-white/10 bg-white/5 p-2 text-white [--cell-size:2.75rem]"
       classNames={{

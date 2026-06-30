@@ -5,7 +5,7 @@ import ClientWeekView from "@/components/plans/ClientWeekView";
 import PlanCalendar, { type PlanCalendarSession } from "@/components/plans/PlanCalendar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { monthRange, parseISODate, startOfMonth, toLocalISODate } from "@/lib/dates";
+import { monthRange, parseISODate, startOfMonth, toLocalISODate, visibleMonthRange } from "@/lib/dates";
 import { formatWeekRangeLabel, getWeekStart, weekRange } from "@/lib/week-view";
 import { sessionStatusBadgeClass, sessionStatusLabel } from "@/lib/session-status";
 import { cn } from "@/lib/utils";
@@ -76,8 +76,24 @@ export default function ClientCalendarHub({
 
   async function handleMonthChange(nextMonth: Date) {
     setMonth(nextMonth);
-    const range = monthRange(nextMonth.getFullYear(), nextMonth.getMonth());
-    setSelectedDate(parseISODate(range.from));
+    const monthStart = monthRange(nextMonth.getFullYear(), nextMonth.getMonth());
+    setSelectedDate(parseISODate(monthStart.from));
+    const range = visibleMonthRange(nextMonth.getFullYear(), nextMonth.getMonth());
+    await loadSessions(range.from, range.to);
+  }
+
+  async function handleSelectDate(date: Date | undefined) {
+    if (!date) {
+      return;
+    }
+    setSelectedDate(date);
+    const isOutsideMonth = date.getFullYear() !== month.getFullYear() || date.getMonth() !== month.getMonth();
+    if (!isOutsideMonth) {
+      return;
+    }
+    const nextMonth = startOfMonth(date);
+    setMonth(nextMonth);
+    const range = visibleMonthRange(nextMonth.getFullYear(), nextMonth.getMonth());
     await loadSessions(range.from, range.to);
   }
 
@@ -108,7 +124,7 @@ export default function ClientCalendarHub({
 
     const nextMonth = startOfMonth(selectedDate);
     setMonth(nextMonth);
-    const range = monthRange(nextMonth.getFullYear(), nextMonth.getMonth());
+    const range = visibleMonthRange(nextMonth.getFullYear(), nextMonth.getMonth());
     await loadSessions(range.from, range.to);
   }
 
@@ -185,9 +201,7 @@ export default function ClientCalendarHub({
               sessions={sessions}
               selectedDate={selectedDate}
               onSelectDate={(date) => {
-                if (date) {
-                  setSelectedDate(date);
-                }
+                void handleSelectDate(date);
               }}
               month={month}
               onMonthChange={(nextMonth) => {

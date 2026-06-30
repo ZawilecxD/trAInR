@@ -18,6 +18,7 @@ interface SessionEditListProps {
   onLogSaved: (setLog: SetLog) => void;
   onLogDeleted: (sessionExerciseId: string, setNumber: number) => void;
   onRestart: () => Promise<void>;
+  onComplete: (status: "finished" | "finished_partially" | "cancelled") => Promise<void>;
 }
 
 function ExerciseEditCard({
@@ -65,11 +66,15 @@ export default function SessionEditList({
   onLogSaved,
   onLogDeleted,
   onRestart,
+  onComplete,
 }: SessionEditListProps) {
   const continueIndex = findFirstIncompleteExerciseIndex(exercises);
   const [restartOpen, setRestartOpen] = useState(false);
   const [restartPending, setRestartPending] = useState(false);
   const [restartError, setRestartError] = useState<string | null>(null);
+  const [cancelOpen, setCancelOpen] = useState(false);
+  const [completePending, setCompletePending] = useState(false);
+  const [completeError, setCompleteError] = useState<string | null>(null);
 
   async function handleRestartConfirm() {
     setRestartPending(true);
@@ -82,6 +87,19 @@ export default function SessionEditList({
       setRestartError(err instanceof Error ? err.message : "Failed to restart session");
     } finally {
       setRestartPending(false);
+    }
+  }
+
+  async function handleComplete(status: "finished" | "finished_partially" | "cancelled") {
+    setCompletePending(true);
+    setCompleteError(null);
+
+    try {
+      await onComplete(status);
+    } catch (err) {
+      setCompleteError(err instanceof Error ? err.message : "Failed to save session status");
+    } finally {
+      setCompletePending(false);
     }
   }
 
@@ -142,7 +160,12 @@ export default function SessionEditList({
       </div>
 
       <div className="fixed inset-x-0 bottom-0 border-t border-white/10 bg-slate-950/90 p-4 backdrop-blur-xl">
-        <div className="mx-auto max-w-2xl">
+        <div className="mx-auto max-w-2xl space-y-2">
+          {completeError ? (
+            <p className="rounded-lg border border-red-400/30 bg-red-500/10 px-4 py-2 text-sm text-red-100">
+              {completeError}
+            </p>
+          ) : null}
           <Button
             type="button"
             className="min-h-12 w-full text-base"
@@ -152,6 +175,52 @@ export default function SessionEditList({
           >
             Continue workout
           </Button>
+          <div className="grid grid-cols-3 gap-2">
+            <Button
+              type="button"
+              variant="outline"
+              className="min-h-11 border-emerald-500/30 bg-emerald-500/10 text-emerald-200 hover:bg-emerald-500/20"
+              disabled={completePending}
+              onClick={() => {
+                void handleComplete("finished");
+              }}
+            >
+              Done
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              className="min-h-11 border-amber-500/30 bg-amber-500/10 text-amber-200 hover:bg-amber-500/20"
+              disabled={completePending}
+              onClick={() => {
+                void handleComplete("finished_partially");
+              }}
+            >
+              Partial
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              className="min-h-11 border-slate-500/30 bg-slate-500/10 text-slate-300 hover:bg-slate-500/20"
+              disabled={completePending}
+              onClick={() => {
+                setCancelOpen(true);
+              }}
+            >
+              Cancel
+            </Button>
+          </div>
+          <DeleteConfirmDialog
+            open={cancelOpen}
+            onOpenChange={setCancelOpen}
+            title="Cancel this session?"
+            description="The session will be marked as cancelled. Any sets you logged will be kept."
+            confirmLabel="Cancel session"
+            loading={completePending}
+            onConfirm={() => {
+              void handleComplete("cancelled");
+            }}
+          />
         </div>
       </div>
     </div>

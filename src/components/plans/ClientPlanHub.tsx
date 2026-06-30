@@ -4,7 +4,7 @@ import PlanCalendar, { type PlanCalendarSession } from "@/components/plans/PlanC
 import TemplatePickerModal from "@/components/workout-sessions/TemplatePickerModal";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { monthRange, parseISODate, toLocalISODate } from "@/lib/dates";
+import { monthRange, parseISODate, startOfMonth, toLocalISODate, visibleMonthRange } from "@/lib/dates";
 import { sessionStatusBadgeClass, sessionStatusLabel } from "@/lib/session-status";
 import { cn } from "@/lib/utils";
 import type { SessionTemplate } from "@/types";
@@ -60,8 +60,33 @@ export default function ClientPlanHub({
     setLoadingMonth(true);
     setFetchError(null);
     try {
-      const range = monthRange(nextMonth.getFullYear(), nextMonth.getMonth());
-      setSelectedDate(parseISODate(range.from));
+      const monthStart = monthRange(nextMonth.getFullYear(), nextMonth.getMonth());
+      setSelectedDate(parseISODate(monthStart.from));
+      const range = visibleMonthRange(nextMonth.getFullYear(), nextMonth.getMonth());
+      const nextSessions = await fetchSessions(clientId, range.from, range.to);
+      setSessions(nextSessions);
+    } catch (err) {
+      setFetchError(err instanceof Error ? err.message : "Failed to load sessions");
+    } finally {
+      setLoadingMonth(false);
+    }
+  }
+
+  async function handleSelectDate(date: Date | undefined) {
+    if (!date) {
+      return;
+    }
+    setSelectedDate(date);
+    const isOutsideMonth = date.getFullYear() !== month.getFullYear() || date.getMonth() !== month.getMonth();
+    if (!isOutsideMonth) {
+      return;
+    }
+    const nextMonth = startOfMonth(date);
+    setMonth(nextMonth);
+    setLoadingMonth(true);
+    setFetchError(null);
+    try {
+      const range = visibleMonthRange(nextMonth.getFullYear(), nextMonth.getMonth());
       const nextSessions = await fetchSessions(clientId, range.from, range.to);
       setSessions(nextSessions);
     } catch (err) {
@@ -99,9 +124,7 @@ export default function ClientPlanHub({
             sessions={sessions}
             selectedDate={selectedDate}
             onSelectDate={(date) => {
-              if (date) {
-                setSelectedDate(date);
-              }
+              void handleSelectDate(date);
             }}
             month={month}
             onMonthChange={(nextMonth) => {
