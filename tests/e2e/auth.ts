@@ -16,3 +16,11 @@ export const clientCredentials = {
   email: process.env.E2E_CLIENT_EMAIL ?? "client-A@gmail.com",
   password: process.env.E2E_CLIENT_PASSWORD ?? "Rooster2",
 };
+
+// A SECOND trainer with no relationship to Trainer A's clients — used to prove
+// cross-tenant isolation (Trainer B must not read or write Trainer A's data).
+// Override per environment with E2E_TRAINER_B_EMAIL / E2E_TRAINER_B_PASSWORD.
+export const trainerBCredentials = {
+  email: process.env.E2E_TRAINER_B_EMAIL ?? "trainer-B@gmail.com",
+  password: process.env.E2E_TRAINER_B_PASSWORD ?? "Rooster2",
+};
