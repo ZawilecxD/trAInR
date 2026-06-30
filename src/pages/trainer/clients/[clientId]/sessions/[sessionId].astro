@@ -1,6 +1,7 @@
 ---
 import Layout from "@/layouts/Layout.astro";
 import SessionActualsReview from "@/components/workout-sessions/SessionActualsReview";
+import SessionCommentsThread from "@/components/session-comments/SessionCommentsThread";
 import SessionForm from "@/components/workout-sessions/SessionForm";
 import { getActivePlanForClient, isTrainerAssignedToClient } from "@/lib/client-plans/service";
 import { listExercises } from "@/lib/exercises/service";
@@ -124,21 +125,24 @@ const pageTitle = notFound
         ) : reviewSession ? (
           <SessionActualsReview client:load session={reviewSession} sessionId={sessionId} currentUserId={userId} />
         ) : session ? (
-          <div class="rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-xl">
-            <SessionForm
-              client:load
-              mode="edit"
-              clientId={clientId}
-              sessionId={sessionId}
-              exerciseSource="session"
-              initialScheduledDate={session.scheduled_date}
-              availableExercises={availableExercises}
-              initialSession={{
-                name: session.name ?? "Workout",
-                exercises: session.exercises,
-              }}
-            />
-          </div>
+          <>
+            <div class="rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-xl">
+              <SessionForm
+                client:load
+                mode="edit"
+                clientId={clientId}
+                sessionId={sessionId}
+                exerciseSource="session"
+                initialScheduledDate={session.scheduled_date}
+                availableExercises={availableExercises}
+                initialSession={{
+                  name: session.name ?? "Workout",
+                  exercises: session.exercises,
+                }}
+              />
+            </div>
+            <SessionCommentsThread client:load sessionId={sessionId} currentUserId={userId} />
+          </>
         ) : null
       }
     </div>

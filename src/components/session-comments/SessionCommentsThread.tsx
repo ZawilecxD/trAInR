@@ -2,7 +2,7 @@ import { type SyntheticEvent, useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
-import type { SessionCommentWithAuthor } from "@/types";
+import type { SessionCommentWithAuthor, UserRole } from "@/types";
 
 interface SessionCommentsThreadProps {
   sessionId: string;

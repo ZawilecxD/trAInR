@@ -170,7 +170,7 @@ export default function GuidedWorkoutHub({ initialSession, currentUserId }: Guid
   }
 
   if (mode === "completed") {
-    return <SessionCompletedView session={session} />;
+    return <SessionCompletedView session={session} currentUserId={currentUserId} />;
   }
 
   if (mode === "overview") {
@@ -193,6 +193,7 @@ export default function GuidedWorkoutHub({ initialSession, currentUserId }: Guid
       <SessionEditList
         session={session}
         exercises={orderedExercises}
+        currentUserId={currentUserId}
         onContinueWorkout={(index) => {
           setExerciseIndex(index);
           setMode("guided");
