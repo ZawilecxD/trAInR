@@ -100,7 +100,7 @@ export default function PlanCalendar({
         sessionNotStarted: cn(sessionDotBase, "after:bg-blue-400"),
         sessionPartial: cn(sessionDotBase, "after:bg-amber-400"),
         sessionFinished: cn(sessionDotBase, "after:bg-emerald-400"),
-        sessionCancelled: cn(sessionDotBase, "after:bg-slate-400"),
+        sessionCancelled: cn(sessionDotBase, "after:bg-red-400"),
       }}
       className="w-full max-w-full rounded-xl border border-white/10 bg-white/5 p-2 text-white [--cell-size:2.75rem]"
       classNames={{

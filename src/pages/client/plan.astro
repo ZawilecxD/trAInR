@@ -1,7 +1,7 @@
 ---
 import Layout from "@/layouts/Layout.astro";
 import ClientCalendarHub from "@/components/plans/ClientCalendarHub";
-import { monthRange, toLocalISODate } from "@/lib/dates";
+import { toLocalISODate, visibleMonthRange } from "@/lib/dates";
 import { listMySessionsAsClient } from "@/lib/workout-sessions/service";
 import { isoDateSchema } from "@/lib/workout-sessions/schemas";
 import { createClient } from "@/lib/supabase";
@@ -16,7 +16,7 @@ const dateParam = Astro.url.searchParams.get("date");
 const parsedDate = isoDateSchema.safeParse(dateParam);
 const selectedDate = parsedDate.success ? parsedDate.data : toLocalISODate(new Date());
 const initialMonth = selectedDate.slice(0, 7);
-const range = monthRange(Number(selectedDate.slice(0, 4)), Number(selectedDate.slice(5, 7)) - 1);
+const range = visibleMonthRange(Number(selectedDate.slice(0, 4)), Number(selectedDate.slice(5, 7)) - 1);
 
 const { data: sessions, error: sessionsError } = await listMySessionsAsClient(
   supabase,

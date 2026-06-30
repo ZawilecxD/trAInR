@@ -2,7 +2,7 @@
 import Layout from "@/layouts/Layout.astro";
 import ClientPlanHub from "@/components/plans/ClientPlanHub";
 import { isTrainerAssignedToClient } from "@/lib/client-plans/service";
-import { monthRange, toLocalISODate } from "@/lib/dates";
+import { toLocalISODate, visibleMonthRange } from "@/lib/dates";
 import { listTemplates } from "@/lib/session-templates/service";
 import { listSessionsForClient } from "@/lib/workout-sessions/service";
 import { isoDateSchema } from "@/lib/workout-sessions/schemas";
@@ -30,7 +30,7 @@ const dateParam = Astro.url.searchParams.get("date");
 const parsedDate = isoDateSchema.safeParse(dateParam);
 const selectedDate = parsedDate.success ? parsedDate.data : toLocalISODate(new Date());
 const initialMonth = selectedDate.slice(0, 7);
-const range = monthRange(Number(selectedDate.slice(0, 4)), Number(selectedDate.slice(5, 7)) - 1);
+const range = visibleMonthRange(Number(selectedDate.slice(0, 4)), Number(selectedDate.slice(5, 7)) - 1);
 
 const profileResult = await supabase.from("profiles").select("display_name").eq("id", clientId).maybeSingle();
 const clientName = typeof profileResult.data?.display_name === "string" ? profileResult.data.display_name : "Client";
