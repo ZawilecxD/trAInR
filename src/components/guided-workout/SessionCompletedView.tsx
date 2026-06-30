@@ -1,4 +1,5 @@
 import { ArrowLeft } from "lucide-react";
+import SessionCommentsThread from "@/components/session-comments/SessionCommentsThread";
 import { Badge } from "@/components/ui/badge";
 import { sessionStatusBadgeClass, sessionStatusLabel } from "@/lib/session-status";
 import { formatSessionOverviewDate } from "@/lib/guided-workout/format-session-date";
@@ -7,9 +8,10 @@ import type { ClientSessionDetail } from "@/lib/workout-sessions/service";
 
 interface SessionCompletedViewProps {
   session: ClientSessionDetail;
+  currentUserId: string;
 }
 
-export default function SessionCompletedView({ session }: SessionCompletedViewProps) {
+export default function SessionCompletedView({ session, currentUserId }: SessionCompletedViewProps) {
   return (
     <div className="flex min-h-[calc(100vh-2rem)] flex-col">
       <header className="mb-6">
@@ -52,6 +54,8 @@ export default function SessionCompletedView({ session }: SessionCompletedViewPr
             ? "This session has been cancelled."
             : "Your workout has been recorded. Your trainer can see the results."}
         </p>
+
+        <SessionCommentsThread sessionId={session.id} currentUserId={currentUserId} />
       </div>
     </div>
   );

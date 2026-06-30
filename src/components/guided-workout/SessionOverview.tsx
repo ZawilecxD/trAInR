@@ -2,6 +2,7 @@ import { ArrowLeft } from "lucide-react";
 import { useState } from "react";
 import DeleteConfirmDialog from "@/components/DeleteConfirmDialog";
 import PhaseBreakdown from "@/components/guided-workout/PhaseBreakdown";
+import SessionCommentsThread from "@/components/session-comments/SessionCommentsThread";
 import { Button } from "@/components/ui/button";
 import { formatSessionOverviewDate } from "@/lib/guided-workout/format-session-date";
 import type { ClientSessionDetail } from "@/lib/workout-sessions/service";
@@ -11,6 +12,7 @@ interface SessionOverviewProps {
   beginPending: boolean;
   beginError: string | null;
   onBegin: () => void;
+  currentUserId: string;
   onCancel: () => Promise<void>;
 }
 
@@ -19,6 +21,7 @@ export default function SessionOverview({
   beginPending,
   beginError,
   onBegin,
+  currentUserId,
   onCancel,
 }: SessionOverviewProps) {
   const trainerNote = session.exercises.find((exercise) => exercise.notes)?.notes ?? null;
@@ -82,6 +85,8 @@ export default function SessionOverview({
           <h2 className="mb-3 text-sm font-medium text-blue-100/80">Phase breakdown</h2>
           <PhaseBreakdown exercises={session.exercises} />
         </section>
+
+        <SessionCommentsThread sessionId={session.id} currentUserId={currentUserId} />
 
         {beginError ? (
           <p className="rounded-lg border border-red-400/30 bg-red-500/10 px-4 py-3 text-sm text-red-100">

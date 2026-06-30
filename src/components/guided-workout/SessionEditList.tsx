@@ -2,6 +2,7 @@ import { ArrowLeft, RotateCcw } from "lucide-react";
 import { useState } from "react";
 import DeleteConfirmDialog from "@/components/DeleteConfirmDialog";
 import ExerciseSetLogTable from "@/components/guided-workout/ExerciseSetLogTable";
+import SessionCommentsThread from "@/components/session-comments/SessionCommentsThread";
 import { Button } from "@/components/ui/button";
 import { findFirstIncompleteExerciseIndex } from "@/lib/guided-workout/exercise-progress";
 import { formatExercisePrescriptionDetail } from "@/lib/guided-workout/format-prescription";
@@ -13,6 +14,7 @@ import type { SetLog } from "@/types";
 interface SessionEditListProps {
   session: ClientSessionDetail;
   exercises: SessionExerciseDetail[];
+  currentUserId: string;
   onContinueWorkout: (exerciseIndex: number) => void;
   onJumpToExercise: (exerciseIndex: number) => void;
   onLogSaved: (setLog: SetLog) => void;
@@ -61,6 +63,7 @@ function ExerciseEditCard({
 export default function SessionEditList({
   session,
   exercises,
+  currentUserId,
   onContinueWorkout,
   onJumpToExercise,
   onLogSaved,
@@ -157,6 +160,8 @@ export default function SessionEditList({
             onLogDeleted={onLogDeleted}
           />
         ))}
+
+        <SessionCommentsThread sessionId={session.id} currentUserId={currentUserId} />
       </div>
 
       <div className="fixed inset-x-0 bottom-0 border-t border-white/10 bg-slate-950/90 p-4 backdrop-blur-xl">

@@ -1,4 +1,5 @@
 import { Check } from "lucide-react";
+import SessionCommentsThread from "@/components/session-comments/SessionCommentsThread";
 import { PHASE_ORDER, phaseLabel } from "@/lib/guided-workout/phase-labels";
 import { formatPrescribedSetDetail, formatSetActual } from "@/lib/guided-workout/format-prescription";
 import { formatSessionOverviewDate } from "@/lib/guided-workout/format-session-date";
@@ -9,6 +10,8 @@ import type { ExercisePhase } from "@/types";
 
 interface SessionActualsReviewProps {
   session: TrainerSessionDetail;
+  sessionId: string;
+  currentUserId: string;
 }
 
 function readoutBadgeClass(status: ReadoutStatus): string {
@@ -132,7 +135,7 @@ function ExerciseActualsCard({ exercise, notes }: { exercise: ExerciseReadout; n
   );
 }
 
-export default function SessionActualsReview({ session }: SessionActualsReviewProps) {
+export default function SessionActualsReview({ session, sessionId, currentUserId }: SessionActualsReviewProps) {
   const groups = groupExercisesByPhase(session.readout.exercises);
   const notesByExerciseId = new Map(session.exercises.map((exercise) => [exercise.id, exercise.notes]));
 
@@ -202,6 +205,8 @@ export default function SessionActualsReview({ session }: SessionActualsReviewPr
           })}
         </div>
       )}
+
+      <SessionCommentsThread sessionId={sessionId} currentUserId={currentUserId} />
     </div>
   );
 }

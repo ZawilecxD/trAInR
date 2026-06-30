@@ -1,9 +1,12 @@
 import type { APIContext } from "astro";
 import { jsonError } from "@/lib/api/responses";
+import type { UserRole } from "@/types";
 
 export type TrainerGuardResult = { ok: true; userId: string } | { ok: false; response: Response };
 
 export type ClientGuardResult = { ok: true; userId: string } | { ok: false; response: Response };
+
+export type AuthenticatedGuardResult = { ok: true; userId: string; role: UserRole } | { ok: false; response: Response };
 
 export function requireTrainer(context: APIContext): TrainerGuardResult {
   if (!context.locals.user) {
@@ -27,4 +30,17 @@ export function requireClient(context: APIContext): ClientGuardResult {
   }
 
   return { ok: true, userId: context.locals.user.id };
+}
+
+export function requireAuthenticated(context: APIContext): AuthenticatedGuardResult {
+  if (!context.locals.user) {
+    return { ok: false, response: jsonError("unauthorized", 401) };
+  }
+
+  const role = context.locals.role;
+  if (role !== "trainer" && role !== "client") {
+    return { ok: false, response: jsonError("forbidden", 403) };
+  }
+
+  return { ok: true, userId: context.locals.user.id, role };
 }

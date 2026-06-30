@@ -13,6 +13,7 @@ import type { SessionStatus, SetLog } from "@/types";
 
 interface GuidedWorkoutHubProps {
   initialSession: ClientSessionDetail;
+  currentUserId: string;
 }
 
 function mergeSetLog(exercises: ClientSessionDetail["exercises"], setLog: SetLog) {
@@ -44,7 +45,7 @@ function removeSetLog(exercises: ClientSessionDetail["exercises"], sessionExerci
   });
 }
 
-export default function GuidedWorkoutHub({ initialSession }: GuidedWorkoutHubProps) {
+export default function GuidedWorkoutHub({ initialSession, currentUserId }: GuidedWorkoutHubProps) {
   const [session, setSession] = useState(initialSession);
   const [mode, setMode] = useState<GuidedWorkoutMode>(() => resolveInitialMode(initialSession));
   const [exerciseIndex, setExerciseIndex] = useState(0);
@@ -169,7 +170,7 @@ export default function GuidedWorkoutHub({ initialSession }: GuidedWorkoutHubPro
   }
 
   if (mode === "completed") {
-    return <SessionCompletedView session={session} />;
+    return <SessionCompletedView session={session} currentUserId={currentUserId} />;
   }
 
   if (mode === "overview") {
@@ -181,6 +182,7 @@ export default function GuidedWorkoutHub({ initialSession }: GuidedWorkoutHubPro
         onBegin={() => {
           void handleBegin();
         }}
+        currentUserId={currentUserId}
         onCancel={handleComplete.bind(null, "cancelled")}
       />
     );
@@ -191,6 +193,7 @@ export default function GuidedWorkoutHub({ initialSession }: GuidedWorkoutHubPro
       <SessionEditList
         session={session}
         exercises={orderedExercises}
+        currentUserId={currentUserId}
         onContinueWorkout={(index) => {
           setExerciseIndex(index);
           setMode("guided");
