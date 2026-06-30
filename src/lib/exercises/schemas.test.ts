@@ -51,6 +51,17 @@ describe("listExercisesQuerySchema", () => {
     }
   });
 
+  it("parses favourites-only filter", () => {
+    const parsed = listExercisesQuerySchema.safeParse({
+      favourites: "1",
+    });
+
+    expect(parsed.success).toBe(true);
+    if (parsed.success) {
+      expect(parsed.data.favourites).toBe(true);
+    }
+  });
+
   it("parses repeated muscleGroupId params from URLSearchParams", () => {
     const params = new URLSearchParams();
     params.append("muscleGroupId", validMuscleGroupId);
@@ -64,6 +75,17 @@ describe("listExercisesQuerySchema", () => {
       expect(parsed.data.muscleGroupId).toEqual([validMuscleGroupId, "a1000001-0000-4000-8000-000000000002"]);
       expect(parsed.data.type).toBe("cardio");
       expect(parsed.data.q).toBe("run");
+    }
+  });
+
+  it("parses favourites from URLSearchParams", () => {
+    const params = new URLSearchParams();
+    params.set("favourites", "1");
+
+    const parsed = parseListExercisesQuery(params);
+    expect(parsed.success).toBe(true);
+    if (parsed.success) {
+      expect(parsed.data.favouritesOnly).toBe(true);
     }
   });
 });

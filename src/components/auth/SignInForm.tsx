@@ -57,6 +57,7 @@ export default function SignInForm({ serverError }: Props) {
         placeholder="you@example.com"
         error={errors.email}
         icon={<Mail className="size-4" />}
+        testId="signin-email"
       />
 
       <FormField
@@ -71,19 +72,26 @@ export default function SignInForm({ serverError }: Props) {
         placeholder="Your password"
         error={errors.password}
         icon={<Lock className="size-4" />}
+        testId="signin-password"
         endContent={
           <PasswordToggle
             visible={showPassword}
             onToggle={() => {
               setShowPassword(!showPassword);
             }}
+            testId="signin-password-toggle"
           />
         }
       />
 
       <ServerError message={serverError} />
 
-      <SubmitButton pending={submitting} pendingText="Signing in..." icon={<LogIn className="size-4" />}>
+      <SubmitButton
+        pending={submitting}
+        pendingText="Signing in..."
+        icon={<LogIn className="size-4" />}
+        testId="signin-submit"
+      >
         Sign in
       </SubmitButton>
     </form>

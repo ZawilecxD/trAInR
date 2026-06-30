@@ -55,6 +55,7 @@ export interface Exercise {
   notes: string | null;
   video_url: string | null;
   is_archived: boolean;
+  is_favourite: boolean;
   created_at: string;
   updated_at: string;
 }

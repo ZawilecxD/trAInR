@@ -38,6 +38,7 @@ export const updateExerciseBodySchema = z
     notes: z.string().nullable().optional(),
     video_url: z.url("Invalid video URL").nullable().optional(),
     is_archived: z.boolean().optional(),
+    is_favourite: z.boolean().optional(),
   })
   .refine((value) => Object.keys(value).length > 0, "At least one field is required for update");
 
@@ -59,6 +60,10 @@ export const listExercisesQuerySchema = z.object({
       const trimmed = value?.trim();
       return trimmed && trimmed.length > 0 ? trimmed : undefined;
     }),
+  favourites: z
+    .string()
+    .optional()
+    .transform((value) => value === "1"),
 });
 
 export type CreateExerciseBody = z.infer<typeof createExerciseBodySchema>;
@@ -67,6 +72,7 @@ export interface ListExercisesQuery {
   type?: z.infer<typeof exerciseTypeSchema>;
   muscleGroupId?: string[];
   q?: string;
+  favouritesOnly?: boolean;
 }
 
 export function parseListExercisesQuery(searchParams: URLSearchParams):
@@ -84,6 +90,7 @@ export function parseListExercisesQuery(searchParams: URLSearchParams):
     muscleGroupId:
       muscleGroupIds.length === 0 ? undefined : muscleGroupIds.length === 1 ? muscleGroupIds[0] : muscleGroupIds,
     q: searchParams.get("q") ?? undefined,
+    favourites: searchParams.get("favourites") ?? undefined,
   };
 
   const parsed = listExercisesQuerySchema.safeParse(raw);
@@ -91,7 +98,14 @@ export function parseListExercisesQuery(searchParams: URLSearchParams):
     return { success: false, issues: parsed.error.issues };
   }
 
-  return { success: true, data: parsed.data };
+  const { favourites, ...rest } = parsed.data;
+  return {
+    success: true,
+    data: {
+      ...rest,
+      favouritesOnly: favourites ? true : undefined,
+    },
+  };
 }
 
 export function formatZodIssues(issues: z.core.$ZodIssue[]): {

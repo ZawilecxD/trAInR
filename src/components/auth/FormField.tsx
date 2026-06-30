@@ -17,6 +17,8 @@ interface FormFieldProps {
   hint?: ReactNode;
   icon: ReactNode;
   endContent?: ReactNode;
+  /** Test-only selector hook; stripped from production builds (see astro.config.mjs). */
+  testId?: string;
 }
 
 export function FormField({
@@ -31,6 +33,7 @@ export function FormField({
   hint,
   icon,
   endContent,
+  testId,
 }: FormFieldProps) {
   return (
     <div>
@@ -42,6 +45,7 @@ export function FormField({
         <input
           id={id}
           name={name ?? id}
+          data-testid={testId}
           type={type}
           value={value}
           onChange={(e) => {
