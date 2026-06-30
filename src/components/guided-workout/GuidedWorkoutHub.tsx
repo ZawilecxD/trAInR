@@ -1,10 +1,11 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import ExerciseNavList from "@/components/guided-workout/ExerciseNavList";
 import ExerciseNavMenu from "@/components/guided-workout/ExerciseNavMenu";
 import GuidedExerciseView from "@/components/guided-workout/GuidedExerciseView";
 import SessionCompletedView from "@/components/guided-workout/SessionCompletedView";
 import SessionEditList from "@/components/guided-workout/SessionEditList";
 import SessionOverview from "@/components/guided-workout/SessionOverview";
+import { SetLogFlushContext, useSetLogFlushRegistry } from "@/components/hooks/useSetLogFlush";
 import { sortByPhaseThenSortOrder } from "@/lib/guided-workout/phase-labels";
 import { resolveInitialMode, type GuidedWorkoutMode } from "@/lib/guided-workout/session-mode";
 import type { ClientSessionDetail } from "@/lib/workout-sessions/service";
@@ -50,8 +51,36 @@ export default function GuidedWorkoutHub({ initialSession }: GuidedWorkoutHubPro
   const [menuOpen, setMenuOpen] = useState(false);
   const [beginPending, setBeginPending] = useState(false);
   const [beginError, setBeginError] = useState<string | null>(null);
+  const [isNavigating, setIsNavigating] = useState(false);
 
   const orderedExercises = useMemo(() => sortByPhaseThenSortOrder(session.exercises), [session.exercises]);
+
+  const { register, unregister, flushAll } = useSetLogFlushRegistry();
+  const flushRegistry = useMemo(() => ({ register, unregister }), [register, unregister]);
+
+  // Gate every exercise-leaving transition on a completed flush of all mounted
+  // set-log rows. Changing exerciseIndex/mode unmounts the rows and cancels their
+  // pending debounce timers, so the flush MUST resolve before apply() runs. On a
+  // failed flush we abort the transition and leave the user on the current
+  // exercise, where the row's existing error/retry UI is already visible.
+  const navigatingRef = useRef(false);
+  const runGuardedTransition = useCallback(
+    async (apply: () => void) => {
+      if (navigatingRef.current) return;
+      navigatingRef.current = true;
+      setIsNavigating(true);
+      try {
+        const ok = await flushAll();
+        if (ok) {
+          apply();
+        }
+      } finally {
+        navigatingRef.current = false;
+        setIsNavigating(false);
+      }
+    },
+    [flushAll],
+  );
 
   const handleLogSaved = useCallback((setLog: SetLog) => {
     setSession((prev) => ({
@@ -192,52 +221,71 @@ export default function GuidedWorkoutHub({ initialSession }: GuidedWorkoutHubPro
   const currentExercise = orderedExercises[exerciseIndex] ?? orderedExercises[0];
 
   return (
-    <div className="lg:flex lg:min-h-[calc(100vh-4rem)] lg:items-stretch lg:gap-6">
-      <aside className="hidden lg:flex lg:w-72 lg:shrink-0 xl:w-80">
-        <div className="sticky top-8 flex max-h-[calc(100vh-4rem)] w-full flex-col overflow-hidden rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl">
-          <ExerciseNavList
-            exercises={orderedExercises}
+    <SetLogFlushContext.Provider value={flushRegistry}>
+      <div className="lg:flex lg:min-h-[calc(100vh-4rem)] lg:items-stretch lg:gap-6">
+        <aside className="hidden lg:flex lg:w-72 lg:shrink-0 xl:w-80">
+          <div className="sticky top-8 flex max-h-[calc(100vh-4rem)] w-full flex-col overflow-hidden rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl">
+            <ExerciseNavList
+              exercises={orderedExercises}
+              exerciseIndex={exerciseIndex}
+              onSelectExercise={(index) => {
+                void runGuardedTransition(() => {
+                  setExerciseIndex(index);
+                });
+              }}
+              className="min-h-0 flex-1 p-4"
+            />
+          </div>
+        </aside>
+
+        <div className="min-w-0 flex-1">
+          <GuidedExerciseView
+            key={currentExercise.id}
+            exercise={currentExercise}
             exerciseIndex={exerciseIndex}
-            onSelectExercise={setExerciseIndex}
-            className="min-h-0 flex-1 p-4"
+            totalExercises={orderedExercises.length}
+            startedAt={session.started_at}
+            isNavigating={isNavigating}
+            onBackToOverview={() => {
+              void runGuardedTransition(() => {
+                setMode("overview");
+              });
+            }}
+            onBackToEditList={() => {
+              void runGuardedTransition(() => {
+                setMode("edit-list");
+              });
+            }}
+            onOpenMenu={() => {
+              setMenuOpen(true);
+            }}
+            onPrev={() => {
+              void runGuardedTransition(() => {
+                setExerciseIndex((index) => Math.max(0, index - 1));
+              });
+            }}
+            onNext={() => {
+              void runGuardedTransition(() => {
+                setExerciseIndex((index) => Math.min(orderedExercises.length - 1, index + 1));
+              });
+            }}
+            onLogSaved={handleLogSaved}
+            onLogDeleted={handleLogDeleted}
           />
         </div>
-      </aside>
 
-      <div className="min-w-0 flex-1">
-        <GuidedExerciseView
-          key={currentExercise.id}
-          exercise={currentExercise}
+        <ExerciseNavMenu
+          open={menuOpen}
+          onOpenChange={setMenuOpen}
+          exercises={orderedExercises}
           exerciseIndex={exerciseIndex}
-          totalExercises={orderedExercises.length}
-          startedAt={session.started_at}
-          onBackToOverview={() => {
-            setMode("overview");
+          onSelectExercise={(index) => {
+            void runGuardedTransition(() => {
+              setExerciseIndex(index);
+            });
           }}
-          onBackToEditList={() => {
-            setMode("edit-list");
-          }}
-          onOpenMenu={() => {
-            setMenuOpen(true);
-          }}
-          onPrev={() => {
-            setExerciseIndex((index) => Math.max(0, index - 1));
-          }}
-          onNext={() => {
-            setExerciseIndex((index) => Math.min(orderedExercises.length - 1, index + 1));
-          }}
-          onLogSaved={handleLogSaved}
-          onLogDeleted={handleLogDeleted}
         />
       </div>
-
-      <ExerciseNavMenu
-        open={menuOpen}
-        onOpenChange={setMenuOpen}
-        exercises={orderedExercises}
-        exerciseIndex={exerciseIndex}
-        onSelectExercise={setExerciseIndex}
-      />
-    </div>
+    </SetLogFlushContext.Provider>
   );
 }

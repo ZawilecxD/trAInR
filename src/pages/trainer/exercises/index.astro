@@ -1,6 +1,7 @@
 ---
 import Layout from "@/layouts/Layout.astro";
 import ExerciseFilters from "@/components/exercises/ExerciseFilters";
+import ExerciseFavouriteButton from "@/components/exercises/ExerciseFavouriteButton";
 import { searchParamsToFilters } from "@/lib/exercises/filter-url";
 import { EXERCISE_METRIC_LABELS, EXERCISE_TYPE_LABELS } from "@/lib/exercises/labels";
 import { parseListExercisesQuery } from "@/lib/exercises/schemas";
@@ -47,7 +48,10 @@ const flashMessage = created
       : successParam;
 
 const hasActiveFilters =
-  initialFilters.type !== undefined || initialFilters.q !== undefined || initialFilters.muscleGroupIds.length > 0;
+  initialFilters.type !== undefined ||
+  initialFilters.q !== undefined ||
+  initialFilters.muscleGroupIds.length > 0 ||
+  initialFilters.favouritesOnly === true;
 ---
 
 <Layout title="Exercise library">
@@ -115,6 +119,9 @@ const hasActiveFilters =
                   <table class="min-w-full text-left text-sm text-blue-100/90">
                     <thead class="border-b border-white/10 bg-white/5 text-xs tracking-wide text-blue-100/60 uppercase">
                       <tr>
+                        <th class="w-10 px-4 py-3">
+                          <span class="sr-only">Favourite</span>
+                        </th>
                         <th class="px-4 py-3">Name</th>
                         <th class="px-4 py-3">Type</th>
                         <th class="px-4 py-3">Metric</th>
@@ -125,6 +132,13 @@ const hasActiveFilters =
                     <tbody>
                       {exerciseRows.map((exercise) => (
                         <tr class="border-b border-white/5 last:border-b-0">
+                          <td class="px-4 py-3">
+                            <ExerciseFavouriteButton
+                              client:load
+                              exerciseId={exercise.id}
+                              initialIsFavourite={exercise.is_favourite}
+                            />
+                          </td>
                           <td class="px-4 py-3 font-medium text-white">{exercise.name}</td>
                           <td class="px-4 py-3">{EXERCISE_TYPE_LABELS[exercise.exercise_type]}</td>
                           <td class="px-4 py-3">{EXERCISE_METRIC_LABELS[exercise.default_metric]}</td>

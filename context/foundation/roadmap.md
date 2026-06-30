@@ -5,7 +5,7 @@
 version: 1
 status: draft
 created: 2026-05-25
-updated: 2026-06-20
+updated: 2026-06-29
 prd_version: 1
 main_goal: speed
 top_blocker: time
@@ -46,7 +46,7 @@ Independent personal trainers lose coaching time to admin — hunting across spr
 | S-12 | exercise-statistics        | view per-exercise history, estimated 1RM, and volume/tonnage              | S-06          | FR-024, FR-025, FR-026                            | proposed |
 | S-13 | data-edit-window           | edit logged data for 24 hours, then sealed                                | S-06          | FR-022                                            | proposed |
 | S-14 | exercises-separate-rounds  | prescribe each exercise round separately (reps, load, rest per round)     | S-02          | FR-010, FR-011                                    | done     |
-| S-15 | exercise-favourites        | mark exercises as favourites and filter exercise lists by favourites only | S-01          | FR-009                                            | proposed |
+| S-15 | exercise-favourites        | mark exercises as favourites and filter exercise lists by favourites only | S-01          | FR-009                                            | done     |
 | S-16 | ad-hoc-session-logging     | log an unplanned workout not on the calendar                              | S-06          | FR-015, FR-016, FR-017 (extends)                  | parked   |
 | S-17 | starter-exercise-seed      | receive a curated starter exercise library on trainer signup              | S-01, S-03    | FR-007, FR-008 (extends; supersedes Non-Goal #14) | done     |
 | S-18 | ui-redesign                | use a unified premium dark UI per DESIGN.md with accessible touch targets and Pencil-aligned key flows | S-06          | NFR mobile usability                              | proposed |
@@ -61,6 +61,7 @@ Independent personal trainers lose coaching time to admin — hunting across spr
 | Q-01 | add-stryker-mutation-testing          | run Stryker on risk-critical modules to catch weak assertions beyond coverage                          | test-plan Phase 1 complete       | NFR data integrity              | proposed |
 | Q-02 | harden-replace-exercise-muscle-groups | close KNOWN GAP: RPC rejects cross-trainer muscle group replacement; flip integration test             | S-01, test-plan Phase 1 complete | NFR privacy, NFR data integrity | done     |
 | Q-03 | harden-complete-client-invite         | close KNOWN GAP: block fraudulent p_client_id on authenticated invite completion; preserve anon signup | S-03, test-plan Phase 1 complete | FR-003, FR-004, FR-005          | proposed |
+| Q-04 | add-e2e-ci-gate                       | run the Playwright E2E suite automatically on every PR against an ephemeral Supabase, blocking merge on browser-flow regressions | S-06, test-plan Phase 5 | NFR mobile usability, NFR data integrity | proposed |
 
 
 ## Streams
@@ -73,7 +74,7 @@ Navigation aid — groups items that share a Prerequisites chain. Canonical orde
 | A      | Trainer authoring → north star | `F-01` → `S-01` → `S-02` → `S-04` → `S-06` → `S-07`                            | Critical path: every link is on the shortest route to validating the async training loop.                                                                                                                                                                                                                                                                                                                  |
 | B      | Client onboarding & calendar   | `S-03` → `S-05`                                                                | Joins Stream A at `S-04` (S-03 is a prerequisite for S-04); `S-05` branches off `S-04` parallel with `S-06`.                                                                                                                                                                                                                                                                                               |
 | C      | Enhancement & polish           | `S-08` / `S-09` / `S-10` / `S-11` / `S-12` / `S-13` / `S-14` / `S-15` / `S-17` / `S-18` / `S-19` | Tier 2+3 items; sequence after core loop completes or when capacity opens. `S-14` extends session template prescription (after S-02). `S-15` extends exercise library browse/filter (after S-01). `S-16` was parked for post-MVP after planning research showed it changes creation ownership, exercise-library access, and trainer dashboard semantics. `S-17` seeds starter exercises on trainer signup. `S-18` unifies the dual design-system debt (shadcn tokens vs cosmic palette) per `DESIGN.md`, `context/changes/ui-redesign/research.md`, and Pencil mockups in `docs/pencil/`. `S-19` replaces the per-set OK/completed toggle with one-click prescription fill and defers completion semantics to session level (S-08). |
-| D      | Quality & testing              | `Q-01` / `Q-02` / `Q-03`                                                       | Cross-cutting; selective mutation testing per `test-plan.md` after the integration harness lands. `Q-02`/`Q-03` close SECURITY DEFINER gaps documented by the harness (flip KNOWN GAP tests).                                                                                                                                                                                                              |
+| D      | Quality & testing              | `Q-01` / `Q-02` / `Q-03` / `Q-04`                                              | Cross-cutting; selective mutation testing per `test-plan.md` after the integration harness lands. `Q-02`/`Q-03` close SECURITY DEFINER gaps documented by the harness (flip KNOWN GAP tests). `Q-04` promotes the existing local-only Playwright suite to a PR gate, reusing the `test-integration` Supabase-in-CI pattern.                                                                          |
 
 
 ## Baseline
@@ -116,6 +117,21 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Blockers:** —
 - **Unknowns:** which modules from `test-plan.md` risk map yield the best signal-per-runtime on first run; whether mutation runs belong in CI or stay local/pre-merge only
 - **Risk:** chasing 100% mutation score produces brittle mirror tests; treat survived mutants as review items, not a todo list (m3-l2). Scope with `--mutate` and incremental mode to keep runs practical.
+- **Status:** proposed
+
+### Q-04: E2E suite in CI
+
+- **Outcome:** team can rely on the Playwright E2E suite running automatically on every PR — against the app backed by an ephemeral local Supabase with the dev seed — so guided-workout and trainer-form browser regressions block merge instead of being caught only when someone remembers to run `npm run test:e2e` locally
+- **Change ID:** add-e2e-ci-gate
+- **PRD refs:** NFR mobile usability (guided-workout phone flow), NFR data integrity (autosave false-safety on client logging — Risk #6 in `test-plan.md`)
+- **Prerequisites:** S-06 (guided-workout E2E specs already exist in `tests/e2e/*.spec.ts`); the Supabase-in-CI pattern already used by the `test-integration` job in `.github/workflows/ci.yml`; aligns with `test-plan.md` §3 Phase 5 and the §8 refresh trigger ("E2E moves from local-only to CI-gated")
+- **Parallel with:** any in-flight slice — CI wiring touches `.github/workflows/ci.yml` and `playwright.config.ts` only, no product code
+- **Blockers:** —
+- **Unknowns:**
+  - whether the E2E job blocks merge from day one or runs informational (non-required) first to measure flakiness and runtime
+  - whether to keep running against `astro dev` (preserves the `data-testid` hooks the specs rely on and matches the current `webServer` + `auth.setup.ts` flow) or invest in a test build that retains test ids — production strips them via `babel-plugin-react-remove-properties`
+  - browser/runtime cost: install `chromium` only vs a wider matrix; whether to shard once the suite grows beyond the current three specs
+- **Risk:** E2E is the slowest, flakiest gate; a poorly-isolated suite erodes trust in CI. Mitigations: reuse the proven `supabase start` + seed flow (dev users `trainer-A@`/`client-A@`, password `Rooster2`, created by `scripts/seed-dev-users.sql` on reset), export `SUPABASE_URL=$API_URL` and `SUPABASE_KEY=$ANON_KEY` from `supabase status` for the dev server (mirror the integration job), pin the Playwright browser version, upload `playwright-report` + traces on failure, and gate on a single `chromium` project before expanding.
 - **Status:** proposed
 
 ## Slices
@@ -296,9 +312,9 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Prerequisites:** S-01
 - **Parallel with:** S-02, S-03, S-04, S-05, S-06, S-07, S-08, S-09, S-10, S-12, S-13
 - **Blockers:** —
-- **Unknowns:** Whether favourite toggle appears inline on list rows only, or also on exercise detail/edit; whether template builder exercise picker shares the same filter component as the library page
+- **Unknowns:** ~~Whether favourite toggle appears inline on list rows only, or also on exercise detail/edit; whether template builder exercise picker shares the same filter component as the library page~~ — **Resolved:** inline star on library rows + checkbox on edit form; picker uses client-side favourites filter via `filterExercises` helper (same semantics, not shared URL component).
 - **Risk:** Minimal — per-trainer boolean flag; main work is consistent filter UX across exercise pickers (library, template builder, session personalization)
-- **Status:** proposed
+- **Status:** done
 
 ### S-16: Ad-hoc session logging
 
@@ -376,6 +392,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 | Q-01       | add-stryker-mutation-testing          | Add Stryker mutation testing as a selective quality gate                    | yes                   | Run `/10x-research add-stryker-mutation-testing`; see `context/changes/add-stryker-mutation-testing/`                       |
 | Q-02       | harden-replace-exercise-muscle-groups | Add auth.uid() ownership check to replace_exercise_muscle_groups RPC        | —                     | done → `context/archive/2026-06-08-harden-replace-exercise-muscle-groups/`                                                  |
 | Q-03       | harden-complete-client-invite         | Harden complete_client_invite p_client_id binding for authenticated callers | no                    | Run `/10x-frame harden-complete-client-invite` first (anon vs authenticated design); then `/10x-plan`                       |
+| Q-04       | add-e2e-ci-gate                       | Wire the Playwright E2E suite into CI as a PR quality gate                   | yes                   | Run `/10x-research add-e2e-ci-gate`; mirror the `test-integration` Supabase job; see `test-plan.md` §3 Phase 5 / §8         |
 
 
 ## Open Roadmap Questions
@@ -423,4 +440,5 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **S-07: trainer can see an overview of all their clients, assigned plans, and recent session activity; can view a read-only detail of a client's session showing exercises, sets, weights** — Archived 2026-06-20 → `context/archive/2026-06-20-trainer-dashboard/`. Lesson: —.
 - **S-10: trainer marks each prescribed round as warm-up or working when building session templates and personalizing assigned sessions; client logs each set with a warm-up/working flag that inherits the prescribed default when a matching round exists and may be overridden at log time; only working logged sets (`set_logs.is_warmup = false`) count toward stats and performance hints (FR-019, FR-025). Session phase warm-up/main/cool-down (whole exercises) is unchanged — this slice is per-round within an exercise.** — Archived 2026-06-20 → `context/archive/2026-06-20-warmup-working-flag/`. Lesson: —.
 - **S-17: every new trainer receives a copy of a curated collection of popular exercises on signup; seeded exercises behave like trainer-owned exercises (editable, deletable, usable in templates) with no read-only or "system" lock** — Archived 2026-06-20 → `context/archive/2026-06-20-starter-exercise-seed/`. Lesson: —.
+- **S-15: trainer can mark exercises as favourites and filter exercise lists to show favourites only (exercise library and anywhere else exercises are browsed for selection)** — Archived 2026-06-29 → `context/archive/2026-06-29-exercise-favourites/`. Lesson: —.
 
