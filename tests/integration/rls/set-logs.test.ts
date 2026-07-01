@@ -81,14 +81,17 @@ describe("set_logs", () => {
           set_number: 1,
           reps: 10,
           load_kg: 50,
+          is_complete: false,
+          is_warmup: false,
         })
-        .select("id")
-        .single<{ id: string }>();
+        .select("id, is_complete")
+        .single<{ id: string; is_complete: boolean }>();
 
       expect(error).toBeNull();
       if (!data?.id) {
         throw new Error("Expected set log id after insert");
       }
+      expect(data.is_complete).toBe(false);
       setLogId = data.id;
     });
 

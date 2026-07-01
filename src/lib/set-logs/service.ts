@@ -52,7 +52,8 @@ function validateMetricFields(metric: ExerciseMetric, body: UpsertSetLogBody): s
     return "distance exercises are not supported for logging";
   }
 
-  if (!body.is_complete) {
+  const hasValues = body.reps !== null || body.duration_seconds !== null || body.load_kg !== null;
+  if (!hasValues) {
     return null;
   }
 

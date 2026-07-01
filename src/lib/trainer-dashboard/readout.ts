@@ -1,5 +1,6 @@
 import { getLoggingSetNumbers } from "@/lib/guided-workout/logging-sets";
 import { sortByPhaseThenSortOrder } from "@/lib/guided-workout/phase-labels";
+import { isSetLogged } from "@/lib/guided-workout/set-logged";
 import type { ExerciseMetric, ExercisePhase, SessionExerciseSet, SetLog } from "@/types";
 
 export type ReadoutStatus = "not_logged" | "in_progress" | "fully_logged";
@@ -66,7 +67,11 @@ export function deriveReadoutStatus(completedSets: number, totalSets: number): R
   return "in_progress";
 }
 
-export function deriveSetReadouts(prescribedSets: SessionExerciseSet[], logs: SetLog[]): SetReadout[] {
+export function deriveSetReadouts(
+  prescribedSets: SessionExerciseSet[],
+  logs: SetLog[],
+  metric: ExerciseMetric,
+): SetReadout[] {
   const setNumbers = getLoggingSetNumbers(prescribedSets, logs);
 
   return setNumbers.map((setNumber) => {
@@ -77,19 +82,19 @@ export function deriveSetReadouts(prescribedSets: SessionExerciseSet[], logs: Se
       setNumber,
       prescribed,
       log,
-      isComplete: log?.is_complete ?? false,
+      isComplete: isSetLogged(log, metric),
     };
   });
 }
 
 export function deriveExerciseReadout(exercise: ExerciseReadoutInput): ExerciseReadout {
   const setNumbers = getLoggingSetNumbers(exercise.sets, exercise.logs);
-  const sets = deriveSetReadouts(exercise.sets, exercise.logs);
+  const sets = deriveSetReadouts(exercise.sets, exercise.logs, exercise.exercise_default_metric);
   let completedSets = 0;
 
   for (const setNumber of setNumbers) {
     const log = exercise.logs.find((entry) => entry.set_number === setNumber);
-    if (log?.is_complete) {
+    if (isSetLogged(log, exercise.exercise_default_metric)) {
       completedSets += 1;
     }
   }

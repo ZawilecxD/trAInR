@@ -46,7 +46,7 @@ describe("upsertSetLogBodySchema", () => {
     expect(parsed.success).toBe(true);
   });
 
-  it("rejects completed sets without reps or duration", () => {
+  it("accepts completed sets without reps when is_complete is true (legacy payload)", () => {
     const parsed = upsertSetLogBodySchema.safeParse({
       session_exercise_id: validSessionExerciseId,
       set_number: 1,
@@ -57,7 +57,7 @@ describe("upsertSetLogBodySchema", () => {
       is_warmup: false,
     });
 
-    expect(parsed.success).toBe(false);
+    expect(parsed.success).toBe(true);
   });
 
   it("rejects invalid session_exercise_id", () => {

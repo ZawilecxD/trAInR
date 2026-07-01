@@ -50,7 +50,7 @@ Independent personal trainers lose coaching time to admin — hunting across spr
 | S-16 | ad-hoc-session-logging     | log an unplanned workout not on the calendar                              | S-06          | FR-015, FR-016, FR-017 (extends)                  | parked   |
 | S-17 | starter-exercise-seed      | receive a curated starter exercise library on trainer signup              | S-01, S-03    | FR-007, FR-008 (extends; supersedes Non-Goal #14) | done     |
 | S-18 | ui-redesign                | use a unified premium dark UI per DESIGN.md with accessible touch targets and Pencil-aligned key flows | S-06          | NFR mobile usability                              | proposed |
-| S-19 | prescription-fill-logging  | one-click fill a round with prescribed reps and load; no per-set completed toggle | S-06          | FR-015, FR-017 (extends)                          | proposed |
+| S-19 | prescription-fill-logging  | one-click fill a round with prescribed reps and load; no per-set completed toggle | S-06          | FR-015, FR-017 (extends)                          | done     |
 | S-20 | finished-session-summary-for-client | see a read-only exercise summary before editing or after completion | S-06, S-08, S-13 | FR-015, FR-017, FR-021, FR-022 (extends)          | proposed |
 
 
@@ -363,7 +363,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Blockers:** —
 - **Unknowns:** Whether to drop `set_logs.is_complete` from the schema or stop using it in UI while keeping the column for existing rows; whether fill copies prescription exactly or pre-fills editable fields the client can still change before save
 - **Risk:** S-06 shipped the OK toggle and `is_complete`-driven exercise progress (`SetLogRow`, `exercise-progress.ts`, trainer readout in S-07); this slice must redefine progress/readout heuristics (e.g. logged reps/load present) without reintroducing per-exercise completion state the product no longer needs
-- **Status:** proposed
+- **Status:** done
 
 ### S-20: Finished session summary for client
 
@@ -459,4 +459,5 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **S-08: client can mark a planned session as "finished", "finished partially", or "cancelled" (did not attempt / chose not to do it); cancelled sessions remain visible on the calendar with distinct status** — Archived 2026-07-01 → `context/archive/2026-06-28-session-completion-marking/`. Lesson: —.
 - **S-09: client and trainer can each leave comments on a training session and read the other's comments (bidirectional thread per session)** — Archived 2026-07-01 → `context/archive/2026-06-28-session-comments/`. Lesson: —.
 - **S-13: logged workout data can be edited for 24 hours after first entry, then sealed (immutable)** — Archived 2026-07-01 → `context/archive/2026-07-01-data-edit-window/`. Lesson: —.
+- **S-19: client can one-click fill a round's log with prescribed reps and load (or duration) instead of retyping each time; the per-set OK/completed toggle is removed; exercise nav progress is inferred from logged values, not an explicit round-completed flag; session finished/partial/cancelled remains session-level only (S-08)** — Archived 2026-07-01 → `context/archive/2026-07-01-prescription-fill-logging/`. Lesson: —.
 

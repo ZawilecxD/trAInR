@@ -102,17 +102,23 @@ test.describe("Risk #6 — guided-workout quick navigation logging safety", () =
       // hydration attaches React handlers. Gate on hydration BEFORE filling any
       // input: a programmatic fill on a controlled input that runs pre-hydration
       // poisons React's value tracker, so later identical fills are swallowed and
-      // the value never reaches state. The set-complete toggle flips `aria-pressed`
+      // the value never reaches state. The warm-up toggle flips `aria-pressed`
       // purely through React state, proving hydration without touching an input.
-      const completeToggle = page.getByLabel("Mark set 1 complete");
-      await clickUntilHydrated(completeToggle, completeToggle, "aria-pressed", "true");
-      await completeToggle.click();
-      await expect(completeToggle).toHaveAttribute("aria-pressed", "false");
+      const warmupToggle = page.getByLabel("Working");
+      await clickUntilHydrated(warmupToggle, warmupToggle, "aria-pressed", "true");
+      await warmupToggle.click();
+      await expect(warmupToggle).toHaveAttribute("aria-pressed", "true");
 
-      // Hydration confirmed; the reps tracker initialized cleanly so this fill sticks.
+      // Hydration confirmed; use Fill to populate prescribed values.
+      const fillButton = page.getByLabel("Fill set 1 from prescription");
+      await fillButton.click();
+      await expect(page.getByLabel("Set 1 reps")).toHaveValue("8");
+      await expect(page.getByLabel("Set 1 load kg")).toHaveValue("40");
+      await expect(page.getByLabel("Remove set 1 log")).toBeEnabled();
+
+      // Override reps to verify manual edit still works after fill.
       const repsInput = page.getByLabel("Set 1 reps");
       await repsInput.fill("9");
-      await expect(page.getByLabel("Remove set 1 log")).toBeEnabled();
 
       // Risk trigger: enter values and immediately navigate away. The test does
       // not wait for the autosave response because quick navigation is the risk.

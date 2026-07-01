@@ -1,8 +1,10 @@
-import { Check, Loader2, RotateCcw, Trash2 } from "lucide-react";
+import { ClipboardPaste, Loader2, RotateCcw, Trash2 } from "lucide-react";
 import { useState, type ComponentProps } from "react";
 import { useDebouncedSetLogSave, type SetLogValues } from "@/components/hooks/useDebouncedSetLogSave";
 import RoundWarmupToggle from "@/components/session-templates/RoundWarmupToggle";
 import { Input } from "@/components/ui/input";
+import { fillValuesFromPrescription } from "@/lib/guided-workout/fill-from-prescription";
+import { isSetLogged, isSetValuesLogged } from "@/lib/guided-workout/set-logged";
 import { resolveLogIsWarmup } from "@/lib/guided-workout/warmup-default";
 import { cn } from "@/lib/utils";
 import type { ExerciseMetric, SessionExerciseSet, SetLog } from "@/types";
@@ -45,7 +47,7 @@ function initialValues(
     reps: existingLog?.reps ?? null,
     duration_seconds: existingLog?.duration_seconds ?? null,
     load_kg: existingLog?.load_kg ?? null,
-    is_complete: existingLog?.is_complete ?? false,
+    is_complete: false,
     is_warmup: resolveLogIsWarmup({ existingLog, prescribedSet, isPrescribed }),
   };
 }
@@ -92,8 +94,11 @@ export default function SetLogRow({
   const showReps = defaultMetric !== "time";
   const showDuration = defaultMetric === "time";
   const showLoad = defaultMetric === "reps_weight";
+  const isLogged = isSetValuesLogged(values, defaultMetric) || isSetLogged(existingLog, defaultMetric);
+  const canFill = !readOnly && Boolean(prescribedSet) && !isLogged;
   const canDelete =
-    !readOnly && (!isPrescribed || Boolean(existingLog) || values.is_complete || hasEnteredValues(values));
+    !readOnly &&
+    (!isPrescribed || Boolean(existingLog) || hasEnteredValues(values) || isSetLogged(existingLog, defaultMetric));
 
   async function handleDelete() {
     onFocus();
@@ -131,6 +136,18 @@ export default function SetLogRow({
     if (!isPrescribed) {
       onRowRemoved?.();
     }
+  }
+
+  function handleFill() {
+    onFocus();
+    setValues(
+      fillValuesFromPrescription({
+        prescribedSet,
+        defaultMetric,
+        existingLog,
+        isPrescribed,
+      }),
+    );
   }
 
   return (
@@ -219,26 +236,16 @@ export default function SetLogRow({
 
       <td className="px-2 py-2">
         <div className="flex min-h-11 items-center justify-center">
-          <button
-            type="button"
-            aria-label={`Mark set ${setNumber} complete`}
-            aria-pressed={values.is_complete}
-            disabled={readOnly}
-            className={cn(
-              "flex size-11 items-center justify-center rounded-lg border transition-colors",
-              values.is_complete
-                ? "border-emerald-400/60 bg-emerald-500/20 text-emerald-200"
-                : "border-white/20 bg-white/5 text-blue-100/50 hover:border-white/40 hover:text-white",
-              readOnly && "cursor-default opacity-70",
-            )}
-            onClick={() => {
-              if (readOnly) return;
-              onFocus();
-              setValues((prev) => ({ ...prev, is_complete: !prev.is_complete }));
-            }}
-          >
-            <Check className="size-5" aria-hidden="true" />
-          </button>
+          {canFill ? (
+            <button
+              type="button"
+              aria-label={`Fill set ${setNumber} from prescription`}
+              className="flex size-11 items-center justify-center rounded-lg border border-blue-400/40 bg-blue-500/15 text-blue-100 transition-colors hover:border-blue-300/60 hover:bg-blue-500/25"
+              onClick={handleFill}
+            >
+              <ClipboardPaste className="size-5" aria-hidden="true" />
+            </button>
+          ) : null}
         </div>
       </td>
 
