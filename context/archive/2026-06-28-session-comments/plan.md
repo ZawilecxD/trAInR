@@ -347,7 +347,7 @@ No migration. Database schema, RLS policies, and integration tests for `session_
 
 #### Manual
 
-- [ ] 1.3 Service functions compile without TypeScript errors
+- [x] 1.3 Service functions compile without TypeScript errors
 
 ### Phase 2: API Routes
 
@@ -358,9 +358,9 @@ No migration. Database schema, RLS policies, and integration tests for `session_
 
 #### Manual
 
-- [ ] 2.3 GET /api/sessions/:id/comments returns 200 with empty array for authenticated user
-- [ ] 2.4 POST /api/sessions/:id/comments returns 201 with new comment
-- [ ] 2.5 GET again returns the posted comment with author attribution
+- [x] 2.3 GET /api/sessions/:id/comments returns 200 with empty array for authenticated user
+- [x] 2.4 POST /api/sessions/:id/comments returns 201 with new comment
+- [x] 2.5 GET again returns the posted comment with author attribution
 
 ### Phase 3: UI Integration
 
@@ -371,7 +371,7 @@ No migration. Database schema, RLS policies, and integration tests for `session_
 
 #### Manual
 
-- [ ] 3.3 Trainer sees comments thread on session detail page and can post
-- [ ] 3.4 Client sees comments thread on session overview and can post
-- [ ] 3.5 Cross-role visibility: trainer comment visible to client and vice versa
-- [ ] 3.6 Empty state ("No comments yet") shown on sessions with no comments
+- [x] 3.3 Trainer sees comments thread on session detail page and can post
+- [x] 3.4 Client sees comments thread on session overview and can post
+- [x] 3.5 Cross-role visibility: trainer comment visible to client and vice versa
+- [x] 3.6 Empty state ("No comments yet") shown on sessions with no comments

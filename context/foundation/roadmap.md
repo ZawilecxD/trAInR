@@ -40,7 +40,7 @@ Independent personal trainers lose coaching time to admin — hunting across spr
 | S-06 | guided-workout-logging     | open a session, step through exercises, log sets, see previous hints      | S-04          | FR-015, FR-016, FR-017, FR-019, FR-020, US-01     | done     |
 | S-07 | trainer-dashboard          | see client overview and read-only session detail with logged data         | S-04, S-06    | FR-027, FR-028, US-01                             | done     |
 | S-08 | session-completion-marking | mark a planned session finished, partially finished, or cancelled         | S-06          | FR-021                                            | done     |
-| S-09 | session-comments           | leave and read comments on a session (client ↔ trainer)                   | S-04          | FR-023                                            | proposed |
+| S-09 | session-comments           | leave and read comments on a session (client ↔ trainer)                   | S-04          | FR-023                                            | done     |
 | S-10 | warmup-working-flag        | prescribe and log warm-up vs working per round (client may override)      | S-02, S-04, S-06 | FR-018                                         | done     |
 | S-11 | client-removal             | remove or reject a wrongly-assigned client                                | S-03          | FR-006                                            | done     |
 | S-12 | exercise-statistics        | view per-exercise history, estimated 1RM, and volume/tonnage              | S-06          | FR-024, FR-025, FR-026                            | proposed |
@@ -242,7 +242,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Blockers:** —
 - **Unknowns:** Whether comments are allowed on cancelled sessions and ad-hoc sessions (S-16); chronological vs threaded display
 - **Risk:** Users may expect real-time notification on new comments; notifications are out of scope (Non-Goal #5), so comments are pull-only.
-- **Status:** proposed
+- **Status:** done
 
 ### S-10: Warm-up/working set flag
 
@@ -442,4 +442,5 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **S-17: every new trainer receives a copy of a curated collection of popular exercises on signup; seeded exercises behave like trainer-owned exercises (editable, deletable, usable in templates) with no read-only or "system" lock** — Archived 2026-06-20 → `context/archive/2026-06-20-starter-exercise-seed/`. Lesson: —.
 - **S-15: trainer can mark exercises as favourites and filter exercise lists to show favourites only (exercise library and anywhere else exercises are browsed for selection)** — Archived 2026-06-29 → `context/archive/2026-06-29-exercise-favourites/`. Lesson: —.
 - **S-08: client can mark a planned session as "finished", "finished partially", or "cancelled" (did not attempt / chose not to do it); cancelled sessions remain visible on the calendar with distinct status** — Archived 2026-07-01 → `context/archive/2026-06-28-session-completion-marking/`. Lesson: —.
+- **S-09: client and trainer can each leave comments on a training session and read the other's comments (bidirectional thread per session)** — Archived 2026-07-01 → `context/archive/2026-06-28-session-comments/`. Lesson: —.
 
