@@ -101,15 +101,38 @@ describe("set_logs sealed session", () => {
   });
 
   it("Client cannot UPDATE set log when session is sealed", async () => {
-    const { error } = await clientA.client.from("set_logs").update({ reps: 12 }).eq("id", setLogId);
+    const { data, error } = await clientA.client
+      .from("set_logs")
+      .update({ reps: 12 })
+      .eq("id", setLogId)
+      .select("id, reps");
 
-    expect(error).not.toBeNull();
+    expect(error).toBeNull();
+    expect(data).toEqual([]);
+
+    const { data: unchanged, error: selectError } = await clientA.client
+      .from("set_logs")
+      .select("reps")
+      .eq("id", setLogId)
+      .single<{ reps: number }>();
+
+    expect(selectError).toBeNull();
+    expect(unchanged?.reps).toBe(10);
   });
 
   it("Client cannot DELETE set log when session is sealed", async () => {
-    const { error } = await clientA.client.from("set_logs").delete().eq("id", setLogId);
+    const { data, error } = await clientA.client.from("set_logs").delete().eq("id", setLogId).select("id");
 
-    expect(error).not.toBeNull();
+    expect(error).toBeNull();
+    expect(data).toEqual([]);
+
+    const { data: stillThere, error: selectError } = await clientA.client
+      .from("set_logs")
+      .select("id")
+      .eq("id", setLogId);
+
+    expect(selectError).toBeNull();
+    expect(stillThere).toEqual([{ id: setLogId }]);
   });
 
   it("Client cannot INSERT set log when session is sealed", async () => {
@@ -126,7 +149,7 @@ describe("set_logs sealed session", () => {
   });
 
   it("is_workout_session_sealed returns true for past locked_at", async () => {
-    const result = await clientA.client.rpc<boolean>("is_workout_session_sealed", {
+    const result = await clientA.client.rpc("is_workout_session_sealed", {
       p_session_id: sessionId,
     });
 
