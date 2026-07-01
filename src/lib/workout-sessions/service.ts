@@ -1,4 +1,5 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { computeEditDeadline, isSessionSealed } from "@/lib/guided-workout/edit-window";
 import { isTrainerAssignedToClient } from "@/lib/client-plans/service";
 import { sortByPhaseThenSortOrder } from "@/lib/guided-workout/phase-labels";
 import { deriveSessionReadout, type SessionReadoutSummary } from "@/lib/trainer-dashboard/readout";
@@ -328,7 +329,7 @@ export async function restartMySession(
     session_exercises: { id: string }[];
   };
 
-  if (session.locked_at) {
+  if (isSessionSealed(session.locked_at)) {
     return { ok: false, code: "locked", message: "Session is locked" };
   }
 
@@ -344,7 +345,7 @@ export async function restartMySession(
 
   const updateResult = await supabase
     .from("workout_sessions")
-    .update({ started_at: null })
+    .update({ started_at: null, locked_at: null })
     .eq("id", sessionId)
     .select("*")
     .maybeSingle();
@@ -393,7 +394,9 @@ export async function markSessionComplete(
 
   const updatePayload: Record<string, string | null> = { status };
   if (status === "finished" || status === "finished_partially") {
-    updatePayload.completed_at = new Date().toISOString();
+    const completedAt = new Date().toISOString();
+    updatePayload.completed_at = completedAt;
+    updatePayload.locked_at = computeEditDeadline(completedAt);
   }
 
   const updateResult = await supabase

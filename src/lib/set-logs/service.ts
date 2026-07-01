@@ -1,5 +1,6 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { UpsertSetLogBody } from "@/lib/set-logs/schemas";
+import { isSessionSealed } from "@/lib/guided-workout/edit-window";
 import type { ExerciseMetric, SetLog } from "@/types";
 
 type UpsertSetLogErrorCode = "not_found" | "locked" | "validation_error";
@@ -96,7 +97,7 @@ export async function upsertSetLog(
     return { ok: false, code: "not_found", message: "Session exercise not found" };
   }
 
-  if (session?.locked_at) {
+  if (isSessionSealed(session?.locked_at)) {
     return { ok: false, code: "locked", message: "Session is locked" };
   }
 
@@ -176,7 +177,7 @@ export async function deleteSetLog(
     return { ok: false, code: "not_found", message: "Session exercise not found" };
   }
 
-  if (session?.locked_at) {
+  if (isSessionSealed(session?.locked_at)) {
     return { ok: false, code: "locked", message: "Session is locked" };
   }
 
