@@ -1,10 +1,10 @@
 ---
 change_id: prescription-fill-logging
 title: Prescription fill logging
-status: implemented
+status: archived
 created: 2026-07-01
 updated: 2026-07-01
-archived_at: null
+archived_at: 2026-07-01T15:05:03Z
 linear_issue: ZAW-50
 phase_issues:
   "1": null

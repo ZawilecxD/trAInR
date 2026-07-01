@@ -209,9 +209,9 @@ Update existing tests; add integration test for fill upsert; update E2E hydratio
 
 #### Manual
 
-- [ ] 2.3 Fill copies prescription and persists on reload
-- [ ] 2.4 Nav progress updates from filled values
-- [ ] 2.5 Manual entry without Fill still works
+- [x] 2.3 Fill copies prescription and persists on reload
+- [x] 2.4 Nav progress updates from filled values
+- [x] 2.5 Manual entry without Fill still works
 
 ### Phase 3: Tests + verification
 
@@ -223,4 +223,4 @@ Update existing tests; add integration test for fill upsert; update E2E hydratio
 
 #### Manual
 
-- [ ] 3.4 Run verification.sql in Supabase Studio
+- [x] 3.4 Run verification.sql in Supabase Studio
