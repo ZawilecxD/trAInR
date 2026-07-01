@@ -1,4 +1,5 @@
-import type { SessionExerciseSet, SetLog } from "@/types";
+import type { ExerciseMetric, SessionExerciseSet, SetLog } from "@/types";
+import { isSetLogged } from "@/lib/guided-workout/set-logged";
 
 export function getLoggingSetNumbers(
   prescribedSets: SessionExerciseSet[],
@@ -34,10 +35,14 @@ export function isPrescribedSetNumber(prescribedSets: SessionExerciseSet[], setN
   return prescribedSets.some((set) => set.set_number === setNumber);
 }
 
-export function findFirstIncompleteSetNumber(setNumbers: number[], logs: SetLog[]): number | null {
+export function findFirstIncompleteSetNumber(
+  setNumbers: number[],
+  logs: SetLog[],
+  metric: ExerciseMetric,
+): number | null {
   for (const setNumber of setNumbers) {
     const log = logs.find((entry) => entry.set_number === setNumber);
-    if (!log?.is_complete) {
+    if (!isSetLogged(log, metric)) {
       return setNumber;
     }
   }

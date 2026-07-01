@@ -80,6 +80,7 @@ export default function ExerciseNavList({
                   const progress = getExerciseProgress(
                     getLoggingSetNumbers(exercise.sets, exercise.logs),
                     exercise.logs,
+                    exercise.exercise_default_metric,
                     globalIndex === exerciseIndex,
                   );
 

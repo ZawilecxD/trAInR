@@ -72,7 +72,7 @@ describe("deriveReadoutStatus", () => {
 describe("deriveSetReadouts", () => {
   it("returns not_logged sets when no logs exist", () => {
     const prescribed = [makePrescribedSet({ set_number: 1 }), makePrescribedSet({ set_number: 2 })];
-    const readouts = deriveSetReadouts(prescribed, []);
+    const readouts = deriveSetReadouts(prescribed, [], "reps_weight");
 
     expect(readouts).toHaveLength(2);
     expect(readouts[0]).toMatchObject({ setNumber: 1, isComplete: false, log: null });
@@ -82,7 +82,7 @@ describe("deriveSetReadouts", () => {
   it("marks complete logs and keeps missing prescribed sets incomplete", () => {
     const prescribed = [makePrescribedSet({ set_number: 1 }), makePrescribedSet({ set_number: 2 })];
     const logs = [makeLog({ set_number: 1, is_complete: true })];
-    const readouts = deriveSetReadouts(prescribed, logs);
+    const readouts = deriveSetReadouts(prescribed, logs, "reps_weight");
 
     expect(readouts[0].isComplete).toBe(true);
     expect(readouts[1].isComplete).toBe(false);
@@ -91,7 +91,7 @@ describe("deriveSetReadouts", () => {
   it("includes extra logged sets beyond prescription", () => {
     const prescribed = [makePrescribedSet({ set_number: 1 })];
     const logs = [makeLog({ set_number: 1 }), makeLog({ set_number: 2, reps: 6 })];
-    const readouts = deriveSetReadouts(prescribed, logs);
+    const readouts = deriveSetReadouts(prescribed, logs, "reps_weight");
 
     expect(readouts).toHaveLength(2);
     expect(readouts[1]).toMatchObject({ setNumber: 2, prescribed: null, isComplete: true });
@@ -110,7 +110,10 @@ describe("deriveExerciseReadout", () => {
   it("returns in_progress for partial logs", () => {
     const readout = deriveExerciseReadout(
       makeExercise({
-        logs: [makeLog({ set_number: 1, is_complete: true }), makeLog({ set_number: 2, is_complete: false })],
+        logs: [
+          makeLog({ set_number: 1, is_complete: true }),
+          makeLog({ set_number: 2, is_complete: false, reps: null, load_kg: null }),
+        ],
       }),
     );
 

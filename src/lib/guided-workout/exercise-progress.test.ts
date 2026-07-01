@@ -6,19 +6,21 @@ import {
 } from "@/lib/guided-workout/exercise-progress";
 import type { SessionExerciseSet, SetLog } from "@/types";
 
-function makeLog(setNumber: number, isComplete: boolean): SetLog {
+function makeLog(setNumber: number, isComplete: boolean, withValues = true): SetLog {
   return {
     id: `log-${setNumber}`,
     session_exercise_id: "ex-1",
     set_number: setNumber,
     is_warmup: false,
     is_complete: isComplete,
-    reps: 8,
+    reps: withValues ? 8 : null,
     duration_seconds: null,
-    load_kg: 80,
+    load_kg: withValues ? 80 : null,
     logged_at: "2026-06-14T10:00:00Z",
   };
 }
+
+const METRIC = "reps_weight" as const;
 
 function prescribed(count: number): SessionExerciseSet[] {
   return Array.from({ length: count }, (_, index) => ({
@@ -35,7 +37,7 @@ function prescribed(count: number): SessionExerciseSet[] {
 
 describe("getExerciseProgress", () => {
   it("returns empty progress when no sets are shown", () => {
-    expect(getExerciseProgress([], [])).toEqual({
+    expect(getExerciseProgress([], [], METRIC)).toEqual({
       completedSets: 0,
       totalSets: 0,
       isDone: false,
@@ -45,7 +47,7 @@ describe("getExerciseProgress", () => {
 
   it("counts completed sets and marks done when all complete", () => {
     const logs = [makeLog(1, true), makeLog(2, true), makeLog(3, true)];
-    expect(getExerciseProgress([1, 2, 3], logs)).toEqual({
+    expect(getExerciseProgress([1, 2, 3], logs, METRIC)).toEqual({
       completedSets: 3,
       totalSets: 3,
       isDone: true,
@@ -55,7 +57,7 @@ describe("getExerciseProgress", () => {
 
   it("includes extra logged rounds beyond prescription", () => {
     const logs = [makeLog(1, true), makeLog(2, true), makeLog(3, true), makeLog(4, true)];
-    expect(getExerciseProgress([1, 2, 3, 4], logs)).toEqual({
+    expect(getExerciseProgress([1, 2, 3, 4], logs, METRIC)).toEqual({
       completedSets: 4,
       totalSets: 4,
       isDone: true,
@@ -64,8 +66,8 @@ describe("getExerciseProgress", () => {
   });
 
   it("marks partial progress as not done", () => {
-    const logs = [makeLog(1, true), makeLog(2, false)];
-    expect(getExerciseProgress([1, 2, 3], logs)).toEqual({
+    const logs = [makeLog(1, true), makeLog(2, false, false)];
+    expect(getExerciseProgress([1, 2, 3], logs, METRIC)).toEqual({
       completedSets: 1,
       totalSets: 3,
       isDone: false,
@@ -74,18 +76,22 @@ describe("getExerciseProgress", () => {
   });
 
   it("passes through isActive flag", () => {
-    expect(getExerciseProgress([1, 2], [], true).isActive).toBe(true);
+    expect(getExerciseProgress([1, 2], [], METRIC, true).isActive).toBe(true);
   });
 });
 
 describe("getSessionProgressSummary", () => {
   it("summarizes done, active, and remaining exercises", () => {
     const exercises = [
-      { sets: prescribed(3), logs: [makeLog(1, true), makeLog(2, true), makeLog(3, true)] },
-      { sets: prescribed(2), logs: [makeLog(1, true), makeLog(2, true)] },
-      { sets: prescribed(2), logs: [makeLog(1, true)] },
-      { sets: prescribed(1), logs: [] },
-      { sets: prescribed(1), logs: [] },
+      {
+        sets: prescribed(3),
+        logs: [makeLog(1, true), makeLog(2, true), makeLog(3, true)],
+        exercise_default_metric: METRIC,
+      },
+      { sets: prescribed(2), logs: [makeLog(1, true), makeLog(2, true)], exercise_default_metric: METRIC },
+      { sets: prescribed(2), logs: [makeLog(1, true)], exercise_default_metric: METRIC },
+      { sets: prescribed(1), logs: [], exercise_default_metric: METRIC },
+      { sets: prescribed(1), logs: [], exercise_default_metric: METRIC },
     ];
 
     expect(getSessionProgressSummary(exercises, 2)).toEqual({
@@ -97,8 +103,8 @@ describe("getSessionProgressSummary", () => {
 
   it("treats current exercise as done when all sets complete", () => {
     const exercises = [
-      { sets: prescribed(1), logs: [makeLog(1, true)] },
-      { sets: prescribed(1), logs: [makeLog(1, true)] },
+      { sets: prescribed(1), logs: [makeLog(1, true)], exercise_default_metric: METRIC },
+      { sets: prescribed(1), logs: [makeLog(1, true)], exercise_default_metric: METRIC },
     ];
 
     expect(getSessionProgressSummary(exercises, 1)).toEqual({
@@ -112,16 +118,16 @@ describe("getSessionProgressSummary", () => {
 describe("findFirstIncompleteExerciseIndex", () => {
   it("returns first exercise with incomplete sets", () => {
     const exercises = [
-      { sets: prescribed(1), logs: [makeLog(1, true)] },
-      { sets: prescribed(2), logs: [makeLog(1, true)] },
-      { sets: prescribed(1), logs: [] },
+      { sets: prescribed(1), logs: [makeLog(1, true)], exercise_default_metric: METRIC },
+      { sets: prescribed(2), logs: [makeLog(1, true)], exercise_default_metric: METRIC },
+      { sets: prescribed(1), logs: [], exercise_default_metric: METRIC },
     ];
 
     expect(findFirstIncompleteExerciseIndex(exercises)).toBe(1);
   });
 
   it("returns zero when all exercises are complete", () => {
-    const exercises = [{ sets: prescribed(1), logs: [makeLog(1, true)] }];
+    const exercises = [{ sets: prescribed(1), logs: [makeLog(1, true)], exercise_default_metric: METRIC }];
 
     expect(findFirstIncompleteExerciseIndex(exercises)).toBe(0);
   });

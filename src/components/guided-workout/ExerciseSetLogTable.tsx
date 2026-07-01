@@ -16,7 +16,7 @@ interface ExerciseSetLogTableProps {
 export default function ExerciseSetLogTable({ exercise, onLogSaved, onLogDeleted }: ExerciseSetLogTableProps) {
   const { setNumbers, addRound, removeAdditionalSet } = useLoggingSetNumbers(exercise);
   const [activeSetNumber, setActiveSetNumber] = useState<number | null>(() =>
-    findFirstIncompleteSetNumber(setNumbers, exercise.logs),
+    findFirstIncompleteSetNumber(setNumbers, exercise.logs, exercise.exercise_default_metric),
   );
 
   const logsBySetNumber = useMemo(() => {

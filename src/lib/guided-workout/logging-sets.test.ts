@@ -50,6 +50,10 @@ describe("getLoggingSetNumbers", () => {
   });
 
   it("finds the first incomplete set number", () => {
-    expect(findFirstIncompleteSetNumber([1, 2, 3], [log(1, true)])).toBe(2);
+    expect(findFirstIncompleteSetNumber([1, 2, 3], [log(1, true)], "reps_weight")).toBe(2);
+  });
+
+  it("treats value-filled logs as complete without is_complete", () => {
+    expect(findFirstIncompleteSetNumber([1, 2], [log(1, false)], "reps_weight")).toBe(2);
   });
 });
