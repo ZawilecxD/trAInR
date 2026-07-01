@@ -282,8 +282,8 @@ No Supabase migration is planned. `set_logs.is_complete` remains present for old
 
 #### Automated
 
-- [x] 1.1 Unit semantics pass: `npm test -- src/lib/guided-workout/prescription-fill.test.ts src/lib/set-logs/schemas.test.ts`
-- [x] 1.2 Lint affected helper/schema files: `npx eslint "src/lib/guided-workout/prescription-fill.ts" "src/lib/guided-workout/prescription-fill.test.ts" "src/lib/set-logs/schemas.ts" "src/lib/set-logs/schemas.test.ts" "src/lib/set-logs/service.ts"`
+- [x] 1.1 Unit semantics pass: `npm test -- src/lib/guided-workout/prescription-fill.test.ts src/lib/set-logs/schemas.test.ts` — 40798a5
+- [x] 1.2 Lint affected helper/schema files: `npx eslint "src/lib/guided-workout/prescription-fill.ts" "src/lib/guided-workout/prescription-fill.test.ts" "src/lib/set-logs/schemas.ts" "src/lib/set-logs/schemas.test.ts" "src/lib/set-logs/service.ts"` — 40798a5
 
 #### Manual
 
@@ -293,8 +293,8 @@ No Supabase migration is planned. `set_logs.is_complete` remains present for old
 
 #### Automated
 
-- [x] 2.1 Guided-workout unit tests pass: `npm test -- src/lib/guided-workout/prescription-fill.test.ts src/lib/guided-workout/logging-sets.test.ts src/lib/guided-workout/exercise-progress.test.ts`
-- [x] 2.2 Lint affected guided-workout files: `npx eslint "src/components/guided-workout/SetLogRow.tsx" "src/lib/guided-workout/prescription-fill.ts" "src/lib/guided-workout/logging-sets.ts" "src/lib/guided-workout/logging-sets.test.ts" "src/lib/guided-workout/exercise-progress.ts" "src/lib/guided-workout/exercise-progress.test.ts"`
+- [x] 2.1 Guided-workout unit tests pass: `npm test -- src/lib/guided-workout/prescription-fill.test.ts src/lib/guided-workout/logging-sets.test.ts src/lib/guided-workout/exercise-progress.test.ts` — 40798a5
+- [x] 2.2 Lint affected guided-workout files: `npx eslint "src/components/guided-workout/SetLogRow.tsx" "src/lib/guided-workout/prescription-fill.ts" "src/lib/guided-workout/logging-sets.ts" "src/lib/guided-workout/logging-sets.test.ts" "src/lib/guided-workout/exercise-progress.ts" "src/lib/guided-workout/exercise-progress.test.ts"` — 40798a5
 
 #### Manual
 
@@ -306,7 +306,7 @@ No Supabase migration is planned. `set_logs.is_complete` remains present for old
 
 #### Automated
 
-- [x] 3.1 Readout unit tests pass: `npm test -- src/lib/guided-workout/format-prescription.test.ts src/lib/trainer-dashboard/readout.test.ts`
+- [x] 3.1 Readout unit tests pass: `npm test -- src/lib/guided-workout/format-prescription.test.ts src/lib/trainer-dashboard/readout.test.ts` — 40798a5
 - [ ] 3.2 Integration set-log test passes: `npm run test:integration -- tests/integration/rls/set-logs.test.ts`
 - [ ] 3.3 E2E prescription fill spec passes if local Supabase/dev seed is available: `npm run test:e2e -- tests/e2e/prescription-fill-logging.spec.ts`
 - [ ] 3.4 Full quality gate passes: `npm run lint && npm test`
