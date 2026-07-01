@@ -44,7 +44,7 @@ Independent personal trainers lose coaching time to admin — hunting across spr
 | S-10 | warmup-working-flag        | prescribe and log warm-up vs working per round (client may override)      | S-02, S-04, S-06 | FR-018                                         | done     |
 | S-11 | client-removal             | remove or reject a wrongly-assigned client                                | S-03          | FR-006                                            | done     |
 | S-12 | exercise-statistics        | view per-exercise history, estimated 1RM, and volume/tonnage              | S-06          | FR-024, FR-025, FR-026                            | proposed |
-| S-13 | data-edit-window           | edit logged data for 24 hours, then sealed                                | S-06          | FR-022                                            | proposed |
+| S-13 | data-edit-window           | edit logged data for 24 hours, then sealed                                | S-06          | FR-022                                            | done     |
 | S-14 | exercises-separate-rounds  | prescribe each exercise round separately (reps, load, rest per round)     | S-02          | FR-010, FR-011                                    | done     |
 | S-15 | exercise-favourites        | mark exercises as favourites and filter exercise lists by favourites only | S-01          | FR-009                                            | done     |
 | S-16 | ad-hoc-session-logging     | log an unplanned workout not on the calendar                              | S-06          | FR-015, FR-016, FR-017 (extends)                  | parked   |
@@ -291,7 +291,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Blockers:** —
 - **Unknowns:** —
 - **Risk:** 24-hour window enforcement needs careful timezone handling; for MVP, use UTC and document the behavior.
-- **Status:** proposed
+- **Status:** done
 
 ### S-14: Per-round exercise prescription
 
@@ -458,4 +458,5 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **S-15: trainer can mark exercises as favourites and filter exercise lists to show favourites only (exercise library and anywhere else exercises are browsed for selection)** — Archived 2026-06-29 → `context/archive/2026-06-29-exercise-favourites/`. Lesson: —.
 - **S-08: client can mark a planned session as "finished", "finished partially", or "cancelled" (did not attempt / chose not to do it); cancelled sessions remain visible on the calendar with distinct status** — Archived 2026-07-01 → `context/archive/2026-06-28-session-completion-marking/`. Lesson: —.
 - **S-09: client and trainer can each leave comments on a training session and read the other's comments (bidirectional thread per session)** — Archived 2026-07-01 → `context/archive/2026-06-28-session-comments/`. Lesson: —.
+- **S-13: logged workout data can be edited for 24 hours after first entry, then sealed (immutable)** — Archived 2026-07-01 → `context/archive/2026-07-01-data-edit-window/`. Lesson: —.
 
