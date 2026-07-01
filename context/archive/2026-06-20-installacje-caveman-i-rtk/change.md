@@ -1,10 +1,10 @@
 ---
 change_id: installacje-caveman-i-rtk
 title: Install opt-in caveman and RTK token-saving workflow
-status: implemented
+status: archived
 created: 2026-06-20
-updated: 2026-06-21
-archived_at: null
+updated: 2026-07-01
+archived_at: 2026-07-01T14:50:08Z
 linear_issue: ZAW-39
 ---
 
