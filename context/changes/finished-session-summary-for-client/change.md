@@ -1,7 +1,7 @@
 ---
 change_id: finished-session-summary-for-client
 title: Show finished session exercise summary to clients
-status: new
+status: implemented
 created: 2026-07-01
 updated: 2026-07-01
 archived_at: null

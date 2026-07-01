@@ -1,13 +1,17 @@
+import { useMemo } from "react";
 import { ArrowLeft } from "lucide-react";
 import EditWindowBanner from "@/components/guided-workout/EditWindowBanner";
 import SessionCommentsThread from "@/components/session-comments/SessionCommentsThread";
+import SessionExerciseSummary, { readoutBadgeClass } from "@/components/workout-sessions/SessionExerciseSummary";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { isEditWindowOpen } from "@/lib/guided-workout/edit-window";
 import { formatSessionOverviewDate } from "@/lib/guided-workout/format-session-date";
 import { sessionStatusBadgeClass, sessionStatusLabel } from "@/lib/session-status";
-import { cn } from "@/lib/utils";
+import { deriveSessionReadout } from "@/lib/trainer-dashboard/readout";
+import { toExerciseReadoutInputs } from "@/lib/trainer-dashboard/to-exercise-readout-input";
 import type { ClientSessionDetail } from "@/lib/workout-sessions/service";
+import { cn } from "@/lib/utils";
 
 interface SessionCompletedViewProps {
   session: ClientSessionDetail;
@@ -18,6 +22,11 @@ interface SessionCompletedViewProps {
 export default function SessionCompletedView({ session, currentUserId, onEdit }: SessionCompletedViewProps) {
   const hasLogs = session.exercises.some((exercise) => exercise.logs.length > 0);
   const canEdit = isEditWindowOpen(session.status, session.locked_at);
+  const readout = useMemo(() => deriveSessionReadout(toExerciseReadoutInputs(session.exercises)), [session.exercises]);
+  const notesByExerciseId = useMemo(
+    () => new Map(session.exercises.map((exercise) => [exercise.id, exercise.notes])),
+    [session.exercises],
+  );
 
   return (
     <div className="flex min-h-[calc(100vh-2rem)] flex-col">
@@ -41,27 +50,44 @@ export default function SessionCompletedView({ session, currentUserId, onEdit }:
 
       <div className="space-y-4 pb-28">
         <section className="rounded-2xl border border-white/10 bg-white/5 p-5 backdrop-blur-xl">
-          <dl className="grid gap-3 text-sm">
-            <div className="flex justify-between gap-4">
+          <dl className="grid gap-3 text-sm sm:grid-cols-2">
+            <div>
               <dt className="text-blue-100/60">Trainer</dt>
-              <dd className="text-right font-medium text-white">{session.trainer_display_name || "Your trainer"}</dd>
+              <dd className="mt-0.5 font-medium text-white">{session.trainer_display_name || "Your trainer"}</dd>
             </div>
-            <div className="flex justify-between gap-4">
+            <div>
               <dt className="text-blue-100/60">Status</dt>
-              <dd className="text-right font-medium text-white">{sessionStatusLabel(session.status)}</dd>
+              <dd className="mt-0.5 font-medium text-white">{sessionStatusLabel(session.status)}</dd>
             </div>
-            <div className="flex justify-between gap-4">
-              <dt className="text-blue-100/60">Exercises</dt>
-              <dd className="text-right font-medium text-white">{session.exercises.length}</dd>
+            <div>
+              <dt className="text-blue-100/60">Logging status</dt>
+              <dd className="mt-0.5">
+                <span
+                  className={cn(
+                    "inline-flex rounded-full border px-2.5 py-0.5 text-xs font-medium",
+                    readoutBadgeClass(readout.status),
+                  )}
+                >
+                  {readout.statusLabel}
+                </span>
+              </dd>
+            </div>
+            <div>
+              <dt className="text-blue-100/60">Sets logged</dt>
+              <dd className="mt-0.5 font-medium text-white">
+                {readout.completedSets} of {readout.totalSets}
+              </dd>
             </div>
           </dl>
         </section>
 
-        <p className="text-sm text-blue-100/60">
-          {session.status === "cancelled"
-            ? "This session has been cancelled."
-            : "Your workout has been recorded. Your trainer can see the results."}
-        </p>
+        {session.status === "cancelled" ? (
+          <p className="text-sm text-blue-100/60">This session has been cancelled.</p>
+        ) : (
+          <p className="text-sm text-blue-100/60">Your workout has been recorded. Your trainer can see the results.</p>
+        )}
+
+        <SessionExerciseSummary readout={readout} notesByExerciseId={notesByExerciseId} />
 
         <SessionCommentsThread sessionId={session.id} currentUserId={currentUserId} />
       </div>
