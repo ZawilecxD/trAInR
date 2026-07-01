@@ -24,6 +24,7 @@ export default function SessionOverview({
   currentUserId,
   onCancel,
 }: SessionOverviewProps) {
+  const isPreStart = session.status === "not_started";
   const trainerNote = session.exercises.find((exercise) => exercise.notes)?.notes ?? null;
   const [cancelOpen, setCancelOpen] = useState(false);
   const [cancelPending, setCancelPending] = useState(false);
@@ -110,28 +111,32 @@ export default function SessionOverview({
           >
             {beginPending ? "Starting…" : "Begin Workout"}
           </Button>
-          <Button
-            type="button"
-            variant="outline"
-            className="min-h-11 w-full border-slate-500/30 bg-slate-500/10 text-slate-300 hover:bg-slate-500/20"
-            disabled={cancelPending}
-            onClick={() => {
-              setCancelOpen(true);
-            }}
-          >
-            Cancel Session
-          </Button>
-          <DeleteConfirmDialog
-            open={cancelOpen}
-            onOpenChange={setCancelOpen}
-            title="Cancel this session?"
-            description="The session will be marked as cancelled and you won't be able to log it later."
-            confirmLabel="Cancel session"
-            loading={cancelPending}
-            onConfirm={() => {
-              void handleCancelConfirm();
-            }}
-          />
+          {isPreStart ? (
+            <Button
+              type="button"
+              variant="outline"
+              className="min-h-11 w-full border-slate-500/30 bg-slate-500/10 text-slate-300 hover:bg-slate-500/20"
+              disabled={cancelPending}
+              onClick={() => {
+                setCancelOpen(true);
+              }}
+            >
+              Cancel Session
+            </Button>
+          ) : null}
+          {isPreStart ? (
+            <DeleteConfirmDialog
+              open={cancelOpen}
+              onOpenChange={setCancelOpen}
+              title="Cancel this session?"
+              description="The session will be marked as cancelled and you won't be able to log it later."
+              confirmLabel="Cancel session"
+              loading={cancelPending}
+              onConfirm={() => {
+                void handleCancelConfirm();
+              }}
+            />
+          ) : null}
         </div>
       </div>
     </div>

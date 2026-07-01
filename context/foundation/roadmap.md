@@ -44,13 +44,14 @@ Independent personal trainers lose coaching time to admin — hunting across spr
 | S-10 | warmup-working-flag        | prescribe and log warm-up vs working per round (client may override)      | S-02, S-04, S-06 | FR-018                                         | done     |
 | S-11 | client-removal             | remove or reject a wrongly-assigned client                                | S-03          | FR-006                                            | done     |
 | S-12 | exercise-statistics        | view per-exercise history, estimated 1RM, and volume/tonnage              | S-06          | FR-024, FR-025, FR-026                            | proposed |
-| S-13 | data-edit-window           | edit logged data for 24 hours, then sealed                                | S-06          | FR-022                                            | proposed |
+| S-13 | data-edit-window           | edit logged data for 24 hours, then sealed                                | S-06          | FR-022                                            | done     |
 | S-14 | exercises-separate-rounds  | prescribe each exercise round separately (reps, load, rest per round)     | S-02          | FR-010, FR-011                                    | done     |
 | S-15 | exercise-favourites        | mark exercises as favourites and filter exercise lists by favourites only | S-01          | FR-009                                            | done     |
 | S-16 | ad-hoc-session-logging     | log an unplanned workout not on the calendar                              | S-06          | FR-015, FR-016, FR-017 (extends)                  | parked   |
 | S-17 | starter-exercise-seed      | receive a curated starter exercise library on trainer signup              | S-01, S-03    | FR-007, FR-008 (extends; supersedes Non-Goal #14) | done     |
 | S-18 | ui-redesign                | use a unified premium dark UI per DESIGN.md with accessible touch targets and Pencil-aligned key flows | S-06          | NFR mobile usability                              | proposed |
 | S-19 | prescription-fill-logging  | one-click fill a round with prescribed reps and load; no per-set completed toggle | S-06          | FR-015, FR-017 (extends)                          | proposed |
+| S-20 | finished-session-summary-for-client | see a read-only exercise summary before editing or after completion | S-06, S-08, S-13 | FR-015, FR-017, FR-021, FR-022 (extends)          | proposed |
 
 
 ### Quality & testing
@@ -73,7 +74,7 @@ Navigation aid — groups items that share a Prerequisites chain. Canonical orde
 | ------ | ------------------------------ | ------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | A      | Trainer authoring → north star | `F-01` → `S-01` → `S-02` → `S-04` → `S-06` → `S-07`                            | Critical path: every link is on the shortest route to validating the async training loop.                                                                                                                                                                                                                                                                                                                  |
 | B      | Client onboarding & calendar   | `S-03` → `S-05`                                                                | Joins Stream A at `S-04` (S-03 is a prerequisite for S-04); `S-05` branches off `S-04` parallel with `S-06`.                                                                                                                                                                                                                                                                                               |
-| C      | Enhancement & polish           | `S-08` / `S-09` / `S-10` / `S-11` / `S-12` / `S-13` / `S-14` / `S-15` / `S-17` / `S-18` / `S-19` | Tier 2+3 items; sequence after core loop completes or when capacity opens. `S-14` extends session template prescription (after S-02). `S-15` extends exercise library browse/filter (after S-01). `S-16` was parked for post-MVP after planning research showed it changes creation ownership, exercise-library access, and trainer dashboard semantics. `S-17` seeds starter exercises on trainer signup. `S-18` unifies the dual design-system debt (shadcn tokens vs cosmic palette) per `DESIGN.md`, `context/changes/ui-redesign/research.md`, and Pencil mockups in `docs/pencil/`. `S-19` replaces the per-set OK/completed toggle with one-click prescription fill and defers completion semantics to session level (S-08). |
+| C      | Enhancement & polish           | `S-08` / `S-09` / `S-10` / `S-11` / `S-12` / `S-13` / `S-14` / `S-15` / `S-17` / `S-18` / `S-19` / `S-20` | Tier 2+3 items; sequence after core loop completes or when capacity opens. `S-14` extends session template prescription (after S-02). `S-15` extends exercise library browse/filter (after S-01). `S-16` was parked for post-MVP after planning research showed it changes creation ownership, exercise-library access, and trainer dashboard semantics. `S-17` seeds starter exercises on trainer signup. `S-18` unifies the dual design-system debt (shadcn tokens vs cosmic palette) per `DESIGN.md`, `context/changes/ui-redesign/research.md`, and Pencil mockups in `docs/pencil/`. `S-19` replaces the per-set OK/completed toggle with one-click prescription fill and defers completion semantics to session level (S-08). `S-20` makes the terminal/client summary state useful by showing the same exercise/log data read-only before the user chooses Edit or after editing is sealed. |
 | D      | Quality & testing              | `Q-01` / `Q-02` / `Q-03` / `Q-04`                                              | Cross-cutting; selective mutation testing per `test-plan.md` after the integration harness lands. `Q-02`/`Q-03` close SECURITY DEFINER gaps documented by the harness (flip KNOWN GAP tests). `Q-04` promotes the existing local-only Playwright suite to a PR gate, reusing the `test-integration` Supabase-in-CI pattern.                                                                          |
 
 
@@ -97,7 +98,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Outcome:** (foundation) All Supabase tables per the ERD are created with row-level security policies enforcing cross-tenant isolation; middleware exposes the user's role (`trainer` | `client`) on `context.locals`.
 - **Change ID:** database-schema-and-rls
 - **PRD refs:** NFR privacy ("strict cross-tenant data isolation enforced at the database level"), NFR data integrity, Access Control section
-- **Unlocks:** S-01, S-02, S-03, S-04, S-05, S-06, S-07, S-08, S-09, S-10, S-11, S-12, S-13 — every data-dependent slice
+- **Unlocks:** S-01, S-02, S-03, S-04, S-05, S-06, S-07, S-08, S-09, S-10, S-11, S-12, S-13, S-20 — every data-dependent slice
 - **Prerequisites:** —
 - **Parallel with:** —
 - **Blockers:** —
@@ -290,7 +291,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Blockers:** —
 - **Unknowns:** —
 - **Risk:** 24-hour window enforcement needs careful timezone handling; for MVP, use UTC and document the behavior.
-- **Status:** proposed
+- **Status:** done
 
 ### S-14: Per-round exercise prescription
 
@@ -364,6 +365,19 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Risk:** S-06 shipped the OK toggle and `is_complete`-driven exercise progress (`SetLogRow`, `exercise-progress.ts`, trainer readout in S-07); this slice must redefine progress/readout heuristics (e.g. logged reps/load present) without reintroducing per-exercise completion state the product no longer needs
 - **Status:** proposed
 
+### S-20: Finished session summary for client
+
+- **Outcome:** client opening a finished, partially finished, cancelled, or edit-window pre-edit session sees a useful read-only summary of all exercises, prescribed targets, and logged values before any optional Edit action
+- **Change ID:** finished-session-summary-for-client
+- **Linear:** ZAW-51
+- **PRD refs:** FR-015, FR-017 (logged data display), FR-021 (terminal session statuses), FR-022 (edit-window pre-edit/sealed summary); dedicated client summary FR not yet in PRD — add at `/10x-plan` if scope needs contract lock-in
+- **Prerequisites:** S-06 for logged exercise data shape; S-08 for terminal statuses; S-13 for edit-window summary vs edit transitions
+- **Parallel with:** S-09, S-12, S-18, S-19 once S-08/S-13 contracts are stable
+- **Blockers:** S-13 Phase 4 navigation must land first if the summary is exposed through `completed` mode
+- **Unknowns:** Whether cancelled sessions with no logs should show the full prescription, a compact "not attempted" exercise list, or both; whether summary rows should reuse trainer dashboard read-only components or client edit-list components in read-only mode
+- **Risk:** The existing completion page is sparse and comments-focused; duplicating exercise readout logic from trainer dashboard or edit-list could drift. Prefer a shared read-only exercise summary component if current data shapes allow it without a broad refactor.
+- **Status:** proposed
+
 ## Backlog Handoff
 
 
@@ -389,6 +403,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 | S-17       | starter-exercise-seed                 | Copy curated starter exercises to each trainer on signup                    | —                     | done → `context/archive/2026-06-20-starter-exercise-seed/`                                                                 |
 | S-18       | ui-redesign                           | Unify design tokens and apply DESIGN.md + Pencil mockups to key flows       | yes                   | Run `/10x-plan ui-redesign`; spec in `DESIGN.md`; research in `context/changes/ui-redesign/research.md`; screens in `docs/pencil/` |
 | S-19       | prescription-fill-logging             | Replace per-set OK toggle with one-click prescription fill                  | yes                   | Run `/10x-plan prescription-fill-logging`; removes `is_complete` UX from S-06; session status stays in S-08                    |
+| S-20       | finished-session-summary-for-client   | Show read-only exercise summary on finished client session pages            | yes                   | Linear ZAW-51; run `/10x-plan finished-session-summary-for-client`; depends on S-08/S-13 summary-mode contracts               |
 | Q-01       | add-stryker-mutation-testing          | Add Stryker mutation testing as a selective quality gate                    | yes                   | Run `/10x-research add-stryker-mutation-testing`; see `context/changes/add-stryker-mutation-testing/`                       |
 | Q-02       | harden-replace-exercise-muscle-groups | Add auth.uid() ownership check to replace_exercise_muscle_groups RPC        | —                     | done → `context/archive/2026-06-08-harden-replace-exercise-muscle-groups/`                                                  |
 | Q-03       | harden-complete-client-invite         | Harden complete_client_invite p_client_id binding for authenticated callers | no                    | Run `/10x-frame harden-complete-client-invite` first (anon vs authenticated design); then `/10x-plan`                       |
@@ -443,4 +458,5 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **S-15: trainer can mark exercises as favourites and filter exercise lists to show favourites only (exercise library and anywhere else exercises are browsed for selection)** — Archived 2026-06-29 → `context/archive/2026-06-29-exercise-favourites/`. Lesson: —.
 - **S-08: client can mark a planned session as "finished", "finished partially", or "cancelled" (did not attempt / chose not to do it); cancelled sessions remain visible on the calendar with distinct status** — Archived 2026-07-01 → `context/archive/2026-06-28-session-completion-marking/`. Lesson: —.
 - **S-09: client and trainer can each leave comments on a training session and read the other's comments (bidirectional thread per session)** — Archived 2026-07-01 → `context/archive/2026-06-28-session-comments/`. Lesson: —.
+- **S-13: logged workout data can be edited for 24 hours after first entry, then sealed (immutable)** — Archived 2026-07-01 → `context/archive/2026-07-01-data-edit-window/`. Lesson: —.
 
