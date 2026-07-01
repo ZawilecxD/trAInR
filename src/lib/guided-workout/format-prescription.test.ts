@@ -109,18 +109,18 @@ describe("formatSetActual", () => {
     expect(formatSetActual(null, "reps_weight")).toBe("Not logged");
   });
 
-  it("formats reps and load from a log", () => {
-    const log = makeLog({ set_number: 1, reps: 10, load_kg: 82.5, is_complete: true });
+  it("formats reps and load from a log without requiring is_complete", () => {
+    const log = makeLog({ set_number: 1, reps: 10, load_kg: 82.5, is_complete: false });
     expect(formatSetActual(log, "reps_weight")).toBe("10 reps @ 82.5 kg");
   });
 
-  it("formats timed actuals", () => {
-    const log = makeLog({ set_number: 1, duration_seconds: 45, is_complete: true });
+  it("formats timed actuals without requiring is_complete", () => {
+    const log = makeLog({ set_number: 1, duration_seconds: 45, is_complete: false });
     expect(formatSetActual(log, "time")).toBe("45s");
   });
 
-  it("returns completed when marked complete without values", () => {
+  it("returns not logged when only the historical complete flag is set", () => {
     const log = makeLog({ set_number: 1, is_complete: true });
-    expect(formatSetActual(log, "reps_weight")).toBe("Completed");
+    expect(formatSetActual(log, "reps_weight")).toBe("Not logged");
   });
 });

@@ -51,19 +51,12 @@ function validateMetricFields(metric: ExerciseMetric, body: UpsertSetLogBody): s
     return "distance exercises are not supported for logging";
   }
 
-  if (!body.is_complete) {
-    return null;
+  if (metric === "time" && (body.reps !== null || body.load_kg !== null)) {
+    return "timed exercises only support duration logging";
   }
 
-  if (metric === "time") {
-    if (body.duration_seconds === null) {
-      return "duration is required for timed exercises";
-    }
-    return null;
-  }
-
-  if (body.reps === null) {
-    return "reps are required for this exercise";
+  if (metric !== "time" && body.duration_seconds !== null) {
+    return "duration logging is only supported for timed exercises";
   }
 
   return null;

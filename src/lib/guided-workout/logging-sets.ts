@@ -1,3 +1,4 @@
+import { hasLoggedValues } from "@/lib/guided-workout/prescription-fill";
 import type { SessionExerciseSet, SetLog } from "@/types";
 
 export function getLoggingSetNumbers(
@@ -37,7 +38,7 @@ export function isPrescribedSetNumber(prescribedSets: SessionExerciseSet[], setN
 export function findFirstIncompleteSetNumber(setNumbers: number[], logs: SetLog[]): number | null {
   for (const setNumber of setNumbers) {
     const log = logs.find((entry) => entry.set_number === setNumber);
-    if (!log?.is_complete) {
+    if (!hasLoggedValues(log)) {
       return setNumber;
     }
   }

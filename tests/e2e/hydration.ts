@@ -27,3 +27,18 @@ export async function clickUntilHydrated(
     await expect(signal).toHaveAttribute(attribute, value, { timeout: stepTimeoutMs });
   }).toPass({ timeout: timeoutMs });
 }
+
+export async function clickUntilHydratedValue(
+  control: Locator,
+  signal: Locator,
+  value: string,
+  {
+    stepTimeoutMs = DEFAULT_STEP_TIMEOUT_MS,
+    timeoutMs = DEFAULT_HYDRATION_TIMEOUT_MS,
+  }: { stepTimeoutMs?: number; timeoutMs?: number } = {},
+): Promise<void> {
+  await expect(async () => {
+    await control.click();
+    await expect(signal).toHaveValue(value, { timeout: stepTimeoutMs });
+  }).toPass({ timeout: timeoutMs });
+}

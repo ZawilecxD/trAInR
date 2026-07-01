@@ -15,6 +15,7 @@ interface SessionEditListProps {
   session: ClientSessionDetail;
   exercises: SessionExerciseDetail[];
   currentUserId: string;
+  onBackToCalendar: () => void;
   onContinueWorkout: (exerciseIndex: number) => void;
   onJumpToExercise: (exerciseIndex: number) => void;
   onLogSaved: (setLog: SetLog) => void;
@@ -64,6 +65,7 @@ export default function SessionEditList({
   session,
   exercises,
   currentUserId,
+  onBackToCalendar,
   onContinueWorkout,
   onJumpToExercise,
   onLogSaved,
@@ -109,13 +111,14 @@ export default function SessionEditList({
   return (
     <div className="flex min-h-[calc(100vh-2rem)] flex-col">
       <header className="mb-6">
-        <a
-          href="/client/plan"
+        <button
+          type="button"
           className="inline-flex min-h-11 items-center gap-2 text-sm text-blue-100/70 transition-colors hover:text-white"
+          onClick={onBackToCalendar}
         >
           <ArrowLeft className="size-4" aria-hidden="true" />
           Calendar
-        </a>
+        </button>
         <div className="mt-4 flex flex-wrap items-start justify-between gap-3">
           <div>
             <h1 className="text-3xl font-bold text-white">{session.name ?? "Workout"}</h1>

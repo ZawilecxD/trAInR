@@ -1,3 +1,4 @@
+import { hasLoggedValues } from "@/lib/guided-workout/prescription-fill";
 import type { ExerciseMetric, SessionExerciseSet, SetLog } from "@/types";
 
 function formatRest(seconds: number): string {
@@ -138,17 +139,13 @@ export function formatPrescribedSetDetail(set: SessionExerciseSet | null, defaul
   return round;
 }
 
-function hasLoggedValues(log: SetLog): boolean {
-  return log.reps !== null || log.duration_seconds !== null || log.load_kg !== null;
-}
-
 export function formatSetActual(log: SetLog | null, defaultMetric: ExerciseMetric): string {
-  if (!log || (!hasLoggedValues(log) && !log.is_complete)) {
+  if (!hasLoggedValues(log)) {
     return "Not logged";
   }
 
   if (defaultMetric === "time") {
-    return log.duration_seconds !== null ? `${log.duration_seconds}s` : log.is_complete ? "Completed" : "—";
+    return log.duration_seconds !== null ? `${log.duration_seconds}s` : "—";
   }
 
   const parts: string[] = [];
@@ -165,5 +162,5 @@ export function formatSetActual(log: SetLog | null, defaultMetric: ExerciseMetri
     return parts.join(" @ ");
   }
 
-  return log.is_complete ? "Completed" : "—";
+  return "—";
 }

@@ -1,5 +1,6 @@
 import { getLoggingSetNumbers } from "@/lib/guided-workout/logging-sets";
 import { sortByPhaseThenSortOrder } from "@/lib/guided-workout/phase-labels";
+import { hasLoggedValues } from "@/lib/guided-workout/prescription-fill";
 import type { ExerciseMetric, ExercisePhase, SessionExerciseSet, SetLog } from "@/types";
 
 export type ReadoutStatus = "not_logged" | "in_progress" | "fully_logged";
@@ -77,7 +78,7 @@ export function deriveSetReadouts(prescribedSets: SessionExerciseSet[], logs: Se
       setNumber,
       prescribed,
       log,
-      isComplete: log?.is_complete ?? false,
+      isComplete: hasLoggedValues(log),
     };
   });
 }
@@ -89,7 +90,7 @@ export function deriveExerciseReadout(exercise: ExerciseReadoutInput): ExerciseR
 
   for (const setNumber of setNumbers) {
     const log = exercise.logs.find((entry) => entry.set_number === setNumber);
-    if (log?.is_complete) {
+    if (hasLoggedValues(log)) {
       completedSets += 1;
     }
   }

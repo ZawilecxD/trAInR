@@ -1,4 +1,5 @@
 import { getLoggingSetNumbers } from "@/lib/guided-workout/logging-sets";
+import { hasLoggedValues } from "@/lib/guided-workout/prescription-fill";
 import type { SessionExerciseSet, SetLog } from "@/types";
 
 export interface ExerciseProgress {
@@ -29,7 +30,7 @@ export function getExerciseProgress(setNumbers: number[], logs: SetLog[], isActi
 
   for (const setNumber of setNumbers) {
     const log = logs.find((entry) => entry.set_number === setNumber);
-    if (log?.is_complete) {
+    if (hasLoggedValues(log)) {
       completedSets += 1;
     }
   }

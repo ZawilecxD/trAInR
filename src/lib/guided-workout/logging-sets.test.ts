@@ -20,17 +20,18 @@ function prescribed(setNumber: number): SessionExerciseSet {
   };
 }
 
-function log(setNumber: number, isComplete = false): SetLog {
+function log(setNumber: number, overrides: Partial<SetLog> = {}): SetLog {
   return {
     id: `log-${setNumber}`,
     session_exercise_id: "ex-1",
     set_number: setNumber,
     is_warmup: false,
-    is_complete: isComplete,
+    is_complete: false,
     reps: 8,
     duration_seconds: null,
     load_kg: 80,
     logged_at: "2026-06-14T10:00:00Z",
+    ...overrides,
   };
 }
 
@@ -50,6 +51,19 @@ describe("getLoggingSetNumbers", () => {
   });
 
   it("finds the first incomplete set number", () => {
-    expect(findFirstIncompleteSetNumber([1, 2, 3], [log(1, true)])).toBe(2);
+    expect(findFirstIncompleteSetNumber([1, 2, 3], [log(1)])).toBe(2);
+  });
+
+  it("ignores historical complete flags when no logged values exist", () => {
+    expect(
+      findFirstIncompleteSetNumber(
+        [1, 2],
+        [log(1, { is_complete: true, reps: null, duration_seconds: null, load_kg: null })],
+      ),
+    ).toBe(1);
+  });
+
+  it("keeps a stable active row when every set has logged values", () => {
+    expect(findFirstIncompleteSetNumber([1, 2], [log(1), log(2)])).toBe(1);
   });
 });

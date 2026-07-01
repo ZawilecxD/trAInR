@@ -138,6 +138,46 @@ describe("set_logs", () => {
   });
 
   describe("UPDATE", () => {
+    it("Client can UPSERT fill-like values on own session exercise without is_complete", async () => {
+      const first = await clientA.client
+        .from("set_logs")
+        .upsert(
+          {
+            session_exercise_id: sessionExerciseAId,
+            set_number: 5,
+            reps: 8,
+            load_kg: 60,
+            is_complete: false,
+            is_warmup: false,
+          },
+          { onConflict: "session_exercise_id,set_number" },
+        )
+        .select("id, reps, load_kg, is_complete")
+        .single<{ id: string; reps: number; load_kg: number; is_complete: boolean }>();
+
+      expect(first.error).toBeNull();
+      expect(first.data).toMatchObject({ reps: 8, load_kg: 60, is_complete: false });
+
+      const second = await clientA.client
+        .from("set_logs")
+        .upsert(
+          {
+            session_exercise_id: sessionExerciseAId,
+            set_number: 5,
+            reps: 9,
+            load_kg: 62.5,
+            is_complete: false,
+            is_warmup: false,
+          },
+          { onConflict: "session_exercise_id,set_number" },
+        )
+        .select("id, reps, load_kg, is_complete")
+        .single<{ id: string; reps: number; load_kg: number; is_complete: boolean }>();
+
+      expect(second.error).toBeNull();
+      expect(second.data).toMatchObject({ id: first.data?.id, reps: 9, load_kg: 62.5, is_complete: false });
+    });
+
     it("Client can UPDATE own set log", async () => {
       const { data, error } = await clientA.client
         .from("set_logs")

@@ -31,13 +31,22 @@ function makeLog(overrides: Partial<SetLog> & Pick<SetLog, "set_number">): SetLo
     id: `log-${overrides.set_number}`,
     session_exercise_id: "session-exercise-1",
     is_warmup: false,
-    is_complete: true,
+    is_complete: false,
     reps: 8,
     duration_seconds: null,
     load_kg: 80,
     logged_at: "2026-06-20T10:00:00.000Z",
     ...overrides,
   };
+}
+
+function makeEmptyLog(overrides: Partial<SetLog> & Pick<SetLog, "set_number">): SetLog {
+  return makeLog({
+    ...overrides,
+    reps: null,
+    duration_seconds: null,
+    load_kg: null,
+  });
 }
 
 function makeExercise(overrides: Partial<ExerciseReadoutInput> = {}): ExerciseReadoutInput {
@@ -79,13 +88,20 @@ describe("deriveSetReadouts", () => {
     expect(readouts[1]).toMatchObject({ setNumber: 2, isComplete: false, log: null });
   });
 
-  it("marks complete logs and keeps missing prescribed sets incomplete", () => {
+  it("marks value-bearing logs and keeps missing prescribed sets incomplete", () => {
     const prescribed = [makePrescribedSet({ set_number: 1 }), makePrescribedSet({ set_number: 2 })];
-    const logs = [makeLog({ set_number: 1, is_complete: true })];
+    const logs = [makeLog({ set_number: 1 })];
     const readouts = deriveSetReadouts(prescribed, logs);
 
     expect(readouts[0].isComplete).toBe(true);
     expect(readouts[1].isComplete).toBe(false);
+  });
+
+  it("does not mark historical complete flags without values as complete", () => {
+    const prescribed = [makePrescribedSet({ set_number: 1 })];
+    const readouts = deriveSetReadouts(prescribed, [makeEmptyLog({ set_number: 1, is_complete: true })]);
+
+    expect(readouts[0].isComplete).toBe(false);
   });
 
   it("includes extra logged sets beyond prescription", () => {
@@ -110,7 +126,7 @@ describe("deriveExerciseReadout", () => {
   it("returns in_progress for partial logs", () => {
     const readout = deriveExerciseReadout(
       makeExercise({
-        logs: [makeLog({ set_number: 1, is_complete: true }), makeLog({ set_number: 2, is_complete: false })],
+        logs: [makeLog({ set_number: 1 }), makeEmptyLog({ set_number: 2, is_complete: true })],
       }),
     );
 

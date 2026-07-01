@@ -32,6 +32,32 @@ describe("upsertSetLogBodySchema", () => {
     expect(parsed.success).toBe(true);
   });
 
+  it("rejects negative reps and duration", () => {
+    expect(
+      upsertSetLogBodySchema.safeParse({
+        session_exercise_id: validSessionExerciseId,
+        set_number: 1,
+        reps: -1,
+        duration_seconds: null,
+        load_kg: null,
+        is_complete: false,
+        is_warmup: false,
+      }).success,
+    ).toBe(false);
+
+    expect(
+      upsertSetLogBodySchema.safeParse({
+        session_exercise_id: validSessionExerciseId,
+        set_number: 1,
+        reps: null,
+        duration_seconds: -1,
+        load_kg: null,
+        is_complete: false,
+        is_warmup: false,
+      }).success,
+    ).toBe(false);
+  });
+
   it("accepts timed exercise duration when complete", () => {
     const parsed = upsertSetLogBodySchema.safeParse({
       session_exercise_id: validSessionExerciseId,
@@ -46,7 +72,7 @@ describe("upsertSetLogBodySchema", () => {
     expect(parsed.success).toBe(true);
   });
 
-  it("rejects completed sets without reps or duration", () => {
+  it("keeps is_complete as a compatibility field, not validation state", () => {
     const parsed = upsertSetLogBodySchema.safeParse({
       session_exercise_id: validSessionExerciseId,
       set_number: 1,
@@ -57,7 +83,7 @@ describe("upsertSetLogBodySchema", () => {
       is_warmup: false,
     });
 
-    expect(parsed.success).toBe(false);
+    expect(parsed.success).toBe(true);
   });
 
   it("rejects invalid session_exercise_id", () => {

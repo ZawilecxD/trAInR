@@ -1,8 +1,9 @@
-import { Check, Loader2, RotateCcw, Trash2 } from "lucide-react";
+import { Loader2, RotateCcw, Trash2 } from "lucide-react";
 import { useState, type ComponentProps } from "react";
 import { useDebouncedSetLogSave, type SetLogValues } from "@/components/hooks/useDebouncedSetLogSave";
 import RoundWarmupToggle from "@/components/session-templates/RoundWarmupToggle";
 import { Input } from "@/components/ui/input";
+import { fillValuesFromPrescription, hasLoggedValues } from "@/lib/guided-workout/prescription-fill";
 import { resolveLogIsWarmup } from "@/lib/guided-workout/warmup-default";
 import { cn } from "@/lib/utils";
 import type { ExerciseMetric, SessionExerciseSet, SetLog } from "@/types";
@@ -44,13 +45,9 @@ function initialValues(
     reps: existingLog?.reps ?? null,
     duration_seconds: existingLog?.duration_seconds ?? null,
     load_kg: existingLog?.load_kg ?? null,
-    is_complete: existingLog?.is_complete ?? false,
+    is_complete: false,
     is_warmup: resolveLogIsWarmup({ existingLog, prescribedSet, isPrescribed }),
   };
-}
-
-function hasEnteredValues(values: SetLogValues): boolean {
-  return values.reps !== null || values.duration_seconds !== null || values.load_kg !== null;
 }
 
 function SuffixInput({ suffix, className, ...props }: ComponentProps<typeof Input> & { suffix: string }) {
@@ -90,11 +87,14 @@ export default function SetLogRow({
   const showReps = defaultMetric !== "time";
   const showDuration = defaultMetric === "time";
   const showLoad = defaultMetric === "reps_weight";
-  const canDelete = !isPrescribed || Boolean(existingLog) || values.is_complete || hasEnteredValues(values);
+  const fillValues = prescribedSet ? fillValuesFromPrescription(prescribedSet, defaultMetric) : null;
+  const canFillFromPrescription = isPrescribed && fillValues !== null && hasLoggedValues(fillValues);
+  const canDelete = !isPrescribed || Boolean(existingLog) || hasLoggedValues(values);
 
   async function handleDelete() {
     onFocus();
     setDeleteError(null);
+    cancelPendingSave();
 
     if (existingLog) {
       setDeletePending(true);
@@ -122,7 +122,6 @@ export default function SetLogRow({
       }
     }
 
-    cancelPendingSave();
     setValues(initialValues(undefined, prescribedSet, isPrescribed));
 
     if (!isPrescribed) {
@@ -149,6 +148,7 @@ export default function SetLogRow({
             suffix="reps"
             type="number"
             inputMode="numeric"
+            min={1}
             aria-label={`Set ${setNumber} reps`}
             className="text-center"
             value={values.reps ?? ""}
@@ -166,6 +166,7 @@ export default function SetLogRow({
             suffix="s"
             type="number"
             inputMode="numeric"
+            min={1}
             aria-label={`Set ${setNumber} duration seconds`}
             className="text-center"
             value={values.duration_seconds ?? ""}
@@ -208,23 +209,21 @@ export default function SetLogRow({
 
       <td className="px-2 py-2">
         <div className="flex min-h-11 items-center justify-center">
-          <button
-            type="button"
-            aria-label={`Mark set ${setNumber} complete`}
-            aria-pressed={values.is_complete}
-            className={cn(
-              "flex size-11 items-center justify-center rounded-lg border transition-colors",
-              values.is_complete
-                ? "border-emerald-400/60 bg-emerald-500/20 text-emerald-200"
-                : "border-white/20 bg-white/5 text-blue-100/50 hover:border-white/40 hover:text-white",
-            )}
-            onClick={() => {
-              onFocus();
-              setValues((prev) => ({ ...prev, is_complete: !prev.is_complete }));
-            }}
-          >
-            <Check className="size-5" aria-hidden="true" />
-          </button>
+          {canFillFromPrescription ? (
+            <button
+              type="button"
+              aria-label={`Fill set ${setNumber} from prescription`}
+              className="inline-flex min-h-11 items-center justify-center rounded-lg border border-blue-300/40 bg-blue-500/15 px-3 text-sm font-semibold text-blue-100 transition-colors hover:border-blue-200/70 hover:bg-blue-500/25"
+              onClick={() => {
+                onFocus();
+                setValues(fillValues);
+              }}
+            >
+              Fill Rx
+            </button>
+          ) : (
+            <span className="text-sm text-blue-100/30">—</span>
+          )}
         </div>
       </td>
 
@@ -234,7 +233,7 @@ export default function SetLogRow({
             type="button"
             className="inline-flex size-9 items-center justify-center rounded-lg text-blue-100/40 hover:bg-white/5 hover:text-red-300 disabled:opacity-30"
             aria-label={`Remove set ${setNumber} log`}
-            disabled={!canDelete || deletePending}
+            disabled={!canDelete || deletePending || status === "saving"}
             onClick={() => {
               void handleDelete();
             }}

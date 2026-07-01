@@ -66,15 +66,16 @@ export default function GuidedWorkoutHub({ initialSession, currentUserId }: Guid
   // exercise, where the row's existing error/retry UI is already visible.
   const navigatingRef = useRef(false);
   const runGuardedTransition = useCallback(
-    async (apply: () => void) => {
-      if (navigatingRef.current) return;
+    async (apply: () => void | Promise<void>): Promise<boolean> => {
+      if (navigatingRef.current) return false;
       navigatingRef.current = true;
       setIsNavigating(true);
       try {
         const ok = await flushAll();
         if (ok) {
-          apply();
+          await apply();
         }
+        return ok;
       } finally {
         navigatingRef.current = false;
         setIsNavigating(false);
@@ -190,23 +191,34 @@ export default function GuidedWorkoutHub({ initialSession, currentUserId }: Guid
 
   if (mode === "edit-list") {
     return (
-      <SessionEditList
-        session={session}
-        exercises={orderedExercises}
-        currentUserId={currentUserId}
-        onContinueWorkout={(index) => {
-          setExerciseIndex(index);
-          setMode("guided");
-        }}
-        onJumpToExercise={(index) => {
-          setExerciseIndex(index);
-          setMode("guided");
-        }}
-        onLogSaved={handleLogSaved}
-        onLogDeleted={handleLogDeleted}
-        onRestart={handleRestart}
-        onComplete={handleComplete}
-      />
+      <SetLogFlushContext.Provider value={flushRegistry}>
+        <SessionEditList
+          session={session}
+          exercises={orderedExercises}
+          currentUserId={currentUserId}
+          onBackToCalendar={() => {
+            void runGuardedTransition(() => {
+              window.location.href = "/client/plan";
+            });
+          }}
+          onContinueWorkout={(index) => {
+            void runGuardedTransition(() => {
+              setExerciseIndex(index);
+              setMode("guided");
+            });
+          }}
+          onJumpToExercise={(index) => {
+            void runGuardedTransition(() => {
+              setExerciseIndex(index);
+              setMode("guided");
+            });
+          }}
+          onLogSaved={handleLogSaved}
+          onLogDeleted={handleLogDeleted}
+          onRestart={() => runGuardedTransition(handleRestart)}
+          onComplete={(status) => runGuardedTransition(() => handleComplete(status))}
+        />
+      </SetLogFlushContext.Provider>
     );
   }
 

@@ -10,7 +10,7 @@
  */
 import { test, expect } from "@playwright/test";
 import { CLIENT_STORAGE_STATE, TRAINER_STORAGE_STATE } from "./auth";
-import { clickUntilHydrated } from "./hydration";
+import { clickUntilHydratedValue } from "./hydration";
 
 const CLIENT_A_ID = "c2000001-0000-4000-8000-000000000002";
 const BENCH_PRESS_ID = "e2000001-0000-4000-8000-000000000001";
@@ -99,18 +99,14 @@ test.describe("Risk #6 — guided-workout quick navigation logging safety", () =
       await expect(page.getByRole("heading", { name: "Bench Press" })).toBeVisible();
 
       // The guided hub is a client:load island; the SSR heading is visible before
-      // hydration attaches React handlers. Gate on hydration BEFORE filling any
-      // input: a programmatic fill on a controlled input that runs pre-hydration
-      // poisons React's value tracker, so later identical fills are swallowed and
-      // the value never reaches state. The set-complete toggle flips `aria-pressed`
-      // purely through React state, proving hydration without touching an input.
-      const completeToggle = page.getByLabel("Mark set 1 complete");
-      await clickUntilHydrated(completeToggle, completeToggle, "aria-pressed", "true");
-      await completeToggle.click();
-      await expect(completeToggle).toHaveAttribute("aria-pressed", "false");
+      // hydration attaches React handlers. Gate on hydration BEFORE manually
+      // filling controlled inputs by using the S-19 fill action, which only
+      // populates inputs after React handlers attach.
+      const fillButton = page.getByRole("button", { name: "Fill set 1 from prescription" });
+      const repsInput = page.getByLabel("Set 1 reps");
+      await clickUntilHydratedValue(fillButton, repsInput, "8");
 
       // Hydration confirmed; the reps tracker initialized cleanly so this fill sticks.
-      const repsInput = page.getByLabel("Set 1 reps");
       await repsInput.fill("9");
       await expect(page.getByLabel("Remove set 1 log")).toBeEnabled();
 
