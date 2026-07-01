@@ -5,7 +5,7 @@
 version: 1
 status: draft
 created: 2026-05-25
-updated: 2026-06-29
+updated: 2026-07-01
 prd_version: 1
 main_goal: speed
 top_blocker: time
@@ -39,7 +39,7 @@ Independent personal trainers lose coaching time to admin — hunting across spr
 | S-05 | client-calendar            | view assigned sessions in month/week view with status colors              | S-04          | FR-013, FR-014                                    | done     |
 | S-06 | guided-workout-logging     | open a session, step through exercises, log sets, see previous hints      | S-04          | FR-015, FR-016, FR-017, FR-019, FR-020, US-01     | done     |
 | S-07 | trainer-dashboard          | see client overview and read-only session detail with logged data         | S-04, S-06    | FR-027, FR-028, US-01                             | done     |
-| S-08 | session-completion-marking | mark a planned session finished, partially finished, or cancelled         | S-06          | FR-021                                            | proposed |
+| S-08 | session-completion-marking | mark a planned session finished, partially finished, or cancelled         | S-06          | FR-021                                            | done     |
 | S-09 | session-comments           | leave and read comments on a session (client ↔ trainer)                   | S-04          | FR-023                                            | proposed |
 | S-10 | warmup-working-flag        | prescribe and log warm-up vs working per round (client may override)      | S-02, S-04, S-06 | FR-018                                         | done     |
 | S-11 | client-removal             | remove or reject a wrongly-assigned client                                | S-03          | FR-006                                            | done     |
@@ -230,7 +230,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Blockers:** —
 - **Unknowns:** Whether a cancelled session can be reopened and started later, or is permanently closed; whether partial logging before cancel is retained
 - **Risk:** Calendar status colors (S-05) need a fourth state; trainer dashboard (S-07) must surface cancelled vs not-started clearly. Per-set `is_complete` from S-06 should not drive session status once S-19 lands — session finished/partial/cancelled stays session-scoped (FR-021).
-- **Status:** proposed
+- **Status:** done
 
 ### S-09: Session comments
 
@@ -441,4 +441,5 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **S-10: trainer marks each prescribed round as warm-up or working when building session templates and personalizing assigned sessions; client logs each set with a warm-up/working flag that inherits the prescribed default when a matching round exists and may be overridden at log time; only working logged sets (`set_logs.is_warmup = false`) count toward stats and performance hints (FR-019, FR-025). Session phase warm-up/main/cool-down (whole exercises) is unchanged — this slice is per-round within an exercise.** — Archived 2026-06-20 → `context/archive/2026-06-20-warmup-working-flag/`. Lesson: —.
 - **S-17: every new trainer receives a copy of a curated collection of popular exercises on signup; seeded exercises behave like trainer-owned exercises (editable, deletable, usable in templates) with no read-only or "system" lock** — Archived 2026-06-20 → `context/archive/2026-06-20-starter-exercise-seed/`. Lesson: —.
 - **S-15: trainer can mark exercises as favourites and filter exercise lists to show favourites only (exercise library and anywhere else exercises are browsed for selection)** — Archived 2026-06-29 → `context/archive/2026-06-29-exercise-favourites/`. Lesson: —.
+- **S-08: client can mark a planned session as "finished", "finished partially", or "cancelled" (did not attempt / chose not to do it); cancelled sessions remain visible on the calendar with distinct status** — Archived 2026-07-01 → `context/archive/2026-06-28-session-completion-marking/`. Lesson: —.
 

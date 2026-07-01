@@ -1,9 +1,10 @@
 ---
 id: session-completion-marking
 title: "S-08: Session completion marking"
-status: implementing
+status: archived
 created: 2026-06-28
-updated: 2026-06-28
+updated: 2026-07-01
+archived_at: 2026-07-01T09:24:57Z
 roadmap_id: S-08
 linear_issue: ZAW-13
 ---
