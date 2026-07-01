@@ -72,4 +72,32 @@ describe("resolveInitialMode", () => {
       }),
     ).toBe("edit-list");
   });
+
+  it("returns edit-list when sealed but still not_started (read-only handled in UI)", () => {
+    expect(
+      resolveInitialMode({
+        ...baseSession,
+        started_at: "2026-06-14T12:00:00.000Z",
+        locked_at: "2020-01-01T00:00:00.000Z",
+        exercises: [
+          {
+            ...baseSession.exercises[0],
+            logs: [
+              {
+                id: "e1000001-0000-4000-8000-000000000001",
+                session_exercise_id: "c1000001-0000-4000-8000-000000000001",
+                set_number: 1,
+                is_warmup: false,
+                is_complete: true,
+                reps: 10,
+                duration_seconds: null,
+                load_kg: 60,
+                logged_at: "2026-06-14T12:05:00.000Z",
+              },
+            ],
+          },
+        ],
+      }),
+    ).toBe("edit-list");
+  });
 });

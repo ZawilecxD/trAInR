@@ -15,6 +15,7 @@ interface SetLogRowProps {
   defaultMetric: ExerciseMetric;
   isPrescribed: boolean;
   isActive: boolean;
+  readOnly?: boolean;
   onFocus: () => void;
   onSaved: (setLog: SetLog) => void;
   onDeleted?: () => void;
@@ -72,6 +73,7 @@ export default function SetLogRow({
   defaultMetric,
   isPrescribed,
   isActive,
+  readOnly = false,
   onFocus,
   onSaved,
   onDeleted,
@@ -90,7 +92,8 @@ export default function SetLogRow({
   const showReps = defaultMetric !== "time";
   const showDuration = defaultMetric === "time";
   const showLoad = defaultMetric === "reps_weight";
-  const canDelete = !isPrescribed || Boolean(existingLog) || values.is_complete || hasEnteredValues(values);
+  const canDelete =
+    !readOnly && (!isPrescribed || Boolean(existingLog) || values.is_complete || hasEnteredValues(values));
 
   async function handleDelete() {
     onFocus();
@@ -151,6 +154,8 @@ export default function SetLogRow({
             inputMode="numeric"
             aria-label={`Set ${setNumber} reps`}
             className="text-center"
+            disabled={readOnly}
+            readOnly={readOnly}
             value={values.reps ?? ""}
             onChange={(event) => {
               onFocus();
@@ -168,6 +173,8 @@ export default function SetLogRow({
             inputMode="numeric"
             aria-label={`Set ${setNumber} duration seconds`}
             className="text-center"
+            disabled={readOnly}
+            readOnly={readOnly}
             value={values.duration_seconds ?? ""}
             onChange={(event) => {
               onFocus();
@@ -185,6 +192,8 @@ export default function SetLogRow({
             inputMode="decimal"
             aria-label={`Set ${setNumber} load kg`}
             className="text-center"
+            disabled={readOnly}
+            readOnly={readOnly}
             value={values.load_kg ?? ""}
             onChange={(event) => {
               onFocus();
@@ -198,7 +207,9 @@ export default function SetLogRow({
         <div className="flex min-h-11 shrink-0 items-center justify-center">
           <RoundWarmupToggle
             isWarmup={values.is_warmup}
+            disabled={readOnly}
             onChange={(isWarmup) => {
+              if (readOnly) return;
               onFocus();
               setValues((prev) => ({ ...prev, is_warmup: isWarmup }));
             }}
@@ -212,13 +223,16 @@ export default function SetLogRow({
             type="button"
             aria-label={`Mark set ${setNumber} complete`}
             aria-pressed={values.is_complete}
+            disabled={readOnly}
             className={cn(
               "flex size-11 items-center justify-center rounded-lg border transition-colors",
               values.is_complete
                 ? "border-emerald-400/60 bg-emerald-500/20 text-emerald-200"
                 : "border-white/20 bg-white/5 text-blue-100/50 hover:border-white/40 hover:text-white",
+              readOnly && "cursor-default opacity-70",
             )}
             onClick={() => {
+              if (readOnly) return;
               onFocus();
               setValues((prev) => ({ ...prev, is_complete: !prev.is_complete }));
             }}

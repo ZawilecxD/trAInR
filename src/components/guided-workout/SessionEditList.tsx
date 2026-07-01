@@ -1,6 +1,7 @@
 import { ArrowLeft, RotateCcw } from "lucide-react";
 import { useState } from "react";
 import DeleteConfirmDialog from "@/components/DeleteConfirmDialog";
+import EditWindowBanner from "@/components/guided-workout/EditWindowBanner";
 import ExerciseSetLogTable from "@/components/guided-workout/ExerciseSetLogTable";
 import SessionCommentsThread from "@/components/session-comments/SessionCommentsThread";
 import { Button } from "@/components/ui/button";
@@ -15,6 +16,7 @@ interface SessionEditListProps {
   session: ClientSessionDetail;
   exercises: SessionExerciseDetail[];
   currentUserId: string;
+  readOnly?: boolean;
   onContinueWorkout: (exerciseIndex: number) => void;
   onJumpToExercise: (exerciseIndex: number) => void;
   onLogSaved: (setLog: SetLog) => void;
@@ -26,12 +28,14 @@ interface SessionEditListProps {
 function ExerciseEditCard({
   exercise,
   exerciseIndex,
+  readOnly,
   onJumpToExercise,
   onLogSaved,
   onLogDeleted,
 }: {
   exercise: SessionExerciseDetail;
   exerciseIndex: number;
+  readOnly: boolean;
   onJumpToExercise: (index: number) => void;
   onLogSaved: (setLog: SetLog) => void;
   onLogDeleted: (sessionExerciseId: string, setNumber: number) => void;
@@ -55,7 +59,12 @@ function ExerciseEditCard({
         </p>
       </div>
 
-      <ExerciseSetLogTable exercise={exercise} onLogSaved={onLogSaved} onLogDeleted={onLogDeleted} />
+      <ExerciseSetLogTable
+        exercise={exercise}
+        readOnly={readOnly}
+        onLogSaved={onLogSaved}
+        onLogDeleted={onLogDeleted}
+      />
     </section>
   );
 }
@@ -64,6 +73,7 @@ export default function SessionEditList({
   session,
   exercises,
   currentUserId,
+  readOnly = false,
   onContinueWorkout,
   onJumpToExercise,
   onLogSaved,
@@ -72,6 +82,7 @@ export default function SessionEditList({
   onComplete,
 }: SessionEditListProps) {
   const continueIndex = findFirstIncompleteExerciseIndex(exercises);
+  const hasLogs = exercises.some((exercise) => exercise.logs.length > 0);
   const [restartOpen, setRestartOpen] = useState(false);
   const [restartPending, setRestartPending] = useState(false);
   const [restartError, setRestartError] = useState<string | null>(null);
@@ -125,6 +136,7 @@ export default function SessionEditList({
             type="button"
             variant="outline"
             className="min-h-11 border-white/20 bg-white/5 text-white hover:bg-white/10"
+            disabled={readOnly}
             onClick={() => {
               setRestartOpen(true);
             }}
@@ -142,6 +154,7 @@ export default function SessionEditList({
             onConfirm={handleRestartConfirm}
           />
         </div>
+        <EditWindowBanner lockedAt={session.locked_at} hasLogs={hasLogs} />
         {restartError ? (
           <p className="mt-3 rounded-lg border border-red-400/30 bg-red-500/10 px-4 py-3 text-sm text-red-100">
             {restartError}
@@ -155,6 +168,7 @@ export default function SessionEditList({
             key={exercise.id}
             exercise={exercise}
             exerciseIndex={index}
+            readOnly={readOnly}
             onJumpToExercise={onJumpToExercise}
             onLogSaved={onLogSaved}
             onLogDeleted={onLogDeleted}

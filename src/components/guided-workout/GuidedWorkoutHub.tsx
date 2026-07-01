@@ -7,6 +7,7 @@ import SessionEditList from "@/components/guided-workout/SessionEditList";
 import SessionOverview from "@/components/guided-workout/SessionOverview";
 import { SetLogFlushContext, useSetLogFlushRegistry } from "@/components/hooks/useSetLogFlush";
 import { sortByPhaseThenSortOrder } from "@/lib/guided-workout/phase-labels";
+import { computeEditDeadline, isSessionSealed } from "@/lib/guided-workout/edit-window";
 import { resolveInitialMode, type GuidedWorkoutMode } from "@/lib/guided-workout/session-mode";
 import type { ClientSessionDetail } from "@/lib/workout-sessions/service";
 import type { SessionStatus, SetLog } from "@/types";
@@ -45,6 +46,27 @@ function removeSetLog(exercises: ClientSessionDetail["exercises"], sessionExerci
   });
 }
 
+function deriveEditDeadlineFromExercises(
+  exercises: ClientSessionDetail["exercises"],
+  existingLockedAt: string | null,
+): string | null {
+  if (existingLockedAt) {
+    return existingLockedAt;
+  }
+
+  let earliestLoggedAt: string | null = null;
+
+  for (const exercise of exercises) {
+    for (const log of exercise.logs) {
+      if (!earliestLoggedAt || log.logged_at < earliestLoggedAt) {
+        earliestLoggedAt = log.logged_at;
+      }
+    }
+  }
+
+  return earliestLoggedAt ? computeEditDeadline(earliestLoggedAt) : null;
+}
+
 export default function GuidedWorkoutHub({ initialSession, currentUserId }: GuidedWorkoutHubProps) {
   const [session, setSession] = useState(initialSession);
   const [mode, setMode] = useState<GuidedWorkoutMode>(() => resolveInitialMode(initialSession));
@@ -55,6 +77,7 @@ export default function GuidedWorkoutHub({ initialSession, currentUserId }: Guid
   const [isNavigating, setIsNavigating] = useState(false);
 
   const orderedExercises = useMemo(() => sortByPhaseThenSortOrder(session.exercises), [session.exercises]);
+  const isSealed = isSessionSealed(session.locked_at);
 
   const { register, unregister, flushAll } = useSetLogFlushRegistry();
   const flushRegistry = useMemo(() => ({ register, unregister }), [register, unregister]);
@@ -84,17 +107,26 @@ export default function GuidedWorkoutHub({ initialSession, currentUserId }: Guid
   );
 
   const handleLogSaved = useCallback((setLog: SetLog) => {
-    setSession((prev) => ({
-      ...prev,
-      exercises: mergeSetLog(prev.exercises, setLog),
-    }));
+    setSession((prev) => {
+      const exercises = mergeSetLog(prev.exercises, setLog);
+      return {
+        ...prev,
+        exercises,
+        locked_at: deriveEditDeadlineFromExercises(exercises, prev.locked_at),
+      };
+    });
   }, []);
 
   const handleLogDeleted = useCallback((sessionExerciseId: string, setNumber: number) => {
-    setSession((prev) => ({
-      ...prev,
-      exercises: removeSetLog(prev.exercises, sessionExerciseId, setNumber),
-    }));
+    setSession((prev) => {
+      const exercises = removeSetLog(prev.exercises, sessionExerciseId, setNumber);
+      const hasLogs = exercises.some((exercise) => exercise.logs.length > 0);
+      return {
+        ...prev,
+        exercises,
+        locked_at: hasLogs ? deriveEditDeadlineFromExercises(exercises, null) : null,
+      };
+    });
   }, []);
 
   async function handleRestart() {
@@ -112,6 +144,7 @@ export default function GuidedWorkoutHub({ initialSession, currentUserId }: Guid
     setSession((prev) => ({
       ...prev,
       started_at: body.session?.started_at ?? null,
+      locked_at: null,
       exercises: prev.exercises.map((exercise) => ({ ...exercise, logs: [] })),
     }));
     setExerciseIndex(0);
@@ -194,6 +227,7 @@ export default function GuidedWorkoutHub({ initialSession, currentUserId }: Guid
         session={session}
         exercises={orderedExercises}
         currentUserId={currentUserId}
+        readOnly={isSealed}
         onContinueWorkout={(index) => {
           setExerciseIndex(index);
           setMode("guided");
@@ -248,6 +282,7 @@ export default function GuidedWorkoutHub({ initialSession, currentUserId }: Guid
             exerciseIndex={exerciseIndex}
             totalExercises={orderedExercises.length}
             startedAt={session.started_at}
+            readOnly={isSealed}
             isNavigating={isNavigating}
             onBackToOverview={() => {
               void runGuardedTransition(() => {

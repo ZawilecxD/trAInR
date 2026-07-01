@@ -9,11 +9,17 @@ import type { SetLog } from "@/types";
 
 interface ExerciseSetLogTableProps {
   exercise: SessionExerciseDetail;
+  readOnly?: boolean;
   onLogSaved: (setLog: SetLog) => void;
   onLogDeleted: (sessionExerciseId: string, setNumber: number) => void;
 }
 
-export default function ExerciseSetLogTable({ exercise, onLogSaved, onLogDeleted }: ExerciseSetLogTableProps) {
+export default function ExerciseSetLogTable({
+  exercise,
+  readOnly = false,
+  onLogSaved,
+  onLogDeleted,
+}: ExerciseSetLogTableProps) {
   const { setNumbers, addRound, removeAdditionalSet } = useLoggingSetNumbers(exercise);
   const [activeSetNumber, setActiveSetNumber] = useState<number | null>(() =>
     findFirstIncompleteSetNumber(setNumbers, exercise.logs),
@@ -50,6 +56,7 @@ export default function ExerciseSetLogTable({ exercise, onLogSaved, onLogDeleted
                 defaultMetric={exercise.exercise_default_metric}
                 isPrescribed={isPrescribed}
                 isActive={activeSetNumber === setNumber}
+                readOnly={readOnly}
                 onFocus={() => {
                   setActiveSetNumber(setNumber);
                 }}
@@ -66,17 +73,19 @@ export default function ExerciseSetLogTable({ exercise, onLogSaved, onLogDeleted
         </tbody>
       </table>
 
-      <div className="border-t border-white/10 p-3">
-        <Button
-          type="button"
-          variant="outline"
-          className="min-h-11 w-full border-white/20 bg-white/5 text-white hover:bg-white/10"
-          onClick={handleAddRound}
-        >
-          <Plus className="size-4" aria-hidden="true" />
-          Add round
-        </Button>
-      </div>
+      {!readOnly ? (
+        <div className="border-t border-white/10 p-3">
+          <Button
+            type="button"
+            variant="outline"
+            className="min-h-11 w-full border-white/20 bg-white/5 text-white hover:bg-white/10"
+            onClick={handleAddRound}
+          >
+            <Plus className="size-4" aria-hidden="true" />
+            Add round
+          </Button>
+        </div>
+      ) : null}
     </div>
   );
 }

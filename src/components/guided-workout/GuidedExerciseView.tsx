@@ -11,6 +11,7 @@ interface GuidedExerciseViewProps {
   exerciseIndex: number;
   totalExercises: number;
   startedAt: string | null;
+  readOnly?: boolean;
   isNavigating?: boolean;
   onBackToOverview: () => void;
   onBackToEditList: () => void;
@@ -26,6 +27,7 @@ export default function GuidedExerciseView({
   exerciseIndex,
   totalExercises,
   startedAt,
+  readOnly = false,
   isNavigating = false,
   onBackToOverview,
   onBackToEditList,
@@ -87,7 +89,12 @@ export default function GuidedExerciseView({
           {formatExercisePrescriptionDetail(exercise.sets, exercise.exercise_default_metric)}
         </section>
 
-        <ExerciseSetLogTable exercise={exercise} onLogSaved={onLogSaved} onLogDeleted={onLogDeleted} />
+        <ExerciseSetLogTable
+          exercise={exercise}
+          readOnly={readOnly}
+          onLogSaved={onLogSaved}
+          onLogDeleted={onLogDeleted}
+        />
       </div>
 
       <div className="fixed inset-x-0 bottom-0 bg-slate-950/90 p-4 backdrop-blur-xl lg:static lg:mt-6 lg:bg-transparent lg:p-0 lg:backdrop-blur-none">
