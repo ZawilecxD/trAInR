@@ -7,7 +7,7 @@ import SessionEditList from "@/components/guided-workout/SessionEditList";
 import SessionOverview from "@/components/guided-workout/SessionOverview";
 import { SetLogFlushContext, useSetLogFlushRegistry } from "@/components/hooks/useSetLogFlush";
 import { sortByPhaseThenSortOrder } from "@/lib/guided-workout/phase-labels";
-import { computeEditDeadline, isSessionSealed } from "@/lib/guided-workout/edit-window";
+import { isSessionSealed } from "@/lib/guided-workout/edit-window";
 import { resolveInitialMode, type GuidedWorkoutMode } from "@/lib/guided-workout/session-mode";
 import type { ClientSessionDetail } from "@/lib/workout-sessions/service";
 import type { SessionStatus, SetLog } from "@/types";
@@ -46,25 +46,8 @@ function removeSetLog(exercises: ClientSessionDetail["exercises"], sessionExerci
   });
 }
 
-function deriveEditDeadlineFromExercises(
-  exercises: ClientSessionDetail["exercises"],
-  existingLockedAt: string | null,
-): string | null {
-  if (existingLockedAt) {
-    return existingLockedAt;
-  }
-
-  let earliestLoggedAt: string | null = null;
-
-  for (const exercise of exercises) {
-    for (const log of exercise.logs) {
-      if (!earliestLoggedAt || log.logged_at < earliestLoggedAt) {
-        earliestLoggedAt = log.logged_at;
-      }
-    }
-  }
-
-  return earliestLoggedAt ? computeEditDeadline(earliestLoggedAt) : null;
+function isTerminalStatus(status: SessionStatus): boolean {
+  return status === "finished" || status === "finished_partially" || status === "cancelled";
 }
 
 export default function GuidedWorkoutHub({ initialSession, currentUserId }: GuidedWorkoutHubProps) {
@@ -78,6 +61,18 @@ export default function GuidedWorkoutHub({ initialSession, currentUserId }: Guid
 
   const orderedExercises = useMemo(() => sortByPhaseThenSortOrder(session.exercises), [session.exercises]);
   const isSealed = isSessionSealed(session.locked_at);
+
+  const setModeForSession = useCallback(
+    (target: GuidedWorkoutMode) => {
+      if (target === "overview" && isTerminalStatus(session.status)) {
+        setMode("completed");
+        return;
+      }
+
+      setMode(target);
+    },
+    [session.status],
+  );
 
   const { register, unregister, flushAll } = useSetLogFlushRegistry();
   const flushRegistry = useMemo(() => ({ register, unregister }), [register, unregister]);
@@ -107,26 +102,17 @@ export default function GuidedWorkoutHub({ initialSession, currentUserId }: Guid
   );
 
   const handleLogSaved = useCallback((setLog: SetLog) => {
-    setSession((prev) => {
-      const exercises = mergeSetLog(prev.exercises, setLog);
-      return {
-        ...prev,
-        exercises,
-        locked_at: deriveEditDeadlineFromExercises(exercises, prev.locked_at),
-      };
-    });
+    setSession((prev) => ({
+      ...prev,
+      exercises: mergeSetLog(prev.exercises, setLog),
+    }));
   }, []);
 
   const handleLogDeleted = useCallback((sessionExerciseId: string, setNumber: number) => {
-    setSession((prev) => {
-      const exercises = removeSetLog(prev.exercises, sessionExerciseId, setNumber);
-      const hasLogs = exercises.some((exercise) => exercise.logs.length > 0);
-      return {
-        ...prev,
-        exercises,
-        locked_at: hasLogs ? deriveEditDeadlineFromExercises(exercises, null) : null,
-      };
-    });
+    setSession((prev) => ({
+      ...prev,
+      exercises: removeSetLog(prev.exercises, sessionExerciseId, setNumber),
+    }));
   }, []);
 
   async function handleRestart() {
@@ -148,10 +134,15 @@ export default function GuidedWorkoutHub({ initialSession, currentUserId }: Guid
       exercises: prev.exercises.map((exercise) => ({ ...exercise, logs: [] })),
     }));
     setExerciseIndex(0);
-    setMode("overview");
+    setModeForSession("overview");
   }
 
   async function handleComplete(status: "finished" | "finished_partially" | "cancelled") {
+    const flushed = await flushAll();
+    if (!flushed) {
+      throw new Error("Save pending set logs before completing the workout");
+    }
+
     const response = await fetch(`/api/client/sessions/${session.id}/complete`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -159,7 +150,11 @@ export default function GuidedWorkoutHub({ initialSession, currentUserId }: Guid
     });
 
     const body = (await response.json()) as {
-      session?: { status: SessionStatus };
+      session?: {
+        status: SessionStatus;
+        locked_at: string | null;
+        completed_at: string | null;
+      };
       error?: string;
       details?: { message?: string };
     };
@@ -168,8 +163,17 @@ export default function GuidedWorkoutHub({ initialSession, currentUserId }: Guid
       throw new Error(body.details?.message ?? body.error ?? `Failed to save session status (${response.status})`);
     }
 
-    const newStatus = body.session?.status ?? status;
-    setSession((prev) => ({ ...prev, status: newStatus }));
+    const updatedSession = body.session;
+    const newStatus = updatedSession?.status ?? status;
+    const lockedAt = updatedSession?.locked_at ?? null;
+
+    setSession((prev) => ({
+      ...prev,
+      status: newStatus,
+      locked_at: lockedAt,
+      completed_at: updatedSession?.completed_at ?? prev.completed_at,
+    }));
+
     setMode("completed");
   }
 
@@ -194,7 +198,7 @@ export default function GuidedWorkoutHub({ initialSession, currentUserId }: Guid
       const startedAt = body.session?.started_at ?? new Date().toISOString();
       setSession((prev) => ({ ...prev, started_at: startedAt }));
       setExerciseIndex(0);
-      setMode("guided");
+      setModeForSession("guided");
     } catch (err) {
       setBeginError(err instanceof Error ? err.message : "Failed to start session");
     } finally {
@@ -203,7 +207,15 @@ export default function GuidedWorkoutHub({ initialSession, currentUserId }: Guid
   }
 
   if (mode === "completed") {
-    return <SessionCompletedView session={session} currentUserId={currentUserId} />;
+    return (
+      <SessionCompletedView
+        session={session}
+        currentUserId={currentUserId}
+        onEdit={() => {
+          setMode("edit-list");
+        }}
+      />
+    );
   }
 
   if (mode === "overview") {
@@ -223,24 +235,29 @@ export default function GuidedWorkoutHub({ initialSession, currentUserId }: Guid
 
   if (mode === "edit-list") {
     return (
-      <SessionEditList
-        session={session}
-        exercises={orderedExercises}
-        currentUserId={currentUserId}
-        readOnly={isSealed}
-        onContinueWorkout={(index) => {
-          setExerciseIndex(index);
-          setMode("guided");
-        }}
-        onJumpToExercise={(index) => {
-          setExerciseIndex(index);
-          setMode("guided");
-        }}
-        onLogSaved={handleLogSaved}
-        onLogDeleted={handleLogDeleted}
-        onRestart={handleRestart}
-        onComplete={handleComplete}
-      />
+      <SetLogFlushContext.Provider value={flushRegistry}>
+        <SessionEditList
+          session={session}
+          exercises={orderedExercises}
+          currentUserId={currentUserId}
+          readOnly={isSealed}
+          onContinueWorkout={(index) => {
+            setExerciseIndex(index);
+            setModeForSession("guided");
+          }}
+          onJumpToExercise={(index) => {
+            setExerciseIndex(index);
+            setModeForSession("guided");
+          }}
+          onLogSaved={handleLogSaved}
+          onLogDeleted={handleLogDeleted}
+          onRestart={handleRestart}
+          onComplete={handleComplete}
+          onBackToSummary={() => {
+            setMode("completed");
+          }}
+        />
+      </SetLogFlushContext.Provider>
     );
   }
 
@@ -286,12 +303,12 @@ export default function GuidedWorkoutHub({ initialSession, currentUserId }: Guid
             isNavigating={isNavigating}
             onBackToOverview={() => {
               void runGuardedTransition(() => {
-                setMode("overview");
+                setModeForSession("overview");
               });
             }}
             onBackToEditList={() => {
               void runGuardedTransition(() => {
-                setMode("edit-list");
+                setModeForSession("edit-list");
               });
             }}
             onOpenMenu={() => {

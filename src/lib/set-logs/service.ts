@@ -1,6 +1,6 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { UpsertSetLogBody } from "@/lib/set-logs/schemas";
-import { computeEditDeadline, isSessionSealed } from "@/lib/guided-workout/edit-window";
+import { isSessionSealed } from "@/lib/guided-workout/edit-window";
 import type { ExerciseMetric, SetLog } from "@/types";
 
 type UpsertSetLogErrorCode = "not_found" | "locked" | "validation_error";
@@ -11,7 +11,6 @@ export type UpsertSetLogResult =
 
 interface SessionExerciseContextRow {
   id: string;
-  session_id: string;
   exercises: { default_metric: ExerciseMetric } | { default_metric: ExerciseMetric }[] | null;
   workout_sessions:
     | {
@@ -71,32 +70,6 @@ function validateMetricFields(metric: ExerciseMetric, body: UpsertSetLogBody): s
   return null;
 }
 
-async function ensureSessionEditDeadline(supabase: SupabaseClient, sessionId: string): Promise<void> {
-  const exercisesResult = await supabase.from("session_exercises").select("id").eq("session_id", sessionId);
-
-  if (exercisesResult.error || exercisesResult.data.length === 0) {
-    return;
-  }
-
-  const exerciseIds = exercisesResult.data.map((row: { id: string }) => row.id);
-
-  const firstLogResult = await supabase
-    .from("set_logs")
-    .select("logged_at")
-    .in("session_exercise_id", exerciseIds)
-    .order("logged_at", { ascending: true })
-    .limit(1)
-    .maybeSingle();
-
-  if (firstLogResult.error || !firstLogResult.data) {
-    return;
-  }
-
-  const deadline = computeEditDeadline(firstLogResult.data.logged_at as string);
-
-  await supabase.from("workout_sessions").update({ locked_at: deadline }).eq("id", sessionId).is("locked_at", null);
-}
-
 export async function upsertSetLog(
   supabase: SupabaseClient,
   userId: string,
@@ -104,7 +77,7 @@ export async function upsertSetLog(
 ): Promise<UpsertSetLogResult> {
   const contextResult = await supabase
     .from("session_exercises")
-    .select("id, session_id, exercises(default_metric), workout_sessions(locked_at, client_plans!inner(client_id))")
+    .select("id, exercises(default_metric), workout_sessions(locked_at, client_plans!inner(client_id))")
     .eq("id", body.session_exercise_id)
     .maybeSingle();
 
@@ -154,11 +127,6 @@ export async function upsertSetLog(
 
   if (upsertResult.error) {
     return { ok: false, code: "not_found", message: upsertResult.error.message };
-  }
-
-  const rowSessionId = row.session_id;
-  if (rowSessionId && !session?.locked_at) {
-    await ensureSessionEditDeadline(supabase, rowSessionId);
   }
 
   return { ok: true, data: parseSetLog(upsertResult.data) };

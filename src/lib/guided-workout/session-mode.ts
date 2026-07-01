@@ -2,8 +2,12 @@ import type { ClientSessionDetail } from "@/lib/workout-sessions/service";
 
 export type GuidedWorkoutMode = "overview" | "guided" | "edit-list" | "completed";
 
+function isTerminalStatus(status: ClientSessionDetail["status"]): boolean {
+  return status === "finished" || status === "finished_partially" || status === "cancelled";
+}
+
 export function resolveInitialMode(session: ClientSessionDetail): GuidedWorkoutMode {
-  if (session.status !== "not_started") {
+  if (isTerminalStatus(session.status)) {
     return "completed";
   }
 

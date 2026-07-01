@@ -21,7 +21,7 @@ export default function EditWindowBanner({ lockedAt, hasLogs }: EditWindowBanner
     };
   }, []);
 
-  if (!hasLogs) {
+  if (!hasLogs && !lockedAt) {
     return null;
   }
 

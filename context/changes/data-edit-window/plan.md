@@ -250,3 +250,17 @@ Existing sessions with logs but `locked_at = null` get deadline set on next upse
 - [x] 3.1 `npm run lint` passes
 - [x] 3.2 `npm run build` passes
 - [x] 3.3 `npm test` passes
+
+### Phase 4: Post-completion summary + Edit entry
+
+> Detail: `plan-phase-4-post-completion-nav.md`
+
+#### Automated
+
+- [x] 4.1 `npm run lint` passes
+- [x] 4.2 `npm run build` passes
+- [x] 4.3 `npm test` passes
+
+#### Manual
+
+- [ ] 4.4 Summary + Edit flow; no Begin/Cancel on finished re-entry

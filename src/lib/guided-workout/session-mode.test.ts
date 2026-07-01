@@ -73,12 +73,46 @@ describe("resolveInitialMode", () => {
     ).toBe("edit-list");
   });
 
-  it("returns edit-list when sealed but still not_started (read-only handled in UI)", () => {
+  it("returns completed when finished within the edit window", () => {
+    expect(
+      resolveInitialMode({
+        ...baseSession,
+        status: "finished",
+        started_at: "2026-06-14T12:00:00.000Z",
+        completed_at: "2026-06-14T13:00:00.000Z",
+        locked_at: "2099-06-15T13:00:00.000Z",
+      }),
+    ).toBe("completed");
+  });
+
+  it("returns completed when finished and edit window has passed", () => {
+    expect(
+      resolveInitialMode({
+        ...baseSession,
+        status: "finished",
+        started_at: "2026-06-14T12:00:00.000Z",
+        completed_at: "2026-06-14T13:00:00.000Z",
+        locked_at: "2020-01-01T00:00:00.000Z",
+      }),
+    ).toBe("completed");
+  });
+
+  it("returns completed for cancelled sessions", () => {
+    expect(
+      resolveInitialMode({
+        ...baseSession,
+        status: "cancelled",
+        started_at: "2026-06-14T12:00:00.000Z",
+      }),
+    ).toBe("completed");
+  });
+
+  it("returns edit-list when in progress with logs (no completion deadline yet)", () => {
     expect(
       resolveInitialMode({
         ...baseSession,
         started_at: "2026-06-14T12:00:00.000Z",
-        locked_at: "2020-01-01T00:00:00.000Z",
+        locked_at: null,
         exercises: [
           {
             ...baseSession.exercises[0],

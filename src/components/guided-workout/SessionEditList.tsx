@@ -23,6 +23,7 @@ interface SessionEditListProps {
   onLogDeleted: (sessionExerciseId: string, setNumber: number) => void;
   onRestart: () => Promise<void>;
   onComplete: (status: "finished" | "finished_partially" | "cancelled") => Promise<void>;
+  onBackToSummary?: () => void;
 }
 
 function ExerciseEditCard({
@@ -80,9 +81,11 @@ export default function SessionEditList({
   onLogDeleted,
   onRestart,
   onComplete,
+  onBackToSummary,
 }: SessionEditListProps) {
   const continueIndex = findFirstIncompleteExerciseIndex(exercises);
   const hasLogs = exercises.some((exercise) => exercise.logs.length > 0);
+  const isInProgress = session.status === "not_started";
   const [restartOpen, setRestartOpen] = useState(false);
   const [restartPending, setRestartPending] = useState(false);
   const [restartError, setRestartError] = useState<string | null>(null);
@@ -120,13 +123,24 @@ export default function SessionEditList({
   return (
     <div className="flex min-h-[calc(100vh-2rem)] flex-col">
       <header className="mb-6">
-        <a
-          href="/client/plan"
-          className="inline-flex min-h-11 items-center gap-2 text-sm text-blue-100/70 transition-colors hover:text-white"
-        >
-          <ArrowLeft className="size-4" aria-hidden="true" />
-          Calendar
-        </a>
+        {isInProgress ? (
+          <a
+            href="/client/plan"
+            className="inline-flex min-h-11 items-center gap-2 text-sm text-blue-100/70 transition-colors hover:text-white"
+          >
+            <ArrowLeft className="size-4" aria-hidden="true" />
+            Calendar
+          </a>
+        ) : (
+          <button
+            type="button"
+            className="inline-flex min-h-11 items-center gap-2 text-sm text-blue-100/70 transition-colors hover:text-white"
+            onClick={onBackToSummary}
+          >
+            <ArrowLeft className="size-4" aria-hidden="true" />
+            Summary
+          </button>
+        )}
         <div className="mt-4 flex flex-wrap items-start justify-between gap-3">
           <div>
             <h1 className="text-3xl font-bold text-white">{session.name ?? "Workout"}</h1>
@@ -136,7 +150,7 @@ export default function SessionEditList({
             type="button"
             variant="outline"
             className="min-h-11 border-white/20 bg-white/5 text-white hover:bg-white/10"
-            disabled={readOnly}
+            disabled={readOnly || !isInProgress}
             onClick={() => {
               setRestartOpen(true);
             }}
@@ -185,61 +199,65 @@ export default function SessionEditList({
               {completeError}
             </p>
           ) : null}
-          <Button
-            type="button"
-            className="min-h-12 w-full text-base"
-            onClick={() => {
-              onContinueWorkout(continueIndex);
-            }}
-          >
-            Continue workout
-          </Button>
-          <div className="grid grid-cols-3 gap-2">
-            <Button
-              type="button"
-              variant="outline"
-              className="min-h-11 border-emerald-500/30 bg-emerald-500/10 text-emerald-200 hover:bg-emerald-500/20"
-              disabled={completePending}
-              onClick={() => {
-                void handleComplete("finished");
-              }}
-            >
-              Done
-            </Button>
-            <Button
-              type="button"
-              variant="outline"
-              className="min-h-11 border-amber-500/30 bg-amber-500/10 text-amber-200 hover:bg-amber-500/20"
-              disabled={completePending}
-              onClick={() => {
-                void handleComplete("finished_partially");
-              }}
-            >
-              Partial
-            </Button>
-            <Button
-              type="button"
-              variant="outline"
-              className="min-h-11 border-slate-500/30 bg-slate-500/10 text-slate-300 hover:bg-slate-500/20"
-              disabled={completePending}
-              onClick={() => {
-                setCancelOpen(true);
-              }}
-            >
-              Cancel
-            </Button>
-          </div>
-          <DeleteConfirmDialog
-            open={cancelOpen}
-            onOpenChange={setCancelOpen}
-            title="Cancel this session?"
-            description="The session will be marked as cancelled. Any sets you logged will be kept."
-            confirmLabel="Cancel session"
-            loading={completePending}
-            onConfirm={() => {
-              void handleComplete("cancelled");
-            }}
-          />
+          {isInProgress ? (
+            <>
+              <Button
+                type="button"
+                className="min-h-12 w-full text-base"
+                onClick={() => {
+                  onContinueWorkout(continueIndex);
+                }}
+              >
+                Continue workout
+              </Button>
+              <div className="grid grid-cols-3 gap-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="min-h-11 border-emerald-500/30 bg-emerald-500/10 text-emerald-200 hover:bg-emerald-500/20"
+                  disabled={completePending}
+                  onClick={() => {
+                    void handleComplete("finished");
+                  }}
+                >
+                  Done
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="min-h-11 border-amber-500/30 bg-amber-500/10 text-amber-200 hover:bg-amber-500/20"
+                  disabled={completePending}
+                  onClick={() => {
+                    void handleComplete("finished_partially");
+                  }}
+                >
+                  Partial
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="min-h-11 border-slate-500/30 bg-slate-500/10 text-slate-300 hover:bg-slate-500/20"
+                  disabled={completePending}
+                  onClick={() => {
+                    setCancelOpen(true);
+                  }}
+                >
+                  Cancel
+                </Button>
+              </div>
+              <DeleteConfirmDialog
+                open={cancelOpen}
+                onOpenChange={setCancelOpen}
+                title="Cancel this session?"
+                description="The session will be marked as cancelled. Any sets you logged will be kept."
+                confirmLabel="Cancel session"
+                loading={completePending}
+                onConfirm={() => {
+                  void handleComplete("cancelled");
+                }}
+              />
+            </>
+          ) : null}
         </div>
       </div>
     </div>
