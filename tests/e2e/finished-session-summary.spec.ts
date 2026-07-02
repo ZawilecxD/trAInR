@@ -5,6 +5,7 @@
  */
 import { test, expect } from "@playwright/test";
 import { CLIENT_STORAGE_STATE, TRAINER_STORAGE_STATE } from "./auth";
+import { clickUntilVisible } from "./hydration";
 
 const CLIENT_A_ID = "c2000001-0000-4000-8000-000000000002";
 const BENCH_PRESS_ID = "e2000001-0000-4000-8000-000000000001";
@@ -69,12 +70,13 @@ test.describe("S-20 — finished session exercise summary", () => {
       });
       expect(startResponse.status()).toBe(200);
 
-      const logResponse = await page.request.post("/api/client/set-logs", {
+      const logResponse = await page.request.put("/api/client/set-logs", {
         headers: { origin: baseURL ?? "http://localhost:4321" },
         data: {
           session_exercise_id: sessionExerciseId,
           set_number: 1,
           reps: 9,
+          duration_seconds: null,
           load_kg: 42.5,
           is_complete: true,
           is_warmup: false,
@@ -90,19 +92,28 @@ test.describe("S-20 — finished session exercise summary", () => {
 
       await page.goto(`/client/sessions/${createdSessionId}`);
       await expect(page.getByRole("heading", { name: sessionName, level: 1 })).toBeVisible();
-      await expect(page.getByRole("heading", { name: "Bench Press", level: 4 })).toBeVisible();
 
-      await expect(page.getByText("Sets logged")).toBeVisible();
-      await expect(page.getByText("1 of 1")).toBeVisible();
-      await expect(page.getByRole("columnheader", { name: "Prescribed" })).toBeVisible();
-      await expect(page.getByRole("columnheader", { name: "Actual" })).toBeVisible();
-      await expect(page.getByText("9 reps @ 42.5 kg")).toBeVisible();
-      await expect(page.getByText("E2E summary visibility check")).toBeVisible();
+      const benchPressSummary = page
+        .getByRole("article")
+        .filter({ has: page.getByRole("heading", { name: "Bench Press", level: 4 }) });
+      const sessionMetadata = page.locator("section").filter({ has: page.getByText("Trainer", { exact: true }) });
+
+      await expect(sessionMetadata.getByText("Sets logged", { exact: true })).toBeVisible();
+      await expect(sessionMetadata.getByText("1 of 1", { exact: true })).toBeVisible();
+      await expect(benchPressSummary.getByRole("columnheader", { name: "Prescribed" })).toBeVisible();
+      await expect(benchPressSummary.getByRole("columnheader", { name: "Actual" })).toBeVisible();
+      await expect(benchPressSummary.getByText("9 reps @ 42.5 kg")).toBeVisible();
+      await expect(benchPressSummary.getByText("E2E summary visibility check")).toBeVisible();
 
       const editButton = page.getByRole("button", { name: "Edit" });
       await expect(editButton).toBeVisible();
-      await editButton.click();
-      await expect(page.getByRole("button", { name: "Summary" })).toBeVisible();
+      // Astro's dev toolbar can cover fixed bottom CTAs in local E2E runs.
+      await page.locator("astro-dev-toolbar").evaluateAll((toolbars) => {
+        for (const toolbar of toolbars) {
+          toolbar.remove();
+        }
+      });
+      await clickUntilVisible(editButton, page.getByRole("button", { name: "Summary" }));
       await expect(page.getByLabel("Set 1 reps")).toHaveValue("9");
     } finally {
       if (createdSessionId) {

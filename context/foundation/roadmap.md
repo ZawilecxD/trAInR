@@ -5,7 +5,7 @@
 version: 1
 status: draft
 created: 2026-05-25
-updated: 2026-07-01
+updated: 2026-07-02
 prd_version: 1
 main_goal: speed
 top_blocker: time
@@ -63,6 +63,7 @@ Independent personal trainers lose coaching time to admin — hunting across spr
 | Q-02 | harden-replace-exercise-muscle-groups | close KNOWN GAP: RPC rejects cross-trainer muscle group replacement; flip integration test             | S-01, test-plan Phase 1 complete | NFR privacy, NFR data integrity | done     |
 | Q-03 | harden-complete-client-invite         | close KNOWN GAP: block fraudulent p_client_id on authenticated invite completion; preserve anon signup | S-03, test-plan Phase 1 complete | FR-003, FR-004, FR-005          | proposed |
 | Q-04 | add-e2e-ci-gate                       | run the Playwright E2E suite automatically on every PR against an ephemeral Supabase, blocking merge on browser-flow regressions | S-06, test-plan Phase 5 | NFR mobile usability, NFR data integrity | proposed |
+| Q-05 | add-production-debug-observability    | capture production errors and runtime logs for AI-assisted debugging via Sentry/Vercel logs MCP tooling | first production traffic          | NFR reliability, NFR supportability | parked   |
 
 
 ## Streams
@@ -75,7 +76,7 @@ Navigation aid — groups items that share a Prerequisites chain. Canonical orde
 | A      | Trainer authoring → north star | `F-01` → `S-01` → `S-02` → `S-04` → `S-06` → `S-07`                            | Critical path: every link is on the shortest route to validating the async training loop.                                                                                                                                                                                                                                                                                                                  |
 | B      | Client onboarding & calendar   | `S-03` → `S-05`                                                                | Joins Stream A at `S-04` (S-03 is a prerequisite for S-04); `S-05` branches off `S-04` parallel with `S-06`.                                                                                                                                                                                                                                                                                               |
 | C      | Enhancement & polish           | `S-08` / `S-09` / `S-10` / `S-11` / `S-12` / `S-13` / `S-14` / `S-15` / `S-17` / `S-18` / `S-19` / `S-20` | Tier 2+3 items; sequence after core loop completes or when capacity opens. `S-14` extends session template prescription (after S-02). `S-15` extends exercise library browse/filter (after S-01). `S-16` was parked for post-MVP after planning research showed it changes creation ownership, exercise-library access, and trainer dashboard semantics. `S-17` seeds starter exercises on trainer signup. `S-18` unifies the dual design-system debt (shadcn tokens vs cosmic palette) per `DESIGN.md`, `context/changes/ui-redesign/research.md`, and Pencil mockups in `docs/pencil/`. `S-19` replaces the per-set OK/completed toggle with one-click prescription fill and defers completion semantics to session level (S-08). `S-20` makes the terminal/client summary state useful by showing the same exercise/log data read-only before the user chooses Edit or after editing is sealed. |
-| D      | Quality & testing              | `Q-01` / `Q-02` / `Q-03` / `Q-04`                                              | Cross-cutting; selective mutation testing per `test-plan.md` after the integration harness lands. `Q-02`/`Q-03` close SECURITY DEFINER gaps documented by the harness (flip KNOWN GAP tests). `Q-04` promotes the existing local-only Playwright suite to a PR gate, reusing the `test-integration` Supabase-in-CI pattern.                                                                          |
+| D      | Quality & testing              | `Q-01` / `Q-02` / `Q-03` / `Q-04` / `Q-05`                                     | Cross-cutting; selective mutation testing per `test-plan.md` after the integration harness lands. `Q-02`/`Q-03` close SECURITY DEFINER gaps documented by the harness (flip KNOWN GAP tests). `Q-04` promotes the existing local-only Playwright suite to a PR gate, reusing the `test-integration` Supabase-in-CI pattern. `Q-05` is parked until production debugging pain appears, then adds Sentry/Vercel log evidence sources and MCP access for agent-assisted triage.                                                                          |
 
 
 ## Baseline
@@ -89,7 +90,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Auth:** present — Supabase Auth via `@supabase/ssr`, cookie sessions, role-aware middleware guards for trainer/client routes
 - **Testing:** present — Vitest unit + integration tests; RLS isolation harness (`tests/integration/`); CI runs lint + build (see `context/foundation/test-plan.md` for phased rollout)
 - **Deploy / infra:** present — Vercel via `@astrojs/vercel`, GitHub Actions CI (`.github/workflows/ci.yml`: lint + build + deploy)
-- **Observability:** absent — no logging, error tracking, metrics, or structured logging
+- **Observability:** absent — no logging, error tracking, metrics, or structured logging; Q-05 parks production debug observability for later
 
 ## Foundations
 
@@ -134,6 +135,19 @@ Foundations below assume these are present and do NOT re-scaffold them.
   - browser/runtime cost: install `chromium` only vs a wider matrix; whether to shard once the suite grows beyond the current three specs
 - **Risk:** E2E is the slowest, flakiest gate; a poorly-isolated suite erodes trust in CI. Mitigations: reuse the proven `supabase start` + seed flow (dev users `trainer-A@`/`client-A@`, password `Rooster2`, created by `scripts/seed-dev-users.sql` on reset), export `SUPABASE_URL=$API_URL` and `SUPABASE_KEY=$ANON_KEY` from `supabase status` for the dev server (mirror the integration job), pin the Playwright browser version, upload `playwright-report` + traces on failure, and gate on a single `chromium` project before expanding.
 - **Status:** proposed
+
+### Q-05: Production debug observability
+
+- **Outcome:** team can debug production-only failures with evidence instead of guesswork: Sentry captures exceptions/warnings with stack traces and breadcrumbs, Vercel runtime logs provide filtered deployment/request context, and MCP servers expose both tools to agents during triage
+- **Change ID:** add-production-debug-observability
+- **Linear:** ZAW-52
+- **PRD refs:** NFR reliability and supportability (post-MVP operational quality; not a user-facing feature)
+- **Prerequisites:** first production traffic; Vercel deployment already in place; secrets managed outside the repo
+- **Parallel with:** any post-MVP hardening slice; should not block MVP feature work
+- **Blockers:** choose final error/logging stack and MCP servers; confirm source-map/release setup for Astro SSR on Vercel; define what may be logged without leaking Supabase tokens, auth cookies, health data, or PII
+- **Unknowns:** whether Sentry alone is enough for errors and console warnings, or whether Vercel Logs/Log Drains need a second destination; whether to use official MCP servers, hosted integrations, or local MCP wrappers; how much structured logging to add around API routes before noise outweighs signal
+- **Risk:** Observability can become noisy or leak sensitive data if added casually. Follow M3L5's debugging loop: ticket/symptom → Sentry issue/stack trace → runtime logs for frequency and request context → local reproduction/test. Keep payloads scrubbed and MCP credentials outside git.
+- **Status:** parked
 
 ## Slices
 
@@ -408,6 +422,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 | Q-02       | harden-replace-exercise-muscle-groups | Add auth.uid() ownership check to replace_exercise_muscle_groups RPC        | —                     | done → `context/archive/2026-06-08-harden-replace-exercise-muscle-groups/`                                                  |
 | Q-03       | harden-complete-client-invite         | Harden complete_client_invite p_client_id binding for authenticated callers | no                    | Run `/10x-frame harden-complete-client-invite` first (anon vs authenticated design); then `/10x-plan`                       |
 | Q-04       | add-e2e-ci-gate                       | Wire the Playwright E2E suite into CI as a PR quality gate                   | yes                   | Run `/10x-research add-e2e-ci-gate`; mirror the `test-integration` Supabase job; see `test-plan.md` §3 Phase 5 / §8         |
+| Q-05       | add-production-debug-observability    | Add Sentry/Vercel production debugging evidence and MCP access              | no                    | Linear ZAW-52; parked post-MVP; run `/10x-research add-production-debug-observability` when production incidents or support tickets appear |
 
 
 ## Open Roadmap Questions
@@ -438,6 +453,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Offline mode** — Why parked: PRD §Non-Goals #13. Requires internet.
 - ~~**Pre-populated exercise database**~~ — **Promoted to S-17** (`starter-exercise-seed`): curated starter library copied per trainer on signup; trainers edit/delete like their own exercises.
 - **Ad-hoc session logging (S-16)** — Why parked: post-MVP scope. Initial planning research found it requires client-created session provenance, client-safe trainer exercise-library access, a new create RPC/API, calendar semantics, and trainer-dashboard distinction before it is safe to implement.
+- **Production debug observability (Q-05)** — Why parked: valuable once real production incidents exist, but not needed to prove MVP. Later scope should add Sentry error/warning capture, Vercel runtime log access, source maps/releases, PII scrubbing, and MCP setup so agents can inspect issues/logs during M3L5-style triage.
 - **Static invite link + trainer approval** — Why parked: research spike complete (`context/archive/2026-06-07-static-invite-link-approval/`). Recommends Everfit-style reusable link + optional approval queue, but departs from locked S-03 contract (auto-assign, no pending state). Needs explicit product decision before a roadmap slice.
 
 ## Done
