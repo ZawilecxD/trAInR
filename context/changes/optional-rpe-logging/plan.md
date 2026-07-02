@@ -246,34 +246,34 @@ Nullable column — no backfill. Existing rows have `rpe = null`.
 
 #### Automated
 
-- [x] 1.1 `npm run lint`
-- [x] 1.2 `npm test -- src/lib/set-logs/schemas.test.ts`
+- [x] 1.1 `npm run lint` — 1e2c856
+- [x] 1.2 `npm test -- src/lib/set-logs/schemas.test.ts` — 1e2c856
 
 #### Manual
 
-- [x] 1.3 Apply migration on local Supabase
+- [x] 1.3 Apply migration on local Supabase — 1e2c856
 
 ### Phase 2: UI — logging input and readouts
 
 #### Automated
 
-- [x] 2.1 `npm run lint`
-- [x] 2.2 `npm run build`
+- [x] 2.1 `npm run lint` — 1e2c856
+- [x] 2.2 `npm run build` — 1e2c856
 
 #### Manual
 
-- [x] 2.3 Log set with RPE in guided workout; reload persists
-- [x] 2.4 Trainer session detail and client summary show RPE
+- [x] 2.3 Log set with RPE in guided workout; reload persists — 1e2c856
+- [x] 2.4 Trainer session detail and client summary show RPE — 1e2c856
 
 ### Phase 3: Tests and verification SQL
 
 #### Automated
 
-- [x] 3.1 `npm run lint`
-- [x] 3.2 Unit tests pass
-- [x] 3.3 Integration test passes
-- [x] 3.4 `npm run build`
+- [x] 3.1 `npm run lint` — 1e2c856
+- [x] 3.2 Unit tests pass — 1e2c856
+- [x] 3.3 Integration test passes — 1e2c856
+- [x] 3.4 `npm run build` — 1e2c856
 
 #### Manual
 
-- [x] 3.5 Run `verify-s21-manual.sql` in Supabase Studio
+- [x] 3.5 Run `verify-s21-manual.sql` in Supabase Studio — 1e2c856
