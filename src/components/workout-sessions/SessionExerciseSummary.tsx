@@ -75,6 +75,7 @@ function ExerciseActualsCard({ exercise, notes }: { exercise: ExerciseReadout; n
                 {showReps ? <th className="px-2 py-2 text-center font-medium">Reps</th> : null}
                 {showDuration ? <th className="px-2 py-2 text-center font-medium">Time</th> : null}
                 {showLoad ? <th className="px-2 py-2 text-center font-medium">Load</th> : null}
+                <th className="px-2 py-2 text-center font-mono text-xs font-medium tracking-wide">RPE</th>
                 <th className="px-2 py-2 text-center font-medium">Done</th>
               </tr>
             </thead>
@@ -105,6 +106,7 @@ function ExerciseActualsCard({ exercise, notes }: { exercise: ExerciseReadout; n
                     {showLoad ? (
                       <td className="px-2 py-2.5 text-center text-blue-100/80">{setReadout.log?.load_kg ?? "—"}</td>
                     ) : null}
+                    <td className="px-2 py-2.5 text-center font-mono text-blue-100/80">{setReadout.log?.rpe ?? "—"}</td>
                     <td className="px-2 py-2.5">
                       <div className="flex justify-center">
                         <span

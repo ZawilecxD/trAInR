@@ -118,6 +118,7 @@ export async function upsertSetLog(
         reps: body.reps,
         duration_seconds: body.duration_seconds,
         load_kg: body.load_kg,
+        rpe: body.rpe,
         is_complete: body.is_complete,
         is_warmup: body.is_warmup,
       },

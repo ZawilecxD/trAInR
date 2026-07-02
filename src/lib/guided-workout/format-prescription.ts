@@ -159,7 +159,8 @@ export function formatSetActual(log: SetLog | null, defaultMetric: ExerciseMetri
   }
 
   if (parts.length > 0) {
-    return parts.join(" @ ");
+    const actual = parts.join(" @ ");
+    return log.rpe !== null ? `${actual} · RPE ${log.rpe}` : actual;
   }
 
   if (log.is_complete) {

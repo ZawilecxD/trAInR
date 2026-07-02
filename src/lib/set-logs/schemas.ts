@@ -8,6 +8,7 @@ export const upsertSetLogBodySchema = z.object({
   reps: z.number().int().nullable(),
   duration_seconds: z.number().int().nullable(),
   load_kg: z.number().nullable(),
+  rpe: z.number().int().min(1).max(10).nullable().default(null),
   is_complete: z.boolean(),
   is_warmup: z.boolean(),
 });

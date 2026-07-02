@@ -60,6 +60,66 @@ describe("upsertSetLogBodySchema", () => {
     expect(parsed.success).toBe(true);
   });
 
+  it("accepts null rpe", () => {
+    const parsed = upsertSetLogBodySchema.safeParse({
+      session_exercise_id: validSessionExerciseId,
+      set_number: 1,
+      reps: 10,
+      duration_seconds: null,
+      load_kg: 80,
+      rpe: null,
+      is_complete: true,
+      is_warmup: false,
+    });
+
+    expect(parsed.success).toBe(true);
+  });
+
+  it("accepts rpe between 1 and 10", () => {
+    const parsed = upsertSetLogBodySchema.safeParse({
+      session_exercise_id: validSessionExerciseId,
+      set_number: 1,
+      reps: 10,
+      duration_seconds: null,
+      load_kg: 80,
+      rpe: 7,
+      is_complete: true,
+      is_warmup: false,
+    });
+
+    expect(parsed.success).toBe(true);
+  });
+
+  it("rejects rpe below 1", () => {
+    const parsed = upsertSetLogBodySchema.safeParse({
+      session_exercise_id: validSessionExerciseId,
+      set_number: 1,
+      reps: 10,
+      duration_seconds: null,
+      load_kg: null,
+      rpe: 0,
+      is_complete: false,
+      is_warmup: false,
+    });
+
+    expect(parsed.success).toBe(false);
+  });
+
+  it("rejects rpe above 10", () => {
+    const parsed = upsertSetLogBodySchema.safeParse({
+      session_exercise_id: validSessionExerciseId,
+      set_number: 1,
+      reps: 10,
+      duration_seconds: null,
+      load_kg: null,
+      rpe: 11,
+      is_complete: false,
+      is_warmup: false,
+    });
+
+    expect(parsed.success).toBe(false);
+  });
+
   it("rejects invalid session_exercise_id", () => {
     const parsed = upsertSetLogBodySchema.safeParse({
       session_exercise_id: "not-a-uuid",

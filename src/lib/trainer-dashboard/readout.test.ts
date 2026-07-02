@@ -35,6 +35,7 @@ function makeLog(overrides: Partial<SetLog> & Pick<SetLog, "set_number">): SetLo
     reps: 8,
     duration_seconds: null,
     load_kg: 80,
+    rpe: null,
     logged_at: "2026-06-20T10:00:00.000Z",
     ...overrides,
   };

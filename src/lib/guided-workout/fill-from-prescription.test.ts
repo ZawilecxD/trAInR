@@ -22,6 +22,7 @@ const existingLog: SetLog = {
   reps: 8,
   duration_seconds: null,
   load_kg: 40,
+  rpe: 6,
   logged_at: "2026-06-14T10:00:00Z",
 };
 
@@ -38,6 +39,7 @@ describe("fillValuesFromPrescription", () => {
       reps: 10,
       duration_seconds: null,
       load_kg: 50,
+      rpe: null,
       is_complete: false,
       is_warmup: true,
     });
@@ -62,6 +64,7 @@ describe("fillValuesFromPrescription", () => {
       reps: null,
       duration_seconds: 45,
       load_kg: null,
+      rpe: null,
       is_complete: false,
       is_warmup: true,
     });
@@ -79,6 +82,7 @@ describe("fillValuesFromPrescription", () => {
       reps: 8,
       duration_seconds: null,
       load_kg: 40,
+      rpe: 6,
       is_complete: false,
       is_warmup: false,
     });

@@ -8,6 +8,7 @@ export interface SetLogValues {
   reps: number | null;
   duration_seconds: number | null;
   load_kg: number | null;
+  rpe: number | null;
   is_complete: boolean;
   is_warmup: boolean;
 }

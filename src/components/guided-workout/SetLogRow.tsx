@@ -38,6 +38,16 @@ function parseOptionalFloat(raw: string): number | null {
   return Number.isNaN(parsed) ? null : parsed;
 }
 
+function parseOptionalRpe(raw: string): number | null {
+  const trimmed = raw.trim();
+  if (trimmed === "") return null;
+  const parsed = Number.parseInt(trimmed, 10);
+  if (Number.isNaN(parsed) || parsed < 1 || parsed > 10) {
+    return null;
+  }
+  return parsed;
+}
+
 function initialValues(
   existingLog: SetLog | undefined,
   prescribedSet: SessionExerciseSet | undefined,
@@ -47,6 +57,7 @@ function initialValues(
     reps: existingLog?.reps ?? null,
     duration_seconds: existingLog?.duration_seconds ?? null,
     load_kg: existingLog?.load_kg ?? null,
+    rpe: existingLog?.rpe ?? null,
     is_complete: false,
     is_warmup: resolveLogIsWarmup({ existingLog, prescribedSet, isPrescribed }),
   };
@@ -219,6 +230,25 @@ export default function SetLogRow({
           />
         </td>
       ) : null}
+
+      <td className="px-2 py-2">
+        <SuffixInput
+          suffix="RPE"
+          type="number"
+          inputMode="numeric"
+          min={1}
+          max={10}
+          aria-label={`Set ${setNumber} RPE`}
+          className="text-center font-mono"
+          disabled={readOnly}
+          readOnly={readOnly}
+          value={values.rpe ?? ""}
+          onChange={(event) => {
+            onFocus();
+            setValues((prev) => ({ ...prev, rpe: parseOptionalRpe(event.target.value) }));
+          }}
+        />
+      </td>
 
       <td className="px-2 py-2 whitespace-nowrap">
         <div className="flex min-h-11 shrink-0 items-center justify-center">
