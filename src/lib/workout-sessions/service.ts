@@ -3,6 +3,7 @@ import { computeEditDeadline, isSessionSealed } from "@/lib/guided-workout/edit-
 import { isTrainerAssignedToClient } from "@/lib/client-plans/service";
 import { sortByPhaseThenSortOrder } from "@/lib/guided-workout/phase-labels";
 import { deriveSessionReadout, type SessionReadoutSummary } from "@/lib/trainer-dashboard/readout";
+import { toExerciseReadoutInputs } from "@/lib/trainer-dashboard/to-exercise-readout-input";
 import type { CreateWorkoutSessionBody, UpdateWorkoutSessionBody } from "@/lib/workout-sessions/schemas";
 import type { AssignedTrainer } from "@/types";
 import type {
@@ -485,18 +486,7 @@ export async function getSessionDetailForTrainer(
 
   const raw = parseWorkoutSessionWithLogs(getResult.data);
   const exercises = sortByPhaseThenSortOrder(raw.session_exercises.map(mapSessionExerciseDetailRow));
-  const readout = deriveSessionReadout(
-    exercises.map((exercise) => ({
-      id: exercise.id,
-      exercise_id: exercise.exercise_id,
-      phase: exercise.phase,
-      sort_order: exercise.sort_order,
-      exercise_name: exercise.exercise_name,
-      exercise_default_metric: exercise.exercise_default_metric,
-      sets: exercise.sets,
-      logs: exercise.logs,
-    })),
-  );
+  const readout = deriveSessionReadout(toExerciseReadoutInputs(exercises));
 
   const profileResult = await supabase.from("profiles").select("display_name").eq("id", clientId).maybeSingle();
 

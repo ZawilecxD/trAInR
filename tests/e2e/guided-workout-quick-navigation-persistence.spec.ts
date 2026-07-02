@@ -103,11 +103,13 @@ test.describe("Risk #6 — guided-workout quick navigation logging safety", () =
       // input: a programmatic fill on a controlled input that runs pre-hydration
       // poisons React's value tracker, so later identical fills are swallowed and
       // the value never reaches state. The warm-up toggle flips `aria-pressed`
-      // purely through React state, proving hydration without touching an input.
-      const warmupToggle = page.getByLabel("Working");
+      // Warm-up starts unpressed; clicking it flips `aria-pressed` through React state,
+      // proving hydration without touching an input. Working is already selected by default.
+      const warmupToggle = page.getByRole("button", { name: "Warm-up" });
       await clickUntilHydrated(warmupToggle, warmupToggle, "aria-pressed", "true");
-      await warmupToggle.click();
-      await expect(warmupToggle).toHaveAttribute("aria-pressed", "true");
+      const workingToggle = page.getByRole("button", { name: "Working" });
+      await workingToggle.click();
+      await expect(workingToggle).toHaveAttribute("aria-pressed", "true");
 
       // Hydration confirmed; use Fill to populate prescribed values.
       const fillButton = page.getByLabel("Fill set 1 from prescription");

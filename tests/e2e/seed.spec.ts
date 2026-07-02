@@ -21,6 +21,7 @@
  *   5. Test name bound to the risk, and an assertion that fails if it materializes.
  */
 import { test, expect } from "@playwright/test";
+import { clickUntilVisible } from "./hydration";
 
 test.describe("Risk #2 — multi-step exercise save integrity", () => {
   let createdExerciseId: string | null = null;
@@ -43,9 +44,10 @@ test.describe("Risk #2 — multi-step exercise save integrity", () => {
     await page.goto("/trainer/exercises/new");
 
     // Select a muscle group — this is the second half of the multi-step write.
-    // The role combobox is also our hydration signal for this React island.
-    await page.getByRole("checkbox", { name: "Chest" }).check();
-    await expect(page.getByRole("combobox", { name: "Role for Chest" })).toBeVisible();
+    // ExerciseForm is a client:load island; gate on hydration before interacting.
+    const chestCheckbox = page.getByRole("checkbox", { name: "Chest" });
+    const roleCombobox = page.getByRole("combobox", { name: "Role for Chest" });
+    await clickUntilVisible(chestCheckbox, roleCombobox);
     await page.getByRole("textbox", { name: "Name" }).fill(exerciseName);
 
     // Action: submit, and capture the created id from the API response (also a
