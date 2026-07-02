@@ -51,7 +51,7 @@ Independent personal trainers lose coaching time to admin — hunting across spr
 | S-17 | starter-exercise-seed      | receive a curated starter exercise library on trainer signup              | S-01, S-03    | FR-007, FR-008 (extends; supersedes Non-Goal #14) | done     |
 | S-18 | ui-redesign                | use a unified premium dark UI per DESIGN.md with accessible touch targets and Pencil-aligned key flows | S-06          | NFR mobile usability                              | proposed |
 | S-19 | prescription-fill-logging  | one-click fill a round with prescribed reps and load; no per-set completed toggle | S-06          | FR-015, FR-017 (extends)                          | done     |
-| S-20 | finished-session-summary-for-client | see a read-only exercise summary before editing or after completion | S-06, S-08, S-13 | FR-015, FR-017, FR-021, FR-022 (extends)          | proposed |
+| S-20 | finished-session-summary-for-client | see a read-only exercise summary before editing or after completion | S-06, S-08, S-13 | FR-015, FR-017, FR-021, FR-022 (extends)          | done |
 
 
 ### Quality & testing
@@ -390,7 +390,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Blockers:** S-13 Phase 4 navigation must land first if the summary is exposed through `completed` mode
 - **Unknowns:** Whether cancelled sessions with no logs should show the full prescription, a compact "not attempted" exercise list, or both; whether summary rows should reuse trainer dashboard read-only components or client edit-list components in read-only mode
 - **Risk:** The existing completion page is sparse and comments-focused; duplicating exercise readout logic from trainer dashboard or edit-list could drift. Prefer a shared read-only exercise summary component if current data shapes allow it without a broad refactor.
-- **Status:** proposed
+- **Status:** done
 
 ## Backlog Handoff
 
@@ -476,4 +476,5 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **S-09: client and trainer can each leave comments on a training session and read the other's comments (bidirectional thread per session)** — Archived 2026-07-01 → `context/archive/2026-06-28-session-comments/`. Lesson: —.
 - **S-13: logged workout data can be edited for 24 hours after first entry, then sealed (immutable)** — Archived 2026-07-01 → `context/archive/2026-07-01-data-edit-window/`. Lesson: —.
 - **S-19: client can one-click fill a round's log with prescribed reps and load (or duration) instead of retyping each time; the per-set OK/completed toggle is removed; exercise nav progress is inferred from logged values, not an explicit round-completed flag; session finished/partial/cancelled remains session-level only (S-08)** — Archived 2026-07-01 → `context/archive/2026-07-01-prescription-fill-logging/`. Lesson: —.
+- **S-20: client opening a finished, partially finished, cancelled, or edit-window pre-edit session sees a useful read-only summary of all exercises, prescribed targets, and logged values before any optional Edit action** — Archived 2026-07-02 → `context/archive/2026-07-01-finished-session-summary-for-client/`. Lesson: —.
 
