@@ -71,7 +71,7 @@ const astroConfig = tseslint.config({
 
 export default tseslint.config(
   includeIgnoreFile(gitignorePath),
-  { ignores: [".cursor/hooks/**", "scripts/**"] },
+  { ignores: [".agents/**", ".cursor/hooks/**", "scripts/**"] },
   baseConfig,
   reactConfig,
   eslintPluginAstro.configs["flat/recommended"],
