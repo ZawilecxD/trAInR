@@ -30,6 +30,7 @@ function log(setNumber: number, isComplete = false): SetLog {
     reps: 8,
     duration_seconds: null,
     load_kg: 80,
+    rpe: null,
     logged_at: "2026-06-14T10:00:00Z",
   };
 }

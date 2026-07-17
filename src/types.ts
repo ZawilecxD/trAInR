@@ -166,6 +166,7 @@ export interface SetLog {
   reps: number | null;
   duration_seconds: number | null;
   load_kg: number | null;
+  rpe: number | null;
   logged_at: string;
 }
 

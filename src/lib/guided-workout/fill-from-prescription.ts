@@ -20,6 +20,7 @@ export function fillValuesFromPrescription({
       reps: existingLog?.reps ?? null,
       duration_seconds: existingLog?.duration_seconds ?? null,
       load_kg: existingLog?.load_kg ?? null,
+      rpe: existingLog?.rpe ?? null,
       is_complete: false,
       is_warmup: resolveLogIsWarmup({ existingLog, prescribedSet, isPrescribed }),
     };
@@ -29,6 +30,7 @@ export function fillValuesFromPrescription({
     reps: defaultMetric === "time" ? null : prescribedSet.prescribed_reps,
     duration_seconds: defaultMetric === "time" ? prescribedSet.prescribed_duration_seconds : null,
     load_kg: defaultMetric === "reps_weight" ? prescribedSet.prescribed_load_kg : null,
+    rpe: existingLog?.rpe ?? null,
     is_complete: false,
     is_warmup: resolveLogIsWarmup({ existingLog, prescribedSet, isPrescribed }),
   };

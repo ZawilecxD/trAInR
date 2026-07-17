@@ -10,8 +10,10 @@ import path from "node:path";
 import tseslint from "typescript-eslint";
 
 const gitignorePath = path.resolve(import.meta.dirname, ".gitignore");
+const scriptFilePatterns = ["**/*.{js,jsx,mjs,cjs,ts,tsx}"];
 
 const baseConfig = {
+  files: scriptFilePatterns,
   extends: [eslint.configs.recommended, tseslint.configs.strictTypeChecked, tseslint.configs.stylisticTypeChecked],
   languageOptions: {
     parserOptions: {
@@ -38,7 +40,7 @@ const baseConfig = {
 };
 
 const reactConfig = {
-  files: ["**/*.{js,jsx,ts,tsx}"],
+  files: scriptFilePatterns,
   extends: [pluginReact.configs.flat.recommended],
   languageOptions: {
     ...pluginReact.configs.flat.recommended.languageOptions,

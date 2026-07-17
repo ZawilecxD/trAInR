@@ -29,6 +29,7 @@ function makeLog(overrides: Partial<SetLog> & Pick<SetLog, "set_number">): SetLo
     reps: null,
     duration_seconds: null,
     load_kg: null,
+    rpe: null,
     logged_at: "2026-06-20T10:00:00.000Z",
     ...overrides,
   };
@@ -112,6 +113,11 @@ describe("formatSetActual", () => {
   it("formats reps and load from a log", () => {
     const log = makeLog({ set_number: 1, reps: 10, load_kg: 82.5, is_complete: true });
     expect(formatSetActual(log, "reps_weight")).toBe("10 reps @ 82.5 kg");
+  });
+
+  it("appends RPE when present", () => {
+    const log = makeLog({ set_number: 1, reps: 10, load_kg: 82.5, rpe: 8, is_complete: true });
+    expect(formatSetActual(log, "reps_weight")).toBe("10 reps @ 82.5 kg · RPE 8");
   });
 
   it("formats timed actuals", () => {

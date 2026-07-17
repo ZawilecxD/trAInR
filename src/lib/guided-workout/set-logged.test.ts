@@ -12,6 +12,7 @@ function makeLog(overrides: Partial<SetLog>): SetLog {
     reps: null,
     duration_seconds: null,
     load_kg: null,
+    rpe: null,
     logged_at: "2026-06-14T10:00:00Z",
     ...overrides,
   };

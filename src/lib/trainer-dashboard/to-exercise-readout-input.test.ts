@@ -36,6 +36,7 @@ function buildExercise(overrides: Partial<SessionExerciseDetail> = {}): SessionE
         reps: 8,
         duration_seconds: null,
         load_kg: 42.5,
+        rpe: null,
         logged_at: "2026-06-14T12:00:00.000Z",
       },
     ],
