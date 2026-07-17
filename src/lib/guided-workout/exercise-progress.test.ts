@@ -16,6 +16,7 @@ function makeLog(setNumber: number, isComplete: boolean, withValues = true): Set
     reps: withValues ? 8 : null,
     duration_seconds: null,
     load_kg: withValues ? 80 : null,
+    rpe: null,
     logged_at: "2026-06-14T10:00:00Z",
   };
 }
