@@ -1,8 +1,8 @@
 ---
-date: 2026-07-03T08:34:00Z
+date: 2026-07-17T18:33:00Z
 researcher: AI Agent (Cursor)
 repository: ZawilecxD/trAInR
-topic: "AI trainer assistant for client Q&A, support, and plan drafts"
+topic: "AI trainer assistant for trainer-led client support, plan discussion, and reports"
 tags: [research, ai, product-proposal, safety, roadmap]
 status: proposed
 linear_issue: ZAW-54
@@ -12,35 +12,35 @@ linear_issue: ZAW-54
 
 ## Executive summary
 
-The requested feature is a major product direction change: clients should be
-able to use an AI trainer to create plans, ask questions, and receive specific
-training support. That capability conflicts with the current MVP non-goal:
-`context/foundation/prd.md` says "No AI-powered plan generation or exercise
-suggestions", and `context/foundation/roadmap.md` parks AI-powered plan
-generation.
+The requested feature should be reframed from "AI for clients" to **AI for
+trainers helping their clients**. The first useful slice is a trainer copilot
+that helps the human trainer think through plan changes, choose exercise
+alternatives for specific client situations, and generate progress reports with
+proposed next steps.
 
-Recommendation: introduce AI in phases, with human approval and safety
-boundaries first:
+This is a better fit for trAInR's current trainer-led async-coaching thesis than
+client self-service AI. It still touches the current MVP non-goal
+(`context/foundation/prd.md` says "No AI-powered plan generation or exercise
+suggestions"), but it keeps the trainer as the accountable decision-maker:
 
-1. **AI trainer Q&A support** - clients can ask training questions in the
-   context of their assigned plan and history, but the assistant stays inside
-   wellness/training education and refuses medical, injury, medication,
-   pregnancy, eating-disorder, self-harm, or emergency advice.
-2. **AI plan draft requests** - AI can generate structured draft session or
-   program ideas from client goals, available exercises, history, and
-   constraints, but drafts are not assigned to a calendar until a human trainer
-   reviews and approves them.
-3. **Trainer copilot** - trainers can use the same engine to draft session
-   templates, modifications, and response suggestions, all mapped into existing
-   trAInR data contracts.
-4. **Client self-service AI plans** - only consider later, after the product
-   owner explicitly lifts the current non-goal and accepts the liability,
-   safety, observability, and pricing implications.
+1. **Plan-change discussion support** - trainers can ask AI to analyze a
+   client's current plan, recent logs, comments, goals, and constraints, then
+   suggest possible adjustments with assumptions and tradeoffs.
+2. **Exercise alternatives and situation handling** - trainers can request
+   preferred exercises or substitutions for situations such as missing
+   equipment, low time, movement dislike, plateau, fatigue, travel, or
+   technique concerns, without AI directly modifying the client's plan.
+3. **Client progress reports** - trainers can generate a draft report that
+   summarizes adherence, completed work, performance trends, friction points,
+   and proposed next steps.
+4. **Trainer-approved output only** - AI outputs stay as drafts,
+   recommendations, or report text until the trainer edits and applies them.
+   Client-facing AI chat and client-submitted plan drafts should remain later
+   options, not the first implementation.
 
-This preserves trAInR's async-coaching thesis while allowing AI to reduce
-trainer admin and improve client support. It also keeps AI outputs inside
-auditable, structured workflows instead of letting a chatbot directly mutate
-plans.
+Recommendation: build a trainer-only assistant first. It should be grounded in
+the trainer's own client data, constrained by safety rules, and designed around
+editable artifacts rather than autonomous plan mutation.
 
 ## Current product constraints
 
@@ -53,19 +53,23 @@ plans.
   strict role clarity: clients should not see trainer-only controls, and
   trainers should understand which clients need attention (`PRODUCT.md`).
 - The current PRD explicitly excludes AI-powered plan generation or exercise
-  suggestions (`context/foundation/prd.md`, Non-Goals #10).
+  suggestions (`context/foundation/prd.md`, Non-Goals #10). A trainer-only
+  copilot is still AI plan support, so product approval is needed, but the risk
+  is lower than direct client self-service because trainer review is built in.
 - The current roadmap parks AI-powered plan generation for the same reason
-  (`context/foundation/roadmap.md`, Parked).
+  (`context/foundation/roadmap.md`, Parked). This research recommends narrowing
+  the parked item to "trainer assistant drafts and reports" before considering
+  client-facing AI.
 
 ### Relevant shipped foundations
 
 - Astro 6 SSR, React 19 islands, Tailwind 4, Supabase auth/RLS, Vercel adapter.
 - API routes already follow a server-side pattern with `export const prerender =
   false`, zod validation, and role guards (`src/lib/api/guards.ts`).
-- Existing domain data can feed AI context safely if scoped server-side:
-  exercises, session templates, assigned sessions, set logs, trainer dashboard
-  readouts, session comments, completion status, warm-up/working flags, and
-  24h edit window behavior.
+- Existing domain data can feed trainer-facing AI context safely if scoped
+  server-side: exercises, session templates, assigned sessions, set logs,
+  trainer dashboard readouts, session comments, completion status,
+  warm-up/working flags, and 24h edit window behavior.
 - There is no AI provider layer, prompt/version registry, conversation store,
   usage metering, safety event table, or audit log today.
 
@@ -76,7 +80,8 @@ automatic AI decisions. It specifically says to prefer explainable coaching
 signals over autonomous plan changes (`context/changes/liftmate-research-zaw-48`).
 
 This AI proposal should build on that caution. AI can summarize, explain,
-draft, and escalate, but should not silently change workout prescriptions.
+draft, compare options, and prepare trainer messages, but should not silently
+change workout prescriptions.
 
 ## External research summary
 
@@ -96,9 +101,10 @@ tool/function calling:
   - https://platform.claude.com/docs/en/build-with-claude/structured-outputs
   - https://platform.claude.com/docs/en/agents-and-tools/tool-use/strict-tool-use
 
-Implication for trAInR: AI plan drafts should not be free-form text blobs. The
-model should return a strict schema that can be validated before anything is
-displayed, saved, or converted into session templates.
+Implication for trAInR: AI suggestions, report drafts, and plan-change options
+should not be free-form text blobs only. The model should return a strict schema
+that can be validated before anything is displayed, saved, or converted into
+trainer-owned artifacts.
 
 ### Safety guidance for health and wellness assistants
 
@@ -128,49 +134,64 @@ observability work. It is not just an API call.
 ### Feature thesis
 
 AI should act as a **trainer assistant**, not as an unaccountable replacement
-for the human trainer. It should help clients understand their assigned plan,
-prepare better questions, and request drafts. It should help trainers move
-faster. Final plan assignment remains trainer-owned until the product explicitly
-chooses self-service AI training.
+for the human trainer. It should help trainers reason faster about client
+progress, plan changes, exercise choices, and communication. The trainer remains
+responsible for deciding what reaches the client and what changes become part of
+the durable plan.
 
 ### User stories
 
-#### Client Q&A
+#### Trainer plan-change discussion
 
-- As a client, I can ask why today's session includes an exercise, how to
-  interpret a prescribed set, or how to make a logged result clearer for my
-  trainer.
-- As a client, I receive answers grounded in my assigned sessions and logged
-  history, with clear boundaries when a question is medical or unsafe.
-- As a client, I can escalate a question to my trainer when the assistant is
-  uncertain or out of scope.
+- As a trainer, I can select a client and ask how the current plan might be
+  adjusted based on recent logs, comments, adherence, performance trends, and
+  stated constraints.
+- As a trainer, I receive several options with reasoning, assumptions, missing
+  information, and risk/safety notes.
+- As a trainer, I can convert an option into my own edited note, message,
+  session-template draft, or future plan task, but AI does not directly assign
+  anything.
 
-#### Client plan draft request
+#### Exercise alternatives for client situations
 
-- As a client, I can describe a goal, availability, constraints, and equipment.
-- The assistant can generate a structured draft plan or session proposal.
-- The draft is clearly marked "AI draft - trainer review required".
-- The trainer can review, edit, reject, or convert it into existing session
-  templates/assigned sessions.
+- As a trainer, I can ask for preferred exercises or substitutions for a
+  client's situation: limited equipment, short session window, movement dislike,
+  fatigue, plateau, travel, or technique concerns.
+- The assistant grounds suggestions in the trainer's exercise library where
+  possible and clearly marks when it is suggesting a new exercise not currently
+  in the library.
+- The assistant explains why each option fits, what to watch for, and when to
+  avoid the option.
+
+#### Progress report and next steps
+
+- As a trainer, I can generate a draft client progress report for a selected
+  date range.
+- The report summarizes completed sessions, adherence, notable improvements,
+  stalled areas, client comments, and proposed next steps.
+- The trainer can edit tone, remove sensitive details, and decide whether the
+  report is shared with the client.
 
 #### Trainer copilot
 
-- As a trainer, I can ask the assistant to draft a session template or adjust an
-  existing session using a client's recent logs and comments.
+- As a trainer, I can draft client messages, review notes, session-template
+  ideas, and next-step checklists from the same AI workspace.
 - The assistant explains its reasoning and highlights assumptions.
-- Nothing is assigned to the client until I approve it.
+- Nothing is assigned to the client or shared with the client until I approve
+  it.
 
 ## Scope recommendation
 
 ### In scope for the first implementation plan
 
 - Server-side AI provider abstraction.
-- AI conversation API for authenticated clients and trainers.
-- Strictly scoped retrieval of user-specific workout context.
+- Trainer-only AI workspace/API.
+- Strictly scoped retrieval of trainer-owned client workout context.
 - Safety classifier/red-flag routing before and after model output.
-- Structured outputs for Q&A responses and plan drafts.
-- AI draft persistence with review status.
-- Trainer approval flow for drafts before calendar assignment.
+- Structured outputs for plan-change options, exercise alternatives, and
+  progress reports.
+- AI artifact persistence with draft/reviewed/applied states.
+- Trainer editing flow before anything becomes client-facing or plan-changing.
 - Usage/cost tracking and rate limiting.
 - Audit/safety event logging.
 
@@ -178,6 +199,8 @@ chooses self-service AI training.
 
 - Fully autonomous AI plan assignment.
 - AI changing existing sessions/templates directly.
+- Client-facing AI chat.
+- Client-submitted AI plan drafts.
 - Medical, injury diagnosis, medication, pregnancy, nutrition prescription, or
   mental health advice.
 - Realtime voice coaching.
@@ -192,15 +215,16 @@ New Supabase tables must have RLS enabled with granular per-operation policies.
 
 ### `ai_conversations`
 
-Purpose: conversation threads for client Q&A and trainer copilot.
+Purpose: trainer-owned assistant threads, usually scoped to one client.
 
 Candidate fields:
 
 - `id`
 - `owner_user_id`
-- `role_scope` (`client` or `trainer`)
-- `trainer_id` nullable
+- `trainer_id`
 - `client_id` nullable
+- `conversation_type` (`plan_discussion`, `exercise_alternatives`,
+  `progress_report`, `general_trainer_support`)
 - `title`
 - `status` (`active`, `archived`)
 - `created_at`
@@ -208,9 +232,10 @@ Candidate fields:
 
 Access:
 
-- Client sees only conversations they own.
-- Trainer sees their own conversations and conversations explicitly escalated
-  by assigned clients.
+- Trainer sees only conversations they own.
+- If a conversation is scoped to a client, the trainer must own that
+  trainer-client relationship.
+- Client access is not part of the first release.
 
 ### `ai_messages`
 
@@ -235,25 +260,27 @@ Access:
 - Consider retention limits and redaction policy before storing sensitive
   health-like free text.
 
-### `ai_plan_drafts`
+### `ai_trainer_artifacts`
 
-Purpose: structured plans generated by AI, awaiting review.
+Purpose: structured AI-generated outputs that trainers can edit, save, share, or
+apply manually.
 
 Candidate fields:
 
 - `id`
-- `created_by_user_id`
-- `client_id`
 - `trainer_id`
+- `client_id` nullable
 - `source_conversation_id`
-- `status` (`draft`, `submitted_for_review`, `approved`, `rejected`,
-  `converted`)
-- `goal_summary`
-- `constraints`
-- `draft_payload` jsonb
+- `artifact_type` (`plan_change_options`, `exercise_alternatives`,
+  `progress_report`, `client_message`, `session_template_draft`)
+- `status` (`draft`, `edited`, `shared`, `applied`, `archived`)
+- `title`
+- `summary`
+- `artifact_payload` jsonb
 - `safety_notes`
-- `reviewed_by_trainer_id` nullable
-- `reviewed_at` nullable
+- `trainer_edits` jsonb nullable
+- `shared_with_client_at` nullable
+- `applied_to_plan_at` nullable
 - `converted_template_id` nullable
 - `converted_session_ids` nullable jsonb
 - `created_at`
@@ -261,9 +288,10 @@ Candidate fields:
 
 Access:
 
-- Client can create/read own drafts and submit for trainer review.
-- Trainer can read/review drafts for assigned clients.
-- Only trainer approval can convert a draft into real templates/sessions.
+- Trainer can create/read/update own artifacts.
+- Client cannot read artifacts unless the trainer explicitly shares them.
+- Applying an artifact to real templates/sessions must go through existing
+  trainer-owned services and app validation.
 
 ### `ai_safety_events`
 
@@ -274,7 +302,7 @@ Candidate fields:
 - `id`
 - `user_id`
 - `conversation_id` nullable
-- `plan_draft_id` nullable
+- `artifact_id` nullable
 - `event_type`
 - `risk_level`
 - `trigger`
@@ -283,8 +311,8 @@ Candidate fields:
 
 Access:
 
-- Trainer visibility should be limited to assigned-client events that need
-  trainer follow-up.
+- Trainer visibility should be limited to events from their own AI usage and
+  assigned-client contexts that need follow-up.
 - Admin/audit access is not currently modeled; decide before production
   launch.
 
@@ -297,7 +325,8 @@ Candidate fields:
 - `id`
 - `user_id`
 - `model`
-- `feature` (`client_qa`, `plan_draft`, `trainer_copilot`)
+- `feature` (`plan_discussion`, `exercise_alternatives`, `progress_report`,
+  `trainer_copilot`)
 - `input_tokens`
 - `output_tokens`
 - `provider_request_id`
@@ -309,16 +338,17 @@ All API route files must export `const prerender = false`.
 
 ### `POST /api/ai/conversations`
 
-Creates or resumes an AI conversation.
+Creates or resumes a trainer-owned AI conversation.
 
 Guard:
 
-- `requireAuthenticated`.
+- `requireTrainer`.
 
 Contract:
 
-- Validates role, optional target client, and conversation type.
+- Validates optional target client and conversation type.
 - Trainer targeting a client must own that trainer-client relationship.
+- Client role is rejected in the first release.
 
 ### `POST /api/ai/messages`
 
@@ -326,12 +356,12 @@ Sends a user message and returns assistant response.
 
 Guard:
 
-- `requireAuthenticated`.
+- `requireTrainer`.
 
 Server responsibilities:
 
 1. Validate message.
-2. Load scoped user context server-side.
+2. Load scoped trainer/client context server-side.
 3. Run deterministic pre-safety checks.
 4. Call provider with strict response schema.
 5. Validate provider output.
@@ -339,33 +369,37 @@ Server responsibilities:
 7. Persist message, usage, and safety events.
 8. Return structured response to UI.
 
-### `POST /api/ai/plan-drafts`
+### `POST /api/ai/artifacts`
 
-Generates a plan or session draft.
+Generates a trainer-owned AI artifact.
 
 Guard:
 
-- Client can create only for self.
-- Trainer can create only for assigned client.
+- `requireTrainer`.
+- Trainer can target only assigned clients.
 
 Contract:
 
+- Supported artifact types: plan-change options, exercise alternatives, progress
+  report, client message, and session-template draft.
 - Output is a draft only.
 - Does not create session templates or assigned sessions.
-- Draft payload must map to existing trAInR exercise/session concepts.
+- Payload must map to existing trAInR exercise/session/client-progress concepts
+  where possible.
 
-### `POST /api/ai/plan-drafts/[id]/submit`
+### `PATCH /api/ai/artifacts/[id]`
 
-Client submits a draft for trainer review.
+Trainer edits title, summary, content, status, and payload metadata.
 
-### `POST /api/ai/plan-drafts/[id]/review`
+### `POST /api/ai/artifacts/[id]/share`
 
-Trainer approves, rejects, or requests changes.
+Trainer shares a report or message with the client, if sharing is part of the
+chosen product slice.
 
-### `POST /api/ai/plan-drafts/[id]/convert`
+### `POST /api/ai/artifacts/[id]/apply`
 
-Trainer converts approved draft into existing session template/session creation
-flows.
+Trainer applies an edited artifact through existing session-template/session
+creation flows.
 
 This endpoint should reuse existing session-template and plan-assignment
 services rather than inserting related rows ad hoc.
@@ -378,8 +412,8 @@ services rather than inserting related rows ad hoc.
 - `src/lib/ai/openai-provider.ts` or `src/lib/ai/anthropic-provider.ts` -
   concrete implementation.
 - `src/lib/ai/schemas.ts` - zod schemas for request and strict provider output.
-- `src/lib/ai/context.ts` - scoped data loaders for workouts, sessions, logs,
-  comments, and exercise library.
+- `src/lib/ai/context.ts` - scoped data loaders for trainer-owned clients,
+  workouts, sessions, logs, comments, and exercise library.
 - `src/lib/ai/safety.ts` - deterministic safety rules and refusal/escalation
   helpers.
 - `src/lib/ai/service.ts` - orchestration.
@@ -410,39 +444,60 @@ Never expose these to client-side code and never commit `.env` values.
 
 ## Structured output contracts
 
-### Q&A response shape
+### Plan-change option shape
 
 The assistant should return structured data like:
 
-- `answer`: concise markdown/plain text.
-- `scope`: `education`, `plan_explanation`, `logging_help`, `out_of_scope`,
-  or `escalate_to_trainer`.
+- `client_summary`: concise description of the client context used.
+- `observations`: trends or facts from scoped app data, with citations.
+- `options`: list of proposed changes.
+  - `title`
+  - `rationale`
+  - `expected_benefit`
+  - `tradeoffs`
+  - `implementation_notes`
+  - `confidence`
+- `missing_information`: questions the trainer should answer before applying.
 - `risk_level`: `none`, `low`, `medium`, `high`.
 - `citations`: references to app context such as session dates, exercise names,
   or logged sets; never fabricate.
-- `recommended_actions`: small list of safe actions, such as "ask your trainer"
-  or "review today's session".
-- `trainer_escalation`: nullable object with reason and suggested message.
+- `safety_notes`: boundaries, red flags, or trainer-review reminders.
 
-### Plan draft shape
+### Exercise alternatives shape
 
 The assistant should return structured data like:
 
-- `goal_summary`
-- `assumptions`
-- `client_constraints`
-- `sessions`
+- `situation_summary`
+- `constraints`: equipment, time, movement preference, fatigue, skill, or other
+  trainer-provided context.
+- `preferred_options`
   - `title`
-  - `target_date_offset` or `week/day`
-  - `phase`
-  - `exercises`
-  - `sets`
-  - `reps_or_duration`
-  - `load_guidance`
-  - `rest_seconds`
-  - `notes`
+  - `exercise_id` nullable
+  - `in_trainer_library`
+  - `why_it_fits`
+  - `setup_or_coaching_notes`
+  - `avoid_when`
+- `new_library_candidates`: optional suggestions not already in the trainer's
+  library.
 - `safety_notes`
-- `requires_trainer_review`: always true in first implementation.
+- `requires_trainer_review`: always true.
+
+### Progress report shape
+
+The assistant should return structured data like:
+
+- `report_title`
+- `date_range`
+- `client_facing_summary`
+- `adherence_summary`
+- `performance_trends`
+- `notable_wins`
+- `friction_points`
+- `proposed_next_steps`
+- `trainer_private_notes`
+- `citations`
+- `tone`: `supportive`, `direct`, `concise`, or `detailed`.
+- `requires_trainer_edit`: always true.
 
 Provider output must be validated with zod before persistence.
 
@@ -457,7 +512,7 @@ The assistant must refuse or escalate:
 - eating disorder, self-harm, or crisis language,
 - nutrition prescriptions beyond general non-medical education,
 - unsafe max-effort recommendations,
-- requests to ignore the trainer's plan,
+- requests to ignore trainer judgment or bypass trainer review,
 - requests from a trainer to access another trainer's client data.
 
 ### Runtime guardrails
@@ -465,52 +520,58 @@ The assistant must refuse or escalate:
 - Pre-check user input with deterministic keyword/intent rules.
 - Post-check model output for prohibited claims and unsafe instructions.
 - Always show product boundary language in AI surfaces.
-- Offer escalation to trainer for plan-specific uncertainty.
+- Prompt the trainer to gather more client information or refer out when the
+  question is uncertain, medical, or outside training scope.
 - Log safety refusals and escalations.
 - Rate-limit repeated unsafe prompts.
 
 ### Human-in-the-loop rule
 
-For the first implementation, AI can draft and explain, but only a trainer can:
+For the first implementation, AI can draft, compare, and summarize, but only a
+trainer can:
 
 - assign sessions to the calendar,
 - change an existing assigned session,
 - create a reusable template from an AI draft,
-- approve a multi-session plan for a client.
+- approve a multi-session plan for a client,
+- share a progress report or recommendation with the client.
 
 ## UX proposal
 
-### Client surface
+### Trainer surface
 
-Add an AI entry point from the client area only after the client has enough
-context:
+Add a trainer AI workspace from places where the trainer already reasons about a
+client:
 
-- client dashboard / Today hub,
-- current session page,
-- finished summary page,
-- plan page.
+- client detail page,
+- trainer dashboard attention cards,
+- session template editor,
+- assigned session detail,
+- client progress/history view.
 
-First version should be framed as "Ask about your plan" rather than "AI doctor"
-or "replace your trainer".
+First version should be framed as "Assistant for this client" or "Draft next
+steps" rather than "AI trainer". The interface should make it obvious that the
+human trainer remains accountable.
 
 Important UI states:
 
 - onboarding disclosure before first use,
-- plan-context chips showing what the assistant can see,
-- visible "Ask trainer" escalation CTA,
-- draft status badges,
+- context chips showing which client data the assistant can see,
+- missing-data prompts,
+- editable draft/report view,
+- artifact status badges,
 - safety refusal state,
 - cost/rate-limit state if quota is reached.
 
-### Trainer surface
+Core trainer actions:
 
-Add trainer review surfaces:
-
-- list of client-submitted AI drafts,
-- draft detail with assumptions and safety notes,
-- edit before convert,
-- reject/request-changes message,
-- convert to session template or assigned sessions.
+- discuss current plan changes,
+- find exercise alternatives,
+- draft client progress report,
+- draft client message,
+- save artifact,
+- share report/message,
+- apply edited artifact via existing plan/session flows.
 
 The UI should avoid generic AI visual tropes that conflict with `PRODUCT.md`.
 Keep the interface precise and workout-data-first.
@@ -519,19 +580,21 @@ Keep the interface precise and workout-data-first.
 
 ### Phase 0: Product decision and roadmap amendment
 
-Outcome: explicitly lift or revise PRD Non-Goal #10.
+Outcome: explicitly narrow or revise PRD Non-Goal #10 for trainer-only AI
+assistance.
 
 Work:
 
-- Decide whether AI plan generation is trainer-approved only or client
-  self-service.
+- Decide that the first release is trainer-only.
+- Decide whether report sharing is part of the first release or save-only.
 - Decide whether AI is part of `trAInR MVP` or post-MVP.
 - Update `context/foundation/prd.md` and `context/foundation/roadmap.md` only
   after product approval.
 
 ### Phase 1: AI foundation and safety logging
 
-Outcome: server-only AI infrastructure exists without user-facing plan creation.
+Outcome: server-only AI infrastructure exists without client-facing AI or direct
+plan mutation.
 
 Work:
 
@@ -541,52 +604,56 @@ Work:
 - Add safety rules and usage logging.
 - Add unit/integration tests for isolation, refusal, and output validation.
 
-### Phase 2: Client AI Q&A
+### Phase 2: Trainer plan discussion
 
-Outcome: clients can ask bounded questions about assigned plans and logged
-history.
+Outcome: trainers can discuss a selected client's current plan and receive
+structured, cited plan-change options.
 
 Work:
 
 - Add conversation API.
-- Add client UI entry point.
+- Add trainer UI entry point from client detail/session surfaces.
 - Persist messages and usage.
-- Support trainer escalation.
-- Add E2E coverage for a normal answer and a safety refusal.
+- Show context citations, assumptions, and missing information.
+- Add E2E coverage for a normal plan discussion and a safety refusal.
 
-### Phase 3: Trainer copilot
+### Phase 3: Exercise alternatives
 
-Outcome: trainers can draft session/template ideas using client context.
+Outcome: trainers can ask for exercise substitutions or preferred exercises for
+specific client situations.
 
 Work:
 
-- Add trainer-side prompt flows.
-- Reuse structured draft schema.
+- Add guided prompt flows for equipment, time, preference, fatigue, plateau, and
+  technique scenarios.
+- Prefer exercises from the trainer's existing library.
+- Mark new-library suggestions clearly.
 - Display assumptions, missing data, and safety notes.
 - Keep output as editable draft, not automatic writes.
 
-### Phase 4: Client AI plan draft request
+### Phase 4: Progress reports
 
-Outcome: clients can request a draft plan and submit it for trainer review.
-
-Work:
-
-- Add `ai_plan_drafts`.
-- Add client draft request UI.
-- Add trainer review queue.
-- Add approve/reject/request-changes flow.
-
-### Phase 5: Conversion to real trAInR plans
-
-Outcome: approved drafts can be converted into existing templates or assigned
-calendar sessions.
+Outcome: trainers can generate draft progress reports and proposed next steps
+for a selected client/date range.
 
 Work:
 
-- Map draft exercises to trainer-owned exercise library rows.
+- Add `ai_trainer_artifacts`.
+- Add report-generation UI.
+- Let trainer edit client-facing summary and private notes separately.
+- Decide whether report sharing is included or deferred.
+
+### Phase 5: Applying edited artifacts
+
+Outcome: edited AI artifacts can assist existing trainer-owned template or
+assigned-session workflows.
+
+Work:
+
+- Map artifact exercises to trainer-owned exercise library rows.
 - Require manual resolution for unknown exercises.
 - Use existing session-template and plan-assignment services.
-- Log trainer approval and conversion.
+- Log trainer application/share events.
 
 ## Testing strategy
 
@@ -596,32 +663,32 @@ Work:
 - zod request schemas.
 - zod provider output schemas.
 - context loader ownership filtering.
-- draft-to-template/session mapping helpers.
+- artifact-to-template/session mapping helpers.
 
 ### Integration tests
 
 - RLS for all AI tables.
-- trainer A cannot read trainer B AI conversations/drafts.
-- client cannot submit draft for another client.
-- trainer cannot review draft for unassigned client.
+- trainer A cannot read trainer B AI conversations/artifacts.
+- trainer cannot target unassigned client.
+- client role cannot call trainer AI routes.
 - AI API routes reject unauthorized roles.
 
 ### E2E tests
 
-- client asks a safe plan question and sees grounded response.
-- client asks injury/medical question and gets refusal/escalation.
-- client creates draft and submits to trainer.
-- trainer reviews and rejects/approves draft.
-- approved draft conversion requires exercise resolution.
+- trainer discusses a client plan and sees grounded options.
+- trainer asks for injury/medical programming and gets refusal/escalation.
+- trainer generates exercise alternatives for limited equipment.
+- trainer generates and edits a progress report.
+- applying an artifact requires exercise resolution and existing app flows.
 
 ### Evaluation tests
 
 Create a small benchmark set of prompts before launch:
 
-- safe plan explanation,
+- safe plan-change discussion,
 - unsafe injury advice,
 - medication/pregnancy edge cases,
-- client tries to access another client's data,
+- trainer tries to access another trainer's client data,
 - hallucination probe where context does not contain requested info,
 - trainer asks for aggressive progression based on weak evidence.
 
@@ -635,7 +702,8 @@ Minimum production needs:
 - Prompt/version IDs.
 - token usage and cost events.
 - refusal/escalation counts.
-- draft approval/rejection counts.
+- artifact saved/shared/applied counts.
+- report generation counts.
 - model latency.
 - error rate by endpoint.
 - safety event review workflow.
@@ -650,8 +718,7 @@ Open decisions before implementation:
 
 - How long to retain AI conversation content.
 - Whether users can delete AI conversations.
-- Whether trainer can see client AI questions by default or only escalated
-  threads.
+- Whether clients can see shared reports/messages only, or any AI provenance.
 - Whether messages are stored in full text, summarized, redacted, or encrypted.
 - Whether provider data retention needs enterprise settings before launch.
 
@@ -659,17 +726,18 @@ Default recommendation:
 
 - store messages for continuity and audit in first private beta,
 - disclose storage before first use,
-- limit trainer visibility to escalated/submitted items,
+- limit client visibility to trainer-shared artifacts only,
 - add retention/deletion policy before broader release.
 
 ## Success criteria
 
 ### Product
 
-- Clients can get useful, bounded help without leaving trAInR.
-- Trainers receive better-prepared questions and useful draft starting points.
-- No AI-generated plan reaches a client calendar without trainer approval in
-  the first version.
+- Trainers can get useful, bounded planning support without leaving trAInR.
+- Trainers can generate draft progress reports and next-step recommendations
+  faster than writing them from scratch.
+- No AI-generated recommendation reaches a client calendar or client-facing
+  report without trainer approval in the first version.
 
 ### Safety
 
@@ -687,40 +755,45 @@ Default recommendation:
 
 ## Risks
 
-- **Product drift:** client self-service plans can weaken trAInR's trainer-led
-  async coaching position.
-- **Safety liability:** plan advice can cross into medical/injury territory.
+- **Product drift:** AI suggestions can weaken trainer accountability if the UI
+  implies the assistant is the coach.
+- **Safety liability:** plan-change advice can cross into medical/injury
+  territory.
 - **Data leakage:** AI context loading must respect trainer/client tenancy.
-- **Cost creep:** chat and draft generation need quotas and usage tracking.
+- **Cost creep:** trainer chat, alternatives, and report generation need quotas
+  and usage tracking.
 - **Hallucination:** assistant may invent history, exercises, or constraints if
   not forced to cite scoped context.
-- **Trainer trust:** poor drafts can create more review work than they save.
+- **Trainer trust:** poor suggestions or reports can create more review work
+  than they save.
 - **Regulatory ambiguity:** health-adjacent coaching data may require stricter
   retention, consent, and audit decisions than current MVP scope.
 
 ## Open product decisions
 
-1. Is the first AI release **trainer-approved only** or should clients ever get
-   self-service plan assignment?
+1. Is the first AI release **trainer-only**, with no client-facing AI chat?
 2. Should AI see only assigned workout data, or also comments, feedback, RPE,
    and future readiness signals?
-3. Can trainers opt clients into AI, or is it enabled globally?
-4. Are AI conversations visible to trainers by default, or only when escalated?
+3. Should progress reports be shareable with clients in the first release, or
+   saved as trainer-private drafts only?
+4. Should exercise alternatives prefer only the trainer's existing library, or
+   can AI suggest new exercises for the trainer to add?
 5. Is the first provider OpenAI, Anthropic, or selected later during
    implementation planning?
 6. Is AI part of the current `trAInR MVP` Linear project or a post-MVP project?
-7. What is the billing/usage model once clients can chat with AI?
+7. What is the billing/usage model for trainer AI usage?
 
 ## Recommended Linear issue outcome
 
 Create one tracking issue for product approval and detailed planning:
 
-**Title:** `ai-trainer-assistant: scope AI Q&A and trainer-approved plan drafts`
+**Title:** `ai-trainer-assistant: scope trainer AI copilot and progress reports`
 
-**Outcome:** Decide and plan an AI trainer assistant that lets clients ask
-bounded plan questions and request AI-generated plan drafts, while preserving
-trainer approval, Supabase/RLS isolation, structured outputs, safety logging,
-and trAInR's async coaching positioning.
+**Outcome:** Decide and plan a trainer-facing AI assistant that helps trainers
+discuss plan changes, choose exercise alternatives for client situations, and
+draft progress reports with proposed next steps, while preserving trainer
+approval, Supabase/RLS isolation, structured outputs, safety logging, and
+trAInR's async coaching positioning.
 
 ## References
 
