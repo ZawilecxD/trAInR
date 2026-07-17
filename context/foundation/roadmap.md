@@ -5,7 +5,7 @@
 version: 1
 status: draft
 created: 2026-05-25
-updated: 2026-07-02
+updated: 2026-07-17
 prd_version: 1
 main_goal: speed
 top_blocker: time
@@ -52,7 +52,7 @@ Independent personal trainers lose coaching time to admin — hunting across spr
 | S-18 | ui-redesign                | use a unified premium dark UI per DESIGN.md with accessible touch targets and Pencil-aligned key flows | S-06          | NFR mobile usability                              | proposed |
 | S-19 | prescription-fill-logging  | one-click fill a round with prescribed reps and load; no per-set completed toggle | S-06          | FR-015, FR-017 (extends)                          | done     |
 | S-20 | finished-session-summary-for-client | see a read-only exercise summary before editing or after completion | S-06, S-08, S-13 | FR-015, FR-017, FR-021, FR-022 (extends)          | done |
-| S-21 | optional-rpe-logging       | optionally log RPE (1–10) for each exercise round when logging a session | S-06, S-13 | FR-015, FR-017 (extends)                          | proposed |
+| S-21 | optional-rpe-logging       | optionally log RPE (1–10) for each exercise round when logging a session | S-06, S-13 | FR-015, FR-017 (extends)                          | done     |
 
 
 ### Quality & testing
@@ -404,7 +404,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Blockers:** —
 - **Unknowns:** Whether RPE is client-logged only or trainer can prescribe a target RPE per round; whether to use Borg CR-10 (1–10) or allow half steps (e.g. 7.5); whether empty RPE should be hidden or shown as "—" in summaries; whether RPE affects stats (S-12) or stays display-only initially
 - **Risk:** Adding a nullable column to `set_logs` is straightforward, but RPE input must stay optional and low-friction on mobile (one-handed gym use). Trainer/client summary components (`SessionExerciseSummary`, edit-list tables) must stay in sync so RPE does not drift between surfaces.
-- **Status:** proposed
+- **Status:** done
 
 ## Backlog Handoff
 
@@ -492,4 +492,5 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **S-13: logged workout data can be edited for 24 hours after first entry, then sealed (immutable)** — Archived 2026-07-01 → `context/archive/2026-07-01-data-edit-window/`. Lesson: —.
 - **S-19: client can one-click fill a round's log with prescribed reps and load (or duration) instead of retyping each time; the per-set OK/completed toggle is removed; exercise nav progress is inferred from logged values, not an explicit round-completed flag; session finished/partial/cancelled remains session-level only (S-08)** — Archived 2026-07-01 → `context/archive/2026-07-01-prescription-fill-logging/`. Lesson: —.
 - **S-20: client opening a finished, partially finished, cancelled, or edit-window pre-edit session sees a useful read-only summary of all exercises, prescribed targets, and logged values before any optional Edit action** — Archived 2026-07-02 → `context/archive/2026-07-01-finished-session-summary-for-client/`. Lesson: —.
+- **S-21: client can optionally record RPE (Rate of Perceived Exertion, typically 1–10) for each exercise round when logging a session; trainer and client session readouts show RPE when present without requiring it for every set** — Archived 2026-07-17 → `context/archive/2026-07-02-optional-rpe-logging/`. Lesson: —.
 

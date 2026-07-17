@@ -1,10 +1,10 @@
 ---
 change_id: optional-rpe-logging
 title: Optional RPE logging per exercise round
-status: implemented
+status: archived
 created: 2026-07-02
-updated: 2026-07-02
-archived_at: null
+updated: 2026-07-17
+archived_at: 2026-07-17T19:16:52Z
 linear_issue: ZAW-53
 ---
 
