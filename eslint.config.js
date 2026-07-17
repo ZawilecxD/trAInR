@@ -1,6 +1,6 @@
-/* eslint-disable @typescript-eslint/no-deprecated -- tseslint.config() is the only way to use extends; core defineConfig has incompatible API */
 import { includeIgnoreFile } from "@eslint/config-helpers";
 import eslint from "@eslint/js";
+import { defineConfig } from "eslint/config";
 import eslintPluginPrettier from "eslint-plugin-prettier/recommended";
 import eslintPluginAstro from "eslint-plugin-astro";
 import pluginReact from "eslint-plugin-react";
@@ -11,7 +11,7 @@ import tseslint from "typescript-eslint";
 
 const gitignorePath = path.resolve(import.meta.dirname, ".gitignore");
 
-const baseConfig = tseslint.config({
+const baseConfig = {
   extends: [eslint.configs.recommended, tseslint.configs.strictTypeChecked, tseslint.configs.stylisticTypeChecked],
   languageOptions: {
     parserOptions: {
@@ -35,9 +35,9 @@ const baseConfig = tseslint.config({
     "@typescript-eslint/restrict-template-expressions": ["error", { allowNumber: true }],
     "@typescript-eslint/no-misused-promises": ["error", { checksVoidReturn: { attributes: false } }],
   },
-});
+};
 
-const reactConfig = tseslint.config({
+const reactConfig = {
   files: ["**/*.{js,jsx,ts,tsx}"],
   extends: [pluginReact.configs.flat.recommended],
   languageOptions: {
@@ -57,9 +57,9 @@ const reactConfig = tseslint.config({
     "react/react-in-jsx-scope": "off",
     "react-compiler/react-compiler": "error",
   },
-});
+};
 
-const astroConfig = tseslint.config({
+const astroConfig = {
   files: ["**/*.astro"],
   rules: {
     "@typescript-eslint/no-misused-promises": "off",
@@ -67,9 +67,9 @@ const astroConfig = tseslint.config({
     "astro/no-unused-css-selector": "warn",
     "astro/prefer-class-list-directive": "warn",
   },
-});
+};
 
-export default tseslint.config(
+export default defineConfig(
   includeIgnoreFile(gitignorePath),
   { ignores: [".agents/**", ".cursor/hooks/**", "scripts/**"] },
   baseConfig,
