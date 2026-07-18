@@ -240,8 +240,8 @@ None — read-only over existing tables and RLS.
 
 #### Automated
 
-- [x] 1.1 Type checking passes: `npm run lint`
-- [x] 1.2 Unit tests pass: `npx vitest run src/lib/exercise-stats/calculations.test.ts`
+- [x] 1.1 Type checking passes: `npm run lint` — 5356590
+- [x] 1.2 Unit tests pass: `npx vitest run src/lib/exercise-stats/calculations.test.ts` — 5356590
 
 #### Manual
 
@@ -251,9 +251,9 @@ None — read-only over existing tables and RLS.
 
 #### Automated
 
-- [ ] 2.1 Type checking / lint passes: `npm run lint`
-- [ ] 2.2 Unit tests still pass: `npx vitest run`
-- [ ] 2.3 Integration test passes: `npm run test:integration -- exercise-stats`
+- [x] 2.1 Type checking / lint passes: `npm run lint`
+- [x] 2.2 Unit tests still pass: `npx vitest run`
+- [ ] 2.3 Integration test passes: `npm run test:integration -- exercise-stats` (requires local Supabase — run locally)
 
 #### Manual
 
