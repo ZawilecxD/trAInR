@@ -1,7 +1,7 @@
 ---
 change_id: exercise-statistics
 title: Exercise statistics (S-12)
-status: implemented
+status: impl_reviewed
 linear_issue: ZAW-17
 created: 2026-07-18
 updated: 2026-07-18
