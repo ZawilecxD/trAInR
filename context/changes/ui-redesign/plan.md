@@ -338,29 +338,29 @@ The stale orange variable table is replaced in Phase 1; no other migration. `DES
 
 #### Automated
 
-- [x] 1.1 `get_variables` on `trainer_dashboard.pen` returns navy/purple tokens (primary `#8083ff`, background `#0b1326`)
-- [x] 1.2 `DESIGN.md` exists at repo root
-- [x] 1.3 `AGENTS.md` references `DESIGN.md`
-- [x] 1.4 `snapshot_layout(problemsOnly: true)` on Design System frame returns no problems
-- [x] 1.5 `npm run lint` passes
+- [x] 1.1 `get_variables` on `trainer_dashboard.pen` returns navy/purple tokens (primary `#8083ff`, background `#0b1326`) — 252ec29
+- [x] 1.2 `DESIGN.md` exists at repo root — 252ec29
+- [x] 1.3 `AGENTS.md` references `DESIGN.md` — 252ec29
+- [x] 1.4 `snapshot_layout(problemsOnly: true)` on Design System frame returns no problems — 252ec29
+- [x] 1.5 `npm run lint` passes — 252ec29
 
 #### Manual
 
-- [x] 1.6 Design-system frame reviewed as one coherent system
-- [x] 1.7 `DESIGN.md` token values match the frames
+- [x] 1.6 Design-system frame reviewed as one coherent system — 252ec29
+- [x] 1.7 `DESIGN.md` token values match the frames — 252ec29
 
 ### Phase 2: Client-Facing Gaps
 
 #### Automated
 
-- [ ] 2.1 New frames export cleanly via `export_nodes`
-- [ ] 2.2 `snapshot_layout(problemsOnly: true)` on `guided_workout_logging.pen` returns no problems
-- [ ] 2.3 New frames reference Phase 1 components (`ref` nodes present)
+- [x] 2.1 New frames export cleanly via `export_nodes`
+- [x] 2.2 `snapshot_layout(problemsOnly: true)` on `guided_workout_logging.pen` returns no problems
+- [x] 2.3 New frames reference Phase 1 components (`ref` nodes present)
 
 #### Manual
 
-- [ ] 2.4 Completed, edit-window (editable + sealed), and comments screens reviewed for consistency
-- [ ] 2.5 One-handed mobile ergonomics + ≥44px touch targets verified
+- [x] 2.4 Completed, edit-window (editable + sealed), and comments screens reviewed for consistency
+- [x] 2.5 One-handed mobile ergonomics + ≥44px touch targets verified
 
 ### Phase 3: Trainer Authoring Gaps
 
