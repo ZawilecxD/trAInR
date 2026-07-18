@@ -53,6 +53,7 @@ interface ResolvedRow {
   durationSeconds: number | null;
   loadKg: number | null;
   loggedAt: string;
+  clientId: string;
   exerciseId: string;
   exerciseName: string;
   defaultMetric: ExerciseMetric;
@@ -64,7 +65,8 @@ function resolveRow(row: WorkingSetRow): ResolvedRow | null {
   const se = row.session_exercises;
   const exercise = se?.exercises;
   const session = se?.workout_sessions;
-  if (!se || !exercise || !session) {
+  const plan = session?.client_plans;
+  if (!se || !exercise || !session || !plan) {
     return null;
   }
 
@@ -73,6 +75,7 @@ function resolveRow(row: WorkingSetRow): ResolvedRow | null {
     durationSeconds: row.duration_seconds,
     loadKg: row.load_kg,
     loggedAt: row.logged_at,
+    clientId: plan.client_id,
     exerciseId: se.exercise_id,
     exerciseName: exercise.name,
     defaultMetric: exercise.default_metric,
@@ -100,7 +103,7 @@ export async function listLoggedExercisesForClient(
   }
 
   const rawRows = (result.data as WorkingSetRow[] | null) ?? [];
-  const rows = rawRows.map(resolveRow).filter((row): row is ResolvedRow => row !== null);
+  const rows = rawRows.map(resolveRow).filter((row): row is ResolvedRow => row !== null && row.clientId === clientId);
 
   const byExercise = new Map<string, { summary: LoggedExerciseSummary; sessionIds: Set<string> }>();
 
@@ -159,7 +162,7 @@ export async function getExerciseHistoryForClient(
   const rawRows = (result.data as WorkingSetRow[] | null) ?? [];
   const rows = rawRows
     .map(resolveRow)
-    .filter((row): row is ResolvedRow => row !== null && row.exerciseId === exerciseId);
+    .filter((row): row is ResolvedRow => row !== null && row.exerciseId === exerciseId && row.clientId === clientId);
 
   if (rows.length === 0) {
     return { data: null, error: null };
