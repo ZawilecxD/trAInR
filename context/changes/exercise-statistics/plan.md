@@ -263,9 +263,9 @@ None — read-only over existing tables and RLS.
 
 #### Automated
 
-- [x] 3.1 Lint passes: `npm run lint`
-- [x] 3.2 Production build succeeds: `npm run build`
-- [x] 3.3 Full unit suite passes: `npx vitest run`
+- [x] 3.1 Lint passes: `npm run lint` — 9b57211
+- [x] 3.2 Production build succeeds: `npm run build` — 9b57211
+- [x] 3.3 Full unit suite passes: `npx vitest run` — 9b57211
 
 #### Manual
 
