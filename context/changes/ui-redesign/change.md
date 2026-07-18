@@ -1,9 +1,9 @@
 ---
 id: ui-redesign
 title: UI Redesign
-status: planned
+status: implementing
 created: 2026-06-12
-updated: 2026-07-17
+updated: 2026-07-18
 ---
 
 # UI Redesign

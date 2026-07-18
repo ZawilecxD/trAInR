@@ -338,16 +338,16 @@ The stale orange variable table is replaced in Phase 1; no other migration. `DES
 
 #### Automated
 
-- [ ] 1.1 `get_variables` on `trainer_dashboard.pen` returns navy/purple tokens (primary `#8083ff`, background `#0b1326`)
-- [ ] 1.2 `DESIGN.md` exists at repo root
-- [ ] 1.3 `AGENTS.md` references `DESIGN.md`
-- [ ] 1.4 `snapshot_layout(problemsOnly: true)` on Design System frame returns no problems
-- [ ] 1.5 `npm run lint` passes
+- [x] 1.1 `get_variables` on `trainer_dashboard.pen` returns navy/purple tokens (primary `#8083ff`, background `#0b1326`)
+- [x] 1.2 `DESIGN.md` exists at repo root
+- [x] 1.3 `AGENTS.md` references `DESIGN.md`
+- [x] 1.4 `snapshot_layout(problemsOnly: true)` on Design System frame returns no problems
+- [x] 1.5 `npm run lint` passes
 
 #### Manual
 
-- [ ] 1.6 Design-system frame reviewed as one coherent system
-- [ ] 1.7 `DESIGN.md` token values match the frames
+- [x] 1.6 Design-system frame reviewed as one coherent system
+- [x] 1.7 `DESIGN.md` token values match the frames
 
 ### Phase 2: Client-Facing Gaps
 
