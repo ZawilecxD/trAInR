@@ -353,14 +353,14 @@ The stale orange variable table is replaced in Phase 1; no other migration. `DES
 
 #### Automated
 
-- [x] 2.1 New frames export cleanly via `export_nodes`
-- [x] 2.2 `snapshot_layout(problemsOnly: true)` on `guided_workout_logging.pen` returns no problems
-- [x] 2.3 New frames reference Phase 1 components (`ref` nodes present)
+- [x] 2.1 New frames export cleanly via `export_nodes` — 2a1e18f
+- [x] 2.2 `snapshot_layout(problemsOnly: true)` on `guided_workout_logging.pen` returns no problems — 2a1e18f
+- [x] 2.3 New frames reference Phase 1 components (`ref` nodes present) — 2a1e18f
 
 #### Manual
 
-- [x] 2.4 Completed, edit-window (editable + sealed), and comments screens reviewed for consistency
-- [x] 2.5 One-handed mobile ergonomics + ≥44px touch targets verified
+- [x] 2.4 Completed, edit-window (editable + sealed), and comments screens reviewed for consistency — 2a1e18f
+- [x] 2.5 One-handed mobile ergonomics + ≥44px touch targets verified — 2a1e18f
 
 ### Phase 3: Trainer Authoring Gaps
 
