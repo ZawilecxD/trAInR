@@ -149,7 +149,8 @@ export async function getExerciseHistoryForClient(
     .select(WORKING_SET_SELECT)
     .eq("is_warmup", false)
     .eq("session_exercises.exercise_id", exerciseId)
-    .eq("session_exercises.workout_sessions.client_plans.client_id", clientId);
+    .eq("session_exercises.workout_sessions.client_plans.client_id", clientId)
+    .order("set_number", { ascending: true });
 
   if (result.error) {
     return { data: null, error: result.error.message };

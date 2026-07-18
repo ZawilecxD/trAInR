@@ -71,6 +71,7 @@ describe("aggregateSessionStats", () => {
     expect(stat.totalVolumeKg).toBe(1400);
     expect(stat.totalReps).toBe(24);
     expect(stat.totalDurationSeconds).toBe(0);
+    expect(stat.sets).toHaveLength(3); // working sets preserved for drill-down
   });
 
   it("handles bodyweight sets: no 1RM/volume, reps counted, top set by reps", () => {
@@ -109,6 +110,7 @@ describe("summarizeExerciseHistory", () => {
     scheduledDate: "2026-07-10",
     loggedAt: "2026-07-10T12:00:00.000Z",
     workingSetCount: 3,
+    sets: [set(5, 100)],
     topSet: set(5, 100),
     estimated1RM: 116.7,
     totalVolumeKg: 1000,

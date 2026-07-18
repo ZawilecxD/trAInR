@@ -251,8 +251,8 @@ None — read-only over existing tables and RLS.
 
 #### Automated
 
-- [x] 2.1 Type checking / lint passes: `npm run lint`
-- [x] 2.2 Unit tests still pass: `npx vitest run`
+- [x] 2.1 Type checking / lint passes: `npm run lint` — caf663d
+- [x] 2.2 Unit tests still pass: `npx vitest run` — caf663d
 - [ ] 2.3 Integration test passes: `npm run test:integration -- exercise-stats` (requires local Supabase — run locally)
 
 #### Manual
@@ -263,9 +263,9 @@ None — read-only over existing tables and RLS.
 
 #### Automated
 
-- [ ] 3.1 Lint passes: `npm run lint`
-- [ ] 3.2 Production build succeeds: `npm run build`
-- [ ] 3.3 Full unit suite passes: `npx vitest run`
+- [x] 3.1 Lint passes: `npm run lint`
+- [x] 3.2 Production build succeeds: `npm run build`
+- [x] 3.3 Full unit suite passes: `npx vitest run`
 
 #### Manual
 

@@ -1,0 +1,43 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import ExerciseStatsView from "@/components/exercise-stats/ExerciseStatsView";
+import { getExerciseHistoryForClient } from "@/lib/exercise-stats/service";
+import { createClient } from "@/lib/supabase";
+import { z } from "zod";
+
+export const prerender = false;
+
+const exerciseIdSchema = z.uuid();
+
+const userId = Astro.locals.user?.id;
+const parsedExerciseId = exerciseIdSchema.safeParse(Astro.params.exerciseId);
+const supabase = createClient(Astro.request.headers, Astro.cookies);
+
+if (!parsedExerciseId.success || !supabase || !userId) {
+  return Astro.redirect("/client/exercises");
+}
+
+const { data: history, error } = await getExerciseHistoryForClient(supabase, userId, parsedExerciseId.data);
+
+if (error || !history) {
+  return Astro.redirect("/client/exercises");
+}
+---
+
+<Layout title={history.exercise.name}>
+  <div class="bg-cosmic min-h-screen p-4 md:p-8">
+    <div class="mx-auto max-w-3xl space-y-6">
+      <div>
+        <a href="/client/exercises" class="text-sm text-blue-100/60 transition-colors hover:text-blue-200">
+          ← All exercises
+        </a>
+        <h1 class="mt-2 bg-gradient-to-r from-blue-200 to-purple-200 bg-clip-text text-3xl font-bold text-transparent">
+          {history.exercise.name}
+        </h1>
+        <p class="mt-1 text-sm text-blue-100/70">Your logged performance across sessions.</p>
+      </div>
+
+      <ExerciseStatsView client:load history={history} />
+    </div>
+  </div>
+</Layout>

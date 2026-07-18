@@ -24,6 +24,8 @@ export interface SessionStat {
   scheduledDate: string;
   loggedAt: string;
   workingSetCount: number;
+  /** The session's working sets, preserved for per-set drill-down in the UI. */
+  sets: WorkingSetInput[];
   topSet: WorkingSetInput | null;
   estimated1RM: number | null;
   totalVolumeKg: number | null;
@@ -134,6 +136,7 @@ export function aggregateSessionStats(input: SessionStatInput, metric: ExerciseM
     scheduledDate: input.scheduledDate,
     loggedAt: input.loggedAt,
     workingSetCount: sets.length,
+    sets,
     topSet: pickTopSet(sets, metric),
     estimated1RM,
     totalVolumeKg: hasVolume ? round1(volumeSum) : null,
