@@ -366,14 +366,14 @@ The stale orange variable table is replaced in Phase 1; no other migration. `DES
 
 #### Automated
 
-- [x] 3.1 `trainer_authoring.pen` exists; all frames export cleanly
-- [x] 3.2 `snapshot_layout(problemsOnly: true)` returns no problems
-- [x] 3.3 `get_variables` matches Phase 1 token set
+- [x] 3.1 `trainer_authoring.pen` exists; all frames export cleanly — ca54add
+- [x] 3.2 `snapshot_layout(problemsOnly: true)` returns no problems — ca54add
+- [x] 3.3 `get_variables` matches Phase 1 token set — ca54add
 
 #### Manual
 
-- [x] 3.4 Plan hub, session builder (create + edit), actuals review reviewed at both breakpoints
-- [x] 3.5 Consistency with existing trainer desktop screens confirmed
+- [x] 3.4 Plan hub, session builder (create + edit), actuals review reviewed at both breakpoints — ca54add
+- [x] 3.5 Consistency with existing trainer desktop screens confirmed — ca54add
 
 ### Phase 4: Public & Auth Surface
 
