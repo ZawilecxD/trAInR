@@ -3,7 +3,7 @@ id: ui-redesign
 title: UI Redesign
 status: implementing
 created: 2026-06-12
-updated: 2026-07-18
+updated: 2026-07-19
 ---
 
 # UI Redesign
