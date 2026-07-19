@@ -6071,6 +6071,153 @@
           ]
         }
       ]
+    },
+    {
+      "type": "frame",
+      "id": "Z3qRtI",
+      "x": 3540,
+      "y": -280,
+      "name": "C/PrimaryButton",
+      "reusable": true,
+      "width": 200,
+      "fill": "$--primary",
+      "cornerRadius": "$--radius",
+      "padding": [
+        13,
+        20
+      ],
+      "justifyContent": "center",
+      "alignItems": "center",
+      "children": [
+        {
+          "type": "text",
+          "id": "BTPyp",
+          "name": "Label",
+          "fill": "$--primary-foreground",
+          "content": "Button",
+          "fontFamily": "$--font-sans",
+          "fontSize": 15,
+          "fontWeight": "600"
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "y172C",
+      "x": 3760,
+      "y": -280,
+      "name": "C/SecondaryButton",
+      "reusable": true,
+      "width": 200,
+      "fill": "$--secondary",
+      "cornerRadius": "$--radius",
+      "stroke": "$--border",
+      "strokeWidth": 1,
+      "padding": [
+        13,
+        20
+      ],
+      "justifyContent": "center",
+      "alignItems": "center",
+      "children": [
+        {
+          "type": "text",
+          "id": "M85EgO",
+          "name": "Label",
+          "fill": "$--secondary-foreground",
+          "content": "Secondary",
+          "fontFamily": "$--font-sans",
+          "fontSize": 15,
+          "fontWeight": "600"
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "weyRB",
+      "x": 3980,
+      "y": -280,
+      "name": "C/GhostButton",
+      "reusable": true,
+      "width": 200,
+      "fill": "#00000000",
+      "cornerRadius": "$--radius",
+      "padding": [
+        13,
+        20
+      ],
+      "justifyContent": "center",
+      "alignItems": "center",
+      "children": [
+        {
+          "type": "text",
+          "id": "t983Db",
+          "name": "Label",
+          "fill": "$--text-lavender",
+          "content": "Ghost",
+          "fontFamily": "$--font-sans",
+          "fontSize": 15,
+          "fontWeight": "600"
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "JJhjM",
+      "x": 4200,
+      "y": -280,
+      "name": "C/DestructiveButton",
+      "reusable": true,
+      "width": 200,
+      "fill": "$--destructive",
+      "cornerRadius": "$--radius",
+      "padding": [
+        13,
+        20
+      ],
+      "justifyContent": "center",
+      "alignItems": "center",
+      "children": [
+        {
+          "type": "text",
+          "id": "cZts4",
+          "name": "Label",
+          "fill": "$--destructive-foreground",
+          "content": "Delete",
+          "fontFamily": "$--font-sans",
+          "fontSize": 15,
+          "fontWeight": "600"
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "GdFmm",
+      "x": 4420,
+      "y": -280,
+      "name": "C/StatusChip",
+      "reusable": true,
+      "fill": "#4edea31a",
+      "cornerRadius": "$--radius-pill",
+      "stroke": "#4edea366",
+      "strokeWidth": 1,
+      "padding": [
+        3,
+        10
+      ],
+      "alignItems": "center",
+      "children": [
+        {
+          "type": "text",
+          "id": "I2f5IA",
+          "name": "Label",
+          "fill": "$--success",
+          "content": "Finished",
+          "fontFamily": "$--font-sans",
+          "fontSize": 11,
+          "fontWeight": "600"
+        }
+      ]
     }
   ],
   "variables": {
