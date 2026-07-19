@@ -379,14 +379,14 @@ The stale orange variable table is replaced in Phase 1; no other migration. `DES
 
 #### Automated
 
-- [x] 4.1 `public_auth.pen` exists; all frames export cleanly
-- [x] 4.2 `snapshot_layout(problemsOnly: true)` returns no problems
-- [x] 4.3 Auth frames reference DS Input/Button components
+- [x] 4.1 `public_auth.pen` exists; all frames export cleanly — 44f4665
+- [x] 4.2 `snapshot_layout(problemsOnly: true)` returns no problems — 44f4665
+- [x] 4.3 Auth frames reference DS Input/Button components — 44f4665
 
 #### Manual
 
-- [x] 4.4 Landing, signin, signup (both variants), confirm-email reviewed
-- [x] 4.5 Invite-token signup variant clearly distinct from standard signup
+- [x] 4.4 Landing, signin, signup (both variants), confirm-email reviewed — 44f4665
+- [x] 4.5 Invite-token signup variant clearly distinct from standard signup — 44f4665
 
 ### Phase 5: Responsive Parity + Consistency Audit
 
