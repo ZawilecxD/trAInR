@@ -39,19 +39,17 @@ const pageTitle = isClientInvite ? "Join as client" : "Sign up";
 ---
 
 <Layout title={pageTitle}>
-  <div class="bg-cosmic flex min-h-screen items-center justify-center p-4">
-    <div class="w-full max-w-sm rounded-2xl border border-white/10 bg-white/10 p-8 text-white backdrop-blur-xl">
+  <div class="bg-background flex min-h-screen items-center justify-center p-4">
+    <div class="border-border bg-muted w-full max-w-sm rounded-2xl border p-8 text-white backdrop-blur-xl">
       {
         token && tokenInvalid ? (
           <>
-            <h1 class="mb-4 bg-gradient-to-r from-blue-200 to-purple-200 bg-clip-text text-center text-2xl font-bold text-transparent">
-              Invite link unavailable
-            </h1>
-            <p class="text-center text-sm text-blue-100/80">
+            <h1 class="headline-lg text-foreground mb-4 text-center text-2xl">Invite link unavailable</h1>
+            <p class="text-muted-foreground text-center text-sm">
               This invite link is invalid, expired, or has already been used. Ask your trainer to send you a new link.
             </p>
-            <p class="mt-6 text-center text-sm text-blue-100/60">
-              <a href="/auth/signin" class="text-purple-300 hover:underline">
+            <p class="text-muted-foreground mt-6 text-center text-sm">
+              <a href="/auth/signin" class="text-text-lavender hover:underline">
                 Sign in
               </a>{" "}
               if you already have an account.
@@ -59,18 +57,18 @@ const pageTitle = isClientInvite ? "Join as client" : "Sign up";
           </>
         ) : (
           <>
-            <h1 class="mb-6 bg-gradient-to-r from-blue-200 to-purple-200 bg-clip-text text-center text-2xl font-bold text-transparent">
+            <h1 class="headline-lg text-foreground mb-6 text-center text-2xl">
               {isClientInvite ? "Create your client account" : "Sign up"}
             </h1>
             {isClientInvite ? (
-              <p class="mb-4 text-center text-sm text-blue-100/80">
+              <p class="text-muted-foreground mb-4 text-center text-sm">
                 You've been invited by <span class="font-semibold text-white">{trainerName ?? "your trainer"}</span>
               </p>
             ) : null}
             <SignUpForm serverError={error} token={token ?? undefined} trainerName={trainerName} client:load />
-            <p class="mt-4 text-center text-sm text-blue-100/60">
+            <p class="text-muted-foreground mt-4 text-center text-sm">
               Already have an account?{" "}
-              <a href="/auth/signin" class="text-purple-300 hover:underline">
+              <a href="/auth/signin" class="text-text-lavender hover:underline">
                 Sign in
               </a>
             </p>

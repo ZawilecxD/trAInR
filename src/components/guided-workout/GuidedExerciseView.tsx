@@ -46,7 +46,7 @@ export default function GuidedExerciseView({
         {startedAt ? (
           <button
             type="button"
-            className="inline-flex min-h-11 min-w-11 items-center justify-center text-sm text-blue-100/70 hover:text-white"
+            className="text-muted-foreground inline-flex min-h-11 min-w-11 items-center justify-center text-sm hover:text-white"
             onClick={onBackToEditList}
             aria-label="All exercises"
           >
@@ -55,7 +55,7 @@ export default function GuidedExerciseView({
         ) : (
           <button
             type="button"
-            className="inline-flex min-h-11 items-center gap-2 text-sm text-blue-100/70 hover:text-white lg:col-span-1"
+            className="text-muted-foreground inline-flex min-h-11 items-center gap-2 text-sm hover:text-white lg:col-span-1"
             onClick={onBackToOverview}
           >
             <ArrowLeft className="size-4" aria-hidden="true" />
@@ -69,7 +69,7 @@ export default function GuidedExerciseView({
 
         <button
           type="button"
-          className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-lg border border-white/15 text-blue-100/70 hover:text-white disabled:opacity-40 lg:hidden"
+          className="border-border text-muted-foreground inline-flex min-h-11 min-w-11 items-center justify-center rounded-lg border hover:text-white disabled:opacity-40 lg:hidden"
           onClick={onOpenMenu}
           disabled={!onOpenMenu}
           aria-label="Exercise menu"
@@ -80,12 +80,12 @@ export default function GuidedExerciseView({
 
       <div className="space-y-4 pb-28 lg:pb-4">
         <section>
-          <p className="font-mono text-xs tracking-widest text-blue-200/80">{phaseLabel(exercise.phase)}</p>
+          <p className="text-text-soft font-mono text-xs tracking-widest">{phaseLabel(exercise.phase)}</p>
           <h1 className="mt-2 text-3xl font-bold text-white">{exercise.exercise_name || "Exercise"}</h1>
-          {exercise.notes ? <p className="mt-2 text-sm text-blue-100/70">{exercise.notes}</p> : null}
+          {exercise.notes ? <p className="text-muted-foreground mt-2 text-sm">{exercise.notes}</p> : null}
         </section>
 
-        <section className="rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-blue-100/90">
+        <section className="border-border bg-card text-foreground/90 rounded-xl border px-4 py-3 text-sm">
           {formatExercisePrescriptionDetail(exercise.sets, exercise.exercise_default_metric)}
         </section>
 
@@ -97,12 +97,12 @@ export default function GuidedExerciseView({
         />
       </div>
 
-      <div className="fixed inset-x-0 bottom-0 bg-slate-950/90 p-4 backdrop-blur-xl lg:static lg:mt-6 lg:bg-transparent lg:p-0 lg:backdrop-blur-none">
+      <div className="bg-background/90 fixed inset-x-0 bottom-0 p-4 backdrop-blur-xl lg:static lg:mt-6 lg:bg-transparent lg:p-0 lg:backdrop-blur-none">
         <div className="mx-auto flex max-w-2xl gap-3 lg:max-w-none">
           <Button
             type="button"
             variant="outline"
-            className="min-h-12 flex-1 border-white/20 bg-white/5 text-base text-white hover:bg-white/10"
+            className="border-border bg-card hover:bg-accent min-h-12 flex-1 text-base text-white"
             disabled={isFirstExercise || isNavigating}
             onClick={onPrev}
           >

@@ -49,7 +49,7 @@ export default function SessionOverview({
       <header className="mb-6">
         <a
           href="/client/plan"
-          className="inline-flex min-h-11 items-center gap-2 text-sm text-blue-100/70 transition-colors hover:text-white"
+          className="text-muted-foreground inline-flex min-h-11 items-center gap-2 text-sm transition-colors hover:text-white"
         >
           <ArrowLeft className="size-4" aria-hidden="true" />
           Calendar
@@ -58,32 +58,32 @@ export default function SessionOverview({
       </header>
 
       <div className="space-y-4 pb-28">
-        <section className="rounded-2xl border border-white/10 bg-white/5 p-5 backdrop-blur-xl">
+        <section className="border-border bg-card rounded-2xl border p-5 backdrop-blur-xl">
           <dl className="grid gap-3 text-sm">
             <div className="flex justify-between gap-4">
-              <dt className="text-blue-100/60">Assigned by</dt>
+              <dt className="text-muted-foreground">Assigned by</dt>
               <dd className="text-right font-medium text-white">{session.trainer_display_name || "Your trainer"}</dd>
             </div>
             <div className="flex justify-between gap-4">
-              <dt className="text-blue-100/60">Date</dt>
+              <dt className="text-muted-foreground">Date</dt>
               <dd className="text-right font-medium text-white">{formatSessionOverviewDate(session.scheduled_date)}</dd>
             </div>
             <div className="flex justify-between gap-4">
-              <dt className="text-blue-100/60">Total exercises</dt>
+              <dt className="text-muted-foreground">Total exercises</dt>
               <dd className="text-right font-medium text-white">{session.exercises.length}</dd>
             </div>
           </dl>
         </section>
 
         {trainerNote ? (
-          <section className="rounded-2xl border border-white/10 bg-white/5 p-5 backdrop-blur-xl">
-            <h2 className="text-sm font-medium text-blue-100/80">Trainer note</h2>
+          <section className="border-border bg-card rounded-2xl border p-5 backdrop-blur-xl">
+            <h2 className="text-muted-foreground text-sm font-medium">Trainer note</h2>
             <p className="mt-2 text-sm leading-relaxed text-white/90">{trainerNote}</p>
           </section>
         ) : null}
 
         <section>
-          <h2 className="mb-3 text-sm font-medium text-blue-100/80">Phase breakdown</h2>
+          <h2 className="text-muted-foreground mb-3 text-sm font-medium">Phase breakdown</h2>
           <PhaseBreakdown exercises={session.exercises} />
         </section>
 
@@ -96,7 +96,7 @@ export default function SessionOverview({
         ) : null}
       </div>
 
-      <div className="fixed inset-x-0 bottom-0 border-t border-white/10 bg-slate-950/90 p-4 backdrop-blur-xl">
+      <div className="border-border bg-background/90 fixed inset-x-0 bottom-0 border-t p-4 backdrop-blur-xl">
         <div className="mx-auto max-w-2xl space-y-2">
           {cancelError ? (
             <p className="rounded-lg border border-red-400/30 bg-red-500/10 px-4 py-2 text-sm text-red-100">
@@ -115,7 +115,7 @@ export default function SessionOverview({
             <Button
               type="button"
               variant="outline"
-              className="min-h-11 w-full border-slate-500/30 bg-slate-500/10 text-slate-300 hover:bg-slate-500/20"
+              className="border-muted-foreground/30 bg-muted text-muted-foreground hover:bg-accent min-h-11 w-full"
               disabled={cancelPending}
               onClick={() => {
                 setCancelOpen(true);

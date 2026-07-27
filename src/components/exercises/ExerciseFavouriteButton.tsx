@@ -55,8 +55,8 @@ export default function ExerciseFavouriteButton({
         void handleToggle();
       }}
       className={cn(
-        "rounded-md p-1 transition-colors hover:bg-white/10 disabled:opacity-50",
-        isFavourite ? "text-amber-300" : "text-blue-100/40 hover:text-amber-200",
+        "hover:bg-accent rounded-md p-1 transition-colors disabled:opacity-50",
+        isFavourite ? "text-warning" : "text-foreground/40 hover:text-warning",
         className,
       )}
     >

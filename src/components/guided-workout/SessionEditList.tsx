@@ -43,19 +43,19 @@ function ExerciseEditCard({
 }) {
   return (
     <section className="space-y-3">
-      <div className="rounded-2xl border border-white/10 bg-white/5 px-4 py-4 backdrop-blur-xl">
-        <p className="font-mono text-xs tracking-widest text-blue-200/80">{phaseLabel(exercise.phase)}</p>
+      <div className="border-border bg-card rounded-2xl border px-4 py-4 backdrop-blur-xl">
+        <p className="text-text-soft font-mono text-xs tracking-widest">{phaseLabel(exercise.phase)}</p>
         <button
           type="button"
-          className="mt-2 text-left text-lg font-semibold text-white hover:text-blue-100"
+          className="hover:text-foreground mt-2 text-left text-lg font-semibold text-white"
           onClick={() => {
             onJumpToExercise(exerciseIndex);
           }}
         >
           {exercise.exercise_name || "Exercise"}
         </button>
-        {exercise.notes ? <p className="mt-1 text-sm text-blue-100/70">{exercise.notes}</p> : null}
-        <p className="mt-3 text-sm text-blue-100/90">
+        {exercise.notes ? <p className="text-muted-foreground mt-1 text-sm">{exercise.notes}</p> : null}
+        <p className="text-foreground/90 mt-3 text-sm">
           {formatExercisePrescriptionDetail(exercise.sets, exercise.exercise_default_metric)}
         </p>
       </div>
@@ -126,7 +126,7 @@ export default function SessionEditList({
         {isInProgress ? (
           <a
             href="/client/plan"
-            className="inline-flex min-h-11 items-center gap-2 text-sm text-blue-100/70 transition-colors hover:text-white"
+            className="text-muted-foreground inline-flex min-h-11 items-center gap-2 text-sm transition-colors hover:text-white"
           >
             <ArrowLeft className="size-4" aria-hidden="true" />
             Calendar
@@ -134,7 +134,7 @@ export default function SessionEditList({
         ) : (
           <button
             type="button"
-            className="inline-flex min-h-11 items-center gap-2 text-sm text-blue-100/70 transition-colors hover:text-white"
+            className="text-muted-foreground inline-flex min-h-11 items-center gap-2 text-sm transition-colors hover:text-white"
             onClick={onBackToSummary}
           >
             <ArrowLeft className="size-4" aria-hidden="true" />
@@ -144,12 +144,12 @@ export default function SessionEditList({
         <div className="mt-4 flex flex-wrap items-start justify-between gap-3">
           <div>
             <h1 className="text-3xl font-bold text-white">{session.name ?? "Workout"}</h1>
-            <p className="mt-1 text-sm text-blue-100/70">{formatSessionOverviewDate(session.scheduled_date)}</p>
+            <p className="text-muted-foreground mt-1 text-sm">{formatSessionOverviewDate(session.scheduled_date)}</p>
           </div>
           <Button
             type="button"
             variant="outline"
-            className="min-h-11 border-white/20 bg-white/5 text-white hover:bg-white/10"
+            className="border-border bg-card hover:bg-accent min-h-11 text-white"
             disabled={readOnly || !isInProgress}
             onClick={() => {
               setRestartOpen(true);
@@ -192,7 +192,7 @@ export default function SessionEditList({
         <SessionCommentsThread sessionId={session.id} currentUserId={currentUserId} />
       </div>
 
-      <div className="fixed inset-x-0 bottom-0 border-t border-white/10 bg-slate-950/90 p-4 backdrop-blur-xl">
+      <div className="border-border bg-background/90 fixed inset-x-0 bottom-0 border-t p-4 backdrop-blur-xl">
         <div className="mx-auto max-w-2xl space-y-2">
           {completeError ? (
             <p className="rounded-lg border border-red-400/30 bg-red-500/10 px-4 py-2 text-sm text-red-100">
@@ -214,7 +214,7 @@ export default function SessionEditList({
                 <Button
                   type="button"
                   variant="outline"
-                  className="min-h-11 border-emerald-500/30 bg-emerald-500/10 text-emerald-200 hover:bg-emerald-500/20"
+                  className="border-success/30 bg-success/10 text-success hover:bg-success/20 min-h-11"
                   disabled={completePending}
                   onClick={() => {
                     void handleComplete("finished");
@@ -225,7 +225,7 @@ export default function SessionEditList({
                 <Button
                   type="button"
                   variant="outline"
-                  className="min-h-11 border-amber-500/30 bg-amber-500/10 text-amber-200 hover:bg-amber-500/20"
+                  className="border-warning/30 bg-warning/10 text-warning hover:bg-warning/20 min-h-11"
                   disabled={completePending}
                   onClick={() => {
                     void handleComplete("finished_partially");
@@ -236,7 +236,7 @@ export default function SessionEditList({
                 <Button
                   type="button"
                   variant="outline"
-                  className="min-h-11 border-slate-500/30 bg-slate-500/10 text-slate-300 hover:bg-slate-500/20"
+                  className="border-muted-foreground/30 bg-muted text-muted-foreground hover:bg-accent min-h-11"
                   disabled={completePending}
                   onClick={() => {
                     setCancelOpen(true);

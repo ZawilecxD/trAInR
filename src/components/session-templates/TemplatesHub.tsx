@@ -146,14 +146,12 @@ export default function TemplatesHub({
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h1 className="bg-gradient-to-r from-blue-200 to-purple-200 bg-clip-text text-3xl font-bold text-transparent">
-            Session templates
-          </h1>
-          <p className="mt-1 text-sm text-blue-100/70">
+          <h1 className="headline-lg text-foreground">Session templates</h1>
+          <p className="text-muted-foreground mt-1 text-sm">
             Build reusable session blueprints with warm-up, main, and cool-down phases.
           </p>
         </div>
-        <Button type="button" className="bg-purple-500 text-white hover:bg-purple-500/90" onClick={openCreateModal}>
+        <Button type="button" className="bg-primary hover:bg-primary/90 text-white" onClick={openCreateModal}>
           <Plus className="size-4" />
           New template
         </Button>
@@ -180,7 +178,7 @@ export default function TemplatesHub({
       <TemplateFilters initialFilters={initialFilters} />
 
       {sortedTemplates.length === 0 ? (
-        <div className="rounded-2xl border border-white/10 bg-white/5 p-8 text-center text-blue-100/80">
+        <div className="border-border bg-card text-muted-foreground rounded-2xl border p-8 text-center">
           {hasActiveFilters ? (
             <>
               <p className="text-lg font-medium text-white">No templates match your filters</p>
@@ -193,7 +191,7 @@ export default function TemplatesHub({
               <Button
                 type="button"
                 variant="outline"
-                className="mt-4 border-white/20 bg-transparent text-white hover:bg-white/10"
+                className="border-border hover:bg-accent mt-4 bg-transparent text-white"
                 onClick={openCreateModal}
               >
                 Create template
@@ -202,10 +200,10 @@ export default function TemplatesHub({
           )}
         </div>
       ) : (
-        <div className="overflow-hidden rounded-2xl border border-white/10 bg-white/5">
+        <div className="border-border bg-card overflow-hidden rounded-2xl border">
           <div className="overflow-x-auto">
-            <table className="min-w-full text-left text-sm text-blue-100/90">
-              <thead className="border-b border-white/10 bg-white/5 text-xs tracking-wide text-blue-100/60 uppercase">
+            <table className="text-foreground/90 min-w-full text-left text-sm">
+              <thead className="border-border bg-card text-muted-foreground border-b text-xs tracking-wide uppercase">
                 <tr>
                   <th className="px-4 py-3">Name</th>
                   <th className="px-4 py-3">Description</th>
@@ -217,7 +215,7 @@ export default function TemplatesHub({
               </thead>
               <tbody>
                 {sortedTemplates.map((template) => (
-                  <tr key={template.id} className="border-b border-white/5 last:border-b-0">
+                  <tr key={template.id} className="border-border/50 border-b last:border-b-0">
                     <td className="px-4 py-3 font-medium text-white">{template.name}</td>
                     <td className="max-w-xs truncate px-4 py-3">{template.description ?? "—"}</td>
                     <td className="px-4 py-3">{template.exercise_count}</td>
@@ -227,7 +225,7 @@ export default function TemplatesHub({
                           {template.phases.map((phase) => (
                             <span
                               key={phase}
-                              className="rounded-full border border-white/20 bg-white/5 px-2 py-0.5 text-xs text-blue-100/80"
+                              className="border-border bg-card text-muted-foreground rounded-full border px-2 py-0.5 text-xs"
                             >
                               {TEMPLATE_PHASE_LABELS[phase]}
                             </span>
@@ -244,7 +242,7 @@ export default function TemplatesHub({
                           type="button"
                           variant="outline"
                           size="sm"
-                          className="border-white/20 bg-transparent text-white hover:bg-white/10"
+                          className="border-border hover:bg-accent bg-transparent text-white"
                           disabled={loadingEdit && editingTemplateId === template.id}
                           onClick={() => {
                             void openEditModal(template.id);
@@ -261,7 +259,7 @@ export default function TemplatesHub({
                           type="button"
                           variant="outline"
                           size="sm"
-                          className="border-white/20 bg-transparent text-red-200 hover:bg-red-500/10"
+                          className="border-border bg-transparent text-red-200 hover:bg-red-500/10"
                           onClick={() => {
                             setDeleteError(null);
                             setDeleteTarget(template);

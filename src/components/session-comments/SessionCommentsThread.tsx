@@ -22,7 +22,7 @@ function formatTimestamp(iso: string): string {
 function AuthorBadge({ role, isMe }: { role: UserRole; isMe: boolean }) {
   if (isMe) {
     return (
-      <span className="inline-flex items-center rounded-full border border-white/20 bg-white/10 px-2 py-0.5 text-xs font-medium text-white/80">
+      <span className="border-border bg-muted inline-flex items-center rounded-full border px-2 py-0.5 text-xs font-medium text-white/80">
         You
       </span>
     );
@@ -30,14 +30,14 @@ function AuthorBadge({ role, isMe }: { role: UserRole; isMe: boolean }) {
 
   if (role === "trainer") {
     return (
-      <span className="inline-flex items-center rounded-full border border-amber-400/30 bg-amber-500/10 px-2 py-0.5 text-xs font-medium text-amber-200">
+      <span className="border-warning/30 bg-warning/10 text-warning inline-flex items-center rounded-full border px-2 py-0.5 text-xs font-medium">
         Trainer
       </span>
     );
   }
 
   return (
-    <span className="inline-flex items-center rounded-full border border-blue-400/30 bg-blue-500/10 px-2 py-0.5 text-xs font-medium text-blue-200">
+    <span className="border-primary/30 bg-primary/10 text-text-soft inline-flex items-center rounded-full border px-2 py-0.5 text-xs font-medium">
       Client
     </span>
   );
@@ -56,7 +56,7 @@ function CommentItem({ comment, currentUserId }: CommentItemProps) {
       <div className="flex items-center gap-2">
         <span className="text-sm font-medium text-white/90">{comment.author_display_name}</span>
         <AuthorBadge role={comment.author_role} isMe={isMe} />
-        <time className="text-xs text-blue-100/50" dateTime={comment.created_at}>
+        <time className="text-muted-foreground text-xs" dateTime={comment.created_at}>
           {formatTimestamp(comment.created_at)}
         </time>
       </div>
@@ -64,8 +64,8 @@ function CommentItem({ comment, currentUserId }: CommentItemProps) {
         className={cn(
           "max-w-[80%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed",
           isMe
-            ? "rounded-tr-sm bg-blue-600/30 text-white"
-            : "rounded-tl-sm border border-white/10 bg-white/5 text-blue-100/90",
+            ? "bg-primary/30 text-foreground rounded-tr-sm"
+            : "border-border bg-card text-foreground/90 rounded-tl-sm border",
         )}
       >
         {comment.body}
@@ -148,17 +148,17 @@ export default function SessionCommentsThread({ sessionId, currentUserId }: Sess
   }
 
   return (
-    <section className="rounded-2xl border border-white/10 bg-white/5 p-5 backdrop-blur-xl">
-      <h2 className="mb-4 text-sm font-medium text-blue-100/80">Comments</h2>
+    <section className="border-border bg-card rounded-2xl border p-5 backdrop-blur-xl">
+      <h2 className="text-muted-foreground mb-4 text-sm font-medium">Comments</h2>
 
       {loading ? (
-        <div className="py-6 text-center text-sm text-blue-100/50">Loading…</div>
+        <div className="text-muted-foreground py-6 text-center text-sm">Loading…</div>
       ) : fetchError ? (
         <div className="rounded-lg border border-red-400/30 bg-red-500/10 px-4 py-3 text-sm text-red-100">
           {fetchError}
         </div>
       ) : comments.length === 0 ? (
-        <p className="py-4 text-center text-sm text-blue-100/50">No comments yet</p>
+        <p className="text-muted-foreground py-4 text-center text-sm">No comments yet</p>
       ) : (
         <div className="mb-4 space-y-4">
           {comments.map((comment) => (
@@ -182,7 +182,7 @@ export default function SessionCommentsThread({ sessionId, currentUserId }: Sess
           placeholder="Write a comment…"
           rows={3}
           maxLength={2000}
-          className="resize-none border-white/20 bg-white/5 text-white placeholder:text-blue-100/40 focus-visible:ring-white/30"
+          className="border-border bg-card placeholder:text-foreground/40 resize-none text-white focus-visible:ring-white/30"
           disabled={submitting}
           aria-label="Comment text"
         />

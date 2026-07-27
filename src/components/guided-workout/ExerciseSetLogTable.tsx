@@ -39,7 +39,7 @@ export default function ExerciseSetLogTable({
   }
 
   return (
-    <div className="overflow-hidden rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl">
+    <div className="border-border bg-card overflow-hidden rounded-2xl border backdrop-blur-xl">
       <table className="w-full border-collapse">
         <tbody>
           {setNumbers.map((setNumber) => {
@@ -74,11 +74,11 @@ export default function ExerciseSetLogTable({
       </table>
 
       {!readOnly ? (
-        <div className="border-t border-white/10 p-3">
+        <div className="border-border border-t p-3">
           <Button
             type="button"
             variant="outline"
-            className="min-h-11 w-full border-white/20 bg-white/5 text-white hover:bg-white/10"
+            className="border-border bg-card hover:bg-accent min-h-11 w-full text-white"
             onClick={handleAddRound}
           >
             <Plus className="size-4" aria-hidden="true" />

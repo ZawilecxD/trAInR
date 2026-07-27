@@ -20,7 +20,7 @@ export default function ClientWeekView({ sessions, weekStart }: ClientWeekViewPr
   }, [sessions, weekStart]);
 
   return (
-    <section className="rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur-xl md:p-5">
+    <section className="border-border bg-card rounded-2xl border p-4 backdrop-blur-xl md:p-5">
       <ul className="space-y-4">
         {weekDays.map((day) => (
           <li key={day.isoDate}>
@@ -32,7 +32,7 @@ export default function ClientWeekView({ sessions, weekStart }: ClientWeekViewPr
               })}
             </h3>
             {day.sessions.length === 0 ? (
-              <div className="rounded-lg border border-dashed border-white/10 px-4 py-2 text-sm text-blue-100/50">
+              <div className="border-border text-muted-foreground rounded-lg border border-dashed px-4 py-2 text-sm">
                 Rest day
               </div>
             ) : (
@@ -41,7 +41,7 @@ export default function ClientWeekView({ sessions, weekStart }: ClientWeekViewPr
                   <li key={session.id}>
                     <a
                       href={`/client/sessions/${session.id}`}
-                      className="flex min-h-11 items-center justify-between gap-3 rounded-lg border border-white/10 bg-white/5 px-4 py-3 transition-colors hover:bg-white/10"
+                      className="border-border bg-card hover:bg-accent flex min-h-11 items-center justify-between gap-3 rounded-lg border px-4 py-3 transition-colors"
                     >
                       <div className="min-w-0">
                         <span className="block truncate font-medium text-white">{session.name}</span>
@@ -49,7 +49,7 @@ export default function ClientWeekView({ sessions, weekStart }: ClientWeekViewPr
                           {sessionStatusLabel(session.status)}
                         </Badge>
                       </div>
-                      <span className="shrink-0 text-sm font-medium text-blue-200">Open</span>
+                      <span className="text-text-soft shrink-0 text-sm font-medium">Open</span>
                     </a>
                   </li>
                 ))}

@@ -16,11 +16,11 @@ const scheduleHref = firstClient ? `/trainer/clients/${firstClient.clientId}/pla
 function readoutBadgeClass(status: ReadoutStatus): string {
   switch (status) {
     case "fully_logged":
-      return "border-emerald-400/40 bg-emerald-500/15 text-emerald-200";
+      return "border-success/40 bg-success/15 text-success";
     case "in_progress":
-      return "border-amber-400/40 bg-amber-500/15 text-amber-100";
+      return "border-warning/40 bg-warning/15 text-warning";
     case "not_logged":
-      return "border-white/15 bg-white/5 text-blue-100/70";
+      return "border-border bg-card text-muted-foreground";
   }
 }
 
@@ -91,24 +91,22 @@ const quickActions = [
 
 <div class="space-y-8">
   <header>
-    <h1 class="bg-gradient-to-r from-blue-200 to-purple-200 bg-clip-text text-3xl font-bold text-transparent">
-      Dashboard
-    </h1>
-    <p class="mt-1 text-sm text-blue-100/70">Active clients, recent logged activity, and quick next steps.</p>
+    <h1 class="headline-lg text-foreground">Dashboard</h1>
+    <p class="text-muted-foreground mt-1 text-sm">Active clients, recent logged activity, and quick next steps.</p>
   </header>
 
   <section aria-label="Summary">
     <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-      <div class="rounded-2xl border border-white/10 bg-white/5 p-5 backdrop-blur-xl">
-        <p class="text-xs tracking-wide text-blue-100/60 uppercase">Active clients</p>
+      <div class="border-border bg-card rounded-2xl border p-5 backdrop-blur-xl">
+        <p class="text-muted-foreground text-xs tracking-wide uppercase">Active clients</p>
         <p class="mt-2 text-3xl font-bold text-white">{summary.activeClientCount}</p>
       </div>
-      <div class="rounded-2xl border border-white/10 bg-white/5 p-5 backdrop-blur-xl">
-        <p class="text-xs tracking-wide text-blue-100/60 uppercase">Clients with active plan</p>
+      <div class="border-border bg-card rounded-2xl border p-5 backdrop-blur-xl">
+        <p class="text-muted-foreground text-xs tracking-wide uppercase">Clients with active plan</p>
         <p class="mt-2 text-3xl font-bold text-white">{summary.clientsWithActivePlanCount}</p>
       </div>
-      <div class="rounded-2xl border border-white/10 bg-white/5 p-5 backdrop-blur-xl sm:col-span-2 lg:col-span-1">
-        <p class="text-xs tracking-wide text-blue-100/60 uppercase">Recent logged sessions</p>
+      <div class="border-border bg-card rounded-2xl border p-5 backdrop-blur-xl sm:col-span-2 lg:col-span-1">
+        <p class="text-muted-foreground text-xs tracking-wide uppercase">Recent logged sessions</p>
         <p class="mt-2 text-3xl font-bold text-white">{summary.recentLoggedSessionCount}</p>
       </div>
     </div>
@@ -116,21 +114,23 @@ const quickActions = [
 
   {
     !hasClients ? (
-      <section class="rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-xl" aria-label="Setup checklist">
+      <section class="border-border bg-card rounded-2xl border p-6 backdrop-blur-xl" aria-label="Setup checklist">
         <h2 class="text-lg font-semibold text-white">Get started</h2>
-        <p class="mt-1 text-sm text-blue-100/70">Complete these steps to start coaching asynchronously with trAInR.</p>
+        <p class="text-muted-foreground mt-1 text-sm">
+          Complete these steps to start coaching asynchronously with trAInR.
+        </p>
         <ol class="mt-5 space-y-4">
           {setupSteps.map((step, index) => (
-            <li class="rounded-xl border border-white/10 bg-white/5 p-4">
+            <li class="border-border bg-card rounded-xl border p-4">
               <div class="flex flex-wrap items-start justify-between gap-3">
                 <div class="min-w-0 flex-1">
-                  <p class="font-mono text-xs tracking-widest text-blue-200/70">STEP {index + 1}</p>
+                  <p class="text-text-soft/70 font-mono text-xs tracking-widest">STEP {index + 1}</p>
                   <h3 class="mt-1 text-sm font-medium text-white">{step.title}</h3>
-                  <p class="mt-1 text-sm text-blue-100/60">{step.description}</p>
+                  <p class="text-muted-foreground mt-1 text-sm">{step.description}</p>
                 </div>
                 <a
                   href={step.href}
-                  class="inline-flex shrink-0 items-center rounded-lg border border-white/20 px-3 py-2 text-sm text-white transition-colors hover:bg-white/10"
+                  class="border-border hover:bg-accent inline-flex shrink-0 items-center rounded-lg border px-3 py-2 text-sm text-white transition-colors"
                 >
                   {step.cta}
                 </a>
@@ -146,18 +146,15 @@ const quickActions = [
     <div class="space-y-6 lg:col-span-2">
       {
         hasClients ? (
-          <section
-            class="rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-xl"
-            aria-label="Active clients"
-          >
+          <section class="border-border bg-card rounded-2xl border p-6 backdrop-blur-xl" aria-label="Active clients">
             <div class="flex flex-wrap items-center justify-between gap-3">
               <div>
                 <h2 class="text-lg font-semibold text-white">Active clients</h2>
-                <p class="mt-1 text-sm text-blue-100/60">Clients currently assigned to you.</p>
+                <p class="text-muted-foreground mt-1 text-sm">Clients currently assigned to you.</p>
               </div>
               <a
                 href="/trainer/clients"
-                class="text-sm text-purple-300 transition-colors hover:text-purple-200 hover:underline"
+                class="text-text-lavender hover:text-text-lavender text-sm transition-colors hover:underline"
               >
                 View all
               </a>
@@ -167,22 +164,22 @@ const quickActions = [
                 <li>
                   <a
                     href={`/trainer/clients/${client.clientId}/plan`}
-                    class="flex items-center gap-3 rounded-xl border border-white/10 bg-white/5 p-4 transition-colors hover:border-white/20 hover:bg-white/10"
+                    class="border-border bg-card hover:border-border hover:bg-accent flex items-center gap-3 rounded-xl border p-4 transition-colors"
                   >
                     <span
-                      class="flex size-10 shrink-0 items-center justify-center rounded-full border border-white/15 bg-white/10 text-sm font-semibold text-white"
+                      class="border-border bg-muted flex size-10 shrink-0 items-center justify-center rounded-full border text-sm font-semibold text-white"
                       aria-hidden="true"
                     >
                       {clientInitials(client.displayName)}
                     </span>
                     <span class="min-w-0 flex-1">
                       <span class="block truncate text-sm font-medium text-white">{client.displayName}</span>
-                      <span class="mt-0.5 block text-xs text-blue-100/60">
+                      <span class="text-muted-foreground mt-0.5 block text-xs">
                         Joined {formatAssignedDate(client.assignedAt)}
                         {client.activePlan ? ` · ${client.activePlan.name}` : " · No active plan"}
                       </span>
                     </span>
-                    <span class="shrink-0 text-xs text-blue-100/50">Open calendar →</span>
+                    <span class="text-muted-foreground shrink-0 text-xs">Open calendar →</span>
                   </a>
                 </li>
               ))}
@@ -192,17 +189,17 @@ const quickActions = [
       }
 
       <section
-        class="rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-xl"
+        class="border-border bg-card rounded-2xl border p-6 backdrop-blur-xl"
         aria-label="Recent logged activity"
       >
         <h2 class="text-lg font-semibold text-white">Recent logged activity</h2>
-        <p class="mt-1 text-sm text-blue-100/60">Sessions where clients have started or logged sets.</p>
+        <p class="text-muted-foreground mt-1 text-sm">Sessions where clients have started or logged sets.</p>
 
         {
           recentActivity.length === 0 ? (
-            <div class="mt-4 rounded-xl border border-dashed border-white/15 bg-white/5 px-4 py-8 text-center">
+            <div class="border-border bg-card mt-4 rounded-xl border border-dashed px-4 py-8 text-center">
               <p class="text-sm font-medium text-white">No logged activity yet</p>
-              <p class="mt-1 text-sm text-blue-100/60">
+              <p class="text-muted-foreground mt-1 text-sm">
                 {hasClients
                   ? "When clients start sessions and log sets, their activity will appear here."
                   : "Invite a client and schedule a session to begin tracking logged work."}
@@ -214,15 +211,15 @@ const quickActions = [
                 <li>
                   <a
                     href={`/trainer/clients/${item.clientId}/sessions/${item.sessionId}`}
-                    class="block rounded-xl border border-white/10 bg-white/5 p-4 transition-colors hover:border-white/20 hover:bg-white/10"
+                    class="border-border bg-card hover:border-border hover:bg-accent block rounded-xl border p-4 transition-colors"
                   >
                     <div class="flex flex-wrap items-start justify-between gap-3">
                       <div class="min-w-0">
                         <p class="truncate text-sm font-medium text-white">{item.sessionName}</p>
-                        <p class="mt-0.5 text-xs text-blue-100/60">
+                        <p class="text-muted-foreground mt-0.5 text-xs">
                           {item.clientDisplayName} · {formatSessionOverviewDate(item.scheduledDate)}
                         </p>
-                        <p class="mt-1 text-xs text-blue-100/50">
+                        <p class="text-muted-foreground mt-1 text-xs">
                           Last activity {formatActivityTimestamp(item.lastActivityAt)}
                         </p>
                       </div>
@@ -245,19 +242,19 @@ const quickActions = [
     </div>
 
     <aside class="space-y-6">
-      <section class="rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-xl" aria-label="Quick actions">
+      <section class="border-border bg-card rounded-2xl border p-6 backdrop-blur-xl" aria-label="Quick actions">
         <h2 class="text-lg font-semibold text-white">Quick actions</h2>
-        <p class="mt-1 text-sm text-blue-100/60">Common trainer workflows.</p>
+        <p class="text-muted-foreground mt-1 text-sm">Common trainer workflows.</p>
         <ul class="mt-4 space-y-2">
           {
             quickActions.map((action) => (
               <li>
                 <a
                   href={action.href}
-                  class="block rounded-xl border border-white/10 bg-white/5 px-4 py-3 transition-colors hover:border-white/20 hover:bg-white/10"
+                  class="border-border bg-card hover:border-border hover:bg-accent block rounded-xl border px-4 py-3 transition-colors"
                 >
                   <span class="block text-sm font-medium text-white">{action.label}</span>
-                  <span class="mt-0.5 block text-xs text-blue-100/60">{action.description}</span>
+                  <span class="text-muted-foreground mt-0.5 block text-xs">{action.description}</span>
                 </a>
               </li>
             ))

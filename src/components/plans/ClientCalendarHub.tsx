@@ -131,11 +131,7 @@ export default function ClientCalendarHub({
   return (
     <div className="space-y-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div
-          className="flex rounded-lg border border-white/10 bg-white/5 p-1"
-          role="tablist"
-          aria-label="Calendar view"
-        >
+        <div className="border-border bg-card flex rounded-lg border p-1" role="tablist" aria-label="Calendar view">
           {(["month", "week"] as const).map((option) => (
             <button
               key={option}
@@ -144,7 +140,7 @@ export default function ClientCalendarHub({
               aria-selected={view === option}
               className={cn(
                 "min-h-11 min-w-24 flex-1 rounded-md px-4 text-sm font-medium capitalize transition-colors",
-                view === option ? "bg-white/10 text-white" : "text-blue-100/70 hover:text-white",
+                view === option ? "bg-muted text-white" : "text-muted-foreground hover:text-white",
               )}
               onClick={() => {
                 void handleViewChange(option);
@@ -161,7 +157,7 @@ export default function ClientCalendarHub({
               type="button"
               variant="outline"
               size="icon"
-              className="size-11 shrink-0 border-white/20 bg-white/5 text-white hover:bg-white/10"
+              className="border-border bg-card hover:bg-accent size-11 shrink-0 text-white"
               aria-label="Previous week"
               onClick={() => {
                 void handleWeekChange("prev");
@@ -176,7 +172,7 @@ export default function ClientCalendarHub({
               type="button"
               variant="outline"
               size="icon"
-              className="size-11 shrink-0 border-white/20 bg-white/5 text-white hover:bg-white/10"
+              className="border-border bg-card hover:bg-accent size-11 shrink-0 text-white"
               aria-label="Next week"
               onClick={() => {
                 void handleWeekChange("next");
@@ -188,14 +184,14 @@ export default function ClientCalendarHub({
         ) : null}
       </div>
 
-      {loading ? <p className="text-xs text-blue-100/50">Loading…</p> : null}
+      {loading ? <p className="text-muted-foreground text-xs">Loading…</p> : null}
       {fetchError ? <p className="text-xs text-red-400/80">{fetchError}</p> : null}
 
       {view === "month" ? (
         <div className="grid gap-6 lg:grid-cols-[minmax(0,22rem)_1fr] lg:items-start">
-          <section className="min-w-0 rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur-xl">
+          <section className="border-border bg-card min-w-0 rounded-2xl border p-4 backdrop-blur-xl">
             <div className="mb-3">
-              <h2 className="text-sm font-medium text-blue-100/80">Calendar</h2>
+              <h2 className="text-muted-foreground text-sm font-medium">Calendar</h2>
             </div>
             <PlanCalendar
               sessions={sessions}
@@ -209,11 +205,13 @@ export default function ClientCalendarHub({
               }}
             />
             {sessions.length === 0 ? (
-              <p className="mt-4 text-center text-sm text-blue-100/60">No sessions yet — your trainer will add them.</p>
+              <p className="text-muted-foreground mt-4 text-center text-sm">
+                No sessions yet — your trainer will add them.
+              </p>
             ) : null}
           </section>
 
-          <section className="rounded-2xl border border-white/10 bg-white/5 p-5 backdrop-blur-xl">
+          <section className="border-border bg-card rounded-2xl border p-5 backdrop-blur-xl">
             <div className="mb-4">
               <h2 className="text-lg font-semibold text-white">
                 {selectedDate.toLocaleDateString(undefined, {
@@ -222,11 +220,11 @@ export default function ClientCalendarHub({
                   day: "numeric",
                 })}
               </h2>
-              <p className="text-sm text-blue-100/60">Your training plan</p>
+              <p className="text-muted-foreground text-sm">Your training plan</p>
             </div>
 
             {sessionsOnSelectedDay.length === 0 ? (
-              <div className="rounded-lg border border-dashed border-white/15 px-4 py-8 text-center text-sm text-blue-100/60">
+              <div className="border-border text-muted-foreground rounded-lg border border-dashed px-4 py-8 text-center text-sm">
                 No sessions on this day.
               </div>
             ) : (
@@ -235,7 +233,7 @@ export default function ClientCalendarHub({
                   <li key={session.id}>
                     <a
                       href={`/client/sessions/${session.id}`}
-                      className="flex min-h-11 items-center justify-between gap-3 rounded-lg border border-white/10 bg-white/5 px-4 py-3 transition-colors hover:bg-white/10"
+                      className="border-border bg-card hover:bg-accent flex min-h-11 items-center justify-between gap-3 rounded-lg border px-4 py-3 transition-colors"
                     >
                       <div className="min-w-0">
                         <span className="block truncate font-medium text-white">{session.name}</span>
@@ -243,7 +241,7 @@ export default function ClientCalendarHub({
                           {sessionStatusLabel(session.status)}
                         </Badge>
                       </div>
-                      <span className="inline-flex shrink-0 items-center gap-1 text-sm font-medium text-blue-200">
+                      <span className="text-text-soft inline-flex shrink-0 items-center gap-1 text-sm font-medium">
                         Open
                         <OpenIcon className="size-4" aria-hidden="true" />
                       </span>
@@ -258,7 +256,7 @@ export default function ClientCalendarHub({
         <div className="space-y-4">
           <ClientWeekView sessions={sessions} weekStart={weekStart} />
           {sessions.length === 0 ? (
-            <p className="text-center text-sm text-blue-100/60">No sessions yet — your trainer will add them.</p>
+            <p className="text-muted-foreground text-center text-sm">No sessions yet — your trainer will add them.</p>
           ) : null}
         </div>
       )}

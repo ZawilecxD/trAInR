@@ -16,12 +16,12 @@ export function sessionStatusLabel(status: SessionStatus): string {
 export function sessionStatusBadgeClass(status: SessionStatus): string {
   switch (status) {
     case "not_started":
-      return "border-blue-400/40 bg-blue-500/20 text-blue-100";
+      return "border-muted-foreground/40 bg-muted text-foreground";
     case "finished":
-      return "border-emerald-400/40 bg-emerald-500/20 text-emerald-100";
+      return "border-success/40 bg-success/20 text-success";
     case "finished_partially":
-      return "border-amber-400/40 bg-amber-500/20 text-amber-100";
+      return "border-warning/40 bg-warning/20 text-warning";
     case "cancelled":
-      return "border-slate-400/40 bg-slate-500/20 text-slate-300";
+      return "border-muted-foreground/40 bg-muted text-muted-foreground";
   }
 }

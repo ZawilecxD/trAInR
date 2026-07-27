@@ -55,18 +55,16 @@ const hasActiveFilters =
 ---
 
 <Layout title="Exercise library">
-  <div class="bg-cosmic min-h-screen p-4 md:p-8">
+  <div class="bg-background min-h-screen p-4 md:p-8">
     <div class="mx-auto max-w-6xl space-y-6">
       <div class="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h1 class="bg-gradient-to-r from-blue-200 to-purple-200 bg-clip-text text-3xl font-bold text-transparent">
-            Exercise library
-          </h1>
-          <p class="mt-1 text-sm text-blue-100/70">Create, edit, and filter your trainer exercise catalog.</p>
+          <h1 class="headline-lg text-foreground">Exercise library</h1>
+          <p class="text-muted-foreground mt-1 text-sm">Create, edit, and filter your trainer exercise catalog.</p>
         </div>
         <a
           href="/trainer/exercises/new"
-          class="rounded-lg bg-purple-500 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-purple-500/90"
+          class="bg-primary hover:bg-primary/90 rounded-lg px-4 py-2 text-sm font-medium text-white transition-colors"
         >
           New exercise
         </a>
@@ -94,7 +92,7 @@ const hasActiveFilters =
             <ExerciseFilters client:load muscleGroups={muscleGroupRows} initialFilters={initialFilters} />
 
             {exerciseRows.length === 0 ? (
-              <div class="rounded-2xl border border-white/10 bg-white/5 p-8 text-center text-blue-100/80">
+              <div class="border-border bg-card text-muted-foreground rounded-2xl border p-8 text-center">
                 {hasActiveFilters ? (
                   <>
                     <p class="text-lg font-medium text-white">No exercises match your filters</p>
@@ -106,7 +104,7 @@ const hasActiveFilters =
                     <p class="mt-2 text-sm">Create your first exercise to start building your library.</p>
                     <a
                       href="/trainer/exercises/new"
-                      class="mt-4 inline-block rounded-lg border border-white/20 px-4 py-2 text-sm transition-colors hover:bg-white/10"
+                      class="border-border hover:bg-accent mt-4 inline-block rounded-lg border px-4 py-2 text-sm transition-colors"
                     >
                       Create exercise
                     </a>
@@ -114,10 +112,10 @@ const hasActiveFilters =
                 )}
               </div>
             ) : (
-              <div class="overflow-hidden rounded-2xl border border-white/10 bg-white/5">
+              <div class="border-border bg-card overflow-hidden rounded-2xl border">
                 <div class="overflow-x-auto">
-                  <table class="min-w-full text-left text-sm text-blue-100/90">
-                    <thead class="border-b border-white/10 bg-white/5 text-xs tracking-wide text-blue-100/60 uppercase">
+                  <table class="text-foreground/90 min-w-full text-left text-sm">
+                    <thead class="border-border bg-card text-muted-foreground border-b text-xs tracking-wide uppercase">
                       <tr>
                         <th class="w-10 px-4 py-3">
                           <span class="sr-only">Favourite</span>
@@ -131,7 +129,7 @@ const hasActiveFilters =
                     </thead>
                     <tbody>
                       {exerciseRows.map((exercise) => (
-                        <tr class="border-b border-white/5 last:border-b-0">
+                        <tr class="border-border/50 border-b last:border-b-0">
                           <td class="px-4 py-3">
                             <ExerciseFavouriteButton
                               client:load
@@ -155,7 +153,7 @@ const hasActiveFilters =
                           <td class="px-4 py-3">
                             <a
                               href={`/trainer/exercises/${exercise.id}`}
-                              class="rounded-md border border-white/20 px-3 py-1 text-xs transition-colors hover:bg-white/10"
+                              class="border-border hover:bg-accent rounded-md border px-3 py-1 text-xs transition-colors"
                             >
                               Edit
                             </a>

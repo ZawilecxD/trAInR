@@ -33,7 +33,7 @@ export default function SessionCompletedView({ session, currentUserId, onEdit }:
       <header className="mb-6">
         <a
           href="/client/plan"
-          className="inline-flex min-h-11 items-center gap-2 text-sm text-blue-100/70 transition-colors hover:text-white"
+          className="text-muted-foreground inline-flex min-h-11 items-center gap-2 text-sm transition-colors hover:text-white"
         >
           <ArrowLeft className="size-4" aria-hidden="true" />
           Calendar
@@ -44,23 +44,23 @@ export default function SessionCompletedView({ session, currentUserId, onEdit }:
             {sessionStatusLabel(session.status)}
           </Badge>
         </div>
-        <p className="mt-1 text-sm text-blue-100/70">{formatSessionOverviewDate(session.scheduled_date)}</p>
+        <p className="text-muted-foreground mt-1 text-sm">{formatSessionOverviewDate(session.scheduled_date)}</p>
         <EditWindowBanner lockedAt={session.locked_at} hasLogs={hasLogs} />
       </header>
 
       <div className="space-y-4 pb-28">
-        <section className="rounded-2xl border border-white/10 bg-white/5 p-5 backdrop-blur-xl">
+        <section className="border-border bg-card rounded-2xl border p-5 backdrop-blur-xl">
           <dl className="grid gap-3 text-sm sm:grid-cols-2">
             <div>
-              <dt className="text-blue-100/60">Trainer</dt>
+              <dt className="text-muted-foreground">Trainer</dt>
               <dd className="mt-0.5 font-medium text-white">{session.trainer_display_name || "Your trainer"}</dd>
             </div>
             <div>
-              <dt className="text-blue-100/60">Status</dt>
+              <dt className="text-muted-foreground">Status</dt>
               <dd className="mt-0.5 font-medium text-white">{sessionStatusLabel(session.status)}</dd>
             </div>
             <div>
-              <dt className="text-blue-100/60">Logging status</dt>
+              <dt className="text-muted-foreground">Logging status</dt>
               <dd className="mt-0.5">
                 <span
                   className={cn(
@@ -73,7 +73,7 @@ export default function SessionCompletedView({ session, currentUserId, onEdit }:
               </dd>
             </div>
             <div>
-              <dt className="text-blue-100/60">Sets logged</dt>
+              <dt className="text-muted-foreground">Sets logged</dt>
               <dd className="mt-0.5 font-medium text-white">
                 {readout.completedSets} of {readout.totalSets}
               </dd>
@@ -82,9 +82,11 @@ export default function SessionCompletedView({ session, currentUserId, onEdit }:
         </section>
 
         {session.status === "cancelled" ? (
-          <p className="text-sm text-blue-100/60">This session has been cancelled.</p>
+          <p className="text-muted-foreground text-sm">This session has been cancelled.</p>
         ) : (
-          <p className="text-sm text-blue-100/60">Your workout has been recorded. Your trainer can see the results.</p>
+          <p className="text-muted-foreground text-sm">
+            Your workout has been recorded. Your trainer can see the results.
+          </p>
         )}
 
         <SessionExerciseSummary readout={readout} notesByExerciseId={notesByExerciseId} />
@@ -93,7 +95,7 @@ export default function SessionCompletedView({ session, currentUserId, onEdit }:
       </div>
 
       {canEdit && onEdit ? (
-        <div className="fixed inset-x-0 bottom-0 border-t border-white/10 bg-slate-950/90 p-4 backdrop-blur-xl">
+        <div className="border-border bg-background/90 fixed inset-x-0 bottom-0 border-t p-4 backdrop-blur-xl">
           <div className="mx-auto max-w-2xl">
             <Button type="button" className="min-h-12 w-full text-base" onClick={onEdit}>
               Edit

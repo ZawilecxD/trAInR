@@ -36,26 +36,22 @@ if (supabase && userId) {
 ---
 
 <Layout title="Dashboard">
-  <div class="bg-cosmic flex min-h-screen items-center justify-center p-4">
-    <div
-      class="w-full max-w-md rounded-2xl border border-white/10 bg-white/10 p-8 text-center text-white backdrop-blur-xl"
-    >
-      <h1 class="mb-4 bg-gradient-to-r from-blue-200 to-purple-200 bg-clip-text text-3xl font-bold text-transparent">
-        Welcome
-      </h1>
+  <div class="bg-background flex min-h-screen items-center justify-center p-4">
+    <div class="border-border bg-muted w-full max-w-md rounded-2xl border p-8 text-center text-white backdrop-blur-xl">
+      <h1 class="headline-lg text-foreground mb-4">Welcome</h1>
       {
         trainerName ? (
-          <p class="text-blue-100/80">
+          <p class="text-muted-foreground">
             You're training with <span class="font-semibold text-white">{trainerName}</span>
           </p>
         ) : (
-          <p class="text-blue-100/80">Your trainer will assign your first plan soon.</p>
+          <p class="text-muted-foreground">Your trainer will assign your first plan soon.</p>
         )
       }
-      <p class="mt-4 text-sm text-blue-100/50">View your assigned workouts on your training calendar.</p>
+      <p class="text-muted-foreground mt-4 text-sm">View your assigned workouts on your training calendar.</p>
       <a
         href="/client/plan"
-        class="mt-6 inline-flex min-h-11 items-center justify-center rounded-lg bg-purple-500 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-purple-500/90"
+        class="bg-primary hover:bg-primary/90 mt-6 inline-flex min-h-11 items-center justify-center rounded-lg px-5 py-2.5 text-sm font-semibold text-white transition-colors"
       >
         My Plan
       </a>

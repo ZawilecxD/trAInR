@@ -41,7 +41,7 @@ export default function TemplateFormModal({
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4" role="presentation">
       <button
         type="button"
-        className="absolute inset-0 bg-slate-950/70 backdrop-blur-sm"
+        className="bg-background/70 absolute inset-0 backdrop-blur-sm"
         aria-label="Close template form"
         onClick={onClose}
       />
@@ -49,9 +49,9 @@ export default function TemplateFormModal({
         role="dialog"
         aria-modal="true"
         aria-labelledby="template-form-modal-title"
-        className="relative z-10 flex max-h-[90vh] w-full max-w-4xl flex-col overflow-hidden rounded-2xl border border-white/10 bg-slate-900 shadow-xl"
+        className="border-border bg-popover relative z-10 flex max-h-[90vh] w-full max-w-4xl flex-col overflow-hidden rounded-2xl border shadow-xl"
       >
-        <div className="flex items-center justify-between border-b border-white/10 px-5 py-4">
+        <div className="border-border flex items-center justify-between border-b px-5 py-4">
           <h2 id="template-form-modal-title" className="text-lg font-semibold text-white">
             {title}
           </h2>
@@ -59,7 +59,7 @@ export default function TemplateFormModal({
             type="button"
             variant="outline"
             size="sm"
-            className="border-white/20 bg-transparent text-white hover:bg-white/10"
+            className="border-border hover:bg-accent bg-transparent text-white"
             onClick={onClose}
             aria-label="Close"
           >
@@ -69,7 +69,7 @@ export default function TemplateFormModal({
 
         <div className="flex-1 overflow-y-auto px-5 py-5">
           {loading ? (
-            <div className="flex items-center justify-center py-16 text-blue-100/70">
+            <div className="text-muted-foreground flex items-center justify-center py-16">
               <Loader2 className="size-6 animate-spin" />
               <span className="ml-2 text-sm">Loading template…</span>
             </div>

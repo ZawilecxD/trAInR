@@ -53,11 +53,11 @@ function statusLabel(status: InviteStatus): string {
 function statusBadgeClass(status: InviteStatus): string {
   switch (status) {
     case "active":
-      return "border-emerald-500/40 bg-emerald-500/20 text-emerald-100";
+      return "border-success/40 bg-success/20 text-success";
     case "used":
-      return "border-white/20 bg-white/10 text-blue-100/70";
+      return "border-border bg-muted text-muted-foreground";
     case "expired":
-      return "border-amber-500/40 bg-amber-500/20 text-amber-100";
+      return "border-warning/40 bg-warning/20 text-warning";
   }
 }
 
@@ -178,7 +178,7 @@ export default function InviteClientPanel({ invites: initialInvites, clients: in
     <div className="space-y-8">
       <section className="space-y-4">
         <h2 className="text-lg font-semibold text-white">Invite a client</h2>
-        <p className="text-sm text-blue-100/70">
+        <p className="text-muted-foreground text-sm">
           Generate a single-use link and share it via WhatsApp, SMS, or any channel you prefer.
         </p>
 
@@ -198,11 +198,16 @@ export default function InviteClientPanel({ invites: initialInvites, clients: in
 
         {displayUrl ? (
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
-            <Input readOnly value={displayUrl} className="font-mono text-xs text-blue-100/90" aria-label="Invite URL" />
+            <Input
+              readOnly
+              value={displayUrl}
+              className="text-foreground/90 font-mono text-xs"
+              aria-label="Invite URL"
+            />
             <Button
               type="button"
               variant="outline"
-              className="shrink-0 border-white/20 bg-white/10 text-white hover:bg-white/20"
+              className="border-border bg-muted hover:bg-accent shrink-0 text-white"
               onClick={() => {
                 void handleCopy(displayUrl);
               }}
@@ -217,9 +222,9 @@ export default function InviteClientPanel({ invites: initialInvites, clients: in
       <section className="space-y-3">
         <h2 className="text-lg font-semibold text-white">Recent invites</h2>
         {invites.length === 0 ? (
-          <p className="text-sm text-blue-100/60">No invites yet. Generate your first link above.</p>
+          <p className="text-muted-foreground text-sm">No invites yet. Generate your first link above.</p>
         ) : (
-          <ul className="divide-y divide-white/10 rounded-xl border border-white/10 bg-white/5">
+          <ul className="border-border bg-card divide-y divide-white/10 rounded-xl border">
             {invites.map((invite) => {
               const status = getInviteStatus(invite);
               const url = formatInviteUrl(origin, invite.token);
@@ -227,8 +232,8 @@ export default function InviteClientPanel({ invites: initialInvites, clients: in
               return (
                 <li key={invite.id} className="flex flex-col gap-2 p-4 sm:flex-row sm:items-center sm:justify-between">
                   <div className="min-w-0 space-y-1">
-                    <p className="truncate font-mono text-xs text-blue-100/80">{url}</p>
-                    <p className="text-xs text-blue-100/50">
+                    <p className="text-muted-foreground truncate font-mono text-xs">{url}</p>
+                    <p className="text-muted-foreground text-xs">
                       Created {formatDateTime(invite.created_at)}
                       {invite.expires_at ? ` · Expires ${formatDateTime(invite.expires_at)}` : null}
                     </p>
@@ -242,7 +247,7 @@ export default function InviteClientPanel({ invites: initialInvites, clients: in
                         type="button"
                         variant="ghost"
                         size="sm"
-                        className="text-blue-100/80 hover:bg-white/10 hover:text-white"
+                        className="text-muted-foreground hover:bg-accent hover:text-white"
                         onClick={() => {
                           void handleCopy(url);
                         }}
@@ -265,37 +270,34 @@ export default function InviteClientPanel({ invites: initialInvites, clients: in
           Your clients
         </h2>
         {clients.length === 0 ? (
-          <p className="text-sm text-blue-100/60">No clients assigned yet. Share an invite link to get started.</p>
+          <p className="text-muted-foreground text-sm">No clients assigned yet. Share an invite link to get started.</p>
         ) : (
           <ul className="space-y-3">
             {clients.map((client) => {
               const planStart = client.activePlan ? formatPlanStartDate(client.activePlan.start_date) : null;
 
               return (
-                <li
-                  key={client.assignmentId}
-                  className="rounded-xl border border-white/10 bg-white/5 p-4 backdrop-blur-xl"
-                >
+                <li key={client.assignmentId} className="border-border bg-card rounded-xl border p-4 backdrop-blur-xl">
                   <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                     <div className="flex min-w-0 items-start gap-3">
                       <span
-                        className="flex size-11 shrink-0 items-center justify-center rounded-full border border-white/15 bg-white/10 text-sm font-semibold text-white"
+                        className="border-border bg-muted flex size-11 shrink-0 items-center justify-center rounded-full border text-sm font-semibold text-white"
                         aria-hidden="true"
                       >
                         {clientInitials(client.displayName)}
                       </span>
                       <div className="min-w-0">
                         <p className="truncate text-base font-medium text-white">{client.displayName}</p>
-                        <p className="mt-0.5 text-xs text-blue-100/60">
+                        <p className="text-muted-foreground mt-0.5 text-xs">
                           Joined {formatAssignedDate(client.assignedAt)}
                         </p>
                         {client.activePlan ? (
-                          <p className="mt-2 text-sm text-blue-100/80">
+                          <p className="text-muted-foreground mt-2 text-sm">
                             <span className="font-medium text-white">{client.activePlan.name}</span>
-                            {planStart ? <span className="text-blue-100/60"> · Started {planStart}</span> : null}
+                            {planStart ? <span className="text-muted-foreground"> · Started {planStart}</span> : null}
                           </p>
                         ) : (
-                          <p className="mt-2 text-sm text-amber-100/80">No active plan</p>
+                          <p className="text-warning/80 mt-2 text-sm">No active plan</p>
                         )}
                       </div>
                     </div>
@@ -305,7 +307,7 @@ export default function InviteClientPanel({ invites: initialInvites, clients: in
                         type="button"
                         variant="outline"
                         size="sm"
-                        className="min-h-11 border-white/20 bg-white/5 text-white hover:bg-white/10"
+                        className="border-border bg-card hover:bg-accent min-h-11 text-white"
                         asChild
                       >
                         <a href={`/trainer/clients/${client.clientId}/plan`}>
@@ -326,16 +328,16 @@ export default function InviteClientPanel({ invites: initialInvites, clients: in
                             Remove
                           </Button>
                         </AlertDialogTrigger>
-                        <AlertDialogContent className="border-white/10 bg-slate-900 text-white">
+                        <AlertDialogContent className="border-border bg-popover text-white">
                           <AlertDialogHeader>
                             <AlertDialogTitle>Remove client?</AlertDialogTitle>
-                            <AlertDialogDescription className="text-blue-100/70">
+                            <AlertDialogDescription className="text-muted-foreground">
                               {client.displayName} will be removed from your client list. Their workout history is
                               retained; you will no longer see them or their plans.
                             </AlertDialogDescription>
                           </AlertDialogHeader>
                           <AlertDialogFooter>
-                            <AlertDialogCancel className="border-white/20 bg-white/10 text-white hover:bg-white/20">
+                            <AlertDialogCancel className="border-border bg-muted hover:bg-accent text-white">
                               Cancel
                             </AlertDialogCancel>
                             <AlertDialogAction

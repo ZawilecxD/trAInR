@@ -17,7 +17,7 @@ const { variant = "info" } = Astro.props;
     padding: 0.75rem 1rem;
     font-size: 0.875rem;
     text-align: center;
-    border-bottom: 1px solid;
+    border-bottom: 1px solid var(--border);
   }
   .banner :global(a) {
     color: inherit;
@@ -25,18 +25,18 @@ const { variant = "info" } = Astro.props;
     font-weight: 600;
   }
   .banner--info {
-    background: #dbeafe;
-    color: #1e3a8a;
-    border-color: #3b82f6;
+    background: color-mix(in srgb, var(--primary) 15%, var(--card));
+    color: var(--text-lavender);
+    border-color: color-mix(in srgb, var(--primary) 30%, transparent);
   }
   .banner--warning {
-    background: #fef3c7;
-    color: #78350f;
-    border-color: #f59e0b;
+    background: color-mix(in srgb, var(--warning) 15%, var(--card));
+    color: var(--warning);
+    border-color: color-mix(in srgb, var(--warning) 30%, transparent);
   }
   .banner--error {
-    background: #fee2e2;
-    color: #7f1d1d;
-    border-color: #dc2626;
+    background: color-mix(in srgb, var(--destructive) 15%, var(--card));
+    color: var(--destructive);
+    border-color: color-mix(in srgb, var(--destructive) 30%, transparent);
   }
 </style>

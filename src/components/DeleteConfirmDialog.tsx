@@ -34,8 +34,8 @@ type DeleteConfirmDialogTriggerProps = DeleteConfirmDialogBaseProps & {
 
 export type DeleteConfirmDialogProps = DeleteConfirmDialogControlledProps | DeleteConfirmDialogTriggerProps;
 
-const dialogContentClass = "border-white/10 bg-slate-900 text-white";
-const cancelClass = "border-white/20 bg-white/10 text-white hover:bg-white/20";
+const dialogContentClass = "border-border bg-popover text-white";
+const cancelClass = "border-border bg-muted text-white hover:bg-accent";
 const confirmClass = "bg-destructive hover:bg-destructive/90 text-white";
 
 function DeleteConfirmDialogContent({
@@ -51,7 +51,7 @@ function DeleteConfirmDialogContent({
     <>
       <AlertDialogHeader>
         <AlertDialogTitle>{title}</AlertDialogTitle>
-        <AlertDialogDescription className="text-blue-100/70">{description}</AlertDialogDescription>
+        <AlertDialogDescription className="text-muted-foreground">{description}</AlertDialogDescription>
       </AlertDialogHeader>
       <AlertDialogFooter>
         <AlertDialogCancel className={cancelClass} disabled={loading}>

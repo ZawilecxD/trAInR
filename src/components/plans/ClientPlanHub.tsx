@@ -114,10 +114,10 @@ export default function ClientPlanHub({
       ) : null}
 
       <div className="grid gap-6 lg:grid-cols-[minmax(0,22rem)_1fr] lg:items-start">
-        <section className="min-w-0 rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur-xl">
+        <section className="border-border bg-card min-w-0 rounded-2xl border p-4 backdrop-blur-xl">
           <div className="mb-3 flex items-center justify-between gap-2">
-            <h2 className="text-sm font-medium text-blue-100/80">Calendar</h2>
-            {loadingMonth ? <span className="text-xs text-blue-100/50">Loading…</span> : null}
+            <h2 className="text-muted-foreground text-sm font-medium">Calendar</h2>
+            {loadingMonth ? <span className="text-muted-foreground text-xs">Loading…</span> : null}
             {fetchError ? <span className="text-xs text-red-400/80">{fetchError}</span> : null}
           </div>
           <PlanCalendar
@@ -132,13 +132,13 @@ export default function ClientPlanHub({
             }}
           />
           {sessions.length === 0 ? (
-            <p className="mt-4 text-center text-sm text-blue-100/60">
+            <p className="text-muted-foreground mt-4 text-center text-sm">
               No sessions yet — pick a day and add your first session.
             </p>
           ) : null}
         </section>
 
-        <section className="rounded-2xl border border-white/10 bg-white/5 p-5 backdrop-blur-xl">
+        <section className="border-border bg-card rounded-2xl border p-5 backdrop-blur-xl">
           <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
             <div>
               <h2 className="text-lg font-semibold text-white">
@@ -148,11 +148,11 @@ export default function ClientPlanHub({
                   day: "numeric",
                 })}
               </h2>
-              <p className="text-sm text-blue-100/60">{clientName}&apos;s plan</p>
+              <p className="text-muted-foreground text-sm">{clientName}&apos;s plan</p>
             </div>
             <Button
               type="button"
-              className="bg-purple-500 text-white hover:bg-purple-500/90"
+              className="bg-primary hover:bg-primary/90 text-white"
               onClick={() => {
                 setPickerOpen(true);
               }}
@@ -163,7 +163,7 @@ export default function ClientPlanHub({
           </div>
 
           {sessionsOnSelectedDay.length === 0 ? (
-            <div className="rounded-lg border border-dashed border-white/15 px-4 py-8 text-center text-sm text-blue-100/60">
+            <div className="border-border text-muted-foreground rounded-lg border border-dashed px-4 py-8 text-center text-sm">
               No sessions on this day. Use &quot;Add session&quot; to assign from a template or start blank.
             </div>
           ) : (
@@ -172,7 +172,7 @@ export default function ClientPlanHub({
                 <li key={session.id}>
                   <a
                     href={`/trainer/clients/${clientId}/sessions/${session.id}`}
-                    className="flex items-center justify-between gap-3 rounded-lg border border-white/10 bg-white/5 px-4 py-3 transition-colors hover:bg-white/10"
+                    className="border-border bg-card hover:bg-accent flex items-center justify-between gap-3 rounded-lg border px-4 py-3 transition-colors"
                   >
                     <span className="min-w-0">
                       <span className="block truncate font-medium text-white">{session.name}</span>
@@ -180,7 +180,7 @@ export default function ClientPlanHub({
                         {sessionStatusLabel(session.status)}
                       </Badge>
                     </span>
-                    <span className="flex shrink-0 items-center gap-1 text-sm text-blue-100/70">
+                    <span className="text-muted-foreground flex shrink-0 items-center gap-1 text-sm">
                       {session.status === "not_started" ? (
                         <>
                           <Pencil className="size-3.5" />

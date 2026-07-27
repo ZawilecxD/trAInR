@@ -15,18 +15,18 @@ export default function SessionActualsReview({ session, sessionId, currentUserId
 
   return (
     <div className="space-y-6">
-      <section className="rounded-2xl border border-white/10 bg-white/5 p-5 backdrop-blur-xl">
+      <section className="border-border bg-card rounded-2xl border p-5 backdrop-blur-xl">
         <dl className="grid gap-3 text-sm sm:grid-cols-2">
           <div>
-            <dt className="text-blue-100/60">Client</dt>
+            <dt className="text-muted-foreground">Client</dt>
             <dd className="mt-0.5 font-medium text-white">{session.client_display_name}</dd>
           </div>
           <div>
-            <dt className="text-blue-100/60">Scheduled</dt>
+            <dt className="text-muted-foreground">Scheduled</dt>
             <dd className="mt-0.5 font-medium text-white">{formatSessionOverviewDate(session.scheduled_date)}</dd>
           </div>
           <div>
-            <dt className="text-blue-100/60">Logging status</dt>
+            <dt className="text-muted-foreground">Logging status</dt>
             <dd className="mt-0.5">
               <span
                 className={cn(
@@ -39,7 +39,7 @@ export default function SessionActualsReview({ session, sessionId, currentUserId
             </dd>
           </div>
           <div>
-            <dt className="text-blue-100/60">Sets logged</dt>
+            <dt className="text-muted-foreground">Sets logged</dt>
             <dd className="mt-0.5 font-medium text-white">
               {session.readout.completedSets} of {session.readout.totalSets}
             </dd>

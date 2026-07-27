@@ -19,11 +19,11 @@ export default function ExerciseNavMenu({
 }: ExerciseNavMenuProps) {
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent side="bottom" className="border-white/10 bg-slate-950 text-white [&>button.absolute]:hidden">
-        <div className="flex items-center justify-end border-b border-white/10 pb-3">
+      <SheetContent side="bottom" className="border-border bg-background text-foreground [&>button.absolute]:hidden">
+        <div className="border-border flex items-center justify-end border-b pb-3">
           <button
             type="button"
-            className="min-h-11 px-2 text-sm text-blue-100/70 hover:text-white"
+            className="text-muted-foreground min-h-11 px-2 text-sm hover:text-white"
             onClick={() => {
               onOpenChange(false);
             }}

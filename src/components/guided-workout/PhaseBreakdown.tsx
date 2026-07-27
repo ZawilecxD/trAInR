@@ -35,16 +35,16 @@ export default function PhaseBreakdown({ exercises }: PhaseBreakdownProps) {
         }
 
         return (
-          <section key={phase} className="rounded-xl border border-white/10 bg-white/5 p-4">
-            <h3 className="font-mono text-xs tracking-widest text-blue-200/80">{phaseLabel(phase)}</h3>
-            <p className="mt-1 text-sm text-blue-100/60">
+          <section key={phase} className="border-border bg-card rounded-xl border p-4">
+            <h3 className="text-text-soft font-mono text-xs tracking-widest">{phaseLabel(phase)}</h3>
+            <p className="text-muted-foreground mt-1 text-sm">
               {phaseExercises.length} exercise{phaseExercises.length === 1 ? "" : "s"}
             </p>
             <ul className="mt-3 space-y-3">
               {phaseExercises.map((exercise) => (
                 <li key={exercise.id}>
                   <p className="text-sm font-medium text-white">{exercise.exercise_name || "Exercise"}</p>
-                  <p className="mt-0.5 text-sm text-blue-100/60">
+                  <p className="text-muted-foreground mt-0.5 text-sm">
                     {formatExercisePrescriptionDetail(exercise.sets, exercise.exercise_default_metric)}
                   </p>
                 </li>

@@ -264,8 +264,8 @@ export default function GuidedWorkoutHub({ initialSession, currentUserId }: Guid
   if (orderedExercises.length === 0) {
     return (
       <div className="space-y-4">
-        <p className="text-sm text-blue-100/60">No exercises in this session.</p>
-        <a href="/client/plan" className="text-sm text-blue-100/70 hover:text-white">
+        <p className="text-muted-foreground text-sm">No exercises in this session.</p>
+        <a href="/client/plan" className="text-muted-foreground text-sm hover:text-white">
           ← Calendar
         </a>
       </div>
@@ -278,7 +278,7 @@ export default function GuidedWorkoutHub({ initialSession, currentUserId }: Guid
     <SetLogFlushContext.Provider value={flushRegistry}>
       <div className="lg:flex lg:min-h-[calc(100vh-4rem)] lg:items-stretch lg:gap-6">
         <aside className="hidden lg:flex lg:w-72 lg:shrink-0 xl:w-80">
-          <div className="sticky top-8 flex max-h-[calc(100vh-4rem)] w-full flex-col overflow-hidden rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl">
+          <div className="border-border bg-card sticky top-8 flex max-h-[calc(100vh-4rem)] w-full flex-col overflow-hidden rounded-2xl border backdrop-blur-xl">
             <ExerciseNavList
               exercises={orderedExercises}
               exerciseIndex={exerciseIndex}
