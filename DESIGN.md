@@ -156,3 +156,92 @@ A consistent `0.625rem` (10px) radius is applied to all primary containers and b
     - *Amber:* Partial/In-Progress.
     - *Green:* Completed.
 - **Exercise Cards:** Grouped sets within a container. Use a subtle vertical line on the left side of the exercise card (colored Primary) to indicate the "Active Exercise."
+
+---
+
+## Design Tokens (code-side reference)
+
+> Canonical, machine-readable token set derived from the actual app frame fills (not the historical Stitch frontmatter above). These names and hex values match the rebuilt Pencil variable table in `docs/pencil/trainer_dashboard.pen` one-to-one, so an agent can implement them directly in `src/styles/global.css`. The Material-3 frontmatter at the top is retained for design-tool lineage only; **when they disagree, this table wins.**
+>
+> The palette is a cosmic-navy dark UI with electric-violet (`#8083ff`) primary interactions. Dark is the only theme.
+
+### Color tokens
+
+| Token | Hex | Usage |
+| --- | --- | --- |
+| `--background` | `#0b1326` | App page background (the cosmic navy base) |
+| `--foreground` | `#ffffff` | Primary text on the page |
+| `--card` | `#131b2e` | Card / list-item / raised row surfaces |
+| `--card-foreground` | `#ffffff` | Text on cards |
+| `--popover` | `#171f33` | Modals, bottom sheets, dropdowns, input fields |
+| `--popover-foreground` | `#ffffff` | Text on popovers/modals |
+| `--primary` | `#8083ff` | Primary buttons, active states, focus ring, links (electric violet) |
+| `--primary-foreground` | `#ffffff` | Text/icons on primary fills |
+| `--secondary` | `#171f33` | Secondary/soft button fills |
+| `--secondary-foreground` | `#c0c1ff` | Text on secondary fills (lavender) |
+| `--muted` | `#171f33` | Muted surface fills |
+| `--muted-foreground` | `#908fa0` | Secondary/metadata text, captions |
+| `--accent` | `#222a3d` | Hover/subtle-elevated surfaces, icon wells |
+| `--accent-foreground` | `#ffffff` | Text on accent surfaces |
+| `--border` | `#ffffff1a` | Hairline borders and dividers (white @ 10%) |
+| `--input` | `#ffffff1a` | Input field borders |
+| `--ring` | `#8083ff` | Focus ring |
+| `--destructive` | `#ef4444` | Destructive actions (delete) |
+| `--destructive-foreground` | `#ffffff` | Text on destructive fills |
+| `--success` | `#4edea3` | Completed status, positive stats (green) |
+| `--success-foreground` | `#04170f` | Text on success fills |
+| `--warning` | `#ffb95f` | In-progress / partial / rest-timer (amber) |
+| `--warning-foreground` | `#2a1700` | Text on warning fills |
+| `--surface-bright` | `#31394d` | Brightest elevated surface (highlights) |
+| `--text-lavender` | `#c0c1ff` | Lavender emphasis text and mono labels |
+| `--text-soft` | `#c7c4d7` | Softened body/secondary text |
+
+### Typography
+
+Font stack: `--font-sans: "Geist"` (display + body), `--font-mono: "JetBrains Mono"` (labels, metrics, instrument-panel metadata).
+
+| Role | Family | Size / Weight | Tracking |
+| --- | --- | --- | --- |
+| `display-hero` | Geist | 48 / 800 | -0.04em |
+| `headline-lg` | Geist | 32 / 700 (28 on mobile) | -0.02em |
+| `stat-readout` | Geist | 24 / 600 | -0.01em |
+| `body-md` | Geist | 16 / 400 | 0 |
+| `label-caps` | JetBrains Mono | 12 / 600 | +0.05em |
+| `data-mono` | JetBrains Mono | 14 / 500 | 0 |
+
+### Radius & spacing
+
+- Radius: `--radius-sm` 4px · `--radius` 10px (default) · `--radius-md` 12px · `--radius-lg` 16px · `--radius-pill` 9999px.
+- Spacing: 4px base grid — `stack-sm` 8px · `stack-md` 16px · `stack-lg` 32px. Minimum touch target 44px (gym-safety).
+
+### Component inventory
+
+Reusable components are defined once in `docs/pencil/trainer_dashboard.pen` and instanced via `ref` on every screen. Final set (17):
+
+**Core primitives**
+- `Button / Primary` (`Kk9za`) — full-width electric-violet CTA; `Invite Client Button` (`mEIaD`) is the labelled variant.
+- `Input` (`LpAdE`), `Textarea` (`EXhz2`), `Select` (`fqGPI`) — form fields on `--popover`/`--input` surfaces.
+- `Search Input` (`J6lNIq`) — icon + placeholder, used across list/table screens.
+- `Card` (`FHrXI`) — the base raised surface for list items and panels.
+- `Badge / Status` (`Cj0jn`) — pill chip; completed (green) / in-progress (amber) / not-started (gray).
+- `Modal Shell` (`V3H9M`) — dialog container with backdrop + blur for create/edit/delete overlays.
+- `Empty State` (`uPFRC`) and `Toast` (`ADiq9`).
+
+**Shell & navigation**
+- `Topbar` (`J8Z6hl`) — desktop shell: logo + nav tabs + account; per-page active tab set via descendant overrides.
+- `Bottom Nav / Mobile` (`sML2o`) — client mobile tab bar. A parallel **trainer** mobile tab bar (Dashboard / Clients / Exercises / Templates) is applied consistently across the four trainer mobile screens (candidate to promote to a DS component).
+
+**Domain components**
+- `Client Card` (`jEyfw`) — avatar + name + active dot + plan row + joined date + `Open Calendar Button` (`QLadd`) / `Assign Plan Link` (`v4efIh`).
+- Stat card (`PENDING INVITES` / `xilIZ` pattern) — mono caps label + large stat readout, used in dashboard/roster stat rows.
+
+### Breakpoint rules
+
+Two breakpoints, both authored for every surface:
+
+- **Desktop 1440px** — trainer surfaces lead here. Uses the `Topbar` shell; multi-column layouts (dashboard two-column, calendar split-pane, authoring split view) and dense data **tables** (exercises, templates).
+- **Mobile 390px** — client + logging surfaces lead here. Uses a bottom tab bar instead of the topbar; single-column stacked content, a 20px gym-safety side margin, thumb-zone primary actions, and ≥44px touch targets. Desktop **tables collapse to stacked cards** (name + type/count badge, metadata, inline Edit/Delete); multi-column dashboards reflow to a single column with 2×2 stat grids.
+
+### Implementation note
+
+Hex values above are the source of truth for the **design** artifacts. The future code-side change is responsible for converting these to **OKLCH** for the shadcn/ui token layer in `src/styles/global.css` (shadcn v4 uses OKLCH throughout); no OKLCH conversion or `globals.css` generation happens in this design-only change.

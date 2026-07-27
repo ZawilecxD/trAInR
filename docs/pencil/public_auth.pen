@@ -1,0 +1,2741 @@
+{
+  "version": "2.14",
+  "children": [
+    {
+      "type": "frame",
+      "id": "T2u6mC",
+      "x": 0,
+      "y": 0,
+      "name": "C/PrimaryButton",
+      "reusable": true,
+      "width": 200,
+      "fill": "$--primary",
+      "cornerRadius": "$--radius",
+      "padding": [
+        13,
+        20
+      ],
+      "justifyContent": "center",
+      "alignItems": "center",
+      "children": [
+        {
+          "type": "text",
+          "id": "mhPnw",
+          "name": "PrimaryButton_Label",
+          "fill": "$--primary-foreground",
+          "content": "Button",
+          "fontFamily": "$--font-sans",
+          "fontSize": 15,
+          "fontWeight": "600"
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "d0v96",
+      "x": 220,
+      "y": 0,
+      "name": "C/SecondaryButton",
+      "reusable": true,
+      "width": 200,
+      "fill": "$--secondary",
+      "cornerRadius": "$--radius",
+      "stroke": "$--border",
+      "strokeWidth": 1,
+      "padding": [
+        13,
+        20
+      ],
+      "justifyContent": "center",
+      "alignItems": "center",
+      "children": [
+        {
+          "type": "text",
+          "id": "Y9TclW",
+          "name": "SecondaryButton_Label",
+          "fill": "$--secondary-foreground",
+          "content": "Secondary",
+          "fontFamily": "$--font-sans",
+          "fontSize": 15,
+          "fontWeight": "600"
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "WSWPl",
+      "x": 440,
+      "y": 0,
+      "name": "C/GhostButton",
+      "reusable": true,
+      "width": 200,
+      "fill": "#00000000",
+      "cornerRadius": "$--radius",
+      "padding": [
+        13,
+        20
+      ],
+      "justifyContent": "center",
+      "alignItems": "center",
+      "children": [
+        {
+          "type": "text",
+          "id": "qSzGH",
+          "name": "GhostButton_Label",
+          "fill": "$--text-lavender",
+          "content": "Ghost",
+          "fontFamily": "$--font-sans",
+          "fontSize": 15,
+          "fontWeight": "600"
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "E4mXf",
+      "x": 660,
+      "y": 0,
+      "name": "C/DestructiveButton",
+      "reusable": true,
+      "width": 200,
+      "fill": "$--destructive",
+      "cornerRadius": "$--radius",
+      "padding": [
+        13,
+        20
+      ],
+      "justifyContent": "center",
+      "alignItems": "center",
+      "children": [
+        {
+          "type": "text",
+          "id": "WyFCr",
+          "name": "DestructiveButton_Label",
+          "fill": "$--destructive-foreground",
+          "content": "Delete",
+          "fontFamily": "$--font-sans",
+          "fontSize": 15,
+          "fontWeight": "600"
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "rC1RE",
+      "x": 900,
+      "y": 0,
+      "name": "C/StatusChip",
+      "reusable": true,
+      "fill": "#4edea31a",
+      "cornerRadius": "$--radius-pill",
+      "stroke": "#4edea366",
+      "strokeWidth": 1,
+      "padding": [
+        3,
+        10
+      ],
+      "alignItems": "center",
+      "children": [
+        {
+          "type": "text",
+          "id": "qvfMW",
+          "name": "StatusChip_Label",
+          "fill": "$--success",
+          "content": "Finished",
+          "fontFamily": "$--font-sans",
+          "fontSize": 11,
+          "fontWeight": "600"
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "alSfd",
+      "x": 0,
+      "y": 125,
+      "name": "C/Input",
+      "reusable": true,
+      "width": 300,
+      "layout": "vertical",
+      "gap": 6,
+      "children": [
+        {
+          "type": "text",
+          "id": "X6op2",
+          "name": "Input_Label",
+          "fill": "$--text-lavender",
+          "content": "Email",
+          "fontFamily": "$--font-sans",
+          "fontSize": 12,
+          "fontWeight": "600"
+        },
+        {
+          "type": "frame",
+          "id": "earEw",
+          "name": "Input_Field",
+          "width": "fill_container",
+          "height": 44,
+          "fill": "$--popover",
+          "cornerRadius": "$--radius",
+          "stroke": "$--input",
+          "strokeWidth": 1,
+          "gap": 10,
+          "padding": [
+            0,
+            12
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "icon",
+              "id": "OIm1B",
+              "name": "Input_Icon",
+              "width": 16,
+              "height": 16,
+              "icon": "mail",
+              "library": "lucide",
+              "fill": "$--muted-foreground"
+            },
+            {
+              "type": "text",
+              "id": "HKqSd",
+              "name": "Input_Value",
+              "fill": "$--muted-foreground",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "you@example.com",
+              "fontFamily": "$--font-sans",
+              "fontSize": 14,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "icon",
+              "id": "e224KA",
+              "x": 0,
+              "y": 0,
+              "name": "Input_Toggle",
+              "enabled": false,
+              "width": 16,
+              "height": 16,
+              "icon": "eye",
+              "library": "lucide",
+              "fill": "$--muted-foreground"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "o2Cno",
+      "x": 340,
+      "y": 125,
+      "name": "C/Card",
+      "reusable": true,
+      "width": 320,
+      "fill": "$--card",
+      "cornerRadius": "$--radius",
+      "stroke": "$--border",
+      "strokeWidth": 1,
+      "layout": "vertical",
+      "gap": 8,
+      "padding": 16,
+      "children": [
+        {
+          "type": "text",
+          "id": "KyOnW",
+          "name": "Card_Title",
+          "fill": "$--foreground",
+          "content": "Card title",
+          "fontFamily": "$--font-sans",
+          "fontSize": 16,
+          "fontWeight": "600"
+        },
+        {
+          "type": "text",
+          "id": "L5NgXx",
+          "name": "Card_Body",
+          "fill": "$--text-soft",
+          "textGrowth": "fixed-width",
+          "width": "fill_container",
+          "content": "Supporting text",
+          "fontFamily": "$--font-sans",
+          "fontSize": 14,
+          "fontWeight": "normal"
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "XRi7l",
+      "x": 700,
+      "y": 125,
+      "name": "C/EmptyState",
+      "reusable": true,
+      "width": 320,
+      "layout": "vertical",
+      "gap": 12,
+      "padding": 24,
+      "justifyContent": "center",
+      "alignItems": "center",
+      "children": [
+        {
+          "type": "frame",
+          "id": "clAWE",
+          "name": "Empty_IconWrap",
+          "width": 56,
+          "height": 56,
+          "fill": "$--accent",
+          "cornerRadius": "$--radius-md",
+          "justifyContent": "center",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "icon",
+              "id": "v5pbr",
+              "name": "Empty_Icon",
+              "width": 24,
+              "height": 24,
+              "icon": "inbox",
+              "library": "lucide",
+              "fill": "$--text-lavender"
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "id": "mvAT1",
+          "name": "Empty_Title",
+          "fill": "$--foreground",
+          "content": "Nothing here yet",
+          "textAlign": "center",
+          "fontFamily": "$--font-sans",
+          "fontSize": 16,
+          "fontWeight": "600"
+        },
+        {
+          "type": "text",
+          "id": "tZzBf",
+          "name": "Empty_Body",
+          "fill": "$--muted-foreground",
+          "content": "Add your first item to get started.",
+          "textAlign": "center",
+          "fontFamily": "$--font-sans",
+          "fontSize": 14,
+          "fontWeight": "normal"
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "TUY9o",
+      "x": 1140,
+      "y": 0,
+      "name": "2 · Sign In — Desktop",
+      "clip": true,
+      "width": 1440,
+      "height": 900,
+      "fill": "$--background",
+      "layout": "vertical",
+      "padding": 40,
+      "justifyContent": "center",
+      "alignItems": "center",
+      "children": [
+        {
+          "type": "frame",
+          "id": "T1u5D",
+          "name": "AuthCard",
+          "width": 420,
+          "fill": "$--card",
+          "cornerRadius": "$--radius-lg",
+          "stroke": "$--border",
+          "strokeWidth": 1,
+          "layout": "vertical",
+          "gap": 18,
+          "padding": 36,
+          "children": [
+            {
+              "type": "text",
+              "id": "DnWP3",
+              "name": "Heading",
+              "fill": {
+                "type": "gradient",
+                "gradientType": "linear",
+                "enabled": true,
+                "rotation": 270,
+                "size": {
+                  "height": 1
+                },
+                "colors": [
+                  {
+                    "color": "#c0c1ff",
+                    "position": 0
+                  },
+                  {
+                    "color": "#8083ff",
+                    "position": 1
+                  }
+                ]
+              },
+              "content": "Sign in",
+              "textAlign": "center",
+              "fontFamily": "$--font-sans",
+              "fontSize": 26,
+              "fontWeight": "700"
+            },
+            {
+              "id": "xHUCa",
+              "type": "ref",
+              "ref": "alSfd",
+              "name": "Email",
+              "width": "fill_container",
+              "descendants": {
+                "X6op2": {
+                  "content": "Email"
+                },
+                "OIm1B": {
+                  "icon": "mail"
+                },
+                "HKqSd": {
+                  "content": "you@example.com"
+                },
+                "e224KA": {
+                  "enabled": false
+                }
+              }
+            },
+            {
+              "id": "u2YxoX",
+              "type": "ref",
+              "ref": "alSfd",
+              "name": "Password",
+              "width": "fill_container",
+              "descendants": {
+                "X6op2": {
+                  "content": "Password"
+                },
+                "OIm1B": {
+                  "icon": "lock"
+                },
+                "HKqSd": {
+                  "content": "Your password"
+                },
+                "e224KA": {
+                  "enabled": true
+                }
+              }
+            },
+            {
+              "id": "p3dOk",
+              "type": "ref",
+              "ref": "T2u6mC",
+              "name": "Sign in Button",
+              "width": "fill_container",
+              "descendants": {
+                "mhPnw": {
+                  "content": "Sign in"
+                }
+              }
+            },
+            {
+              "type": "frame",
+              "id": "hw48i",
+              "name": "Footer",
+              "width": "fill_container",
+              "gap": 5,
+              "justifyContent": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "KV8F6",
+                  "name": "Pre",
+                  "fill": "$--muted-foreground",
+                  "content": "Don't have an account?",
+                  "fontFamily": "$--font-sans",
+                  "fontSize": 13,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "i8xwP",
+                  "name": "Link",
+                  "fill": "$--text-lavender",
+                  "content": "Sign up",
+                  "fontFamily": "$--font-sans",
+                  "fontSize": 13,
+                  "fontWeight": "600"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "SfSBm",
+      "x": 2660,
+      "y": 0,
+      "name": "3 · Sign Up — Desktop",
+      "clip": true,
+      "width": 1440,
+      "height": 900,
+      "fill": "$--background",
+      "layout": "vertical",
+      "padding": 40,
+      "justifyContent": "center",
+      "alignItems": "center",
+      "children": [
+        {
+          "type": "frame",
+          "id": "BIKMF",
+          "name": "AuthCard",
+          "width": 420,
+          "fill": "$--card",
+          "cornerRadius": "$--radius-lg",
+          "stroke": "$--border",
+          "strokeWidth": 1,
+          "layout": "vertical",
+          "gap": 18,
+          "padding": 36,
+          "children": [
+            {
+              "type": "text",
+              "id": "OerVJ",
+              "name": "Heading",
+              "fill": {
+                "type": "gradient",
+                "gradientType": "linear",
+                "enabled": true,
+                "rotation": 270,
+                "size": {
+                  "height": 1
+                },
+                "colors": [
+                  {
+                    "color": "#c0c1ff",
+                    "position": 0
+                  },
+                  {
+                    "color": "#8083ff",
+                    "position": 1
+                  }
+                ]
+              },
+              "content": "Sign up",
+              "textAlign": "center",
+              "fontFamily": "$--font-sans",
+              "fontSize": 26,
+              "fontWeight": "700"
+            },
+            {
+              "id": "cP4vi",
+              "type": "ref",
+              "ref": "alSfd",
+              "name": "Email",
+              "width": "fill_container",
+              "descendants": {
+                "X6op2": {
+                  "content": "Email"
+                },
+                "OIm1B": {
+                  "icon": "mail"
+                },
+                "HKqSd": {
+                  "content": "you@example.com"
+                },
+                "e224KA": {
+                  "enabled": false
+                }
+              }
+            },
+            {
+              "id": "TqWFX",
+              "type": "ref",
+              "ref": "alSfd",
+              "name": "Password",
+              "width": "fill_container",
+              "descendants": {
+                "X6op2": {
+                  "content": "Password"
+                },
+                "OIm1B": {
+                  "icon": "lock"
+                },
+                "HKqSd": {
+                  "content": "Min. 6 characters"
+                },
+                "e224KA": {
+                  "enabled": true
+                }
+              }
+            },
+            {
+              "id": "V2hle2",
+              "type": "ref",
+              "ref": "alSfd",
+              "name": "Confirm password",
+              "width": "fill_container",
+              "descendants": {
+                "X6op2": {
+                  "content": "Confirm password"
+                },
+                "OIm1B": {
+                  "icon": "lock"
+                },
+                "HKqSd": {
+                  "content": "Re-enter your password"
+                },
+                "e224KA": {
+                  "enabled": true
+                }
+              }
+            },
+            {
+              "id": "D0fMy1",
+              "type": "ref",
+              "ref": "T2u6mC",
+              "name": "Create account Button",
+              "width": "fill_container",
+              "descendants": {
+                "mhPnw": {
+                  "content": "Create account"
+                }
+              }
+            },
+            {
+              "type": "frame",
+              "id": "eW3Ir",
+              "name": "Footer",
+              "width": "fill_container",
+              "gap": 5,
+              "justifyContent": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "k2w1rg",
+                  "name": "Pre",
+                  "fill": "$--muted-foreground",
+                  "content": "Already have an account?",
+                  "fontFamily": "$--font-sans",
+                  "fontSize": 13,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "sVVkn",
+                  "name": "Link",
+                  "fill": "$--text-lavender",
+                  "content": "Sign in",
+                  "fontFamily": "$--font-sans",
+                  "fontSize": 13,
+                  "fontWeight": "600"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "CLnxP",
+      "x": 4180,
+      "y": 0,
+      "name": "4 · Join as Client — Desktop",
+      "clip": true,
+      "width": 1440,
+      "height": 900,
+      "fill": "$--background",
+      "layout": "vertical",
+      "padding": 40,
+      "justifyContent": "center",
+      "alignItems": "center",
+      "children": [
+        {
+          "type": "frame",
+          "id": "d9vmgc",
+          "name": "AuthCard",
+          "width": 420,
+          "fill": "$--card",
+          "cornerRadius": "$--radius-lg",
+          "stroke": "$--border",
+          "strokeWidth": 1,
+          "layout": "vertical",
+          "gap": 18,
+          "padding": 36,
+          "children": [
+            {
+              "type": "text",
+              "id": "b0zBiS",
+              "name": "Heading",
+              "fill": {
+                "type": "gradient",
+                "gradientType": "linear",
+                "enabled": true,
+                "rotation": 270,
+                "size": {
+                  "height": 1
+                },
+                "colors": [
+                  {
+                    "color": "#c0c1ff",
+                    "position": 0
+                  },
+                  {
+                    "color": "#8083ff",
+                    "position": 1
+                  }
+                ]
+              },
+              "content": "Create your client account",
+              "textAlign": "center",
+              "fontFamily": "$--font-sans",
+              "fontSize": 23,
+              "fontWeight": "700"
+            },
+            {
+              "type": "frame",
+              "id": "H1eL5O",
+              "name": "InviteBanner",
+              "width": "fill_container",
+              "fill": "#8083ff1a",
+              "cornerRadius": "$--radius",
+              "stroke": "#8083ff40",
+              "strokeWidth": 1,
+              "gap": 5,
+              "padding": [
+                10,
+                12
+              ],
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "UHrIL",
+                  "name": "Pre",
+                  "fill": "$--text-soft",
+                  "content": "Invited by",
+                  "fontFamily": "$--font-sans",
+                  "fontSize": 13,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "GXnVD",
+                  "name": "Name",
+                  "fill": "$--foreground",
+                  "content": "Jordan Blake",
+                  "fontFamily": "$--font-sans",
+                  "fontSize": 13,
+                  "fontWeight": "700"
+                }
+              ]
+            },
+            {
+              "id": "OeSCZ",
+              "type": "ref",
+              "ref": "alSfd",
+              "name": "Email",
+              "width": "fill_container",
+              "descendants": {
+                "X6op2": {
+                  "content": "Email"
+                },
+                "OIm1B": {
+                  "icon": "mail"
+                },
+                "HKqSd": {
+                  "content": "you@example.com"
+                },
+                "e224KA": {
+                  "enabled": false
+                }
+              }
+            },
+            {
+              "id": "YdgH1",
+              "type": "ref",
+              "ref": "alSfd",
+              "name": "Password",
+              "width": "fill_container",
+              "descendants": {
+                "X6op2": {
+                  "content": "Password"
+                },
+                "OIm1B": {
+                  "icon": "lock"
+                },
+                "HKqSd": {
+                  "content": "Min. 6 characters"
+                },
+                "e224KA": {
+                  "enabled": true
+                }
+              }
+            },
+            {
+              "id": "sRcsw",
+              "type": "ref",
+              "ref": "alSfd",
+              "name": "Confirm password",
+              "width": "fill_container",
+              "descendants": {
+                "X6op2": {
+                  "content": "Confirm password"
+                },
+                "OIm1B": {
+                  "icon": "lock"
+                },
+                "HKqSd": {
+                  "content": "Re-enter your password"
+                },
+                "e224KA": {
+                  "enabled": true
+                }
+              }
+            },
+            {
+              "id": "tr8uC",
+              "type": "ref",
+              "ref": "T2u6mC",
+              "name": "Join as client Button",
+              "width": "fill_container",
+              "descendants": {
+                "mhPnw": {
+                  "content": "Join as client"
+                }
+              }
+            },
+            {
+              "type": "frame",
+              "id": "CW5iE",
+              "name": "Footer",
+              "width": "fill_container",
+              "gap": 5,
+              "justifyContent": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "bicY9",
+                  "name": "Pre",
+                  "fill": "$--muted-foreground",
+                  "content": "Already have an account?",
+                  "fontFamily": "$--font-sans",
+                  "fontSize": 13,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "bdota",
+                  "name": "Link",
+                  "fill": "$--text-lavender",
+                  "content": "Sign in",
+                  "fontFamily": "$--font-sans",
+                  "fontSize": 13,
+                  "fontWeight": "600"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "L4JH3",
+      "x": 5700,
+      "y": 0,
+      "name": "5 · Confirm Email — Desktop",
+      "clip": true,
+      "width": 1440,
+      "height": 900,
+      "fill": "$--background",
+      "layout": "vertical",
+      "padding": 40,
+      "justifyContent": "center",
+      "alignItems": "center",
+      "children": [
+        {
+          "type": "frame",
+          "id": "O5vsj",
+          "name": "AuthCard",
+          "width": 420,
+          "fill": "$--card",
+          "cornerRadius": "$--radius-lg",
+          "stroke": "$--border",
+          "strokeWidth": 1,
+          "layout": "vertical",
+          "gap": 14,
+          "padding": 36,
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "MleWF",
+              "name": "Emoji",
+              "fill": "$--foreground",
+              "content": "📧",
+              "fontFamily": "Inter",
+              "fontSize": 44,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "text",
+              "id": "oJBfT",
+              "name": "Heading",
+              "fill": {
+                "type": "gradient",
+                "gradientType": "linear",
+                "enabled": true,
+                "rotation": 270,
+                "size": {
+                  "height": 1
+                },
+                "colors": [
+                  {
+                    "color": "#c0c1ff",
+                    "position": 0
+                  },
+                  {
+                    "color": "#8083ff",
+                    "position": 1
+                  }
+                ]
+              },
+              "content": "Check your email",
+              "textAlign": "center",
+              "fontFamily": "$--font-sans",
+              "fontSize": 26,
+              "fontWeight": "700"
+            },
+            {
+              "type": "text",
+              "id": "ktXYT",
+              "name": "Body",
+              "fill": "$--text-soft",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "We've sent a confirmation link to your email address. Click it to activate your account.",
+              "textAlign": "center",
+              "fontFamily": "$--font-sans",
+              "fontSize": 14,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "text",
+              "id": "ePp7o",
+              "name": "Link",
+              "fill": "$--text-lavender",
+              "content": "Back to sign in",
+              "textAlign": "center",
+              "fontFamily": "$--font-sans",
+              "fontSize": 13,
+              "fontWeight": "600"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "Mo63o",
+      "x": 1140,
+      "y": 1020,
+      "name": "2 · Sign In — Mobile",
+      "clip": true,
+      "width": 390,
+      "height": 844,
+      "fill": "$--background",
+      "layout": "vertical",
+      "padding": [
+        40,
+        20
+      ],
+      "justifyContent": "center",
+      "alignItems": "center",
+      "children": [
+        {
+          "type": "frame",
+          "id": "ikfWy",
+          "name": "AuthCard",
+          "width": "fill_container",
+          "fill": "$--card",
+          "cornerRadius": "$--radius-lg",
+          "stroke": "$--border",
+          "strokeWidth": 1,
+          "layout": "vertical",
+          "gap": 16,
+          "padding": 24,
+          "children": [
+            {
+              "type": "text",
+              "id": "gDY3F",
+              "name": "Heading",
+              "fill": {
+                "type": "gradient",
+                "gradientType": "linear",
+                "enabled": true,
+                "rotation": 270,
+                "size": {
+                  "height": 1
+                },
+                "colors": [
+                  {
+                    "color": "#c0c1ff",
+                    "position": 0
+                  },
+                  {
+                    "color": "#8083ff",
+                    "position": 1
+                  }
+                ]
+              },
+              "content": "Sign in",
+              "textAlign": "center",
+              "fontFamily": "$--font-sans",
+              "fontSize": 24,
+              "fontWeight": "700"
+            },
+            {
+              "id": "H0H1AI",
+              "type": "ref",
+              "ref": "alSfd",
+              "name": "Email",
+              "width": "fill_container",
+              "descendants": {
+                "X6op2": {
+                  "content": "Email"
+                },
+                "OIm1B": {
+                  "icon": "mail"
+                },
+                "HKqSd": {
+                  "content": "you@example.com"
+                },
+                "e224KA": {
+                  "enabled": false
+                }
+              }
+            },
+            {
+              "id": "MLvmW",
+              "type": "ref",
+              "ref": "alSfd",
+              "name": "Password",
+              "width": "fill_container",
+              "descendants": {
+                "X6op2": {
+                  "content": "Password"
+                },
+                "OIm1B": {
+                  "icon": "lock"
+                },
+                "HKqSd": {
+                  "content": "Your password"
+                },
+                "e224KA": {
+                  "enabled": true
+                }
+              }
+            },
+            {
+              "id": "TknVa",
+              "type": "ref",
+              "ref": "T2u6mC",
+              "name": "Sign in Button",
+              "width": "fill_container",
+              "descendants": {
+                "mhPnw": {
+                  "content": "Sign in"
+                }
+              }
+            },
+            {
+              "type": "frame",
+              "id": "pfC6Z",
+              "name": "Footer",
+              "width": "fill_container",
+              "gap": 5,
+              "justifyContent": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "UxPsU",
+                  "name": "Pre",
+                  "fill": "$--muted-foreground",
+                  "content": "Don't have an account?",
+                  "fontFamily": "$--font-sans",
+                  "fontSize": 13,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "F6uN5",
+                  "name": "Link",
+                  "fill": "$--text-lavender",
+                  "content": "Sign up",
+                  "fontFamily": "$--font-sans",
+                  "fontSize": 13,
+                  "fontWeight": "600"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "KwmCv",
+      "x": 1610,
+      "y": 1020,
+      "name": "3 · Sign Up — Mobile",
+      "clip": true,
+      "width": 390,
+      "height": 844,
+      "fill": "$--background",
+      "layout": "vertical",
+      "padding": [
+        40,
+        20
+      ],
+      "justifyContent": "center",
+      "alignItems": "center",
+      "children": [
+        {
+          "type": "frame",
+          "id": "Q2zCz",
+          "name": "AuthCard",
+          "width": "fill_container",
+          "fill": "$--card",
+          "cornerRadius": "$--radius-lg",
+          "stroke": "$--border",
+          "strokeWidth": 1,
+          "layout": "vertical",
+          "gap": 16,
+          "padding": 24,
+          "children": [
+            {
+              "type": "text",
+              "id": "X1jUM",
+              "name": "Heading",
+              "fill": {
+                "type": "gradient",
+                "gradientType": "linear",
+                "enabled": true,
+                "rotation": 270,
+                "size": {
+                  "height": 1
+                },
+                "colors": [
+                  {
+                    "color": "#c0c1ff",
+                    "position": 0
+                  },
+                  {
+                    "color": "#8083ff",
+                    "position": 1
+                  }
+                ]
+              },
+              "content": "Sign up",
+              "textAlign": "center",
+              "fontFamily": "$--font-sans",
+              "fontSize": 24,
+              "fontWeight": "700"
+            },
+            {
+              "id": "nlrcD",
+              "type": "ref",
+              "ref": "alSfd",
+              "name": "Email",
+              "width": "fill_container",
+              "descendants": {
+                "X6op2": {
+                  "content": "Email"
+                },
+                "OIm1B": {
+                  "icon": "mail"
+                },
+                "HKqSd": {
+                  "content": "you@example.com"
+                },
+                "e224KA": {
+                  "enabled": false
+                }
+              }
+            },
+            {
+              "id": "ShDM6",
+              "type": "ref",
+              "ref": "alSfd",
+              "name": "Password",
+              "width": "fill_container",
+              "descendants": {
+                "X6op2": {
+                  "content": "Password"
+                },
+                "OIm1B": {
+                  "icon": "lock"
+                },
+                "HKqSd": {
+                  "content": "Min. 6 characters"
+                },
+                "e224KA": {
+                  "enabled": true
+                }
+              }
+            },
+            {
+              "id": "tt11w",
+              "type": "ref",
+              "ref": "alSfd",
+              "name": "Confirm password",
+              "width": "fill_container",
+              "descendants": {
+                "X6op2": {
+                  "content": "Confirm password"
+                },
+                "OIm1B": {
+                  "icon": "lock"
+                },
+                "HKqSd": {
+                  "content": "Re-enter your password"
+                },
+                "e224KA": {
+                  "enabled": true
+                }
+              }
+            },
+            {
+              "id": "uJQz5",
+              "type": "ref",
+              "ref": "T2u6mC",
+              "name": "Create account Button",
+              "width": "fill_container",
+              "descendants": {
+                "mhPnw": {
+                  "content": "Create account"
+                }
+              }
+            },
+            {
+              "type": "frame",
+              "id": "wiVut",
+              "name": "Footer",
+              "width": "fill_container",
+              "gap": 5,
+              "justifyContent": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "x4fBiB",
+                  "name": "Pre",
+                  "fill": "$--muted-foreground",
+                  "content": "Already have an account?",
+                  "fontFamily": "$--font-sans",
+                  "fontSize": 13,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "YiJ6E",
+                  "name": "Link",
+                  "fill": "$--text-lavender",
+                  "content": "Sign in",
+                  "fontFamily": "$--font-sans",
+                  "fontSize": 13,
+                  "fontWeight": "600"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "T8EiY",
+      "x": 2080,
+      "y": 1020,
+      "name": "4 · Join as Client — Mobile",
+      "clip": true,
+      "width": 390,
+      "height": 844,
+      "fill": "$--background",
+      "layout": "vertical",
+      "padding": [
+        40,
+        20
+      ],
+      "justifyContent": "center",
+      "alignItems": "center",
+      "children": [
+        {
+          "type": "frame",
+          "id": "O0HhY8",
+          "name": "AuthCard",
+          "width": "fill_container",
+          "fill": "$--card",
+          "cornerRadius": "$--radius-lg",
+          "stroke": "$--border",
+          "strokeWidth": 1,
+          "layout": "vertical",
+          "gap": 16,
+          "padding": 24,
+          "children": [
+            {
+              "type": "text",
+              "id": "R1ZNy",
+              "name": "Heading",
+              "fill": {
+                "type": "gradient",
+                "gradientType": "linear",
+                "enabled": true,
+                "rotation": 270,
+                "size": {
+                  "height": 1
+                },
+                "colors": [
+                  {
+                    "color": "#c0c1ff",
+                    "position": 0
+                  },
+                  {
+                    "color": "#8083ff",
+                    "position": 1
+                  }
+                ]
+              },
+              "content": "Create your client account",
+              "textAlign": "center",
+              "fontFamily": "$--font-sans",
+              "fontSize": 21,
+              "fontWeight": "700"
+            },
+            {
+              "type": "frame",
+              "id": "AIqgJ",
+              "name": "InviteBanner",
+              "width": "fill_container",
+              "fill": "#8083ff1a",
+              "cornerRadius": "$--radius",
+              "stroke": "#8083ff40",
+              "strokeWidth": 1,
+              "gap": 5,
+              "padding": [
+                10,
+                12
+              ],
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "bzX7W",
+                  "name": "Pre",
+                  "fill": "$--text-soft",
+                  "content": "Invited by",
+                  "fontFamily": "$--font-sans",
+                  "fontSize": 13,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "VGGep",
+                  "name": "Name",
+                  "fill": "$--foreground",
+                  "content": "Jordan Blake",
+                  "fontFamily": "$--font-sans",
+                  "fontSize": 13,
+                  "fontWeight": "700"
+                }
+              ]
+            },
+            {
+              "id": "XqdFA",
+              "type": "ref",
+              "ref": "alSfd",
+              "name": "Email",
+              "width": "fill_container",
+              "descendants": {
+                "X6op2": {
+                  "content": "Email"
+                },
+                "OIm1B": {
+                  "icon": "mail"
+                },
+                "HKqSd": {
+                  "content": "you@example.com"
+                },
+                "e224KA": {
+                  "enabled": false
+                }
+              }
+            },
+            {
+              "id": "jPNXo",
+              "type": "ref",
+              "ref": "alSfd",
+              "name": "Password",
+              "width": "fill_container",
+              "descendants": {
+                "X6op2": {
+                  "content": "Password"
+                },
+                "OIm1B": {
+                  "icon": "lock"
+                },
+                "HKqSd": {
+                  "content": "Min. 6 characters"
+                },
+                "e224KA": {
+                  "enabled": true
+                }
+              }
+            },
+            {
+              "id": "suZV0",
+              "type": "ref",
+              "ref": "alSfd",
+              "name": "Confirm password",
+              "width": "fill_container",
+              "descendants": {
+                "X6op2": {
+                  "content": "Confirm password"
+                },
+                "OIm1B": {
+                  "icon": "lock"
+                },
+                "HKqSd": {
+                  "content": "Re-enter your password"
+                },
+                "e224KA": {
+                  "enabled": true
+                }
+              }
+            },
+            {
+              "id": "pONY2",
+              "type": "ref",
+              "ref": "T2u6mC",
+              "name": "Join as client Button",
+              "width": "fill_container",
+              "descendants": {
+                "mhPnw": {
+                  "content": "Join as client"
+                }
+              }
+            },
+            {
+              "type": "frame",
+              "id": "w5sejN",
+              "name": "Footer",
+              "width": "fill_container",
+              "gap": 5,
+              "justifyContent": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "hKlfA",
+                  "name": "Pre",
+                  "fill": "$--muted-foreground",
+                  "content": "Already have an account?",
+                  "fontFamily": "$--font-sans",
+                  "fontSize": 13,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "XQSDc",
+                  "name": "Link",
+                  "fill": "$--text-lavender",
+                  "content": "Sign in",
+                  "fontFamily": "$--font-sans",
+                  "fontSize": 13,
+                  "fontWeight": "600"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "nRq8Y",
+      "x": 2550,
+      "y": 1020,
+      "name": "5 · Confirm Email — Mobile",
+      "clip": true,
+      "width": 390,
+      "height": 844,
+      "fill": "$--background",
+      "layout": "vertical",
+      "padding": [
+        40,
+        20
+      ],
+      "justifyContent": "center",
+      "alignItems": "center",
+      "children": [
+        {
+          "type": "frame",
+          "id": "cJNsA",
+          "name": "AuthCard",
+          "width": "fill_container",
+          "fill": "$--card",
+          "cornerRadius": "$--radius-lg",
+          "stroke": "$--border",
+          "strokeWidth": 1,
+          "layout": "vertical",
+          "gap": 14,
+          "padding": 24,
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "Kky0D",
+              "name": "Emoji",
+              "fill": "$--foreground",
+              "content": "📧",
+              "fontFamily": "Inter",
+              "fontSize": 40,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "text",
+              "id": "ylPwa",
+              "name": "Heading",
+              "fill": {
+                "type": "gradient",
+                "gradientType": "linear",
+                "enabled": true,
+                "rotation": 270,
+                "size": {
+                  "height": 1
+                },
+                "colors": [
+                  {
+                    "color": "#c0c1ff",
+                    "position": 0
+                  },
+                  {
+                    "color": "#8083ff",
+                    "position": 1
+                  }
+                ]
+              },
+              "content": "Check your email",
+              "textAlign": "center",
+              "fontFamily": "$--font-sans",
+              "fontSize": 24,
+              "fontWeight": "700"
+            },
+            {
+              "type": "text",
+              "id": "rSptq",
+              "name": "Body",
+              "fill": "$--text-soft",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "We've sent a confirmation link to your email address. Click it to activate your account.",
+              "textAlign": "center",
+              "fontFamily": "$--font-sans",
+              "fontSize": 14,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "text",
+              "id": "ITFFp",
+              "name": "Link",
+              "fill": "$--text-lavender",
+              "content": "Back to sign in",
+              "textAlign": "center",
+              "fontFamily": "$--font-sans",
+              "fontSize": 13,
+              "fontWeight": "600"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "Rt06d",
+      "x": 1140,
+      "y": -1260,
+      "name": "1 · Landing — Desktop",
+      "clip": true,
+      "width": 1440,
+      "fill": "$--background",
+      "layout": "vertical",
+      "children": [
+        {
+          "type": "frame",
+          "id": "b3SJN",
+          "name": "Nav",
+          "width": "fill_container",
+          "padding": [
+            24,
+            64
+          ],
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "lZ0mn",
+              "name": "Logo",
+              "fill": {
+                "type": "gradient",
+                "gradientType": "linear",
+                "enabled": true,
+                "rotation": 270,
+                "size": {
+                  "height": 1
+                },
+                "colors": [
+                  {
+                    "color": "#c0c1ff",
+                    "position": 0
+                  },
+                  {
+                    "color": "#8083ff",
+                    "position": 1
+                  }
+                ]
+              },
+              "content": "trAInR",
+              "fontFamily": "$--font-sans",
+              "fontSize": 22,
+              "fontWeight": "700"
+            },
+            {
+              "type": "frame",
+              "id": "upiOe",
+              "name": "NavActions",
+              "gap": 12,
+              "alignItems": "center",
+              "children": [
+                {
+                  "id": "R0MHgo",
+                  "type": "ref",
+                  "ref": "WSWPl",
+                  "name": "Sign in",
+                  "width": "fit_content",
+                  "descendants": {
+                    "qSzGH": {
+                      "content": "Sign in"
+                    }
+                  }
+                },
+                {
+                  "id": "hEaWQ",
+                  "type": "ref",
+                  "ref": "T2u6mC",
+                  "name": "Sign up",
+                  "width": "fit_content",
+                  "descendants": {
+                    "mhPnw": {
+                      "content": "Sign up"
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "TMsgW",
+          "name": "Hero",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 24,
+          "padding": [
+            96,
+            64
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "pvtNp",
+              "name": "Eyebrow",
+              "fill": "#8083ff1a",
+              "cornerRadius": "$--radius-pill",
+              "stroke": "#8083ff40",
+              "strokeWidth": 1,
+              "padding": [
+                6,
+                14
+              ],
+              "children": [
+                {
+                  "type": "text",
+                  "id": "ymO7q",
+                  "name": "EyebrowLabel",
+                  "fill": "$--text-lavender",
+                  "content": "ASYNC COACHING PLATFORM",
+                  "fontFamily": "$--font-secondary",
+                  "fontSize": 12,
+                  "fontWeight": "600",
+                  "letterSpacing": 1
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "id": "x0z9L",
+              "name": "HeroTitle",
+              "fill": {
+                "type": "gradient",
+                "gradientType": "linear",
+                "enabled": true,
+                "rotation": 270,
+                "size": {
+                  "height": 1
+                },
+                "colors": [
+                  {
+                    "color": "#c0c1ff",
+                    "position": 0
+                  },
+                  {
+                    "color": "#8083ff",
+                    "position": 1
+                  }
+                ]
+              },
+              "content": "trAInR",
+              "textAlign": "center",
+              "fontFamily": "$--font-sans",
+              "fontSize": 88,
+              "fontWeight": "700"
+            },
+            {
+              "type": "text",
+              "id": "A2CQ8",
+              "name": "HeroSub",
+              "fill": "$--text-soft",
+              "textGrowth": "fixed-width",
+              "width": 640,
+              "content": "Async coaching for independent personal trainers. Build session templates, assign them to clients, and review what they actually logged at the gym.",
+              "lineHeight": 1.5,
+              "textAlign": "center",
+              "fontFamily": "$--font-sans",
+              "fontSize": 18,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "frame",
+              "id": "bA8JJ",
+              "name": "HeroCTA",
+              "gap": 14,
+              "alignItems": "center",
+              "children": [
+                {
+                  "id": "KPeAc",
+                  "type": "ref",
+                  "ref": "T2u6mC",
+                  "name": "Get started",
+                  "width": "fit_content",
+                  "descendants": {
+                    "mhPnw": {
+                      "content": "Sign up"
+                    }
+                  }
+                },
+                {
+                  "id": "bh6Rj",
+                  "type": "ref",
+                  "ref": "d0v96",
+                  "name": "Sign in",
+                  "width": "fit_content",
+                  "descendants": {
+                    "Y9TclW": {
+                      "content": "Sign in"
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "xpMP7",
+          "name": "Features",
+          "width": "fill_container",
+          "gap": 24,
+          "padding": [
+            24,
+            64,
+            96,
+            64
+          ],
+          "children": [
+            {
+              "type": "frame",
+              "id": "aQtKg",
+              "name": "Build session templates",
+              "width": "fill_container",
+              "fill": "$--card",
+              "cornerRadius": "$--radius-lg",
+              "stroke": "$--border",
+              "strokeWidth": 1,
+              "layout": "vertical",
+              "gap": 14,
+              "padding": 28,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "l0yMPp",
+                  "name": "IconWrap",
+                  "width": 48,
+                  "height": 48,
+                  "fill": "$--accent",
+                  "cornerRadius": "$--radius-md",
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "v9ltlN",
+                      "name": "Icon",
+                      "width": 22,
+                      "height": 22,
+                      "icon": "dumbbell",
+                      "library": "lucide",
+                      "fill": "$--text-lavender"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "sGogz",
+                  "name": "Title",
+                  "fill": "$--foreground",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Build session templates",
+                  "fontFamily": "$--font-sans",
+                  "fontSize": 18,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "w179M",
+                  "name": "Body",
+                  "fill": "$--text-soft",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Compose reusable workouts with phases, exercises, and prescribed sets once — then reuse them across your whole roster.",
+                  "lineHeight": 1.5,
+                  "fontFamily": "$--font-sans",
+                  "fontSize": 14,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "J8jhCl",
+              "name": "Assign to clients",
+              "width": "fill_container",
+              "fill": "$--card",
+              "cornerRadius": "$--radius-lg",
+              "stroke": "$--border",
+              "strokeWidth": 1,
+              "layout": "vertical",
+              "gap": 14,
+              "padding": 28,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "n1KY4C",
+                  "name": "IconWrap",
+                  "width": 48,
+                  "height": 48,
+                  "fill": "$--accent",
+                  "cornerRadius": "$--radius-md",
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "RvEtP",
+                      "name": "Icon",
+                      "width": 22,
+                      "height": 22,
+                      "icon": "users",
+                      "library": "lucide",
+                      "fill": "$--text-lavender"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "wkmBc",
+                  "name": "Title",
+                  "fill": "$--foreground",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Assign to clients",
+                  "fontFamily": "$--font-sans",
+                  "fontSize": 18,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "Aowgx",
+                  "name": "Body",
+                  "fill": "$--text-soft",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Drop sessions onto a client's calendar and onboard them in seconds with a single-use invite link.",
+                  "lineHeight": 1.5,
+                  "fontFamily": "$--font-sans",
+                  "fontSize": 14,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "G20gG",
+              "name": "Review what they logged",
+              "width": "fill_container",
+              "fill": "$--card",
+              "cornerRadius": "$--radius-lg",
+              "stroke": "$--border",
+              "strokeWidth": 1,
+              "layout": "vertical",
+              "gap": 14,
+              "padding": 28,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "qbcT5",
+                  "name": "IconWrap",
+                  "width": 48,
+                  "height": 48,
+                  "fill": "$--accent",
+                  "cornerRadius": "$--radius-md",
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "IkYAx",
+                      "name": "Icon",
+                      "width": 22,
+                      "height": 22,
+                      "icon": "clipboard-check",
+                      "library": "lucide",
+                      "fill": "$--text-lavender"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "A4oE9t",
+                  "name": "Title",
+                  "fill": "$--foreground",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Review what they logged",
+                  "fontFamily": "$--font-sans",
+                  "fontSize": 18,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "JHH8H",
+                  "name": "Body",
+                  "fill": "$--text-soft",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Compare planned vs. actual reps, weights, and RPE, then leave feedback right in the session thread.",
+                  "lineHeight": 1.5,
+                  "fontFamily": "$--font-sans",
+                  "fontSize": 14,
+                  "fontWeight": "normal"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "r27hLY",
+      "x": 2740,
+      "y": -1260,
+      "name": "1 · Landing — Mobile",
+      "clip": true,
+      "width": 390,
+      "fill": "$--background",
+      "layout": "vertical",
+      "children": [
+        {
+          "type": "frame",
+          "id": "hk7BA",
+          "name": "Nav",
+          "width": "fill_container",
+          "padding": [
+            18,
+            20
+          ],
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "nY3fr",
+              "name": "Logo",
+              "fill": {
+                "type": "gradient",
+                "gradientType": "linear",
+                "enabled": true,
+                "rotation": 270,
+                "size": {
+                  "height": 1
+                },
+                "colors": [
+                  {
+                    "color": "#c0c1ff",
+                    "position": 0
+                  },
+                  {
+                    "color": "#8083ff",
+                    "position": 1
+                  }
+                ]
+              },
+              "content": "trAInR",
+              "fontFamily": "$--font-sans",
+              "fontSize": 20,
+              "fontWeight": "700"
+            },
+            {
+              "id": "C0jK0d",
+              "type": "ref",
+              "ref": "T2u6mC",
+              "name": "Sign up",
+              "width": "fit_content",
+              "descendants": {
+                "mhPnw": {
+                  "content": "Sign up"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "ZrqF3",
+          "name": "Hero",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 18,
+          "padding": [
+            48,
+            24
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "xWwsK",
+              "name": "Eyebrow",
+              "fill": "#8083ff1a",
+              "cornerRadius": "$--radius-pill",
+              "stroke": "#8083ff40",
+              "strokeWidth": 1,
+              "padding": [
+                6,
+                12
+              ],
+              "children": [
+                {
+                  "type": "text",
+                  "id": "apbBi",
+                  "name": "EyebrowLabel",
+                  "fill": "$--text-lavender",
+                  "content": "ASYNC COACHING",
+                  "fontFamily": "$--font-secondary",
+                  "fontSize": 11,
+                  "fontWeight": "600",
+                  "letterSpacing": 1
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "id": "Webyo",
+              "name": "HeroTitle",
+              "fill": {
+                "type": "gradient",
+                "gradientType": "linear",
+                "enabled": true,
+                "rotation": 270,
+                "size": {
+                  "height": 1
+                },
+                "colors": [
+                  {
+                    "color": "#c0c1ff",
+                    "position": 0
+                  },
+                  {
+                    "color": "#8083ff",
+                    "position": 1
+                  }
+                ]
+              },
+              "content": "trAInR",
+              "textAlign": "center",
+              "fontFamily": "$--font-sans",
+              "fontSize": 60,
+              "fontWeight": "700"
+            },
+            {
+              "type": "text",
+              "id": "jrvv8",
+              "name": "HeroSub",
+              "fill": "$--text-soft",
+              "textGrowth": "fixed-width",
+              "width": 322,
+              "content": "Async coaching for independent personal trainers. Build templates, assign them to clients, and review what they logged.",
+              "lineHeight": 1.5,
+              "textAlign": "center",
+              "fontFamily": "$--font-sans",
+              "fontSize": 15,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "frame",
+              "id": "kRqRH",
+              "name": "HeroCTA",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 12,
+              "children": [
+                {
+                  "id": "L3cHF",
+                  "type": "ref",
+                  "ref": "T2u6mC",
+                  "name": "Sign up",
+                  "width": "fill_container",
+                  "descendants": {
+                    "mhPnw": {
+                      "content": "Sign up"
+                    }
+                  }
+                },
+                {
+                  "id": "ZNL26",
+                  "type": "ref",
+                  "ref": "d0v96",
+                  "name": "Sign in",
+                  "width": "fill_container",
+                  "descendants": {
+                    "Y9TclW": {
+                      "content": "Sign in"
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "MUaSq",
+          "name": "Features",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 14,
+          "padding": [
+            8,
+            24,
+            56,
+            24
+          ],
+          "children": [
+            {
+              "type": "frame",
+              "id": "kAIwO",
+              "name": "Build session templates",
+              "width": "fill_container",
+              "fill": "$--card",
+              "cornerRadius": "$--radius-lg",
+              "stroke": "$--border",
+              "strokeWidth": 1,
+              "layout": "vertical",
+              "gap": 10,
+              "padding": 20,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "vMTgz",
+                  "name": "IconWrap",
+                  "width": 44,
+                  "height": 44,
+                  "fill": "$--accent",
+                  "cornerRadius": "$--radius-md",
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "c2AJI",
+                      "name": "Icon",
+                      "width": 20,
+                      "height": 20,
+                      "icon": "dumbbell",
+                      "library": "lucide",
+                      "fill": "$--text-lavender"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "XhP1y",
+                  "name": "Title",
+                  "fill": "$--foreground",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Build session templates",
+                  "fontFamily": "$--font-sans",
+                  "fontSize": 16,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "lusgy",
+                  "name": "Body",
+                  "fill": "$--text-soft",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Compose reusable workouts with phases, exercises, and prescribed sets once — reuse them across your roster.",
+                  "lineHeight": 1.5,
+                  "fontFamily": "$--font-sans",
+                  "fontSize": 13,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "z2hojb",
+              "name": "Assign to clients",
+              "width": "fill_container",
+              "fill": "$--card",
+              "cornerRadius": "$--radius-lg",
+              "stroke": "$--border",
+              "strokeWidth": 1,
+              "layout": "vertical",
+              "gap": 10,
+              "padding": 20,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "lOnE8",
+                  "name": "IconWrap",
+                  "width": 44,
+                  "height": 44,
+                  "fill": "$--accent",
+                  "cornerRadius": "$--radius-md",
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "dFPcn",
+                      "name": "Icon",
+                      "width": 20,
+                      "height": 20,
+                      "icon": "users",
+                      "library": "lucide",
+                      "fill": "$--text-lavender"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "n4tAg",
+                  "name": "Title",
+                  "fill": "$--foreground",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Assign to clients",
+                  "fontFamily": "$--font-sans",
+                  "fontSize": 16,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "UmCSb",
+                  "name": "Body",
+                  "fill": "$--text-soft",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Drop sessions onto a client's calendar and onboard them with a single-use invite link.",
+                  "lineHeight": 1.5,
+                  "fontFamily": "$--font-sans",
+                  "fontSize": 13,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "yYUqm",
+              "name": "Review what they logged",
+              "width": "fill_container",
+              "fill": "$--card",
+              "cornerRadius": "$--radius-lg",
+              "stroke": "$--border",
+              "strokeWidth": 1,
+              "layout": "vertical",
+              "gap": 10,
+              "padding": 20,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "tk0vD",
+                  "name": "IconWrap",
+                  "width": 44,
+                  "height": 44,
+                  "fill": "$--accent",
+                  "cornerRadius": "$--radius-md",
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "A7mzy1",
+                      "name": "Icon",
+                      "width": 20,
+                      "height": 20,
+                      "icon": "clipboard-check",
+                      "library": "lucide",
+                      "fill": "$--text-lavender"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "JwxPV",
+                  "name": "Title",
+                  "fill": "$--foreground",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Review what they logged",
+                  "fontFamily": "$--font-sans",
+                  "fontSize": 16,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "zVIva",
+                  "name": "Body",
+                  "fill": "$--text-soft",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Compare planned vs. actual reps, weights, and RPE, then leave feedback in the session thread.",
+                  "lineHeight": 1.5,
+                  "fontFamily": "$--font-sans",
+                  "fontSize": 13,
+                  "fontWeight": "normal"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "Iqs7V",
+      "x": 520,
+      "y": -1260,
+      "name": "Design Spec — Public & Auth",
+      "clip": true,
+      "width": 420,
+      "fill": "$--card",
+      "cornerRadius": "$--radius-lg",
+      "stroke": "$--border",
+      "strokeWidth": 1,
+      "layout": "vertical",
+      "gap": 20,
+      "padding": 28,
+      "children": [
+        {
+          "type": "frame",
+          "id": "ePq7e",
+          "name": "Head",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 6,
+          "children": [
+            {
+              "type": "text",
+              "id": "t4C68",
+              "name": "Kicker",
+              "fill": "$--text-lavender",
+              "content": "DESIGN SPEC",
+              "fontFamily": "$--font-secondary",
+              "fontSize": 11,
+              "fontWeight": "600",
+              "letterSpacing": 1.5
+            },
+            {
+              "type": "text",
+              "id": "WTdnm",
+              "name": "Title",
+              "fill": "$--foreground",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "Public & Auth Surface",
+              "fontFamily": "$--font-sans",
+              "fontSize": 20,
+              "fontWeight": "700"
+            },
+            {
+              "type": "text",
+              "id": "eTy9a",
+              "name": "Mode",
+              "fill": "$--muted-foreground",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "MOBILE-FIRST FORMS · DESKTOP 1440 · MOBILE 390",
+              "fontFamily": "$--font-secondary",
+              "fontSize": 11,
+              "fontWeight": "normal"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "Rge9c",
+          "name": "SCREENS",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 8,
+          "children": [
+            {
+              "type": "text",
+              "id": "GG1Je",
+              "name": "Label",
+              "fill": "$--text-lavender",
+              "content": "SCREENS",
+              "fontFamily": "$--font-secondary",
+              "fontSize": 11,
+              "fontWeight": "600",
+              "letterSpacing": 1
+            },
+            {
+              "type": "text",
+              "id": "vziQg",
+              "name": "Body",
+              "fill": "$--text-soft",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "Landing  ·  /\nSign in  ·  /auth/signin\nSign up  ·  /auth/signup\nJoin as client  ·  /auth/signup?token=\nConfirm email  ·  /auth/confirm-email",
+              "lineHeight": 1.6,
+              "fontFamily": "$--font-sans",
+              "fontSize": 13,
+              "fontWeight": "normal"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "v5NL8",
+          "name": "REQUIREMENTS",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 8,
+          "children": [
+            {
+              "type": "text",
+              "id": "TBvNb",
+              "name": "Label",
+              "fill": "$--text-lavender",
+              "content": "REQUIREMENTS",
+              "fontFamily": "$--font-secondary",
+              "fontSize": 11,
+              "fontWeight": "600",
+              "letterSpacing": 1
+            },
+            {
+              "type": "text",
+              "id": "Yf0Yo",
+              "name": "Body",
+              "fill": "$--text-soft",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "FR-001 / FR-002 — trainer email + password auth.\nFR-003 / FR-004 / FR-005 (S-03) — invite-link client onboarding with auto-assignment to the inviting trainer.",
+              "lineHeight": 1.6,
+              "fontFamily": "$--font-sans",
+              "fontSize": 13,
+              "fontWeight": "normal"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "tPMrd",
+          "name": "COMPONENTS",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 8,
+          "children": [
+            {
+              "type": "text",
+              "id": "znHg0",
+              "name": "Label",
+              "fill": "$--text-lavender",
+              "content": "COMPONENTS",
+              "fontFamily": "$--font-secondary",
+              "fontSize": 11,
+              "fontWeight": "600",
+              "letterSpacing": 1
+            },
+            {
+              "type": "text",
+              "id": "cwqmE",
+              "name": "Body",
+              "fill": "$--text-soft",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "C/Input (leading icon + eye toggle), C/PrimaryButton, C/SecondaryButton, C/GhostButton, and a shared glass AuthCard shell.",
+              "lineHeight": 1.6,
+              "fontFamily": "$--font-sans",
+              "fontSize": 13,
+              "fontWeight": "normal"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "x4e7zg",
+          "name": "STATES",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 8,
+          "children": [
+            {
+              "type": "text",
+              "id": "rx6KQ",
+              "name": "Label",
+              "fill": "$--text-lavender",
+              "content": "STATES",
+              "fontFamily": "$--font-secondary",
+              "fontSize": 11,
+              "fontWeight": "600",
+              "letterSpacing": 1
+            },
+            {
+              "type": "text",
+              "id": "Z1lRcz",
+              "name": "Body",
+              "fill": "$--text-soft",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "Default · Error (red border + CircleAlert, e.g. “Enter a valid email address”) · Loading (button text: “Signing in…” / “Creating account…” / “Joining…”).",
+              "lineHeight": 1.6,
+              "fontFamily": "$--font-sans",
+              "fontSize": 13,
+              "fontWeight": "normal"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "a9MgTv",
+          "name": "NOTES",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 8,
+          "children": [
+            {
+              "type": "text",
+              "id": "GI8WO",
+              "name": "Label",
+              "fill": "$--text-lavender",
+              "content": "NOTES",
+              "fontFamily": "$--font-secondary",
+              "fontSize": 11,
+              "fontWeight": "600",
+              "letterSpacing": 1
+            },
+            {
+              "type": "text",
+              "id": "gxLIB",
+              "name": "Body",
+              "fill": "$--text-soft",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "Dark theme only. The invite variant swaps the heading to “Create your client account”, adds the “Invited by <trainer>” banner, and the CTA reads “Join as client”. Confirm-email also has a DEV auto-confirm success state (✅ “Registration successful”).",
+              "lineHeight": 1.6,
+              "fontFamily": "$--font-sans",
+              "fontSize": 13,
+              "fontWeight": "normal"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "variables": {
+    "--accent": {
+      "type": "color",
+      "value": "#222a3d"
+    },
+    "--accent-foreground": {
+      "type": "color",
+      "value": "#ffffff"
+    },
+    "--background": {
+      "type": "color",
+      "value": "#0b1326"
+    },
+    "--border": {
+      "type": "color",
+      "value": "#ffffff1a"
+    },
+    "--card": {
+      "type": "color",
+      "value": "#131b2e"
+    },
+    "--card-foreground": {
+      "type": "color",
+      "value": "#ffffff"
+    },
+    "--destructive": {
+      "type": "color",
+      "value": "#ef4444"
+    },
+    "--destructive-foreground": {
+      "type": "color",
+      "value": "#ffffff"
+    },
+    "--font-mono": {
+      "type": "string",
+      "value": "JetBrains Mono"
+    },
+    "--font-primary": {
+      "type": "string",
+      "value": "Geist"
+    },
+    "--font-sans": {
+      "type": "string",
+      "value": "Geist"
+    },
+    "--font-secondary": {
+      "type": "string",
+      "value": "JetBrains Mono"
+    },
+    "--foreground": {
+      "type": "color",
+      "value": "#ffffff"
+    },
+    "--input": {
+      "type": "color",
+      "value": "#ffffff1a"
+    },
+    "--muted": {
+      "type": "color",
+      "value": "#171f33"
+    },
+    "--muted-foreground": {
+      "type": "color",
+      "value": "#908fa0"
+    },
+    "--popover": {
+      "type": "color",
+      "value": "#171f33"
+    },
+    "--popover-foreground": {
+      "type": "color",
+      "value": "#ffffff"
+    },
+    "--primary": {
+      "type": "color",
+      "value": "#8083ff"
+    },
+    "--primary-foreground": {
+      "type": "color",
+      "value": "#ffffff"
+    },
+    "--radius": {
+      "type": "number",
+      "value": 10
+    },
+    "--radius-lg": {
+      "type": "number",
+      "value": 16
+    },
+    "--radius-md": {
+      "type": "number",
+      "value": 12
+    },
+    "--radius-pill": {
+      "type": "number",
+      "value": 999
+    },
+    "--radius-sm": {
+      "type": "number",
+      "value": 4
+    },
+    "--ring": {
+      "type": "color",
+      "value": "#8083ff"
+    },
+    "--secondary": {
+      "type": "color",
+      "value": "#171f33"
+    },
+    "--secondary-foreground": {
+      "type": "color",
+      "value": "#c0c1ff"
+    },
+    "--success": {
+      "type": "color",
+      "value": "#4edea3"
+    },
+    "--success-foreground": {
+      "type": "color",
+      "value": "#04170f"
+    },
+    "--surface-bright": {
+      "type": "color",
+      "value": "#31394d"
+    },
+    "--text-lavender": {
+      "type": "color",
+      "value": "#c0c1ff"
+    },
+    "--text-soft": {
+      "type": "color",
+      "value": "#c7c4d7"
+    },
+    "--warning": {
+      "type": "color",
+      "value": "#ffb95f"
+    },
+    "--warning-foreground": {
+      "type": "color",
+      "value": "#2a1700"
+    }
+  },
+  "fileToken": "396f549f-b3d6-4060-81f8-3109118dbfb4"
+}
