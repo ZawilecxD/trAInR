@@ -216,7 +216,31 @@ Font stack: `--font-sans: "Geist"` (display + body), `--font-mono: "JetBrains Mo
 
 ### Component inventory
 
-Reusable primitives established in the Pencil "Design System" frame (instanced via `ref` on every screen): Button (primary / secondary / ghost / destructive), Input, Select, Textarea, Card, Badge/Status chip (completed / in-progress / not-started), Modal shell, Empty state, Toast, and mobile Bottom Nav. The existing Topbar (`J8Z6hl`) is the desktop shell.
+Reusable components are defined once in `docs/pencil/trainer_dashboard.pen` and instanced via `ref` on every screen. Final set (17):
+
+**Core primitives**
+- `Button / Primary` (`Kk9za`) — full-width electric-violet CTA; `Invite Client Button` (`mEIaD`) is the labelled variant.
+- `Input` (`LpAdE`), `Textarea` (`EXhz2`), `Select` (`fqGPI`) — form fields on `--popover`/`--input` surfaces.
+- `Search Input` (`J6lNIq`) — icon + placeholder, used across list/table screens.
+- `Card` (`FHrXI`) — the base raised surface for list items and panels.
+- `Badge / Status` (`Cj0jn`) — pill chip; completed (green) / in-progress (amber) / not-started (gray).
+- `Modal Shell` (`V3H9M`) — dialog container with backdrop + blur for create/edit/delete overlays.
+- `Empty State` (`uPFRC`) and `Toast` (`ADiq9`).
+
+**Shell & navigation**
+- `Topbar` (`J8Z6hl`) — desktop shell: logo + nav tabs + account; per-page active tab set via descendant overrides.
+- `Bottom Nav / Mobile` (`sML2o`) — client mobile tab bar. A parallel **trainer** mobile tab bar (Dashboard / Clients / Exercises / Templates) is applied consistently across the four trainer mobile screens (candidate to promote to a DS component).
+
+**Domain components**
+- `Client Card` (`jEyfw`) — avatar + name + active dot + plan row + joined date + `Open Calendar Button` (`QLadd`) / `Assign Plan Link` (`v4efIh`).
+- Stat card (`PENDING INVITES` / `xilIZ` pattern) — mono caps label + large stat readout, used in dashboard/roster stat rows.
+
+### Breakpoint rules
+
+Two breakpoints, both authored for every surface:
+
+- **Desktop 1440px** — trainer surfaces lead here. Uses the `Topbar` shell; multi-column layouts (dashboard two-column, calendar split-pane, authoring split view) and dense data **tables** (exercises, templates).
+- **Mobile 390px** — client + logging surfaces lead here. Uses a bottom tab bar instead of the topbar; single-column stacked content, a 20px gym-safety side margin, thumb-zone primary actions, and ≥44px touch targets. Desktop **tables collapse to stacked cards** (name + type/count badge, metadata, inline Edit/Delete); multi-column dashboards reflow to a single column with 2×2 stat grids.
 
 ### Implementation note
 

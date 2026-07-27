@@ -392,12 +392,12 @@ The stale orange variable table is replaced in Phase 1; no other migration. `DES
 
 #### Automated
 
-- [ ] 5.1 `get_variables` returns identical token set across all `.pen` files
-- [ ] 5.2 `snapshot_layout(problemsOnly: true)` returns no problems in any file
-- [ ] 5.3 Full screenshot set exported (every screen, both breakpoints)
-- [ ] 5.4 `npm run lint` passes
+- [x] 5.1 `get_variables` returns identical token set across all `.pen` files
+- [x] 5.2 `snapshot_layout(problemsOnly: true)` returns no problems in any file
+- [x] 5.3 Full screenshot set exported (every screen, both breakpoints)
+- [x] 5.4 `npm run lint` passes
 
 #### Manual
 
-- [ ] 5.5 Full screenshot set reviewed end-to-end as one cohesive system
-- [ ] 5.6 `DESIGN.md` reflects final component inventory
+- [x] 5.5 Full screenshot set reviewed end-to-end as one cohesive system
+- [x] 5.6 `DESIGN.md` reflects final component inventory
