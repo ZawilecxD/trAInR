@@ -4,6 +4,7 @@ title: UI Redesign
 status: done
 created: 2026-06-12
 updated: 2026-07-27
+linear_issue: ZAW-38
 ---
 
 # UI Redesign
