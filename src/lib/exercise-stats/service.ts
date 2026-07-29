@@ -43,9 +43,7 @@ interface WorkingSetRow {
 }
 
 const WORKING_SET_SELECT =
-  "reps, duration_seconds, load_kg, logged_at, " +
-  "session_exercises!inner(exercise_id, exercises!inner(id, name, default_metric), " +
-  "workout_sessions!inner(id, scheduled_date, client_plans!inner(client_id)))";
+  "reps, duration_seconds, load_kg, logged_at, session_exercises!inner(exercise_id, exercises!inner(id, name, default_metric), workout_sessions!inner(id, scheduled_date, client_plans!inner(client_id)))";
 
 /** A row that carries all the nested data we need. */
 interface ResolvedRow {
@@ -96,14 +94,16 @@ export async function listLoggedExercisesForClient(
     .from("set_logs")
     .select(WORKING_SET_SELECT)
     .eq("is_warmup", false)
-    .eq("session_exercises.workout_sessions.client_plans.client_id", clientId);
+    .eq("session_exercises.workout_sessions.client_plans.client_id", clientId)
+    .overrideTypes<WorkingSetRow[], { merge: false }>();
 
   if (result.error) {
     return { data: null, error: result.error.message };
   }
 
-  const rawRows = (result.data as WorkingSetRow[] | null) ?? [];
-  const rows = rawRows.map(resolveRow).filter((row): row is ResolvedRow => row !== null && row.clientId === clientId);
+  const rows = result.data
+    .map(resolveRow)
+    .filter((row): row is ResolvedRow => row !== null && row.clientId === clientId);
 
   const byExercise = new Map<string, { summary: LoggedExerciseSummary; sessionIds: Set<string> }>();
 
@@ -153,14 +153,14 @@ export async function getExerciseHistoryForClient(
     .eq("is_warmup", false)
     .eq("session_exercises.exercise_id", exerciseId)
     .eq("session_exercises.workout_sessions.client_plans.client_id", clientId)
-    .order("set_number", { ascending: true });
+    .order("set_number", { ascending: true })
+    .overrideTypes<WorkingSetRow[], { merge: false }>();
 
   if (result.error) {
     return { data: null, error: result.error.message };
   }
 
-  const rawRows = (result.data as WorkingSetRow[] | null) ?? [];
-  const rows = rawRows
+  const rows = result.data
     .map(resolveRow)
     .filter((row): row is ResolvedRow => row !== null && row.exerciseId === exerciseId && row.clientId === clientId);
 
