@@ -418,7 +418,7 @@ Bottom nav and Topbar are light Astro components — avoid shipping heavy client
 
 #### Manual
 
-- [x] 3.3 Guided logging matches `exports/phase-5-guided` at mobile + desktop
+- [x] 3.3 Guided logging matches `exports/phase-5-guided` at mobile + desktop — c2ac2af
 - [x] 3.4 Client dashboard uses real data or EmptyState — no fake metrics — c2ac2af
 - [x] 3.5 Client plan calendar usable at ~390 and desktop — c2ac2af
 
