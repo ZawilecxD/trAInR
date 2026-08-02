@@ -387,10 +387,10 @@ Bottom nav and Topbar are light Astro components — avoid shipping heavy client
 
 #### Automated
 
-- [x] 1.1 `npm run lint` passes
-- [x] 1.2 `npm run check` passes
-- [x] 1.3 `npm run test` passes (no intentional test regressions from class renames)
-- [x] 1.4 Grep gate: no brand `purple-*` under `src/`; `text-white` only on intentional fill exceptions
+- [x] 1.1 `npm run lint` passes — 38fad0a
+- [x] 1.2 `npm run check` passes — 38fad0a
+- [x] 1.3 `npm run test` passes (no intentional test regressions from class renames) — 38fad0a
+- [x] 1.4 Grep gate: no brand `purple-*` under `src/`; `text-white` only on intentional fill exceptions — 38fad0a
 
 #### Manual
 
@@ -401,13 +401,13 @@ Bottom nav and Topbar are light Astro components — avoid shipping heavy client
 
 #### Automated
 
-- [x] 2.1 `npm run lint` / `npm run check` pass
-- [x] 2.2 Layout still wraps all pages; no middleware changes required for nav
+- [x] 2.1 `npm run lint` / `npm run check` pass — 38fad0a
+- [x] 2.2 Layout still wraps all pages; no middleware changes required for nav — 38fad0a
 
 #### Manual
 
-- [x] 2.3 Desktop trainer Topbar matches export chrome
-- [x] 2.4 Mobile ~390: bottom nav works for trainer + client; no duplicate primary nav; public pages have no bottom nav
+- [x] 2.3 Desktop trainer Topbar matches export chrome — 38fad0a
+- [x] 2.4 Mobile ~390: bottom nav works for trainer + client; no duplicate primary nav; public pages have no bottom nav — 38fad0a
 
 ### Phase 3: Client surfaces (dashboard, calendar, guided logging)
 
