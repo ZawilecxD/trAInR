@@ -418,9 +418,9 @@ Bottom nav and Topbar are light Astro components — avoid shipping heavy client
 
 #### Manual
 
-- [ ] 3.3 Guided logging matches `exports/phase-5-guided` at mobile + desktop
-- [ ] 3.4 Client dashboard uses real data or EmptyState — no fake metrics
-- [ ] 3.5 Client plan calendar usable at ~390 and desktop
+- [x] 3.3 Guided logging matches `exports/phase-5-guided` at mobile + desktop
+- [x] 3.4 Client dashboard uses real data or EmptyState — no fake metrics
+- [x] 3.5 Client plan calendar usable at ~390 and desktop
 
 ### Phase 4: Trainer hubs (dashboard, clients, exercises, templates)
 
