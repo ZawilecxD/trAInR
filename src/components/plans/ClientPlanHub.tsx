@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { CalendarPlus, ChevronRight, Pencil } from "lucide-react";
-import PlanCalendar, { type PlanCalendarSession } from "@/components/plans/PlanCalendar";
+import PlanCalendar from "@/components/plans/PlanCalendar";
+import { type PlanCalendarSession } from "@/lib/plans/calendar-session";
 import TemplatePickerModal from "@/components/workout-sessions/TemplatePickerModal";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";

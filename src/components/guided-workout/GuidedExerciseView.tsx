@@ -3,6 +3,8 @@ import ExerciseSetLogTable from "@/components/guided-workout/ExerciseSetLogTable
 import { Button } from "@/components/ui/button";
 import { formatExercisePrescriptionDetail } from "@/lib/guided-workout/format-prescription";
 import { phaseLabel } from "@/lib/guided-workout/phase-labels";
+import { mobileStickyActionBarClass, surfaceCardClass } from "@/lib/ui-classes";
+import { cn } from "@/lib/utils";
 import type { SessionExerciseDetail } from "@/lib/workout-sessions/service";
 import type { SetLog } from "@/types";
 
@@ -78,14 +80,16 @@ export default function GuidedExerciseView({
         </button>
       </header>
 
-      <div className="space-y-4 pb-28 lg:pb-4">
+      <div className="space-y-4 pb-36 md:pb-28 lg:pb-4">
         <section>
-          <p className="text-text-soft font-mono text-xs tracking-widest">{phaseLabel(exercise.phase)}</p>
-          <h1 className="text-foreground mt-2 text-3xl font-bold">{exercise.exercise_name || "Exercise"}</h1>
+          <p className="text-primary label-caps">{phaseLabel(exercise.phase)}</p>
+          <h1 className="text-foreground mt-2 text-3xl font-bold tracking-tight">
+            {exercise.exercise_name || "Exercise"}
+          </h1>
           {exercise.notes ? <p className="text-muted-foreground mt-2 text-sm">{exercise.notes}</p> : null}
         </section>
 
-        <section className="border-border bg-card text-foreground/90 rounded-xl border px-4 py-3 text-sm">
+        <section className={cn(surfaceCardClass, "text-foreground/90 px-4 py-3 text-sm")}>
           {formatExercisePrescriptionDetail(exercise.sets, exercise.exercise_default_metric)}
         </section>
 
@@ -97,7 +101,12 @@ export default function GuidedExerciseView({
         />
       </div>
 
-      <div className="bg-background/90 fixed inset-x-0 bottom-0 p-4 backdrop-blur-xl lg:static lg:mt-6 lg:bg-transparent lg:p-0 lg:backdrop-blur-none">
+      <div
+        className={cn(
+          mobileStickyActionBarClass,
+          "border-t-0 lg:static lg:z-auto lg:mt-6 lg:border-0 lg:bg-transparent lg:p-0 lg:backdrop-blur-none",
+        )}
+      >
         <div className="mx-auto flex max-w-2xl gap-3 lg:max-w-none">
           <Button
             type="button"
@@ -110,7 +119,7 @@ export default function GuidedExerciseView({
           </Button>
           <Button
             type="button"
-            className="min-h-12 flex-1 text-base"
+            className="min-h-12 flex-1 text-base font-semibold"
             disabled={isNavigating}
             onClick={isLastExercise ? onBackToEditList : onNext}
           >
@@ -122,7 +131,7 @@ export default function GuidedExerciseView({
             ) : isLastExercise ? (
               "Finish"
             ) : (
-              "Next"
+              "Next Exercise"
             )}
           </Button>
         </div>

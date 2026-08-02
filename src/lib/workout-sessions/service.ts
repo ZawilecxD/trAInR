@@ -15,7 +15,10 @@ import type {
   WorkoutSession,
 } from "@/types";
 
-export type SessionListItem = Pick<WorkoutSession, "id" | "name" | "scheduled_date" | "status" | "source_template_id">;
+export type SessionListItem = Pick<
+  WorkoutSession,
+  "id" | "name" | "scheduled_date" | "status" | "source_template_id" | "started_at"
+>;
 
 export type SessionExerciseWithName = SessionExercise & {
   exercise_name: string;
@@ -161,7 +164,7 @@ export async function listSessionsForClient(
 
   const sessionsResult = await supabase
     .from("workout_sessions")
-    .select("id, name, scheduled_date, status, source_template_id")
+    .select("id, name, scheduled_date, status, source_template_id, started_at")
     .eq("client_plan_id", planResult.data.id)
     .gte("scheduled_date", from)
     .lte("scheduled_date", to)
@@ -199,7 +202,7 @@ export async function listMySessionsAsClient(
 
   const sessionsResult = await supabase
     .from("workout_sessions")
-    .select("id, name, scheduled_date, status, source_template_id")
+    .select("id, name, scheduled_date, status, source_template_id, started_at")
     .eq("client_plan_id", planResult.data.id)
     .gte("scheduled_date", from)
     .lte("scheduled_date", to)

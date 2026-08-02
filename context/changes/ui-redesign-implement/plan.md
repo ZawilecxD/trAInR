@@ -413,8 +413,8 @@ Bottom nav and Topbar are light Astro components — avoid shipping heavy client
 
 #### Automated
 
-- [ ] 3.1 `npm run lint` / `npm run check` / `npm run test` pass
-- [ ] 3.2 Existing guided-workout unit tests still pass
+- [x] 3.1 `npm run lint` / `npm run check` / `npm run test` pass
+- [x] 3.2 Existing guided-workout unit tests still pass
 
 #### Manual
 

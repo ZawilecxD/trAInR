@@ -13,6 +13,13 @@ export const authCardClass = cn(surfaceCardClass, "p-8 text-card-foreground");
 /** Page content shell with gym-safety side padding */
 export const pageShellClass = "bg-background min-h-screen p-5 md:p-8";
 
+/**
+ * Fixed primary action bar for authenticated mobile shells that also show BottomNav.
+ * Clears the bottom tab bar below `md`; sits flush on desktop.
+ */
+export const mobileStickyActionBarClass =
+  "fixed inset-x-0 bottom-16 z-40 border-t border-border bg-background/90 p-4 backdrop-blur-xl md:bottom-0";
+
 /** Inline / page error banner — destructive surface recipe */
 export const errorBannerClass =
   "rounded-lg border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive";

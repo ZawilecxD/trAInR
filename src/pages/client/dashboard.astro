@@ -1,15 +1,39 @@
 ---
+import ClientDashboardHub from "@/components/client/ClientDashboardHub";
 import Layout from "@/layouts/Layout.astro";
+import { addDays } from "date-fns";
+import { selectFocusSession, selectUpcomingSessions } from "@/lib/client-dashboard/next-session";
+import { toLocalISODate } from "@/lib/dates";
+import { pageShellClass } from "@/lib/ui-classes";
 import { createClient } from "@/lib/supabase";
+import { listMySessionsAsClient } from "@/lib/workout-sessions/service";
 import type { AssignedTrainer } from "@/types";
 
 const userId = Astro.locals.user?.id;
 const supabase = createClient(Astro.request.headers, Astro.cookies);
 
+let clientName = "Athlete";
 let trainerName: string | null = null;
+let hasActivePlan = false;
+let loadError: string | null = null;
+let focusSession = null as ReturnType<typeof selectFocusSession>;
+let upcomingSessions: NonNullable<typeof focusSession>[] = [];
+
+const today = new Date();
+const todayIso = toLocalISODate(today);
+const hour = today.getHours();
+const greeting = hour < 12 ? "Good morning" : hour < 17 ? "Good afternoon" : "Good evening";
 
 if (supabase && userId) {
-  const trainerResult = await supabase.rpc("get_my_assigned_trainer");
+  const [profileResult, trainerResult, planResult] = await Promise.all([
+    supabase.from("profiles").select("display_name").eq("id", userId).maybeSingle(),
+    supabase.rpc("get_my_assigned_trainer"),
+    supabase.from("client_plans").select("id").eq("client_id", userId).eq("status", "active").maybeSingle(),
+  ]);
+
+  if (typeof profileResult.data?.display_name === "string" && profileResult.data.display_name.trim()) {
+    clientName = profileResult.data.display_name.trim();
+  }
 
   if (!trainerResult.error && trainerResult.data) {
     trainerName = (trainerResult.data as AssignedTrainer).display_name;
@@ -32,31 +56,37 @@ if (supabase && userId) {
       trainerName = trainer?.display_name ?? null;
     }
   }
+
+  hasActivePlan = Boolean(planResult.data?.id) && !planResult.error;
+
+  if (planResult.error) {
+    loadError = planResult.error.message;
+  } else if (hasActivePlan) {
+    const rangeTo = toLocalISODate(addDays(today, 42));
+    const { data: sessions, error: sessionsError } = await listMySessionsAsClient(supabase, userId, todayIso, rangeTo);
+
+    if (sessionsError) {
+      loadError = sessionsError;
+    } else {
+      const list = sessions ?? [];
+      focusSession = selectFocusSession(list, todayIso);
+      upcomingSessions = selectUpcomingSessions(list, todayIso, focusSession?.id ?? null, 3);
+    }
+  }
 }
 ---
 
 <Layout title="Dashboard">
-  <div class="bg-background flex min-h-screen items-center justify-center p-4">
-    <div
-      class="border-border bg-muted text-foreground w-full max-w-md rounded-2xl border p-8 text-center backdrop-blur-xl"
-    >
-      <h1 class="headline-lg text-foreground mb-4">Welcome</h1>
-      {
-        trainerName ? (
-          <p class="text-muted-foreground">
-            You're training with <span class="text-foreground font-semibold">{trainerName}</span>
-          </p>
-        ) : (
-          <p class="text-muted-foreground">Your trainer will assign your first plan soon.</p>
-        )
-      }
-      <p class="text-muted-foreground mt-4 text-sm">View your assigned workouts on your training calendar.</p>
-      <a
-        href="/client/plan"
-        class="bg-primary hover:bg-primary/90 text-primary-foreground mt-6 inline-flex min-h-11 items-center justify-center rounded-lg px-5 py-2.5 text-sm font-semibold transition-colors"
-      >
-        My Plan
-      </a>
-    </div>
+  <div class:list={pageShellClass}>
+    <ClientDashboardHub
+      clientName={clientName}
+      trainerName={trainerName}
+      greeting={greeting}
+      todayIso={todayIso}
+      focusSession={focusSession}
+      upcomingSessions={upcomingSessions}
+      hasActivePlan={hasActivePlan}
+      loadError={loadError}
+    />
   </div>
 </Layout>

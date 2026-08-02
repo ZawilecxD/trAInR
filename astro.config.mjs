@@ -27,6 +27,11 @@ export default defineConfig({
   ],
   vite: {
     plugins: [tailwindcss()],
+    optimizeDeps: {
+      // Keep calendar / icon / date deps eagerly prebundled so island hydration
+      // does not 504 on a stale or partial node_modules/.vite cache.
+      include: ["date-fns", "lucide-react", "react-day-picker"],
+    },
   },
   adapter: vercel(),
   env: {

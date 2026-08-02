@@ -9,6 +9,8 @@ import { findFirstIncompleteExerciseIndex } from "@/lib/guided-workout/exercise-
 import { formatExercisePrescriptionDetail } from "@/lib/guided-workout/format-prescription";
 import { formatSessionOverviewDate } from "@/lib/guided-workout/format-session-date";
 import { phaseLabel } from "@/lib/guided-workout/phase-labels";
+import { errorBannerClass, mobileStickyActionBarClass, surfaceCardClass } from "@/lib/ui-classes";
+import { cn } from "@/lib/utils";
 import type { ClientSessionDetail, SessionExerciseDetail } from "@/lib/workout-sessions/service";
 import type { SetLog } from "@/types";
 
@@ -43,11 +45,11 @@ function ExerciseEditCard({
 }) {
   return (
     <section className="space-y-3">
-      <div className="border-border bg-card rounded-2xl border px-4 py-4 backdrop-blur-xl">
-        <p className="text-text-soft font-mono text-xs tracking-widest">{phaseLabel(exercise.phase)}</p>
+      <div className={cn(surfaceCardClass, "px-4 py-4")}>
+        <p className="text-primary label-caps">{phaseLabel(exercise.phase)}</p>
         <button
           type="button"
-          className="hover:text-foreground text-foreground mt-2 text-left text-lg font-semibold"
+          className="hover:text-foreground text-foreground mt-2 min-h-11 text-left text-lg font-semibold"
           onClick={() => {
             onJumpToExercise(exerciseIndex);
           }}
@@ -169,14 +171,10 @@ export default function SessionEditList({
           />
         </div>
         <EditWindowBanner lockedAt={session.locked_at} hasLogs={hasLogs} />
-        {restartError ? (
-          <p className="border-destructive/30 bg-destructive/10 text-destructive mt-3 rounded-lg border px-4 py-3 text-sm">
-            {restartError}
-          </p>
-        ) : null}
+        {restartError ? <p className={cn(errorBannerClass, "mt-3")}>{restartError}</p> : null}
       </header>
 
-      <div className="space-y-4 pb-28">
+      <div className="space-y-4 pb-40 md:pb-32">
         {exercises.map((exercise, index) => (
           <ExerciseEditCard
             key={exercise.id}
@@ -192,18 +190,14 @@ export default function SessionEditList({
         <SessionCommentsThread sessionId={session.id} currentUserId={currentUserId} />
       </div>
 
-      <div className="border-border bg-background/90 fixed inset-x-0 bottom-0 border-t p-4 backdrop-blur-xl">
+      <div className={mobileStickyActionBarClass}>
         <div className="mx-auto max-w-2xl space-y-2">
-          {completeError ? (
-            <p className="border-destructive/30 bg-destructive/10 text-destructive rounded-lg border px-4 py-2 text-sm">
-              {completeError}
-            </p>
-          ) : null}
+          {completeError ? <p className={errorBannerClass}>{completeError}</p> : null}
           {isInProgress ? (
             <>
               <Button
                 type="button"
-                className="min-h-12 w-full text-base"
+                className="min-h-12 w-full text-base font-semibold"
                 onClick={() => {
                   onContinueWorkout(continueIndex);
                 }}

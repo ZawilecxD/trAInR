@@ -1,13 +1,16 @@
 import { addDays, differenceInCalendarDays } from "date-fns";
-import { ChevronLeft, ChevronRight, ChevronRight as OpenIcon } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useMemo, useRef, useState } from "react";
+import { EmptyState } from "@/components/EmptyState";
 import ClientWeekView from "@/components/plans/ClientWeekView";
-import PlanCalendar, { type PlanCalendarSession } from "@/components/plans/PlanCalendar";
-import { Badge } from "@/components/ui/badge";
+import PlanCalendar from "@/components/plans/PlanCalendar";
+import { StatusBadge } from "@/components/StatusBadge";
 import { Button } from "@/components/ui/button";
 import { monthRange, parseISODate, startOfMonth, toLocalISODate, visibleMonthRange } from "@/lib/dates";
+import { type PlanCalendarSession } from "@/lib/plans/calendar-session";
 import { formatWeekRangeLabel, getWeekStart, weekRange } from "@/lib/week-view";
-import { sessionStatusBadgeClass, sessionStatusLabel } from "@/lib/session-status";
+import { clientSessionChip } from "@/lib/session-status";
+import { surfaceCardClass } from "@/lib/ui-classes";
 import { cn } from "@/lib/utils";
 
 interface ClientCalendarHubProps {
@@ -131,7 +134,11 @@ export default function ClientCalendarHub({
   return (
     <div className="space-y-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div className="border-border bg-card flex rounded-lg border p-1" role="tablist" aria-label="Calendar view">
+        <div
+          className="border-border bg-card flex rounded-[var(--radius)] border p-1"
+          role="tablist"
+          aria-label="Calendar view"
+        >
           {(["month", "week"] as const).map((option) => (
             <button
               key={option}
@@ -140,7 +147,7 @@ export default function ClientCalendarHub({
               aria-selected={view === option}
               className={cn(
                 "min-h-11 min-w-24 flex-1 rounded-md px-4 text-sm font-medium capitalize transition-colors",
-                view === option ? "bg-muted text-foreground" : "text-muted-foreground hover:text-foreground",
+                view === option ? "bg-accent text-foreground" : "text-muted-foreground hover:text-foreground",
               )}
               onClick={() => {
                 void handleViewChange(option);
@@ -189,10 +196,7 @@ export default function ClientCalendarHub({
 
       {view === "month" ? (
         <div className="grid gap-6 lg:grid-cols-[minmax(0,22rem)_1fr] lg:items-start">
-          <section className="border-border bg-card min-w-0 rounded-2xl border p-4 backdrop-blur-xl">
-            <div className="mb-3">
-              <h2 className="text-muted-foreground text-sm font-medium">Calendar</h2>
-            </div>
+          <section className={cn(surfaceCardClass, "min-w-0 p-4")}>
             <PlanCalendar
               sessions={sessions}
               selectedDate={selectedDate}
@@ -204,6 +208,24 @@ export default function ClientCalendarHub({
                 void handleMonthChange(nextMonth);
               }}
             />
+            <ul className="text-muted-foreground mt-4 flex flex-wrap gap-x-4 gap-y-2 text-xs">
+              <li className="inline-flex items-center gap-1.5">
+                <span className="bg-success size-1.5 rounded-full" aria-hidden="true" />
+                Completed
+              </li>
+              <li className="inline-flex items-center gap-1.5">
+                <span className="bg-warning size-1.5 rounded-full" aria-hidden="true" />
+                Partial
+              </li>
+              <li className="inline-flex items-center gap-1.5">
+                <span className="bg-primary size-1.5 rounded-full" aria-hidden="true" />
+                Scheduled
+              </li>
+              <li className="inline-flex items-center gap-1.5">
+                <span className="bg-muted-foreground/50 size-1.5 rounded-full" aria-hidden="true" />
+                Rest
+              </li>
+            </ul>
             {sessions.length === 0 ? (
               <p className="text-muted-foreground mt-4 text-center text-sm">
                 No sessions yet — your trainer will add them.
@@ -211,7 +233,7 @@ export default function ClientCalendarHub({
             ) : null}
           </section>
 
-          <section className="border-border bg-card rounded-2xl border p-5 backdrop-blur-xl">
+          <section className={cn(surfaceCardClass, "p-5")}>
             <div className="mb-4">
               <h2 className="text-foreground text-lg font-semibold">
                 {selectedDate.toLocaleDateString(undefined, {
@@ -224,30 +246,30 @@ export default function ClientCalendarHub({
             </div>
 
             {sessionsOnSelectedDay.length === 0 ? (
-              <div className="border-border text-muted-foreground rounded-lg border border-dashed px-4 py-8 text-center text-sm">
-                No sessions on this day.
-              </div>
+              <EmptyState title="Rest day" description="No sessions on this day." className="border-dashed" />
             ) : (
-              <ul className="space-y-2">
-                {sessionsOnSelectedDay.map((session) => (
-                  <li key={session.id}>
-                    <a
-                      href={`/client/sessions/${session.id}`}
-                      className="border-border bg-card hover:bg-accent flex min-h-11 items-center justify-between gap-3 rounded-lg border px-4 py-3 transition-colors"
-                    >
-                      <div className="min-w-0">
-                        <span className="text-foreground block truncate font-medium">{session.name}</span>
-                        <Badge variant="outline" className={cn("mt-1", sessionStatusBadgeClass(session.status))}>
-                          {sessionStatusLabel(session.status)}
-                        </Badge>
+              <ul className="space-y-3">
+                {sessionsOnSelectedDay.map((session) => {
+                  const chip = clientSessionChip(session.status, session.started_at);
+                  return (
+                    <li key={session.id} className={cn(surfaceCardClass, "space-y-3 p-4")}>
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="min-w-0">
+                          <p className="text-foreground truncate text-lg font-semibold">{session.name}</p>
+                          <div className="mt-2">
+                            <StatusBadge status={chip.status}>{chip.label}</StatusBadge>
+                          </div>
+                        </div>
                       </div>
-                      <span className="text-text-soft inline-flex shrink-0 items-center gap-1 text-sm font-medium">
-                        Open
-                        <OpenIcon className="size-4" aria-hidden="true" />
-                      </span>
-                    </a>
-                  </li>
-                ))}
+                      <a
+                        href={`/client/sessions/${session.id}`}
+                        className="bg-primary text-primary-foreground hover:bg-primary/90 inline-flex min-h-11 w-full items-center justify-center rounded-[var(--radius)] text-sm font-semibold transition-colors"
+                      >
+                        View Full Session
+                      </a>
+                    </li>
+                  );
+                })}
               </ul>
             )}
           </section>
@@ -256,7 +278,11 @@ export default function ClientCalendarHub({
         <div className="space-y-4">
           <ClientWeekView sessions={sessions} weekStart={weekStart} />
           {sessions.length === 0 ? (
-            <p className="text-muted-foreground text-center text-sm">No sessions yet — your trainer will add them.</p>
+            <EmptyState
+              title="No sessions yet"
+              description="Your trainer will add workouts to your plan."
+              className="border-dashed"
+            />
           ) : null}
         </div>
       )}

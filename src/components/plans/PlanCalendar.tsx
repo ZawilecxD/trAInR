@@ -1,14 +1,10 @@
 import { useMemo } from "react";
 import { Calendar } from "@/components/ui/calendar";
+import { type PlanCalendarSession } from "@/lib/plans/calendar-session";
 import { cn } from "@/lib/utils";
 import type { SessionStatus } from "@/types";
 
-export interface PlanCalendarSession {
-  id: string;
-  scheduled_date: string;
-  name: string;
-  status: SessionStatus;
-}
+export type { PlanCalendarSession };
 
 interface PlanCalendarProps {
   sessions: PlanCalendarSession[];
@@ -97,12 +93,12 @@ export default function PlanCalendar({
       onMonthChange={onMonthChange}
       modifiers={statusDates}
       modifiersClassNames={{
-        sessionNotStarted: cn(sessionDotBase, "after:bg-muted-foreground"),
+        sessionNotStarted: cn(sessionDotBase, "after:bg-primary"),
         sessionPartial: cn(sessionDotBase, "after:bg-warning"),
         sessionFinished: cn(sessionDotBase, "after:bg-success"),
         sessionCancelled: cn(sessionDotBase, "after:bg-destructive"),
       }}
-      className="border-border bg-card text-foreground w-full max-w-full rounded-xl border p-2 [--cell-size:2.75rem]"
+      className="text-foreground w-full max-w-full bg-transparent p-1 [--cell-size:2.75rem]"
       classNames={{
         caption_label: "text-base font-semibold text-foreground",
         weekday: "w-11 shrink-0 text-xs text-muted-foreground",

@@ -1,5 +1,6 @@
+import { ChevronRight } from "lucide-react";
 import { PHASE_ORDER, phaseLabel, sortByPhaseThenSortOrder } from "@/lib/guided-workout/phase-labels";
-import { formatExercisePrescriptionDetail } from "@/lib/guided-workout/format-prescription";
+import { cn } from "@/lib/utils";
 import type { SessionExerciseDetail } from "@/lib/workout-sessions/service";
 import type { ExercisePhase } from "@/types";
 
@@ -7,50 +8,50 @@ interface PhaseBreakdownProps {
   exercises: SessionExerciseDetail[];
 }
 
-function groupExercisesByPhase(exercises: SessionExerciseDetail[]): Map<ExercisePhase, SessionExerciseDetail[]> {
-  const groups = new Map<ExercisePhase, SessionExerciseDetail[]>();
+const PHASE_ACCENT: Record<ExercisePhase, string> = {
+  warm_up: "bg-warning",
+  main: "bg-primary",
+  cool_down: "bg-success",
+};
 
+function countByPhase(exercises: SessionExerciseDetail[]): Map<ExercisePhase, number> {
+  const counts = new Map<ExercisePhase, number>();
   for (const phase of PHASE_ORDER) {
-    groups.set(phase, []);
+    counts.set(phase, 0);
   }
-
   for (const exercise of sortByPhaseThenSortOrder(exercises)) {
-    const bucket = groups.get(exercise.phase) ?? [];
-    bucket.push(exercise);
-    groups.set(exercise.phase, bucket);
+    counts.set(exercise.phase, (counts.get(exercise.phase) ?? 0) + 1);
   }
-
-  return groups;
+  return counts;
 }
 
 export default function PhaseBreakdown({ exercises }: PhaseBreakdownProps) {
-  const groups = groupExercisesByPhase(exercises);
+  const counts = countByPhase(exercises);
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-2">
       {PHASE_ORDER.map((phase) => {
-        const phaseExercises = groups.get(phase) ?? [];
-        if (phaseExercises.length === 0) {
+        const count = counts.get(phase) ?? 0;
+        if (count === 0) {
           return null;
         }
 
         return (
-          <section key={phase} className="border-border bg-card rounded-xl border p-4">
-            <h3 className="text-text-soft font-mono text-xs tracking-widest">{phaseLabel(phase)}</h3>
-            <p className="text-muted-foreground mt-1 text-sm">
-              {phaseExercises.length} exercise{phaseExercises.length === 1 ? "" : "s"}
-            </p>
-            <ul className="mt-3 space-y-3">
-              {phaseExercises.map((exercise) => (
-                <li key={exercise.id}>
-                  <p className="text-foreground text-sm font-medium">{exercise.exercise_name || "Exercise"}</p>
-                  <p className="text-muted-foreground mt-0.5 text-sm">
-                    {formatExercisePrescriptionDetail(exercise.sets, exercise.exercise_default_metric)}
-                  </p>
-                </li>
-              ))}
-            </ul>
-          </section>
+          <div key={phase} className="border-border bg-card relative overflow-hidden rounded-[var(--radius-lg)] border">
+            <span className={cn("absolute inset-y-0 left-0 w-1", PHASE_ACCENT[phase])} aria-hidden="true" />
+            <div className="flex min-h-14 items-center justify-between gap-3 py-3 pr-4 pl-5">
+              <div>
+                <p className="text-foreground font-semibold capitalize">
+                  {phase === "warm_up" ? "Warm-up" : phase === "cool_down" ? "Cooldown" : "Main"}
+                </p>
+                <p className="text-muted-foreground text-sm">
+                  {count} exercise{count === 1 ? "" : "s"}
+                </p>
+                <p className="text-text-soft sr-only">{phaseLabel(phase)}</p>
+              </div>
+              <ChevronRight className="text-muted-foreground size-4 shrink-0" aria-hidden="true" />
+            </div>
+          </div>
         );
       })}
     </div>

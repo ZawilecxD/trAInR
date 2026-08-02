@@ -5,6 +5,8 @@ import PhaseBreakdown from "@/components/guided-workout/PhaseBreakdown";
 import SessionCommentsThread from "@/components/session-comments/SessionCommentsThread";
 import { Button } from "@/components/ui/button";
 import { formatSessionOverviewDate } from "@/lib/guided-workout/format-session-date";
+import { errorBannerClass, mobileStickyActionBarClass, surfaceCardClass } from "@/lib/ui-classes";
+import { cn } from "@/lib/utils";
 import type { ClientSessionDetail } from "@/lib/workout-sessions/service";
 
 interface SessionOverviewProps {
@@ -46,7 +48,7 @@ export default function SessionOverview({
 
   return (
     <div className="flex min-h-[calc(100vh-2rem)] flex-col">
-      <header className="mb-6">
+      <header className="mb-6 grid grid-cols-[auto_1fr_auto] items-center gap-2">
         <a
           href="/client/plan"
           className="text-muted-foreground hover:text-foreground inline-flex min-h-11 items-center gap-2 text-sm transition-colors"
@@ -54,11 +56,14 @@ export default function SessionOverview({
           <ArrowLeft className="size-4" aria-hidden="true" />
           Calendar
         </a>
-        <h1 className="text-foreground mt-4 text-3xl font-bold">{session.name ?? "Workout"}</h1>
+        <h1 className="text-foreground truncate text-center text-lg font-bold sm:text-xl">
+          {session.name ?? "Workout"}
+        </h1>
+        <span className="min-w-11" aria-hidden="true" />
       </header>
 
-      <div className="space-y-4 pb-28">
-        <section className="border-border bg-card rounded-2xl border p-5 backdrop-blur-xl">
+      <div className="space-y-4 pb-36 md:pb-28">
+        <section className={cn(surfaceCardClass, "p-5")}>
           <dl className="grid gap-3 text-sm">
             <div className="flex justify-between gap-4">
               <dt className="text-muted-foreground">Assigned by</dt>
@@ -80,36 +85,27 @@ export default function SessionOverview({
         </section>
 
         {trainerNote ? (
-          <section className="border-border bg-card rounded-2xl border p-5 backdrop-blur-xl">
+          <section className={cn(surfaceCardClass, "p-5")}>
             <h2 className="text-muted-foreground text-sm font-medium">Trainer note</h2>
             <p className="text-foreground/90 mt-2 text-sm leading-relaxed">{trainerNote}</p>
           </section>
         ) : null}
 
         <section>
-          <h2 className="text-muted-foreground mb-3 text-sm font-medium">Phase breakdown</h2>
           <PhaseBreakdown exercises={session.exercises} />
         </section>
 
         <SessionCommentsThread sessionId={session.id} currentUserId={currentUserId} />
 
-        {beginError ? (
-          <p className="border-destructive/30 bg-destructive/10 text-destructive rounded-lg border px-4 py-3 text-sm">
-            {beginError}
-          </p>
-        ) : null}
+        {beginError ? <p className={errorBannerClass}>{beginError}</p> : null}
       </div>
 
-      <div className="border-border bg-background/90 fixed inset-x-0 bottom-0 border-t p-4 backdrop-blur-xl">
+      <div className={mobileStickyActionBarClass}>
         <div className="mx-auto max-w-2xl space-y-2">
-          {cancelError ? (
-            <p className="border-destructive/30 bg-destructive/10 text-destructive rounded-lg border px-4 py-2 text-sm">
-              {cancelError}
-            </p>
-          ) : null}
+          {cancelError ? <p className={errorBannerClass}>{cancelError}</p> : null}
           <Button
             type="button"
-            className="min-h-12 w-full text-base"
+            className="min-h-12 w-full text-base font-semibold"
             disabled={beginPending || session.exercises.length === 0}
             onClick={onBegin}
           >
