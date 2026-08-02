@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { CalendarDays, Copy, Link2, Trash2, Users } from "lucide-react";
+import { useMemo, useState } from "react";
+import { CalendarDays, Copy, Link2, Search, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import {
   AlertDialog,
@@ -12,9 +12,11 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { Badge } from "@/components/ui/badge";
+import { EmptyState } from "@/components/EmptyState";
+import { StatusBadge } from "@/components/StatusBadge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { surfaceCardClass } from "@/lib/ui-classes";
 import { cn } from "@/lib/utils";
 import type { TrainerClientRosterItem } from "@/lib/trainer/clients-roster";
 import type { InviteLink } from "@/types";
@@ -50,14 +52,14 @@ function statusLabel(status: InviteStatus): string {
   }
 }
 
-function statusBadgeClass(status: InviteStatus): string {
+function statusBadgeVariant(status: InviteStatus): "success" | "warning" | "muted" {
   switch (status) {
     case "active":
-      return "border-success/40 bg-success/20 text-success";
+      return "success";
     case "used":
-      return "border-border bg-muted text-muted-foreground";
+      return "muted";
     case "expired":
-      return "border-warning/40 bg-warning/20 text-warning";
+      return "warning";
   }
 }
 
@@ -115,6 +117,23 @@ export default function InviteClientPanel({ invites: initialInvites, clients: in
   const [generating, setGenerating] = useState(false);
   const [removingId, setRemovingId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [query, setQuery] = useState("");
+  const [inviteOpen, setInviteOpen] = useState(false);
+
+  const pendingInvites = useMemo(
+    () => invites.filter((invite) => getInviteStatus(invite) === "active").length,
+    [invites],
+  );
+  const withActivePlan = useMemo(() => clients.filter((client) => client.activePlan).length, [clients]);
+
+  const filteredClients = useMemo(() => {
+    const normalized = query.trim().toLowerCase();
+    const sorted = [...clients].sort((a, b) => a.displayName.localeCompare(b.displayName));
+    if (!normalized) {
+      return sorted;
+    }
+    return sorted.filter((client) => client.displayName.toLowerCase().includes(normalized));
+  }, [clients, query]);
 
   async function handleGenerate() {
     setGenerating(true);
@@ -134,6 +153,7 @@ export default function InviteClientPanel({ invites: initialInvites, clients: in
       if (newInvite && newUrl) {
         setInvites((prev) => [newInvite, ...prev]);
         setLatestUrl(newUrl);
+        setInviteOpen(true);
       }
     } catch {
       setError("Failed to generate invite");
@@ -174,110 +194,138 @@ export default function InviteClientPanel({ invites: initialInvites, clients: in
 
   const displayUrl = latestUrl ?? (invites[0] ? formatInviteUrl(origin, invites[0].token) : null);
 
+  const stats = [
+    { label: "Active clients", value: clients.length },
+    { label: "With active plan", value: withActivePlan },
+    { label: "Pending invites", value: pendingInvites },
+  ];
+
   return (
     <div className="space-y-8">
-      <section className="space-y-4">
-        <h2 className="text-foreground text-lg font-semibold">Invite a client</h2>
-        <p className="text-muted-foreground text-sm">
-          Generate a single-use link and share it via WhatsApp, SMS, or any channel you prefer.
-        </p>
-
+      <header className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+        <div>
+          <h1 className="headline-lg text-foreground">Clients</h1>
+          <p className="text-muted-foreground mt-1 text-sm">
+            Manage your roster, active plans, and client calendars.
+          </p>
+        </div>
         <Button
           type="button"
-          onClick={() => {
-            void handleGenerate();
-          }}
+          className="bg-primary hover:bg-primary/90 text-primary-foreground min-h-11 w-full sm:w-auto"
           disabled={generating}
-          className="w-full sm:w-auto"
+          onClick={() => {
+            setInviteOpen(true);
+            if (!displayUrl) {
+              void handleGenerate();
+            }
+          }}
         >
           <Link2 className="size-4" />
-          {generating ? "Generating…" : "Generate invite link"}
+          {generating ? "Generating…" : "Invite Client"}
         </Button>
+      </header>
 
-        {error ? <p className="text-destructive text-sm">{error}</p> : null}
+      <section aria-label="Summary" className="grid gap-3 sm:grid-cols-3">
+        {stats.map((stat) => (
+          <div key={stat.label} className={cn(surfaceCardClass, "p-5")}>
+            <p className="label-caps text-muted-foreground">{stat.label}</p>
+            <p className="stat-readout text-foreground mt-2">{stat.value}</p>
+          </div>
+        ))}
+      </section>
 
-        {displayUrl ? (
-          <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
-            <Input
-              readOnly
-              value={displayUrl}
-              className="text-foreground/90 font-mono text-xs"
-              aria-label="Invite URL"
-            />
+      {(inviteOpen || displayUrl) && (
+        <section className={cn(surfaceCardClass, "space-y-4 p-5")}>
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <h2 className="text-foreground text-lg font-semibold">Invite link</h2>
             <Button
               type="button"
               variant="outline"
-              className="border-border bg-muted hover:bg-accent text-foreground shrink-0"
+              size="sm"
+              className="border-border hover:bg-accent bg-transparent"
+              disabled={generating}
               onClick={() => {
-                void handleCopy(displayUrl);
+                void handleGenerate();
               }}
             >
-              <Copy className="size-4" />
-              Copy
+              Generate new
             </Button>
           </div>
-        ) : null}
-      </section>
+          <p className="text-muted-foreground text-sm">
+            Share a single-use link via WhatsApp, SMS, or any channel you prefer.
+          </p>
+          {error ? <p className="text-destructive text-sm">{error}</p> : null}
+          {displayUrl ? (
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+              <Input
+                readOnly
+                value={displayUrl}
+                className="text-foreground/90 font-mono text-xs"
+                aria-label="Invite URL"
+              />
+              <Button
+                type="button"
+                variant="outline"
+                className="border-border bg-muted hover:bg-accent text-foreground shrink-0"
+                onClick={() => {
+                  void handleCopy(displayUrl);
+                }}
+              >
+                <Copy className="size-4" />
+                Copy
+              </Button>
+            </div>
+          ) : null}
+        </section>
+      )}
 
       <section className="space-y-3">
-        <h2 className="text-foreground text-lg font-semibold">Recent invites</h2>
-        {invites.length === 0 ? (
-          <p className="text-muted-foreground text-sm">No invites yet. Generate your first link above.</p>
-        ) : (
-          <ul className="border-border bg-card divide-y divide-white/10 rounded-xl border">
-            {invites.map((invite) => {
-              const status = getInviteStatus(invite);
-              const url = formatInviteUrl(origin, invite.token);
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="relative w-full sm:max-w-md">
+            <Search className="text-muted-foreground pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2" />
+            <Input
+              value={query}
+              onChange={(event) => {
+                setQuery(event.target.value);
+              }}
+              placeholder="Search clients…"
+              className="pl-9"
+              aria-label="Search clients"
+            />
+          </div>
+          <p className="text-muted-foreground text-sm">Sorted by name</p>
+        </div>
 
-              return (
-                <li key={invite.id} className="flex flex-col gap-2 p-4 sm:flex-row sm:items-center sm:justify-between">
-                  <div className="min-w-0 space-y-1">
-                    <p className="text-muted-foreground truncate font-mono text-xs">{url}</p>
-                    <p className="text-muted-foreground text-xs">
-                      Created {formatDateTime(invite.created_at)}
-                      {invite.expires_at ? ` · Expires ${formatDateTime(invite.expires_at)}` : null}
-                    </p>
-                  </div>
-                  <div className="flex shrink-0 items-center gap-2">
-                    <Badge variant="outline" className={cn(statusBadgeClass(status))}>
-                      {statusLabel(status)}
-                    </Badge>
-                    {status === "active" ? (
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="sm"
-                        className="text-muted-foreground hover:bg-accent hover:text-foreground"
-                        onClick={() => {
-                          void handleCopy(url);
-                        }}
-                      >
-                        <Copy className="size-3.5" />
-                        Copy
-                      </Button>
-                    ) : null}
-                  </div>
-                </li>
-              );
-            })}
-          </ul>
-        )}
-      </section>
-
-      <section className="space-y-3">
-        <h2 className="text-foreground flex items-center gap-2 text-lg font-semibold">
-          <Users className="size-5" />
-          Your clients
-        </h2>
-        {clients.length === 0 ? (
-          <p className="text-muted-foreground text-sm">No clients assigned yet. Share an invite link to get started.</p>
+        {filteredClients.length === 0 ? (
+          clients.length === 0 ? (
+            <EmptyState
+              title="No clients assigned yet"
+              description="Share an invite link to get started."
+              action={
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="border-border hover:bg-accent bg-transparent"
+                  disabled={generating}
+                  onClick={() => {
+                    setInviteOpen(true);
+                    void handleGenerate();
+                  }}
+                >
+                  Invite Client
+                </Button>
+              }
+            />
+          ) : (
+            <EmptyState title="No clients match your search" description="Try a different name." />
+          )
         ) : (
           <ul className="space-y-3">
-            {clients.map((client) => {
+            {filteredClients.map((client) => {
               const planStart = client.activePlan ? formatPlanStartDate(client.activePlan.start_date) : null;
 
               return (
-                <li key={client.assignmentId} className="border-border bg-card rounded-xl border p-4 backdrop-blur-xl">
+                <li key={client.assignmentId} className={cn(surfaceCardClass, "p-4 backdrop-blur-xl")}>
                   <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                     <div className="flex min-w-0 items-start gap-3">
                       <span
@@ -287,17 +335,26 @@ export default function InviteClientPanel({ invites: initialInvites, clients: in
                         {clientInitials(client.displayName)}
                       </span>
                       <div className="min-w-0">
-                        <p className="text-foreground truncate text-base font-medium">{client.displayName}</p>
-                        <p className="text-muted-foreground mt-0.5 text-xs">
+                        <p className="text-foreground flex items-center gap-2 truncate text-base font-medium">
+                          {client.displayName}
+                          <span
+                            className={cn(
+                              "size-1.5 shrink-0 rounded-full",
+                              client.activePlan ? "bg-success" : "bg-muted-foreground/50",
+                            )}
+                            aria-hidden="true"
+                          />
+                        </p>
+                        <p className="label-caps text-muted-foreground mt-1">
                           Joined {formatAssignedDate(client.assignedAt)}
                         </p>
                         {client.activePlan ? (
                           <p className="text-muted-foreground mt-2 text-sm">
                             <span className="text-foreground font-medium">{client.activePlan.name}</span>
-                            {planStart ? <span className="text-muted-foreground"> · Started {planStart}</span> : null}
+                            {planStart ? <span> · Started {planStart}</span> : null}
                           </p>
                         ) : (
-                          <p className="text-warning/80 mt-2 text-sm">No active plan</p>
+                          <p className="text-warning mt-2 text-sm">No active plan</p>
                         )}
                       </div>
                     </div>
@@ -305,9 +362,14 @@ export default function InviteClientPanel({ invites: initialInvites, clients: in
                     <div className="flex flex-wrap items-center gap-2 sm:justify-end">
                       <Button
                         type="button"
-                        variant="outline"
                         size="sm"
-                        className="border-border bg-card hover:bg-accent text-foreground min-h-11"
+                        className={cn(
+                          "min-h-11",
+                          client.activePlan
+                            ? "bg-primary hover:bg-primary/90 text-primary-foreground"
+                            : "border-border bg-transparent",
+                        )}
+                        variant={client.activePlan ? "default" : "outline"}
                         asChild
                       >
                         <a href={`/trainer/clients/${client.clientId}/plan`}>
@@ -315,6 +377,14 @@ export default function InviteClientPanel({ invites: initialInvites, clients: in
                           Open calendar
                         </a>
                       </Button>
+                      {!client.activePlan ? (
+                        <a
+                          href={`/trainer/clients/${client.clientId}/plan`}
+                          className="text-muted-foreground hover:text-foreground text-sm transition-colors hover:underline"
+                        >
+                          Assign plan →
+                        </a>
+                      ) : null}
                       <AlertDialog>
                         <AlertDialogTrigger asChild>
                           <Button
@@ -353,6 +423,49 @@ export default function InviteClientPanel({ invites: initialInvites, clients: in
                         </AlertDialogContent>
                       </AlertDialog>
                     </div>
+                  </div>
+                </li>
+              );
+            })}
+          </ul>
+        )}
+      </section>
+
+      <section className="space-y-3">
+        <h2 className="text-foreground text-lg font-semibold">Recent invites</h2>
+        {invites.length === 0 ? (
+          <p className="text-muted-foreground text-sm">No invites yet. Generate your first link above.</p>
+        ) : (
+          <ul className={cn(surfaceCardClass, "divide-border divide-y")}>
+            {invites.map((invite) => {
+              const status = getInviteStatus(invite);
+              const url = formatInviteUrl(origin, invite.token);
+
+              return (
+                <li key={invite.id} className="flex flex-col gap-2 p-4 sm:flex-row sm:items-center sm:justify-between">
+                  <div className="min-w-0 space-y-1">
+                    <p className="text-muted-foreground truncate font-mono text-xs">{url}</p>
+                    <p className="text-muted-foreground text-xs">
+                      Created {formatDateTime(invite.created_at)}
+                      {invite.expires_at ? ` · Expires ${formatDateTime(invite.expires_at)}` : null}
+                    </p>
+                  </div>
+                  <div className="flex shrink-0 items-center gap-2">
+                    <StatusBadge status={statusBadgeVariant(status)}>{statusLabel(status)}</StatusBadge>
+                    {status === "active" ? (
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        className="text-muted-foreground hover:bg-accent hover:text-foreground"
+                        onClick={() => {
+                          void handleCopy(url);
+                        }}
+                      >
+                        <Copy className="size-3.5" />
+                        Copy
+                      </Button>
+                    ) : null}
                   </div>
                 </li>
               );

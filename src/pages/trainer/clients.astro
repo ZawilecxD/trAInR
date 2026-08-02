@@ -4,6 +4,7 @@ import InviteClientPanel from "@/components/trainer/InviteClientPanel";
 import type { ActiveClientPlan } from "@/lib/client-plans/service";
 import { mapAssignmentsToRoster } from "@/lib/trainer/clients-roster";
 import { createClient } from "@/lib/supabase";
+import { pageShellClass } from "@/lib/ui-classes";
 import type { InviteLink, Profile, TrainerClient } from "@/types";
 
 const userId = Astro.locals.user?.id;
@@ -74,17 +75,8 @@ const clients = mapAssignmentsToRoster(assignments, profileById, planByClientId)
 ---
 
 <Layout title="Clients">
-  <div class="bg-background min-h-screen p-4 md:p-8">
-    <div
-      class="border-border bg-muted text-foreground mx-auto w-full max-w-4xl rounded-2xl border p-6 backdrop-blur-xl md:p-8"
-    >
-      <div class="mb-8">
-        <h1 class="headline-lg text-foreground text-2xl md:text-3xl">Clients</h1>
-        <p class="text-muted-foreground mt-1 text-sm">
-          Manage invites, view assigned clients, and open plan calendars.
-        </p>
-      </div>
-
+  <div class:list={pageShellClass}>
+    <div class="mx-auto w-full max-w-5xl">
       <InviteClientPanel invites={invites} clients={clients} origin={origin} client:load />
     </div>
   </div>

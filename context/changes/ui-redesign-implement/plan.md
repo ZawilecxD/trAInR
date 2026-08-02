@@ -426,14 +426,14 @@ Bottom nav and Topbar are light Astro components — avoid shipping heavy client
 
 #### Automated
 
-- [ ] 4.1 `npm run lint` / `npm run check` / relevant Vitest pass
-- [ ] 4.2 Exercise/template create-edit work via modal and full-page routes
+- [x] 4.1 `npm run lint` / `npm run check` / relevant Vitest pass
+- [x] 4.2 Exercise/template create-edit work via modal and full-page routes
 
 #### Manual
 
-- [ ] 4.3 Hubs match `exports/phase-5` trainer PNGs (dashboard/clients/exercises/templates)
-- [ ] 4.4 Dashboard shows no fabricated week/missed/today KPIs
-- [ ] 4.5 Mobile exercises/templates use stacked cards
+- [x] 4.3 Hubs match `exports/phase-5` trainer PNGs (dashboard/clients/exercises/templates)
+- [x] 4.4 Dashboard shows no fabricated week/missed/today KPIs
+- [x] 4.5 Mobile exercises/templates use stacked cards
 
 ### Phase 5: Trainer authoring (plan hub, session builder, actuals review)
 

@@ -1,10 +1,7 @@
 ---
 import Layout from "@/layouts/Layout.astro";
-import EmptyState from "@/components/EmptyStateBlock.astro";
-import ExerciseFilters from "@/components/exercises/ExerciseFilters";
-import ExerciseFavouriteButton from "@/components/exercises/ExerciseFavouriteButton";
+import ExercisesHub from "@/components/exercises/ExercisesHub";
 import { searchParamsToFilters } from "@/lib/exercises/filter-url";
-import { EXERCISE_METRIC_LABELS, EXERCISE_TYPE_LABELS } from "@/lib/exercises/labels";
 import { parseListExercisesQuery } from "@/lib/exercises/schemas";
 import { listExercises } from "@/lib/exercises/service";
 import { createClient } from "@/lib/supabase";
@@ -33,7 +30,7 @@ if (!supabase) {
   loadError = listError ?? muscleError?.message ?? null;
 }
 
-const muscleGroupNameById = new Map(muscleGroupRows.map((group) => [group.id, group.name]));
+const muscleGroupNameById = Object.fromEntries(muscleGroupRows.map((group) => [group.id, group.name]));
 const initialFilters = searchParamsToFilters(Astro.url.searchParams);
 
 const successParam = Astro.url.searchParams.get("success");
@@ -59,103 +56,20 @@ const hasActiveFilters =
 <Layout title="Exercise library">
   <div class:list={pageShellClass}>
     <div class="mx-auto max-w-6xl space-y-6">
-      <div class="flex flex-wrap items-center justify-between gap-4">
-        <div>
-          <h1 class="headline-lg text-foreground">Exercise library</h1>
-          <p class="text-muted-foreground mt-1 text-sm">Create, edit, and filter your trainer exercise catalog.</p>
-        </div>
-        <a
-          href="/trainer/exercises/new"
-          class="bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg px-4 py-2 text-sm font-medium transition-colors"
-        >
-          New exercise
-        </a>
-      </div>
-
       {flashMessage ? <div class:list={successBannerClass}>{flashMessage}</div> : null}
 
       {loadError ? <div class:list={errorBannerClass}>Failed to load exercises: {loadError}</div> : null}
 
       {
         !loadError ? (
-          <>
-            <ExerciseFilters client:load muscleGroups={muscleGroupRows} initialFilters={initialFilters} />
-
-            {exerciseRows.length === 0 ? (
-              hasActiveFilters ? (
-                <EmptyState
-                  title="No exercises match your filters"
-                  description="Try clearing filters or adjusting your search."
-                />
-              ) : (
-                <EmptyState
-                  title="No exercises yet"
-                  description="Create your first exercise to start building your library."
-                >
-                  <a
-                    slot="action"
-                    href="/trainer/exercises/new"
-                    class="border-border hover:bg-accent inline-block rounded-lg border px-4 py-2 text-sm transition-colors"
-                  >
-                    Create exercise
-                  </a>
-                </EmptyState>
-              )
-            ) : (
-              <div class="border-border bg-card overflow-hidden rounded-2xl border">
-                <div class="overflow-x-auto">
-                  <table class="text-foreground/90 min-w-full text-left text-sm">
-                    <thead class="border-border bg-card text-muted-foreground border-b text-xs tracking-wide uppercase">
-                      <tr>
-                        <th class="w-10 px-4 py-3">
-                          <span class="sr-only">Favourite</span>
-                        </th>
-                        <th class="px-4 py-3">Name</th>
-                        <th class="px-4 py-3">Type</th>
-                        <th class="px-4 py-3">Metric</th>
-                        <th class="px-4 py-3">Muscle groups</th>
-                        <th class="px-4 py-3">Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {exerciseRows.map((exercise) => (
-                        <tr class="border-border/50 border-b last:border-b-0">
-                          <td class="px-4 py-3">
-                            <ExerciseFavouriteButton
-                              client:load
-                              exerciseId={exercise.id}
-                              initialIsFavourite={exercise.is_favourite}
-                            />
-                          </td>
-                          <td class="text-foreground px-4 py-3 font-medium">{exercise.name}</td>
-                          <td class="px-4 py-3">{EXERCISE_TYPE_LABELS[exercise.exercise_type]}</td>
-                          <td class="px-4 py-3">{EXERCISE_METRIC_LABELS[exercise.default_metric]}</td>
-                          <td class="px-4 py-3">
-                            {exercise.muscle_groups.length > 0
-                              ? exercise.muscle_groups
-                                  .map((group) => {
-                                    const name = muscleGroupNameById.get(group.muscle_group_id) ?? "Unknown";
-                                    return `${name} (${group.role})`;
-                                  })
-                                  .join(", ")
-                              : "—"}
-                          </td>
-                          <td class="px-4 py-3">
-                            <a
-                              href={`/trainer/exercises/${exercise.id}`}
-                              class="border-border hover:bg-accent rounded-md border px-3 py-1 text-xs transition-colors"
-                            >
-                              Edit
-                            </a>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            )}
-          </>
+          <ExercisesHub
+            client:load
+            initialExercises={exerciseRows}
+            muscleGroups={muscleGroupRows}
+            initialFilters={initialFilters}
+            hasActiveFilters={hasActiveFilters}
+            muscleGroupNameById={muscleGroupNameById}
+          />
         ) : null
       }
     </div>

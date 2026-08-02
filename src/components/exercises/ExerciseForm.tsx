@@ -29,6 +29,9 @@ interface ExerciseFormProps {
     is_favourite?: boolean;
     muscle_groups: { muscle_group_id: string; role: MuscleRole }[];
   };
+  onSuccess?: () => void;
+  onCancel?: () => void;
+  onArchived?: () => void;
 }
 
 interface ApiValidationIssue {
@@ -69,7 +72,15 @@ function mapApiIssues(issues: ApiValidationIssue[]): FormFieldErrors {
   return errors;
 }
 
-export default function ExerciseForm({ mode, muscleGroups, exerciseId, initialExercise }: ExerciseFormProps) {
+export default function ExerciseForm({
+  mode,
+  muscleGroups,
+  exerciseId,
+  initialExercise,
+  onSuccess,
+  onCancel,
+  onArchived,
+}: ExerciseFormProps) {
   const initialValues = useMemo(
     () => (initialExercise ? exerciseToFormValues(initialExercise) : emptyExerciseFormValues()),
     [initialExercise],
@@ -136,7 +147,11 @@ export default function ExerciseForm({ mode, muscleGroups, exerciseId, initialEx
           return;
         }
 
-        window.location.assign("/trainer/exercises?created=1");
+        if (onSuccess) {
+          onSuccess();
+        } else {
+          window.location.assign("/trainer/exercises?created=1");
+        }
       } finally {
         setSubmitting(false);
       }
@@ -175,7 +190,11 @@ export default function ExerciseForm({ mode, muscleGroups, exerciseId, initialEx
         return;
       }
 
-      window.location.assign("/trainer/exercises?updated=1");
+      if (onSuccess) {
+        onSuccess();
+      } else {
+        window.location.assign("/trainer/exercises?updated=1");
+      }
     } finally {
       setSubmitting(false);
     }
@@ -203,7 +222,11 @@ export default function ExerciseForm({ mode, muscleGroups, exerciseId, initialEx
         return;
       }
 
-      window.location.assign("/trainer/exercises?archived=1");
+      if (onArchived) {
+        onArchived();
+      } else {
+        window.location.assign("/trainer/exercises?archived=1");
+      }
     } finally {
       setArchiving(false);
     }
@@ -394,7 +417,11 @@ export default function ExerciseForm({ mode, muscleGroups, exerciseId, initialEx
           variant="outline"
           className="border-border hover:bg-accent text-foreground bg-transparent"
           onClick={() => {
-            window.location.assign("/trainer/exercises");
+            if (onCancel) {
+              onCancel();
+            } else {
+              window.location.assign("/trainer/exercises");
+            }
           }}
         >
           Cancel

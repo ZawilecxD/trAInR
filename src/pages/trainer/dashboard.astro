@@ -1,36 +1,47 @@
 ---
 import Layout from "@/layouts/Layout.astro";
-import TrainerDashboardOverview from "@/components/trainer/TrainerDashboardOverview.astro";
+import TrainerDashboardOverview from "@/components/trainer/TrainerDashboardOverview";
 import { getTrainerDashboard } from "@/lib/trainer-dashboard/service";
 import { createClient } from "@/lib/supabase";
+import { errorBannerClass, pageShellClass } from "@/lib/ui-classes";
 
 const userId = Astro.locals.user?.id;
 const supabase = createClient(Astro.request.headers, Astro.cookies);
 
 let loadError: string | null = null;
 let dashboard: Awaited<ReturnType<typeof getTrainerDashboard>>["data"] = null;
+let trainerName = "Trainer";
+
+const hour = new Date().getHours();
+const greeting = hour < 12 ? "Good morning" : hour < 17 ? "Good afternoon" : "Good evening";
 
 if (!supabase) {
   loadError = "Dashboard is unavailable. Check Supabase configuration.";
 } else if (!userId) {
   loadError = "You must be signed in to view the dashboard.";
 } else {
-  const result = await getTrainerDashboard(supabase, userId);
-  loadError = result.error;
-  dashboard = result.data;
+  const [dashboardResult, profileResult] = await Promise.all([
+    getTrainerDashboard(supabase, userId),
+    supabase.from("profiles").select("display_name").eq("id", userId).maybeSingle(),
+  ]);
+
+  loadError = dashboardResult.error;
+  dashboard = dashboardResult.data;
+
+  if (typeof profileResult.data?.display_name === "string" && profileResult.data.display_name.trim()) {
+    trainerName = profileResult.data.display_name.trim().split(/\s+/)[0] ?? trainerName;
+  }
 }
 ---
 
 <Layout title="Dashboard">
-  <div class="bg-background min-h-screen p-4 md:p-8">
+  <div class:list={pageShellClass}>
     <div class="mx-auto max-w-6xl">
       {
         loadError ? (
-          <div class="border-destructive/30 bg-destructive/10 text-destructive rounded-lg border px-4 py-3 text-sm">
-            Failed to load dashboard: {loadError}
-          </div>
+          <div class:list={errorBannerClass}>Failed to load dashboard: {loadError}</div>
         ) : dashboard ? (
-          <TrainerDashboardOverview dashboard={dashboard} />
+          <TrainerDashboardOverview dashboard={dashboard} trainerName={trainerName} greeting={greeting} />
         ) : null
       }
     </div>
