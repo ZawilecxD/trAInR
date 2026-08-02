@@ -88,7 +88,7 @@ const pageTitle = notFound
       <div>
         <a
           href={`/trainer/clients/${clientId}/plan${scheduledDate ? `?date=${scheduledDate}` : ""}`}
-          class="text-muted-foreground text-sm transition-colors hover:text-white"
+          class="text-muted-foreground hover:text-foreground text-sm transition-colors"
         >
           ← Back to plan
         </a>
@@ -109,7 +109,7 @@ const pageTitle = notFound
       {
         notFound ? (
           <div class="border-border bg-card text-muted-foreground rounded-2xl border p-8 text-center">
-            <p class="text-lg font-medium text-white">This session could not be found</p>
+            <p class="text-foreground text-lg font-medium">This session could not be found</p>
             <p class="mt-2 text-sm">It may have been deleted or does not belong to this client.</p>
             <a
               href={`/trainer/clients/${clientId}/plan`}
@@ -119,7 +119,7 @@ const pageTitle = notFound
             </a>
           </div>
         ) : loadError ? (
-          <div class="rounded-lg border border-red-400/30 bg-red-500/10 px-4 py-3 text-sm text-red-100">
+          <div class="border-destructive/30 bg-destructive/10 text-destructive rounded-lg border px-4 py-3 text-sm">
             Failed to load session: {loadError}
           </div>
         ) : reviewSession ? (

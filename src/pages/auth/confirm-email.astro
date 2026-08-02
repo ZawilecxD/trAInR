@@ -20,7 +20,9 @@ const content = isAutoConfirmed
 
 <Layout title={content.heading}>
   <div class="bg-background flex min-h-screen items-center justify-center p-4">
-    <div class="border-border bg-muted w-full max-w-sm rounded-2xl border p-8 text-center text-white backdrop-blur-xl">
+    <div
+      class="border-border bg-muted text-foreground w-full max-w-sm rounded-2xl border p-8 text-center backdrop-blur-xl"
+    >
       <div class="mb-4 text-5xl">{content.emoji}</div>
       <h1 class="headline-lg text-foreground mb-3 text-2xl">
         {content.heading}

@@ -42,7 +42,7 @@ const updated = Astro.url.searchParams.get("updated") === "1";
   <div class="bg-background min-h-screen p-4 md:p-8">
     <div class="mx-auto max-w-4xl space-y-6">
       <div>
-        <a href="/trainer/templates" class="text-muted-foreground text-sm transition-colors hover:text-white">
+        <a href="/trainer/templates" class="text-muted-foreground hover:text-foreground text-sm transition-colors">
           ← Back to templates
         </a>
         <h1 class="headline-lg text-foreground mt-3">
@@ -57,7 +57,7 @@ const updated = Astro.url.searchParams.get("updated") === "1";
 
       {
         updated ? (
-          <div class="rounded-lg border border-green-400/30 bg-green-500/10 px-4 py-3 text-sm text-green-100">
+          <div class="border-success/30 bg-success/10 text-success rounded-lg border px-4 py-3 text-sm">
             Template updated successfully.
           </div>
         ) : null
@@ -66,7 +66,7 @@ const updated = Astro.url.searchParams.get("updated") === "1";
       {
         notFound ? (
           <div class="border-border bg-card text-muted-foreground rounded-2xl border p-8 text-center">
-            <p class="text-lg font-medium text-white">This template could not be found</p>
+            <p class="text-foreground text-lg font-medium">This template could not be found</p>
             <p class="mt-2 text-sm">It may have been deleted or the link is invalid.</p>
             <a
               href="/trainer/templates"
@@ -76,7 +76,7 @@ const updated = Astro.url.searchParams.get("updated") === "1";
             </a>
           </div>
         ) : loadError ? (
-          <div class="rounded-lg border border-red-400/30 bg-red-500/10 px-4 py-3 text-sm text-red-100">
+          <div class="border-destructive/30 bg-destructive/10 text-destructive rounded-lg border px-4 py-3 text-sm">
             Failed to load template: {loadError}
           </div>
         ) : template ? (

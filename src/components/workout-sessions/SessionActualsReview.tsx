@@ -19,11 +19,11 @@ export default function SessionActualsReview({ session, sessionId, currentUserId
         <dl className="grid gap-3 text-sm sm:grid-cols-2">
           <div>
             <dt className="text-muted-foreground">Client</dt>
-            <dd className="mt-0.5 font-medium text-white">{session.client_display_name}</dd>
+            <dd className="text-foreground mt-0.5 font-medium">{session.client_display_name}</dd>
           </div>
           <div>
             <dt className="text-muted-foreground">Scheduled</dt>
-            <dd className="mt-0.5 font-medium text-white">{formatSessionOverviewDate(session.scheduled_date)}</dd>
+            <dd className="text-foreground mt-0.5 font-medium">{formatSessionOverviewDate(session.scheduled_date)}</dd>
           </div>
           <div>
             <dt className="text-muted-foreground">Logging status</dt>
@@ -40,7 +40,7 @@ export default function SessionActualsReview({ session, sessionId, currentUserId
           </div>
           <div>
             <dt className="text-muted-foreground">Sets logged</dt>
-            <dd className="mt-0.5 font-medium text-white">
+            <dd className="text-foreground mt-0.5 font-medium">
               {session.readout.completedSets} of {session.readout.totalSets}
             </dd>
           </div>

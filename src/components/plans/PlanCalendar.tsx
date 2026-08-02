@@ -100,20 +100,20 @@ export default function PlanCalendar({
         sessionNotStarted: cn(sessionDotBase, "after:bg-muted-foreground"),
         sessionPartial: cn(sessionDotBase, "after:bg-warning"),
         sessionFinished: cn(sessionDotBase, "after:bg-success"),
-        sessionCancelled: cn(sessionDotBase, "after:bg-red-400"),
+        sessionCancelled: cn(sessionDotBase, "after:bg-destructive"),
       }}
-      className="border-border bg-card w-full max-w-full rounded-xl border p-2 text-white [--cell-size:2.75rem]"
+      className="border-border bg-card text-foreground w-full max-w-full rounded-xl border p-2 [--cell-size:2.75rem]"
       classNames={{
-        caption_label: "text-base font-semibold text-white",
+        caption_label: "text-base font-semibold text-foreground",
         weekday: "w-11 shrink-0 text-xs text-muted-foreground",
         day_button: cn(
-          "size-11 rounded-lg text-white hover:bg-accent",
-          "aria-selected:bg-primary aria-selected:text-white aria-selected:hover:bg-primary/90",
+          "size-11 rounded-lg text-foreground hover:bg-accent",
+          "aria-selected:bg-primary aria-selected:text-primary-foreground aria-selected:hover:bg-primary/90",
         ),
-        today: "border border-purple-400/40 bg-primary/10 text-white",
+        today: "border border-primary/40 bg-primary/10 text-primary-foreground",
         outside: "text-foreground/30",
-        button_previous: "border-border bg-card text-white hover:bg-accent",
-        button_next: "border-border bg-card text-white hover:bg-accent",
+        button_previous: "border-border bg-card text-foreground hover:bg-accent",
+        button_next: "border-border bg-card text-foreground hover:bg-accent",
       }}
     />
   );

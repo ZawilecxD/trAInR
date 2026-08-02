@@ -78,7 +78,7 @@ export default function ExerciseSetLogTable({
           <Button
             type="button"
             variant="outline"
-            className="border-border bg-card hover:bg-accent min-h-11 w-full text-white"
+            className="border-border bg-card hover:bg-accent text-foreground min-h-11 w-full"
             onClick={handleAddRound}
           >
             <Plus className="size-4" aria-hidden="true" />

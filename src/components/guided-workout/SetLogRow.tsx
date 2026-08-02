@@ -70,7 +70,7 @@ function hasEnteredValues(values: SetLogValues): boolean {
 function SuffixInput({ suffix, className, ...props }: ComponentProps<typeof Input> & { suffix: string }) {
   return (
     <div className="relative">
-      <Input className={cn("border-border bg-card min-h-11 pr-10 text-base text-white", className)} {...props} />
+      <Input className={cn("border-border bg-card text-foreground min-h-11 pr-10 text-base", className)} {...props} />
       <span className="text-muted-foreground pointer-events-none absolute inset-y-0 right-3 flex items-center text-sm">
         {suffix}
       </span>
@@ -170,7 +170,9 @@ export default function SetLogRow({
       )}
       onFocusCapture={onFocus}
     >
-      <td className={cn("px-3 py-3 text-sm font-medium", values.is_warmup ? "text-muted-foreground" : "text-white")}>
+      <td
+        className={cn("px-3 py-3 text-sm font-medium", values.is_warmup ? "text-muted-foreground" : "text-foreground")}
+      >
         Set {setNumber}
       </td>
 
@@ -283,7 +285,7 @@ export default function SetLogRow({
         <div className="flex min-h-11 items-center justify-center">
           <button
             type="button"
-            className="text-foreground/40 hover:bg-card inline-flex size-9 items-center justify-center rounded-lg hover:text-red-300 disabled:opacity-30"
+            className="text-foreground/40 hover:bg-card hover:text-destructive inline-flex size-9 items-center justify-center rounded-lg disabled:opacity-30"
             aria-label={`Remove set ${setNumber} log`}
             disabled={!canDelete || deletePending}
             onClick={() => {
@@ -307,7 +309,7 @@ export default function SetLogRow({
           {status === "error" ? (
             <button
               type="button"
-              className="inline-flex items-center gap-1 text-xs text-red-300 hover:text-red-200"
+              className="text-destructive hover:text-destructive inline-flex items-center gap-1 text-xs"
               aria-label={error ? `Retry save: ${error}` : "Retry save"}
               onClick={retry}
             >

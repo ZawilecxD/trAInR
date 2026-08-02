@@ -43,7 +43,7 @@ export default function PhaseBreakdown({ exercises }: PhaseBreakdownProps) {
             <ul className="mt-3 space-y-3">
               {phaseExercises.map((exercise) => (
                 <li key={exercise.id}>
-                  <p className="text-sm font-medium text-white">{exercise.exercise_name || "Exercise"}</p>
+                  <p className="text-foreground text-sm font-medium">{exercise.exercise_name || "Exercise"}</p>
                   <p className="text-muted-foreground mt-0.5 text-sm">
                     {formatExercisePrescriptionDetail(exercise.sets, exercise.exercise_default_metric)}
                   </p>

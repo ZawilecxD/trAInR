@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { Loader2, Pencil, Plus, Trash2 } from "lucide-react";
 import DeleteConfirmDialog from "@/components/DeleteConfirmDialog";
+import { EmptyState } from "@/components/EmptyState";
 import TemplateFilters from "@/components/session-templates/TemplateFilters";
 import TemplateFormModal from "@/components/session-templates/TemplateFormModal";
 import { Button } from "@/components/ui/button";
@@ -8,6 +9,7 @@ import type { TemplateFilterState } from "@/lib/session-templates/filter-url";
 import { TEMPLATE_PHASE_LABELS } from "@/lib/session-templates/labels";
 import type { SessionTemplateSummary, TemplateWithExercises } from "@/lib/session-templates/service";
 import type { ExerciseWithMuscleGroups } from "@/lib/exercises/service";
+import { errorBannerClass, successBannerClass } from "@/lib/ui-classes";
 
 interface TemplatesHubProps {
   initialTemplates: SessionTemplateSummary[];
@@ -151,54 +153,46 @@ export default function TemplatesHub({
             Build reusable session blueprints with warm-up, main, and cool-down phases.
           </p>
         </div>
-        <Button type="button" className="bg-primary hover:bg-primary/90 text-white" onClick={openCreateModal}>
+        <Button
+          type="button"
+          className="bg-primary hover:bg-primary/90 text-primary-foreground"
+          onClick={openCreateModal}
+        >
           <Plus className="size-4" />
           New template
         </Button>
       </div>
 
-      {flashMessage ? (
-        <div className="rounded-lg border border-green-400/30 bg-green-500/10 px-4 py-3 text-sm text-green-100">
-          {flashMessage}
-        </div>
-      ) : null}
+      {flashMessage ? <div className={successBannerClass}>{flashMessage}</div> : null}
 
-      {modalError ? (
-        <div className="rounded-lg border border-red-400/30 bg-red-500/10 px-4 py-3 text-sm text-red-100">
-          {modalError}
-        </div>
-      ) : null}
+      {modalError ? <div className={errorBannerClass}>{modalError}</div> : null}
 
-      {deleteError ? (
-        <div className="rounded-lg border border-red-400/30 bg-red-500/10 px-4 py-3 text-sm text-red-100">
-          {deleteError}
-        </div>
-      ) : null}
+      {deleteError ? <div className={errorBannerClass}>{deleteError}</div> : null}
 
       <TemplateFilters initialFilters={initialFilters} />
 
       {sortedTemplates.length === 0 ? (
-        <div className="border-border bg-card text-muted-foreground rounded-2xl border p-8 text-center">
-          {hasActiveFilters ? (
-            <>
-              <p className="text-lg font-medium text-white">No templates match your filters</p>
-              <p className="mt-2 text-sm">Try clearing filters or adjusting your search.</p>
-            </>
-          ) : (
-            <>
-              <p className="text-lg font-medium text-white">No templates yet</p>
-              <p className="mt-2 text-sm">Create your first template to reuse session structures across clients.</p>
+        hasActiveFilters ? (
+          <EmptyState
+            title="No templates match your filters"
+            description="Try clearing filters or adjusting your search."
+          />
+        ) : (
+          <EmptyState
+            title="No templates yet"
+            description="Create your first template to reuse session structures across clients."
+            action={
               <Button
                 type="button"
                 variant="outline"
-                className="border-border hover:bg-accent mt-4 bg-transparent text-white"
+                className="border-border hover:bg-accent bg-transparent"
                 onClick={openCreateModal}
               >
                 Create template
               </Button>
-            </>
-          )}
-        </div>
+            }
+          />
+        )
       ) : (
         <div className="border-border bg-card overflow-hidden rounded-2xl border">
           <div className="overflow-x-auto">
@@ -216,7 +210,7 @@ export default function TemplatesHub({
               <tbody>
                 {sortedTemplates.map((template) => (
                   <tr key={template.id} className="border-border/50 border-b last:border-b-0">
-                    <td className="px-4 py-3 font-medium text-white">{template.name}</td>
+                    <td className="text-foreground px-4 py-3 font-medium">{template.name}</td>
                     <td className="max-w-xs truncate px-4 py-3">{template.description ?? "—"}</td>
                     <td className="px-4 py-3">{template.exercise_count}</td>
                     <td className="px-4 py-3">
@@ -242,7 +236,7 @@ export default function TemplatesHub({
                           type="button"
                           variant="outline"
                           size="sm"
-                          className="border-border hover:bg-accent bg-transparent text-white"
+                          className="border-border hover:bg-accent text-foreground bg-transparent"
                           disabled={loadingEdit && editingTemplateId === template.id}
                           onClick={() => {
                             void openEditModal(template.id);
@@ -259,7 +253,7 @@ export default function TemplatesHub({
                           type="button"
                           variant="outline"
                           size="sm"
-                          className="border-border bg-transparent text-red-200 hover:bg-red-500/10"
+                          className="border-border text-destructive hover:bg-destructive/10 bg-transparent"
                           onClick={() => {
                             setDeleteError(null);
                             setDeleteTarget(template);
@@ -315,7 +309,7 @@ export default function TemplatesHub({
         description={
           deleteTarget ? (
             <>
-              <span className="font-medium text-white">{deleteTarget.name}</span> will be permanently removed. This
+              <span className="text-foreground font-medium">{deleteTarget.name}</span> will be permanently removed. This
               cannot be undone.
             </>
           ) : (

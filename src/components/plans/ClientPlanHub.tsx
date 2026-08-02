@@ -99,11 +99,11 @@ export default function ClientPlanHub({
   return (
     <div className="space-y-6">
       {showAssignedBanner && !dismissedBanner ? (
-        <div className="flex items-start justify-between gap-3 rounded-lg border border-green-400/30 bg-green-500/10 px-4 py-3 text-sm text-green-100">
+        <div className="border-success/30 bg-success/10 text-success flex items-start justify-between gap-3 rounded-lg border px-4 py-3 text-sm">
           <p>Session saved successfully.</p>
           <button
             type="button"
-            className="shrink-0 text-green-200/80 hover:text-green-50"
+            className="text-success/80 hover:text-success shrink-0"
             onClick={() => {
               setDismissedBanner(true);
             }}
@@ -118,7 +118,7 @@ export default function ClientPlanHub({
           <div className="mb-3 flex items-center justify-between gap-2">
             <h2 className="text-muted-foreground text-sm font-medium">Calendar</h2>
             {loadingMonth ? <span className="text-muted-foreground text-xs">Loading…</span> : null}
-            {fetchError ? <span className="text-xs text-red-400/80">{fetchError}</span> : null}
+            {fetchError ? <span className="text-destructive/80 text-xs">{fetchError}</span> : null}
           </div>
           <PlanCalendar
             sessions={sessions}
@@ -141,7 +141,7 @@ export default function ClientPlanHub({
         <section className="border-border bg-card rounded-2xl border p-5 backdrop-blur-xl">
           <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
             <div>
-              <h2 className="text-lg font-semibold text-white">
+              <h2 className="text-foreground text-lg font-semibold">
                 {selectedDate.toLocaleDateString(undefined, {
                   weekday: "long",
                   month: "long",
@@ -152,7 +152,7 @@ export default function ClientPlanHub({
             </div>
             <Button
               type="button"
-              className="bg-primary hover:bg-primary/90 text-white"
+              className="bg-primary hover:bg-primary/90 text-primary-foreground"
               onClick={() => {
                 setPickerOpen(true);
               }}
@@ -175,7 +175,7 @@ export default function ClientPlanHub({
                     className="border-border bg-card hover:bg-accent flex items-center justify-between gap-3 rounded-lg border px-4 py-3 transition-colors"
                   >
                     <span className="min-w-0">
-                      <span className="block truncate font-medium text-white">{session.name}</span>
+                      <span className="text-foreground block truncate font-medium">{session.name}</span>
                       <Badge variant="outline" className={cn("mt-1", sessionStatusBadgeClass(session.status))}>
                         {sessionStatusLabel(session.status)}
                       </Badge>

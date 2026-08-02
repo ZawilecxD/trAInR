@@ -33,13 +33,13 @@ export default function SessionCompletedView({ session, currentUserId, onEdit }:
       <header className="mb-6">
         <a
           href="/client/plan"
-          className="text-muted-foreground inline-flex min-h-11 items-center gap-2 text-sm transition-colors hover:text-white"
+          className="text-muted-foreground hover:text-foreground inline-flex min-h-11 items-center gap-2 text-sm transition-colors"
         >
           <ArrowLeft className="size-4" aria-hidden="true" />
           Calendar
         </a>
         <div className="mt-4 flex flex-wrap items-center gap-3">
-          <h1 className="text-3xl font-bold text-white">{session.name ?? "Workout"}</h1>
+          <h1 className="text-foreground text-3xl font-bold">{session.name ?? "Workout"}</h1>
           <Badge variant="outline" className={cn("text-xs", sessionStatusBadgeClass(session.status))}>
             {sessionStatusLabel(session.status)}
           </Badge>
@@ -53,11 +53,11 @@ export default function SessionCompletedView({ session, currentUserId, onEdit }:
           <dl className="grid gap-3 text-sm sm:grid-cols-2">
             <div>
               <dt className="text-muted-foreground">Trainer</dt>
-              <dd className="mt-0.5 font-medium text-white">{session.trainer_display_name || "Your trainer"}</dd>
+              <dd className="text-foreground mt-0.5 font-medium">{session.trainer_display_name || "Your trainer"}</dd>
             </div>
             <div>
               <dt className="text-muted-foreground">Status</dt>
-              <dd className="mt-0.5 font-medium text-white">{sessionStatusLabel(session.status)}</dd>
+              <dd className="text-foreground mt-0.5 font-medium">{sessionStatusLabel(session.status)}</dd>
             </div>
             <div>
               <dt className="text-muted-foreground">Logging status</dt>
@@ -74,7 +74,7 @@ export default function SessionCompletedView({ session, currentUserId, onEdit }:
             </div>
             <div>
               <dt className="text-muted-foreground">Sets logged</dt>
-              <dd className="mt-0.5 font-medium text-white">
+              <dd className="text-foreground mt-0.5 font-medium">
                 {readout.completedSets} of {readout.totalSets}
               </dd>
             </div>

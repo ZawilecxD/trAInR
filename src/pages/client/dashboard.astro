@@ -37,12 +37,14 @@ if (supabase && userId) {
 
 <Layout title="Dashboard">
   <div class="bg-background flex min-h-screen items-center justify-center p-4">
-    <div class="border-border bg-muted w-full max-w-md rounded-2xl border p-8 text-center text-white backdrop-blur-xl">
+    <div
+      class="border-border bg-muted text-foreground w-full max-w-md rounded-2xl border p-8 text-center backdrop-blur-xl"
+    >
       <h1 class="headline-lg text-foreground mb-4">Welcome</h1>
       {
         trainerName ? (
           <p class="text-muted-foreground">
-            You're training with <span class="font-semibold text-white">{trainerName}</span>
+            You're training with <span class="text-foreground font-semibold">{trainerName}</span>
           </p>
         ) : (
           <p class="text-muted-foreground">Your trainer will assign your first plan soon.</p>
@@ -51,7 +53,7 @@ if (supabase && userId) {
       <p class="text-muted-foreground mt-4 text-sm">View your assigned workouts on your training calendar.</p>
       <a
         href="/client/plan"
-        class="bg-primary hover:bg-primary/90 mt-6 inline-flex min-h-11 items-center justify-center rounded-lg px-5 py-2.5 text-sm font-semibold text-white transition-colors"
+        class="bg-primary hover:bg-primary/90 text-primary-foreground mt-6 inline-flex min-h-11 items-center justify-center rounded-lg px-5 py-2.5 text-sm font-semibold transition-colors"
       >
         My Plan
       </a>

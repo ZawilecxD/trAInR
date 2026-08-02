@@ -177,7 +177,7 @@ export default function InviteClientPanel({ invites: initialInvites, clients: in
   return (
     <div className="space-y-8">
       <section className="space-y-4">
-        <h2 className="text-lg font-semibold text-white">Invite a client</h2>
+        <h2 className="text-foreground text-lg font-semibold">Invite a client</h2>
         <p className="text-muted-foreground text-sm">
           Generate a single-use link and share it via WhatsApp, SMS, or any channel you prefer.
         </p>
@@ -194,7 +194,7 @@ export default function InviteClientPanel({ invites: initialInvites, clients: in
           {generating ? "Generating…" : "Generate invite link"}
         </Button>
 
-        {error ? <p className="text-sm text-red-300">{error}</p> : null}
+        {error ? <p className="text-destructive text-sm">{error}</p> : null}
 
         {displayUrl ? (
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
@@ -207,7 +207,7 @@ export default function InviteClientPanel({ invites: initialInvites, clients: in
             <Button
               type="button"
               variant="outline"
-              className="border-border bg-muted hover:bg-accent shrink-0 text-white"
+              className="border-border bg-muted hover:bg-accent text-foreground shrink-0"
               onClick={() => {
                 void handleCopy(displayUrl);
               }}
@@ -220,7 +220,7 @@ export default function InviteClientPanel({ invites: initialInvites, clients: in
       </section>
 
       <section className="space-y-3">
-        <h2 className="text-lg font-semibold text-white">Recent invites</h2>
+        <h2 className="text-foreground text-lg font-semibold">Recent invites</h2>
         {invites.length === 0 ? (
           <p className="text-muted-foreground text-sm">No invites yet. Generate your first link above.</p>
         ) : (
@@ -247,7 +247,7 @@ export default function InviteClientPanel({ invites: initialInvites, clients: in
                         type="button"
                         variant="ghost"
                         size="sm"
-                        className="text-muted-foreground hover:bg-accent hover:text-white"
+                        className="text-muted-foreground hover:bg-accent hover:text-foreground"
                         onClick={() => {
                           void handleCopy(url);
                         }}
@@ -265,7 +265,7 @@ export default function InviteClientPanel({ invites: initialInvites, clients: in
       </section>
 
       <section className="space-y-3">
-        <h2 className="flex items-center gap-2 text-lg font-semibold text-white">
+        <h2 className="text-foreground flex items-center gap-2 text-lg font-semibold">
           <Users className="size-5" />
           Your clients
         </h2>
@@ -281,19 +281,19 @@ export default function InviteClientPanel({ invites: initialInvites, clients: in
                   <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                     <div className="flex min-w-0 items-start gap-3">
                       <span
-                        className="border-border bg-muted flex size-11 shrink-0 items-center justify-center rounded-full border text-sm font-semibold text-white"
+                        className="border-border bg-muted text-foreground flex size-11 shrink-0 items-center justify-center rounded-full border text-sm font-semibold"
                         aria-hidden="true"
                       >
                         {clientInitials(client.displayName)}
                       </span>
                       <div className="min-w-0">
-                        <p className="truncate text-base font-medium text-white">{client.displayName}</p>
+                        <p className="text-foreground truncate text-base font-medium">{client.displayName}</p>
                         <p className="text-muted-foreground mt-0.5 text-xs">
                           Joined {formatAssignedDate(client.assignedAt)}
                         </p>
                         {client.activePlan ? (
                           <p className="text-muted-foreground mt-2 text-sm">
-                            <span className="font-medium text-white">{client.activePlan.name}</span>
+                            <span className="text-foreground font-medium">{client.activePlan.name}</span>
                             {planStart ? <span className="text-muted-foreground"> · Started {planStart}</span> : null}
                           </p>
                         ) : (
@@ -307,7 +307,7 @@ export default function InviteClientPanel({ invites: initialInvites, clients: in
                         type="button"
                         variant="outline"
                         size="sm"
-                        className="border-border bg-card hover:bg-accent min-h-11 text-white"
+                        className="border-border bg-card hover:bg-accent text-foreground min-h-11"
                         asChild
                       >
                         <a href={`/trainer/clients/${client.clientId}/plan`}>
@@ -322,13 +322,13 @@ export default function InviteClientPanel({ invites: initialInvites, clients: in
                             variant="ghost"
                             size="sm"
                             disabled={removingId === client.assignmentId}
-                            className="min-h-11 text-red-300 hover:bg-red-500/10 hover:text-red-200"
+                            className="text-destructive hover:bg-destructive/10 hover:text-destructive min-h-11"
                           >
                             <Trash2 className="size-3.5" />
                             Remove
                           </Button>
                         </AlertDialogTrigger>
-                        <AlertDialogContent className="border-border bg-popover text-white">
+                        <AlertDialogContent className="border-border bg-popover text-foreground">
                           <AlertDialogHeader>
                             <AlertDialogTitle>Remove client?</AlertDialogTitle>
                             <AlertDialogDescription className="text-muted-foreground">
@@ -337,11 +337,11 @@ export default function InviteClientPanel({ invites: initialInvites, clients: in
                             </AlertDialogDescription>
                           </AlertDialogHeader>
                           <AlertDialogFooter>
-                            <AlertDialogCancel className="border-border bg-muted hover:bg-accent text-white">
+                            <AlertDialogCancel className="border-border bg-muted hover:bg-accent text-foreground">
                               Cancel
                             </AlertDialogCancel>
                             <AlertDialogAction
-                              className="bg-destructive hover:bg-destructive/90 text-white"
+                              className="bg-destructive hover:bg-destructive/90 text-destructive-foreground"
                               disabled={removingId === client.assignmentId}
                               onClick={() => {
                                 void handleRemove(client.assignmentId, client.displayName);

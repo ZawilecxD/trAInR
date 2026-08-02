@@ -140,7 +140,7 @@ export default function ClientCalendarHub({
               aria-selected={view === option}
               className={cn(
                 "min-h-11 min-w-24 flex-1 rounded-md px-4 text-sm font-medium capitalize transition-colors",
-                view === option ? "bg-muted text-white" : "text-muted-foreground hover:text-white",
+                view === option ? "bg-muted text-foreground" : "text-muted-foreground hover:text-foreground",
               )}
               onClick={() => {
                 void handleViewChange(option);
@@ -157,7 +157,7 @@ export default function ClientCalendarHub({
               type="button"
               variant="outline"
               size="icon"
-              className="border-border bg-card hover:bg-accent size-11 shrink-0 text-white"
+              className="border-border bg-card hover:bg-accent text-foreground size-11 shrink-0"
               aria-label="Previous week"
               onClick={() => {
                 void handleWeekChange("prev");
@@ -165,14 +165,14 @@ export default function ClientCalendarHub({
             >
               <ChevronLeft className="size-5" />
             </Button>
-            <span className="min-w-0 text-center text-sm font-medium text-white sm:min-w-48">
+            <span className="text-foreground min-w-0 text-center text-sm font-medium sm:min-w-48">
               {formatWeekRangeLabel(weekStart)}
             </span>
             <Button
               type="button"
               variant="outline"
               size="icon"
-              className="border-border bg-card hover:bg-accent size-11 shrink-0 text-white"
+              className="border-border bg-card hover:bg-accent text-foreground size-11 shrink-0"
               aria-label="Next week"
               onClick={() => {
                 void handleWeekChange("next");
@@ -185,7 +185,7 @@ export default function ClientCalendarHub({
       </div>
 
       {loading ? <p className="text-muted-foreground text-xs">Loading…</p> : null}
-      {fetchError ? <p className="text-xs text-red-400/80">{fetchError}</p> : null}
+      {fetchError ? <p className="text-destructive/80 text-xs">{fetchError}</p> : null}
 
       {view === "month" ? (
         <div className="grid gap-6 lg:grid-cols-[minmax(0,22rem)_1fr] lg:items-start">
@@ -213,7 +213,7 @@ export default function ClientCalendarHub({
 
           <section className="border-border bg-card rounded-2xl border p-5 backdrop-blur-xl">
             <div className="mb-4">
-              <h2 className="text-lg font-semibold text-white">
+              <h2 className="text-foreground text-lg font-semibold">
                 {selectedDate.toLocaleDateString(undefined, {
                   weekday: "long",
                   month: "long",
@@ -236,7 +236,7 @@ export default function ClientCalendarHub({
                       className="border-border bg-card hover:bg-accent flex min-h-11 items-center justify-between gap-3 rounded-lg border px-4 py-3 transition-colors"
                     >
                       <div className="min-w-0">
-                        <span className="block truncate font-medium text-white">{session.name}</span>
+                        <span className="text-foreground block truncate font-medium">{session.name}</span>
                         <Badge variant="outline" className={cn("mt-1", sessionStatusBadgeClass(session.status))}>
                           {sessionStatusLabel(session.status)}
                         </Badge>

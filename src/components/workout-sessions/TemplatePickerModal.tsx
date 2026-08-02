@@ -33,7 +33,7 @@ export default function TemplatePickerModal({
     >
       <div className="border-border bg-popover max-h-[85vh] w-full max-w-lg overflow-hidden rounded-2xl border shadow-xl">
         <div className="border-border border-b px-5 py-4">
-          <h2 id="template-picker-title" className="text-lg font-semibold text-white">
+          <h2 id="template-picker-title" className="text-foreground text-lg font-semibold">
             Add session
           </h2>
           <p className="text-muted-foreground mt-1 text-sm">Choose a template or start with a blank session.</p>
@@ -53,7 +53,7 @@ export default function TemplatePickerModal({
               >
                 <FileText className="text-text-lavender mt-0.5 size-4 shrink-0" />
                 <span className="min-w-0">
-                  <span className="block font-medium text-white">{template.name}</span>
+                  <span className="text-foreground block font-medium">{template.name}</span>
                   {template.description ? (
                     <span className="text-muted-foreground mt-0.5 block truncate text-sm">{template.description}</span>
                   ) : null}
@@ -66,7 +66,7 @@ export default function TemplatePickerModal({
         <div className="border-border flex flex-col gap-2 border-t px-5 py-4 sm:flex-row sm:justify-between">
           <Button
             type="button"
-            className="bg-primary hover:bg-primary/90 text-white"
+            className="bg-primary hover:bg-primary/90 text-primary-foreground"
             onClick={() => {
               window.location.assign(basePath);
             }}
@@ -77,7 +77,7 @@ export default function TemplatePickerModal({
           <Button
             type="button"
             variant="outline"
-            className="border-border hover:bg-accent bg-transparent text-white"
+            className="border-border hover:bg-accent text-foreground bg-transparent"
             onClick={onClose}
           >
             Cancel

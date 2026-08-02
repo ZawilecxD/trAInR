@@ -265,7 +265,7 @@ export default function GuidedWorkoutHub({ initialSession, currentUserId }: Guid
     return (
       <div className="space-y-4">
         <p className="text-muted-foreground text-sm">No exercises in this session.</p>
-        <a href="/client/plan" className="text-muted-foreground text-sm hover:text-white">
+        <a href="/client/plan" className="text-muted-foreground hover:text-foreground text-sm">
           ← Calendar
         </a>
       </div>

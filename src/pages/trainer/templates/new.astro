@@ -22,7 +22,7 @@ if (!supabase) {
   <div class="bg-background min-h-screen p-4 md:p-8">
     <div class="mx-auto max-w-4xl space-y-6">
       <div>
-        <a href="/trainer/templates" class="text-muted-foreground text-sm transition-colors hover:text-white">
+        <a href="/trainer/templates" class="text-muted-foreground hover:text-foreground text-sm transition-colors">
           ← Back to templates
         </a>
         <h1 class="headline-lg text-foreground mt-3">New template</h1>
@@ -31,7 +31,7 @@ if (!supabase) {
 
       {
         loadError ? (
-          <div class="rounded-lg border border-red-400/30 bg-red-500/10 px-4 py-3 text-sm text-red-100">
+          <div class="border-destructive/30 bg-destructive/10 text-destructive rounded-lg border px-4 py-3 text-sm">
             Failed to load exercises: {loadError}
           </div>
         ) : (

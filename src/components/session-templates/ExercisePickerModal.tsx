@@ -51,14 +51,14 @@ export default function ExercisePickerModal({ open, onClose, onPick, availableEx
         className="border-border bg-popover relative z-10 flex max-h-[80vh] w-full max-w-lg flex-col overflow-hidden rounded-2xl border shadow-xl"
       >
         <div className="border-border flex items-center justify-between border-b px-4 py-3">
-          <h2 id="exercise-picker-title" className="text-lg font-semibold text-white">
+          <h2 id="exercise-picker-title" className="text-foreground text-lg font-semibold">
             Add exercise
           </h2>
           <Button
             type="button"
             variant="outline"
             size="sm"
-            className="border-border hover:bg-accent bg-transparent text-white"
+            className="border-border hover:bg-accent text-foreground bg-transparent"
             onClick={handleClose}
             aria-label="Close"
           >
@@ -107,7 +107,7 @@ export default function ExercisePickerModal({ open, onClose, onPick, availableEx
               <li key={exercise.id}>
                 <button
                   type="button"
-                  className="hover:bg-accent w-full rounded-lg px-3 py-2 text-left text-sm text-white transition-colors"
+                  className="hover:bg-accent text-foreground w-full rounded-lg px-3 py-2 text-left text-sm transition-colors"
                   onClick={() => {
                     onPick(exercise);
                     resetFilters();

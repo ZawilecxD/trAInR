@@ -226,7 +226,7 @@ export default function ExerciseForm({ mode, muscleGroups, exerciseId, initialEx
             className={formInputClassWithError(Boolean(errors.name))}
           />
           {errors.name ? (
-            <p className="mt-1 flex items-center gap-1 text-xs text-red-300">
+            <p className="text-destructive mt-1 flex items-center gap-1 text-xs">
               <CircleAlert className="size-3" />
               {errors.name}
             </p>
@@ -288,7 +288,7 @@ export default function ExerciseForm({ mode, muscleGroups, exerciseId, initialEx
             className={formInputClassWithError(Boolean(errors.video_url))}
           />
           {errors.video_url ? (
-            <p className="mt-1 flex items-center gap-1 text-xs text-red-300">
+            <p className="text-destructive mt-1 flex items-center gap-1 text-xs">
               <CircleAlert className="size-3" />
               {errors.video_url}
             </p>
@@ -314,7 +314,7 @@ export default function ExerciseForm({ mode, muscleGroups, exerciseId, initialEx
 
       {mode === "edit" ? (
         <div>
-          <label className="flex items-center gap-2 text-sm text-white">
+          <label className="text-foreground flex items-center gap-2 text-sm">
             <input
               type="checkbox"
               checked={values.is_favourite}
@@ -336,7 +336,7 @@ export default function ExerciseForm({ mode, muscleGroups, exerciseId, initialEx
             const selected = values.muscle_groups.find((item) => item.muscle_group_id === group.id);
             return (
               <div key={group.id} className="flex flex-wrap items-center gap-3">
-                <label className="flex min-w-[160px] items-center gap-2 text-sm text-white">
+                <label className="text-foreground flex min-w-[160px] items-center gap-2 text-sm">
                   <input
                     type="checkbox"
                     checked={Boolean(selected)}
@@ -365,7 +365,7 @@ export default function ExerciseForm({ mode, muscleGroups, exerciseId, initialEx
           })}
         </div>
         {errors.muscle_groups ? (
-          <p className="mt-1 flex items-center gap-1 text-xs text-red-300">
+          <p className="text-destructive mt-1 flex items-center gap-1 text-xs">
             <CircleAlert className="size-3" />
             {errors.muscle_groups}
           </p>
@@ -373,14 +373,18 @@ export default function ExerciseForm({ mode, muscleGroups, exerciseId, initialEx
       </div>
 
       {errors.form ? (
-        <p className="flex items-center gap-2 rounded-lg border border-red-400/30 bg-red-500/10 px-3 py-2 text-sm text-red-200">
+        <p className="border-destructive/30 bg-destructive/10 text-destructive flex items-center gap-2 rounded-lg border px-3 py-2 text-sm">
           <CircleAlert className="size-4 shrink-0" />
           {errors.form}
         </p>
       ) : null}
 
       <div className="flex flex-wrap gap-3">
-        <Button type="submit" disabled={submitting || archiving} className="bg-primary hover:bg-primary/90 text-white">
+        <Button
+          type="submit"
+          disabled={submitting || archiving}
+          className="bg-primary hover:bg-primary/90 text-primary-foreground"
+        >
           {submitting ? <Loader2 className="size-4 animate-spin" /> : <Save className="size-4" />}
           {mode === "create" ? "Create exercise" : "Save changes"}
         </Button>
@@ -388,7 +392,7 @@ export default function ExerciseForm({ mode, muscleGroups, exerciseId, initialEx
         <Button
           type="button"
           variant="outline"
-          className="border-border hover:bg-accent bg-transparent text-white"
+          className="border-border hover:bg-accent text-foreground bg-transparent"
           onClick={() => {
             window.location.assign("/trainer/exercises");
           }}

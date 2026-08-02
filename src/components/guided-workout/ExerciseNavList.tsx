@@ -59,7 +59,7 @@ export default function ExerciseNavList({
   return (
     <div className={cn("flex flex-col", className)}>
       <header className="border-border border-b pb-4">
-        <h2 className="text-lg font-semibold text-white">Exercises</h2>
+        <h2 className="text-foreground text-lg font-semibold">Exercises</h2>
         <p className="text-muted-foreground mt-1 text-sm">
           {summary.done} done · {summary.active} active · {summary.remaining} remaining
         </p>
@@ -98,7 +98,7 @@ export default function ExerciseNavList({
                       >
                         <StatusDot isDone={progress.isDone} isActive={progress.isActive} />
                         <span className="min-w-0 flex-1">
-                          <span className="block text-sm font-medium text-white">
+                          <span className="text-foreground block text-sm font-medium">
                             {exercise.exercise_name || "Exercise"}
                           </span>
                           <span className="text-muted-foreground mt-0.5 block text-xs">

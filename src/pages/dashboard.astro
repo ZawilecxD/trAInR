@@ -12,10 +12,10 @@ if (roleDashboard) {
 
 <Layout title="Dashboard">
   <div class="bg-background flex min-h-screen items-center justify-center p-4">
-    <div class="border-border bg-muted rounded-2xl border p-8 text-center text-white backdrop-blur-xl">
+    <div class="border-border bg-muted text-foreground rounded-2xl border p-8 text-center backdrop-blur-xl">
       <h1 class="headline-lg text-foreground mb-4">Dashboard</h1>
       <p class="text-muted-foreground">
-        Welcome, <span class="font-semibold text-white">{user?.email}</span>
+        Welcome, <span class="text-foreground font-semibold">{user?.email}</span>
       </p>
       <p class="text-muted-foreground mt-2 text-sm">This page is only for authenticated users.</p>
       {

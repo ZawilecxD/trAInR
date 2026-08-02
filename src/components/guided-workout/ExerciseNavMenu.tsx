@@ -23,7 +23,7 @@ export default function ExerciseNavMenu({
         <div className="border-border flex items-center justify-end border-b pb-3">
           <button
             type="button"
-            className="text-muted-foreground min-h-11 px-2 text-sm hover:text-white"
+            className="text-muted-foreground hover:text-foreground min-h-11 px-2 text-sm"
             onClick={() => {
               onOpenChange(false);
             }}

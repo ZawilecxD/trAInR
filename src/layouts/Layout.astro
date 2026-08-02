@@ -1,15 +1,19 @@
 ---
 import "../styles/global.css";
 import Banner from "@/components/Banner.astro";
+import BottomNav from "@/components/BottomNav.astro";
 import Topbar from "@/components/Topbar.astro";
 import { Toaster } from "@/components/ui/sonner";
 import { missingConfigs } from "@/lib/config-status";
+import { cn } from "@/lib/utils";
 
 interface Props {
   title?: string;
 }
 
 const { title = "trAInR" } = Astro.props;
+const { user, role } = Astro.locals;
+const hasMobileBottomNav = Boolean(user && (role === "trainer" || role === "client"));
 ---
 
 <!doctype html>
@@ -38,7 +42,10 @@ const { title = "trAInR" } = Astro.props;
       ))
     }
     <Topbar />
-    <slot />
+    <div class:list={cn(hasMobileBottomNav && "pb-20 md:pb-0")}>
+      <slot />
+    </div>
+    <BottomNav />
     <Toaster client:load />
   </body>
 </html>

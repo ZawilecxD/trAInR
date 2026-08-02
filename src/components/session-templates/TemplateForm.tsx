@@ -285,7 +285,7 @@ export default function TemplateForm({
               className={formInputClassWithError(Boolean(errors.name))}
             />
             {errors.name ? (
-              <p className="mt-1 flex items-center gap-1 text-xs text-red-300">
+              <p className="text-destructive mt-1 flex items-center gap-1 text-xs">
                 <CircleAlert className="size-3" />
                 {errors.name}
               </p>
@@ -308,7 +308,7 @@ export default function TemplateForm({
               className={formInputClassWithError(Boolean(errors.description))}
             />
             {errors.description ? (
-              <p className="mt-1 flex items-center gap-1 text-xs text-red-300">
+              <p className="text-destructive mt-1 flex items-center gap-1 text-xs">
                 <CircleAlert className="size-3" />
                 {errors.description}
               </p>
@@ -331,7 +331,7 @@ export default function TemplateForm({
                   }}
                   aria-expanded={isOpen}
                 >
-                  <span className="font-medium text-white">
+                  <span className="text-foreground font-medium">
                     {label}
                     <span className="text-muted-foreground ml-2 text-sm font-normal">({entries.length})</span>
                   </span>
@@ -353,13 +353,13 @@ export default function TemplateForm({
                           className="border-border bg-card rounded-lg border p-4"
                         >
                           <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
-                            <p className="font-medium text-white">{entry.exerciseName}</p>
+                            <p className="text-foreground font-medium">{entry.exerciseName}</p>
                             <div className="flex items-center gap-1">
                               <Button
                                 type="button"
                                 variant="outline"
                                 size="sm"
-                                className="border-border hover:bg-accent bg-transparent text-white"
+                                className="border-border hover:bg-accent text-foreground bg-transparent"
                                 disabled={index === 0}
                                 onClick={() => {
                                   updatePhaseEntries(phase, swapEntries(entries, index, "up"));
@@ -372,7 +372,7 @@ export default function TemplateForm({
                                 type="button"
                                 variant="outline"
                                 size="sm"
-                                className="border-border hover:bg-accent bg-transparent text-white"
+                                className="border-border hover:bg-accent text-foreground bg-transparent"
                                 disabled={index === entries.length - 1}
                                 onClick={() => {
                                   updatePhaseEntries(phase, swapEntries(entries, index, "down"));
@@ -385,7 +385,7 @@ export default function TemplateForm({
                                 type="button"
                                 variant="outline"
                                 size="sm"
-                                className="border-border bg-transparent text-red-200 hover:bg-red-500/10"
+                                className="border-border text-destructive hover:bg-destructive/10 bg-transparent"
                                 onClick={() => {
                                   removeExerciseEntry(phase, index);
                                 }}
@@ -404,7 +404,7 @@ export default function TemplateForm({
                                 className={cn(
                                   "rounded-md px-3 py-1 text-xs font-medium transition-colors",
                                   entry.metricMode === metricMode
-                                    ? "bg-primary text-white"
+                                    ? "bg-primary text-primary-foreground"
                                     : "border-border text-muted-foreground hover:bg-accent border",
                                 )}
                                 onClick={() => {
@@ -456,7 +456,7 @@ export default function TemplateForm({
                                       type="button"
                                       variant="outline"
                                       size="sm"
-                                      className="border-border bg-transparent text-red-200 hover:bg-red-500/10"
+                                      className="border-border text-destructive hover:bg-destructive/10 bg-transparent"
                                       disabled={entry.rounds.length <= 1}
                                       onClick={() => {
                                         updateExerciseEntry(phase, index, removeRound(entry, roundIndex));
@@ -552,7 +552,7 @@ export default function TemplateForm({
                                 type="button"
                                 variant="outline"
                                 size="sm"
-                                className="border-border hover:bg-accent bg-transparent text-white"
+                                className="border-border hover:bg-accent text-foreground bg-transparent"
                                 aria-label={`Add round to ${entry.exerciseName}`}
                                 disabled={entry.rounds.length >= 20}
                                 onClick={() => {
@@ -584,7 +584,7 @@ export default function TemplateForm({
                     <Button
                       type="button"
                       variant="outline"
-                      className="border-border hover:bg-accent bg-transparent text-white"
+                      className="border-border hover:bg-accent text-foreground bg-transparent"
                       aria-label={`Add exercise to ${label}`}
                       onClick={() => {
                         setPickerPhase(phase);
@@ -601,14 +601,18 @@ export default function TemplateForm({
         </div>
 
         {errors.form ? (
-          <p className="flex items-center gap-2 rounded-lg border border-red-400/30 bg-red-500/10 px-3 py-2 text-sm text-red-200">
+          <p className="border-destructive/30 bg-destructive/10 text-destructive flex items-center gap-2 rounded-lg border px-3 py-2 text-sm">
             <CircleAlert className="size-4 shrink-0" />
             {errors.form}
           </p>
         ) : null}
 
         <div className="flex flex-wrap gap-3">
-          <Button type="submit" disabled={submitting || deleting} className="bg-primary hover:bg-primary/90 text-white">
+          <Button
+            type="submit"
+            disabled={submitting || deleting}
+            className="bg-primary hover:bg-primary/90 text-primary-foreground"
+          >
             {submitting ? <Loader2 className="size-4 animate-spin" /> : <Save className="size-4" />}
             {mode === "create" ? "Create template" : "Save changes"}
           </Button>
@@ -616,7 +620,7 @@ export default function TemplateForm({
           <Button
             type="button"
             variant="outline"
-            className="border-border hover:bg-accent bg-transparent text-white"
+            className="border-border hover:bg-accent text-foreground bg-transparent"
             onClick={() => {
               if (onCancel) {
                 onCancel();

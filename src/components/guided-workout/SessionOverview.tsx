@@ -49,12 +49,12 @@ export default function SessionOverview({
       <header className="mb-6">
         <a
           href="/client/plan"
-          className="text-muted-foreground inline-flex min-h-11 items-center gap-2 text-sm transition-colors hover:text-white"
+          className="text-muted-foreground hover:text-foreground inline-flex min-h-11 items-center gap-2 text-sm transition-colors"
         >
           <ArrowLeft className="size-4" aria-hidden="true" />
           Calendar
         </a>
-        <h1 className="mt-4 text-3xl font-bold text-white">{session.name ?? "Workout"}</h1>
+        <h1 className="text-foreground mt-4 text-3xl font-bold">{session.name ?? "Workout"}</h1>
       </header>
 
       <div className="space-y-4 pb-28">
@@ -62,15 +62,19 @@ export default function SessionOverview({
           <dl className="grid gap-3 text-sm">
             <div className="flex justify-between gap-4">
               <dt className="text-muted-foreground">Assigned by</dt>
-              <dd className="text-right font-medium text-white">{session.trainer_display_name || "Your trainer"}</dd>
+              <dd className="text-foreground text-right font-medium">
+                {session.trainer_display_name || "Your trainer"}
+              </dd>
             </div>
             <div className="flex justify-between gap-4">
               <dt className="text-muted-foreground">Date</dt>
-              <dd className="text-right font-medium text-white">{formatSessionOverviewDate(session.scheduled_date)}</dd>
+              <dd className="text-foreground text-right font-medium">
+                {formatSessionOverviewDate(session.scheduled_date)}
+              </dd>
             </div>
             <div className="flex justify-between gap-4">
               <dt className="text-muted-foreground">Total exercises</dt>
-              <dd className="text-right font-medium text-white">{session.exercises.length}</dd>
+              <dd className="text-foreground text-right font-medium">{session.exercises.length}</dd>
             </div>
           </dl>
         </section>
@@ -78,7 +82,7 @@ export default function SessionOverview({
         {trainerNote ? (
           <section className="border-border bg-card rounded-2xl border p-5 backdrop-blur-xl">
             <h2 className="text-muted-foreground text-sm font-medium">Trainer note</h2>
-            <p className="mt-2 text-sm leading-relaxed text-white/90">{trainerNote}</p>
+            <p className="text-foreground/90 mt-2 text-sm leading-relaxed">{trainerNote}</p>
           </section>
         ) : null}
 
@@ -90,7 +94,7 @@ export default function SessionOverview({
         <SessionCommentsThread sessionId={session.id} currentUserId={currentUserId} />
 
         {beginError ? (
-          <p className="rounded-lg border border-red-400/30 bg-red-500/10 px-4 py-3 text-sm text-red-100">
+          <p className="border-destructive/30 bg-destructive/10 text-destructive rounded-lg border px-4 py-3 text-sm">
             {beginError}
           </p>
         ) : null}
@@ -99,7 +103,7 @@ export default function SessionOverview({
       <div className="border-border bg-background/90 fixed inset-x-0 bottom-0 border-t p-4 backdrop-blur-xl">
         <div className="mx-auto max-w-2xl space-y-2">
           {cancelError ? (
-            <p className="rounded-lg border border-red-400/30 bg-red-500/10 px-4 py-2 text-sm text-red-100">
+            <p className="border-destructive/30 bg-destructive/10 text-destructive rounded-lg border px-4 py-2 text-sm">
               {cancelError}
             </p>
           ) : null}

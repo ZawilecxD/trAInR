@@ -98,7 +98,7 @@ export default function ExerciseFilters({ muscleGroups, initialFilters }: Exerci
             Search
           </label>
           <div className="relative">
-            <Search className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-white/40" />
+            <Search className="text-foreground/40 absolute top-1/2 left-3 size-4 -translate-y-1/2" />
             <input
               id="filter-q"
               name="q"
@@ -155,7 +155,7 @@ export default function ExerciseFilters({ muscleGroups, initialFilters }: Exerci
                 className={cn(
                   "rounded-full border px-3 py-1 text-xs transition-colors",
                   selected
-                    ? "border-primary/60 bg-primary/30 text-white"
+                    ? "border-primary/60 bg-primary/30 text-primary-foreground"
                     : "border-border bg-card text-muted-foreground hover:bg-accent",
                 )}
               >

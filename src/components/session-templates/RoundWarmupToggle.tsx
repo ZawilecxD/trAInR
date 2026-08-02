@@ -36,7 +36,7 @@ export default function RoundWarmupToggle({
             isWarmup === option.value
               ? option.value
                 ? "bg-accent text-muted-foreground"
-                : "bg-primary text-white"
+                : "bg-primary text-primary-foreground"
               : "border-border text-muted-foreground hover:bg-accent border",
           )}
           onClick={() => {

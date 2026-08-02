@@ -47,7 +47,7 @@ function ExerciseEditCard({
         <p className="text-text-soft font-mono text-xs tracking-widest">{phaseLabel(exercise.phase)}</p>
         <button
           type="button"
-          className="hover:text-foreground mt-2 text-left text-lg font-semibold text-white"
+          className="hover:text-foreground text-foreground mt-2 text-left text-lg font-semibold"
           onClick={() => {
             onJumpToExercise(exerciseIndex);
           }}
@@ -126,7 +126,7 @@ export default function SessionEditList({
         {isInProgress ? (
           <a
             href="/client/plan"
-            className="text-muted-foreground inline-flex min-h-11 items-center gap-2 text-sm transition-colors hover:text-white"
+            className="text-muted-foreground hover:text-foreground inline-flex min-h-11 items-center gap-2 text-sm transition-colors"
           >
             <ArrowLeft className="size-4" aria-hidden="true" />
             Calendar
@@ -134,7 +134,7 @@ export default function SessionEditList({
         ) : (
           <button
             type="button"
-            className="text-muted-foreground inline-flex min-h-11 items-center gap-2 text-sm transition-colors hover:text-white"
+            className="text-muted-foreground hover:text-foreground inline-flex min-h-11 items-center gap-2 text-sm transition-colors"
             onClick={onBackToSummary}
           >
             <ArrowLeft className="size-4" aria-hidden="true" />
@@ -143,13 +143,13 @@ export default function SessionEditList({
         )}
         <div className="mt-4 flex flex-wrap items-start justify-between gap-3">
           <div>
-            <h1 className="text-3xl font-bold text-white">{session.name ?? "Workout"}</h1>
+            <h1 className="text-foreground text-3xl font-bold">{session.name ?? "Workout"}</h1>
             <p className="text-muted-foreground mt-1 text-sm">{formatSessionOverviewDate(session.scheduled_date)}</p>
           </div>
           <Button
             type="button"
             variant="outline"
-            className="border-border bg-card hover:bg-accent min-h-11 text-white"
+            className="border-border bg-card hover:bg-accent text-foreground min-h-11"
             disabled={readOnly || !isInProgress}
             onClick={() => {
               setRestartOpen(true);
@@ -170,7 +170,7 @@ export default function SessionEditList({
         </div>
         <EditWindowBanner lockedAt={session.locked_at} hasLogs={hasLogs} />
         {restartError ? (
-          <p className="mt-3 rounded-lg border border-red-400/30 bg-red-500/10 px-4 py-3 text-sm text-red-100">
+          <p className="border-destructive/30 bg-destructive/10 text-destructive mt-3 rounded-lg border px-4 py-3 text-sm">
             {restartError}
           </p>
         ) : null}
@@ -195,7 +195,7 @@ export default function SessionEditList({
       <div className="border-border bg-background/90 fixed inset-x-0 bottom-0 border-t p-4 backdrop-blur-xl">
         <div className="mx-auto max-w-2xl space-y-2">
           {completeError ? (
-            <p className="rounded-lg border border-red-400/30 bg-red-500/10 px-4 py-2 text-sm text-red-100">
+            <p className="border-destructive/30 bg-destructive/10 text-destructive rounded-lg border px-4 py-2 text-sm">
               {completeError}
             </p>
           ) : null}

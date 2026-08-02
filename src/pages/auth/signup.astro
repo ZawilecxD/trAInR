@@ -40,7 +40,7 @@ const pageTitle = isClientInvite ? "Join as client" : "Sign up";
 
 <Layout title={pageTitle}>
   <div class="bg-background flex min-h-screen items-center justify-center p-4">
-    <div class="border-border bg-muted w-full max-w-sm rounded-2xl border p-8 text-white backdrop-blur-xl">
+    <div class="border-border bg-muted text-foreground w-full max-w-sm rounded-2xl border p-8 backdrop-blur-xl">
       {
         token && tokenInvalid ? (
           <>
@@ -62,7 +62,8 @@ const pageTitle = isClientInvite ? "Join as client" : "Sign up";
             </h1>
             {isClientInvite ? (
               <p class="text-muted-foreground mb-4 text-center text-sm">
-                You've been invited by <span class="font-semibold text-white">{trainerName ?? "your trainer"}</span>
+                You've been invited by{" "}
+                <span class="text-foreground font-semibold">{trainerName ?? "your trainer"}</span>
               </p>
             ) : null}
             <SignUpForm serverError={error} token={token ?? undefined} trainerName={trainerName} client:load />

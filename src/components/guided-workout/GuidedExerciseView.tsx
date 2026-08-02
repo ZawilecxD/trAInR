@@ -46,7 +46,7 @@ export default function GuidedExerciseView({
         {startedAt ? (
           <button
             type="button"
-            className="text-muted-foreground inline-flex min-h-11 min-w-11 items-center justify-center text-sm hover:text-white"
+            className="text-muted-foreground hover:text-foreground inline-flex min-h-11 min-w-11 items-center justify-center text-sm"
             onClick={onBackToEditList}
             aria-label="All exercises"
           >
@@ -55,7 +55,7 @@ export default function GuidedExerciseView({
         ) : (
           <button
             type="button"
-            className="text-muted-foreground inline-flex min-h-11 items-center gap-2 text-sm hover:text-white lg:col-span-1"
+            className="text-muted-foreground hover:text-foreground inline-flex min-h-11 items-center gap-2 text-sm lg:col-span-1"
             onClick={onBackToOverview}
           >
             <ArrowLeft className="size-4" aria-hidden="true" />
@@ -63,13 +63,13 @@ export default function GuidedExerciseView({
           </button>
         )}
 
-        <span className="text-center text-sm font-medium text-white lg:text-left">
+        <span className="text-foreground text-center text-sm font-medium lg:text-left">
           {exerciseIndex + 1} of {totalExercises}
         </span>
 
         <button
           type="button"
-          className="border-border text-muted-foreground inline-flex min-h-11 min-w-11 items-center justify-center rounded-lg border hover:text-white disabled:opacity-40 lg:hidden"
+          className="border-border text-muted-foreground hover:text-foreground inline-flex min-h-11 min-w-11 items-center justify-center rounded-lg border disabled:opacity-40 lg:hidden"
           onClick={onOpenMenu}
           disabled={!onOpenMenu}
           aria-label="Exercise menu"
@@ -81,7 +81,7 @@ export default function GuidedExerciseView({
       <div className="space-y-4 pb-28 lg:pb-4">
         <section>
           <p className="text-text-soft font-mono text-xs tracking-widest">{phaseLabel(exercise.phase)}</p>
-          <h1 className="mt-2 text-3xl font-bold text-white">{exercise.exercise_name || "Exercise"}</h1>
+          <h1 className="text-foreground mt-2 text-3xl font-bold">{exercise.exercise_name || "Exercise"}</h1>
           {exercise.notes ? <p className="text-muted-foreground mt-2 text-sm">{exercise.notes}</p> : null}
         </section>
 
@@ -102,7 +102,7 @@ export default function GuidedExerciseView({
           <Button
             type="button"
             variant="outline"
-            className="border-border bg-card hover:bg-accent min-h-12 flex-1 text-base text-white"
+            className="border-border bg-card hover:bg-accent text-foreground min-h-12 flex-1 text-base"
             disabled={isFirstExercise || isNavigating}
             onClick={onPrev}
           >

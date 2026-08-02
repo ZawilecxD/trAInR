@@ -1,5 +1,6 @@
 ---
 import Layout from "@/layouts/Layout.astro";
+import EmptyState from "@/components/EmptyState.astro";
 import ExerciseFilters from "@/components/exercises/ExerciseFilters";
 import ExerciseFavouriteButton from "@/components/exercises/ExerciseFavouriteButton";
 import { searchParamsToFilters } from "@/lib/exercises/filter-url";
@@ -7,6 +8,7 @@ import { EXERCISE_METRIC_LABELS, EXERCISE_TYPE_LABELS } from "@/lib/exercises/la
 import { parseListExercisesQuery } from "@/lib/exercises/schemas";
 import { listExercises } from "@/lib/exercises/service";
 import { createClient } from "@/lib/supabase";
+import { errorBannerClass, pageShellClass, successBannerClass } from "@/lib/ui-classes";
 import type { MuscleGroup } from "@/types";
 
 const supabase = createClient(Astro.request.headers, Astro.cookies);
@@ -55,7 +57,7 @@ const hasActiveFilters =
 ---
 
 <Layout title="Exercise library">
-  <div class="bg-background min-h-screen p-4 md:p-8">
+  <div class:list={pageShellClass}>
     <div class="mx-auto max-w-6xl space-y-6">
       <div class="flex flex-wrap items-center justify-between gap-4">
         <div>
@@ -64,27 +66,15 @@ const hasActiveFilters =
         </div>
         <a
           href="/trainer/exercises/new"
-          class="bg-primary hover:bg-primary/90 rounded-lg px-4 py-2 text-sm font-medium text-white transition-colors"
+          class="bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg px-4 py-2 text-sm font-medium transition-colors"
         >
           New exercise
         </a>
       </div>
 
-      {
-        flashMessage ? (
-          <div class="rounded-lg border border-green-400/30 bg-green-500/10 px-4 py-3 text-sm text-green-100">
-            {flashMessage}
-          </div>
-        ) : null
-      }
+      {flashMessage ? <div class:list={successBannerClass}>{flashMessage}</div> : null}
 
-      {
-        loadError ? (
-          <div class="rounded-lg border border-red-400/30 bg-red-500/10 px-4 py-3 text-sm text-red-100">
-            Failed to load exercises: {loadError}
-          </div>
-        ) : null
-      }
+      {loadError ? <div class:list={errorBannerClass}>Failed to load exercises: {loadError}</div> : null}
 
       {
         !loadError ? (
@@ -92,25 +82,25 @@ const hasActiveFilters =
             <ExerciseFilters client:load muscleGroups={muscleGroupRows} initialFilters={initialFilters} />
 
             {exerciseRows.length === 0 ? (
-              <div class="border-border bg-card text-muted-foreground rounded-2xl border p-8 text-center">
-                {hasActiveFilters ? (
-                  <>
-                    <p class="text-lg font-medium text-white">No exercises match your filters</p>
-                    <p class="mt-2 text-sm">Try clearing filters or adjusting your search.</p>
-                  </>
-                ) : (
-                  <>
-                    <p class="text-lg font-medium text-white">No exercises yet</p>
-                    <p class="mt-2 text-sm">Create your first exercise to start building your library.</p>
-                    <a
-                      href="/trainer/exercises/new"
-                      class="border-border hover:bg-accent mt-4 inline-block rounded-lg border px-4 py-2 text-sm transition-colors"
-                    >
-                      Create exercise
-                    </a>
-                  </>
-                )}
-              </div>
+              hasActiveFilters ? (
+                <EmptyState
+                  title="No exercises match your filters"
+                  description="Try clearing filters or adjusting your search."
+                />
+              ) : (
+                <EmptyState
+                  title="No exercises yet"
+                  description="Create your first exercise to start building your library."
+                >
+                  <a
+                    slot="action"
+                    href="/trainer/exercises/new"
+                    class="border-border hover:bg-accent inline-block rounded-lg border px-4 py-2 text-sm transition-colors"
+                  >
+                    Create exercise
+                  </a>
+                </EmptyState>
+              )
             ) : (
               <div class="border-border bg-card overflow-hidden rounded-2xl border">
                 <div class="overflow-x-auto">
@@ -137,7 +127,7 @@ const hasActiveFilters =
                               initialIsFavourite={exercise.is_favourite}
                             />
                           </td>
-                          <td class="px-4 py-3 font-medium text-white">{exercise.name}</td>
+                          <td class="text-foreground px-4 py-3 font-medium">{exercise.name}</td>
                           <td class="px-4 py-3">{EXERCISE_TYPE_LABELS[exercise.exercise_type]}</td>
                           <td class="px-4 py-3">{EXERCISE_METRIC_LABELS[exercise.default_metric]}</td>
                           <td class="px-4 py-3">

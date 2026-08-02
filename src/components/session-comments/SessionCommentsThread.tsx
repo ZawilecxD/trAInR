@@ -22,7 +22,7 @@ function formatTimestamp(iso: string): string {
 function AuthorBadge({ role, isMe }: { role: UserRole; isMe: boolean }) {
   if (isMe) {
     return (
-      <span className="border-border bg-muted inline-flex items-center rounded-full border px-2 py-0.5 text-xs font-medium text-white/80">
+      <span className="border-border bg-muted text-foreground/80 inline-flex items-center rounded-full border px-2 py-0.5 text-xs font-medium">
         You
       </span>
     );
@@ -54,7 +54,7 @@ function CommentItem({ comment, currentUserId }: CommentItemProps) {
   return (
     <article className={cn("flex flex-col gap-1", isMe ? "items-end" : "items-start")}>
       <div className="flex items-center gap-2">
-        <span className="text-sm font-medium text-white/90">{comment.author_display_name}</span>
+        <span className="text-foreground/90 text-sm font-medium">{comment.author_display_name}</span>
         <AuthorBadge role={comment.author_role} isMe={isMe} />
         <time className="text-muted-foreground text-xs" dateTime={comment.created_at}>
           {formatTimestamp(comment.created_at)}
@@ -154,7 +154,7 @@ export default function SessionCommentsThread({ sessionId, currentUserId }: Sess
       {loading ? (
         <div className="text-muted-foreground py-6 text-center text-sm">Loading…</div>
       ) : fetchError ? (
-        <div className="rounded-lg border border-red-400/30 bg-red-500/10 px-4 py-3 text-sm text-red-100">
+        <div className="border-destructive/30 bg-destructive/10 text-destructive rounded-lg border px-4 py-3 text-sm">
           {fetchError}
         </div>
       ) : comments.length === 0 ? (
@@ -182,11 +182,11 @@ export default function SessionCommentsThread({ sessionId, currentUserId }: Sess
           placeholder="Write a comment…"
           rows={3}
           maxLength={2000}
-          className="border-border bg-card placeholder:text-foreground/40 resize-none text-white focus-visible:ring-white/30"
+          className="border-border bg-card placeholder:text-foreground/40 text-foreground focus-visible:ring-ring/30 resize-none"
           disabled={submitting}
           aria-label="Comment text"
         />
-        {submitError ? <p className="text-sm text-red-300">{submitError}</p> : null}
+        {submitError ? <p className="text-destructive text-sm">{submitError}</p> : null}
         <div className="flex justify-end">
           <Button type="submit" disabled={!draft.trim() || submitting} className="min-h-9">
             {submitting ? "Sending…" : "Send"}

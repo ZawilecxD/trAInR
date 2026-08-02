@@ -24,7 +24,7 @@ export default function ClientWeekView({ sessions, weekStart }: ClientWeekViewPr
       <ul className="space-y-4">
         {weekDays.map((day) => (
           <li key={day.isoDate}>
-            <h3 className="mb-2 text-sm font-semibold text-white">
+            <h3 className="text-foreground mb-2 text-sm font-semibold">
               {day.date.toLocaleDateString(undefined, {
                 weekday: "long",
                 month: "short",
@@ -44,7 +44,7 @@ export default function ClientWeekView({ sessions, weekStart }: ClientWeekViewPr
                       className="border-border bg-card hover:bg-accent flex min-h-11 items-center justify-between gap-3 rounded-lg border px-4 py-3 transition-colors"
                     >
                       <div className="min-w-0">
-                        <span className="block truncate font-medium text-white">{session.name}</span>
+                        <span className="text-foreground block truncate font-medium">{session.name}</span>
                         <Badge variant="outline" className={cn("mt-1", sessionStatusBadgeClass(session.status))}>
                           {sessionStatusLabel(session.status)}
                         </Badge>

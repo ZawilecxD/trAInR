@@ -1,0 +1,171 @@
+---
+import { cn } from "@/lib/utils";
+
+const { user, role } = Astro.locals;
+const pathname = Astro.url.pathname;
+
+interface NavItem {
+  href: string;
+  label: string;
+  icon: "dashboard" | "clients" | "exercises" | "templates" | "plan" | "workout";
+  /** When set, overrides href-prefix matching for the active state. */
+  match?: (path: string) => boolean;
+}
+
+function isItemActive(item: NavItem): boolean {
+  if (item.match) {
+    return item.match(pathname);
+  }
+  return pathname === item.href || pathname.startsWith(`${item.href}/`);
+}
+
+const trainerNav: NavItem[] = [
+  { href: "/trainer/dashboard", label: "Dashboard", icon: "dashboard" },
+  { href: "/trainer/clients", label: "Clients", icon: "clients" },
+  { href: "/trainer/exercises", label: "Exercises", icon: "exercises" },
+  { href: "/trainer/templates", label: "Templates", icon: "templates" },
+];
+
+const clientNav: NavItem[] = [
+  {
+    href: "/client/dashboard",
+    label: "Dashboard",
+    icon: "dashboard",
+    match: (path) => path === "/client/dashboard" || path.startsWith("/client/dashboard/"),
+  },
+  {
+    href: "/client/plan",
+    label: "My Plan",
+    icon: "plan",
+    match: (path) => path === "/client/plan" || path.startsWith("/client/plan/"),
+  },
+  {
+    href: "/client/plan",
+    label: "Workout",
+    icon: "workout",
+    match: (path) => path.startsWith("/client/sessions"),
+  },
+];
+
+let navItems: NavItem[] = [];
+if (user && role === "trainer") {
+  navItems = trainerNav;
+} else if (user && role === "client") {
+  navItems = clientNav;
+}
+
+const showBottomNav = navItems.length > 0;
+---
+
+{
+  showBottomNav ? (
+    <nav
+      class="border-border bg-background/95 fixed inset-x-0 bottom-0 z-50 border-t backdrop-blur-md md:hidden"
+      aria-label="Mobile app"
+      style="padding-bottom: env(safe-area-inset-bottom, 0px);"
+    >
+      <ul class="mx-auto flex max-w-lg items-stretch justify-around px-1">
+        {navItems.map((item) => {
+          const active = isItemActive(item);
+          return (
+            <li class="min-w-0 flex-1">
+              <a
+                href={item.href}
+                class:list={cn(
+                  "flex min-h-11 flex-col items-center justify-center gap-0.5 px-1 py-2 text-[10px] font-medium tracking-wide transition-colors",
+                  active ? "text-primary" : "text-muted-foreground hover:text-foreground",
+                )}
+                aria-current={active ? "page" : undefined}
+              >
+                <span class="relative flex size-6 items-center justify-center" aria-hidden="true">
+                  {item.icon === "dashboard" ? (
+                    <svg
+                      class="size-5"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+                      <rect width="7" height="7" x="3" y="3" rx="1" />
+                      <rect width="7" height="7" x="14" y="3" rx="1" />
+                      <rect width="7" height="7" x="14" y="14" rx="1" />
+                      <rect width="7" height="7" x="3" y="14" rx="1" />
+                    </svg>
+                  ) : null}
+                  {item.icon === "clients" ? (
+                    <svg
+                      class="size-5"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+                      <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                      <circle cx="9" cy="7" r="4" />
+                      <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+                      <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                    </svg>
+                  ) : null}
+                  {item.icon === "exercises" || item.icon === "workout" ? (
+                    <svg
+                      class="size-5"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+                      <path d="M17.596 12.768a2 2 0 1 0 2.829-2.829l-1.768-1.767a2 2 0 0 0 2.828-2.829l-2.828-2.828a2 2 0 0 0-2.829 2.828l-1.767-1.768a2 2 0 1 0-2.829 2.829z" />
+                      <path d="m2.5 21.5 1.4-1.4" />
+                      <path d="m20.1 3.9 1.4-1.4" />
+                      <path d="M5.343 21.485a2 2 0 1 0 2.829-2.828l1.767 1.768a2 2 0 1 0 2.829-2.829l-6.364-6.364a2 2 0 1 0-2.829 2.829l1.768 1.767a2 2 0 0 0-2.828 2.829z" />
+                      <path d="m9.6 14.4 4.8-4.8" />
+                    </svg>
+                  ) : null}
+                  {item.icon === "templates" ? (
+                    <svg
+                      class="size-5"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+                      <rect width="18" height="7" x="3" y="3" rx="1" />
+                      <rect width="9" height="7" x="3" y="14" rx="1" />
+                      <rect width="5" height="7" x="16" y="14" rx="1" />
+                    </svg>
+                  ) : null}
+                  {item.icon === "plan" ? (
+                    <svg
+                      class="size-5"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+                      <path d="M8 2v4" />
+                      <path d="M16 2v4" />
+                      <rect width="18" height="18" x="3" y="4" rx="2" />
+                      <path d="M3 10h18" />
+                    </svg>
+                  ) : null}
+                  {active ? <span class="bg-primary absolute -bottom-1 size-1 rounded-full" /> : null}
+                </span>
+                <span class="truncate">{item.label}</span>
+              </a>
+            </li>
+          );
+        })}
+      </ul>
+    </nav>
+  ) : null
+}

@@ -52,14 +52,14 @@ export default function TemplateFormModal({
         className="border-border bg-popover relative z-10 flex max-h-[90vh] w-full max-w-4xl flex-col overflow-hidden rounded-2xl border shadow-xl"
       >
         <div className="border-border flex items-center justify-between border-b px-5 py-4">
-          <h2 id="template-form-modal-title" className="text-lg font-semibold text-white">
+          <h2 id="template-form-modal-title" className="text-foreground text-lg font-semibold">
             {title}
           </h2>
           <Button
             type="button"
             variant="outline"
             size="sm"
-            className="border-border hover:bg-accent bg-transparent text-white"
+            className="border-border hover:bg-accent text-foreground bg-transparent"
             onClick={onClose}
             aria-label="Close"
           >

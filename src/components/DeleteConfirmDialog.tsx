@@ -34,9 +34,9 @@ type DeleteConfirmDialogTriggerProps = DeleteConfirmDialogBaseProps & {
 
 export type DeleteConfirmDialogProps = DeleteConfirmDialogControlledProps | DeleteConfirmDialogTriggerProps;
 
-const dialogContentClass = "border-border bg-popover text-white";
-const cancelClass = "border-border bg-muted text-white hover:bg-accent";
-const confirmClass = "bg-destructive hover:bg-destructive/90 text-white";
+const dialogContentClass = "border-border bg-popover text-foreground";
+const cancelClass = "border-border bg-muted text-foreground hover:bg-accent";
+const confirmClass = "bg-destructive hover:bg-destructive/90 text-destructive-foreground";
 
 function DeleteConfirmDialogContent({
   title,
