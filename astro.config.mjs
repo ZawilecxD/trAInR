@@ -27,10 +27,23 @@ export default defineConfig({
   ],
   vite: {
     plugins: [tailwindcss()],
+    resolve: {
+      // One React for islands + prebundled calendar deps (avoids
+      // "Cannot read properties of null (reading 'useMemo')" from DayPicker).
+      dedupe: ["react", "react-dom"],
+    },
     optimizeDeps: {
-      // Keep calendar / icon / date deps eagerly prebundled so island hydration
-      // does not 504 on a stale or partial node_modules/.vite cache.
-      include: ["date-fns", "lucide-react", "react-day-picker"],
+      // Prebundle React first, then calendar/icon/date peers that import it,
+      // so DayPicker shares the same dispatcher as @astrojs/react islands.
+      include: [
+        "react",
+        "react-dom",
+        "react/jsx-runtime",
+        "react/jsx-dev-runtime",
+        "date-fns",
+        "lucide-react",
+        "react-day-picker",
+      ],
     },
   },
   adapter: vercel(),

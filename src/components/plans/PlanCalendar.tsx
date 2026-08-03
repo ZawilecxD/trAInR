@@ -98,12 +98,13 @@ export default function PlanCalendar({
         sessionFinished: cn(sessionDotBase, "after:bg-success"),
         sessionCancelled: cn(sessionDotBase, "after:bg-destructive"),
       }}
-      className="text-foreground w-full max-w-full bg-transparent p-1 [--cell-size:2.75rem]"
+      className="text-foreground w-full max-w-full min-w-0 bg-transparent p-1"
       classNames={{
-        caption_label: "text-base font-semibold text-foreground",
-        weekday: "w-11 shrink-0 text-xs text-muted-foreground",
+        caption_label: "truncate text-base font-semibold text-foreground",
+        weekday: "min-w-0 flex-1 basis-0 text-xs text-muted-foreground",
+        day: "min-w-0 flex-1 basis-0",
         day_button: cn(
-          "size-11 rounded-lg text-foreground hover:bg-accent",
+          "mx-auto aspect-square h-auto w-full max-h-11 max-w-11 min-h-9 rounded-lg text-foreground hover:bg-accent",
           "aria-selected:bg-primary aria-selected:text-primary-foreground aria-selected:hover:bg-primary/90",
         ),
         today: "border border-primary/40 bg-primary/10 text-primary-foreground",

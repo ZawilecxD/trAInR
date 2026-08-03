@@ -1,6 +1,8 @@
 import { type SyntheticEvent, useEffect, useRef, useState } from "react";
+import { EmptyState } from "@/components/EmptyState";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { errorBannerClass, surfaceCardClass } from "@/lib/ui-classes";
 import { cn } from "@/lib/utils";
 import type { SessionCommentWithAuthor, UserRole } from "@/types";
 
@@ -22,7 +24,7 @@ function formatTimestamp(iso: string): string {
 function AuthorBadge({ role, isMe }: { role: UserRole; isMe: boolean }) {
   if (isMe) {
     return (
-      <span className="border-border bg-muted text-foreground/80 inline-flex items-center rounded-full border px-2 py-0.5 text-xs font-medium">
+      <span className="label-caps border-border bg-muted text-foreground/80 inline-flex items-center rounded-[var(--radius-pill)] border px-2 py-0.5">
         You
       </span>
     );
@@ -30,14 +32,14 @@ function AuthorBadge({ role, isMe }: { role: UserRole; isMe: boolean }) {
 
   if (role === "trainer") {
     return (
-      <span className="border-warning/30 bg-warning/10 text-warning inline-flex items-center rounded-full border px-2 py-0.5 text-xs font-medium">
+      <span className="label-caps border-warning/30 bg-warning/10 text-warning inline-flex items-center rounded-[var(--radius-pill)] border px-2 py-0.5">
         Trainer
       </span>
     );
   }
 
   return (
-    <span className="border-primary/30 bg-primary/10 text-text-soft inline-flex items-center rounded-full border px-2 py-0.5 text-xs font-medium">
+    <span className="label-caps border-primary/30 bg-primary/10 text-text-soft inline-flex items-center rounded-[var(--radius-pill)] border px-2 py-0.5">
       Client
     </span>
   );
@@ -148,17 +150,15 @@ export default function SessionCommentsThread({ sessionId, currentUserId }: Sess
   }
 
   return (
-    <section className="border-border bg-card rounded-2xl border p-5 backdrop-blur-xl">
-      <h2 className="text-muted-foreground mb-4 text-sm font-medium">Comments</h2>
+    <section className={cn(surfaceCardClass, "p-5")}>
+      <h2 className="text-text-soft label-caps mb-4">Comments</h2>
 
       {loading ? (
         <div className="text-muted-foreground py-6 text-center text-sm">Loading…</div>
       ) : fetchError ? (
-        <div className="border-destructive/30 bg-destructive/10 text-destructive rounded-lg border px-4 py-3 text-sm">
-          {fetchError}
-        </div>
+        <div className={errorBannerClass}>{fetchError}</div>
       ) : comments.length === 0 ? (
-        <p className="text-muted-foreground py-4 text-center text-sm">No comments yet</p>
+        <EmptyState title="No comments yet" description="Start the thread below." className="mb-4 border-dashed" />
       ) : (
         <div className="mb-4 space-y-4">
           {comments.map((comment) => (
@@ -182,13 +182,17 @@ export default function SessionCommentsThread({ sessionId, currentUserId }: Sess
           placeholder="Write a comment…"
           rows={3}
           maxLength={2000}
-          className="border-border bg-card placeholder:text-foreground/40 text-foreground focus-visible:ring-ring/30 resize-none"
+          className="border-input bg-popover placeholder:text-muted-foreground text-foreground focus-visible:ring-ring resize-none"
           disabled={submitting}
           aria-label="Comment text"
         />
         {submitError ? <p className="text-destructive text-sm">{submitError}</p> : null}
         <div className="flex justify-end">
-          <Button type="submit" disabled={!draft.trim() || submitting} className="min-h-9">
+          <Button
+            type="submit"
+            disabled={!draft.trim() || submitting}
+            className="bg-primary hover:bg-primary/90 text-primary-foreground min-h-11"
+          >
             {submitting ? "Sending…" : "Send"}
           </Button>
         </div>

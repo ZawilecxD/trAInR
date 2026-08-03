@@ -5,6 +5,7 @@ import { isTrainerAssignedToClient } from "@/lib/client-plans/service";
 import { listExercises } from "@/lib/exercises/service";
 import { getTemplate, type TemplateWithExercises } from "@/lib/session-templates/service";
 import { createClient } from "@/lib/supabase";
+import { errorBannerClass, pageShellClass } from "@/lib/ui-classes";
 import { z } from "zod";
 
 const clientIdSchema = z.uuid();
@@ -59,7 +60,7 @@ const clientName = typeof profileResult.data?.display_name === "string" ? profil
 ---
 
 <Layout title={`New session — ${clientName}`}>
-  <div class="bg-background min-h-screen p-4 md:p-8">
+  <div class:list={pageShellClass}>
     <div class="mx-auto max-w-4xl space-y-6">
       <div>
         <a
@@ -68,7 +69,7 @@ const clientName = typeof profileResult.data?.display_name === "string" ? profil
         >
           ← Back to plan
         </a>
-        <h1 class="headline-lg text-foreground mt-3">New session</h1>
+        <h1 class="headline-lg text-foreground mt-3 text-balance">New session</h1>
         <p class="text-muted-foreground mt-1 text-sm">
           {
             initialSession
@@ -80,21 +81,17 @@ const clientName = typeof profileResult.data?.display_name === "string" ? profil
 
       {
         loadError ? (
-          <div class="border-destructive/30 bg-destructive/10 text-destructive rounded-lg border px-4 py-3 text-sm">
-            Failed to load editor: {loadError}
-          </div>
+          <div class:list={errorBannerClass}>Failed to load editor: {loadError}</div>
         ) : (
-          <div class="border-border bg-card rounded-2xl border p-6 backdrop-blur-xl">
-            <SessionForm
-              client:load
-              mode="create"
-              clientId={clientId}
-              initialScheduledDate={scheduledDate}
-              initialSourceTemplateId={sourceTemplateId}
-              availableExercises={availableExercises}
-              initialSession={initialSession}
-            />
-          </div>
+          <SessionForm
+            client:load
+            mode="create"
+            clientId={clientId}
+            initialScheduledDate={scheduledDate}
+            initialSourceTemplateId={sourceTemplateId}
+            availableExercises={availableExercises}
+            initialSession={initialSession}
+          />
         )
       }
     </div>

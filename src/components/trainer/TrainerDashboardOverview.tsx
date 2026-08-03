@@ -49,11 +49,7 @@ function clientSubtitle(client: TrainerDashboardClient): string {
   return client.activePlan ? client.activePlan.name : "No active plan";
 }
 
-export default function TrainerDashboardOverview({
-  dashboard,
-  trainerName,
-  greeting,
-}: TrainerDashboardOverviewProps) {
+export default function TrainerDashboardOverview({ dashboard, trainerName, greeting }: TrainerDashboardOverviewProps) {
   const { clients, summary, recentActivity } = dashboard;
   const hasClients = clients.length > 0;
   const firstClient = clients.at(0);

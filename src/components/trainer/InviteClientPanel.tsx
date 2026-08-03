@@ -205,9 +205,7 @@ export default function InviteClientPanel({ invites: initialInvites, clients: in
       <header className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <h1 className="headline-lg text-foreground">Clients</h1>
-          <p className="text-muted-foreground mt-1 text-sm">
-            Manage your roster, active plans, and client calendars.
-          </p>
+          <p className="text-muted-foreground mt-1 text-sm">Manage your roster, active plans, and client calendars.</p>
         </div>
         <Button
           type="button"

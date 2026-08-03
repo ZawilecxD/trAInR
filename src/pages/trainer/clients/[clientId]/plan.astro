@@ -7,6 +7,7 @@ import { listTemplates } from "@/lib/session-templates/service";
 import { listSessionsForClient } from "@/lib/workout-sessions/service";
 import { isoDateSchema } from "@/lib/workout-sessions/schemas";
 import { createClient } from "@/lib/supabase";
+import { errorBannerClass, pageShellClass } from "@/lib/ui-classes";
 import { z } from "zod";
 
 const clientIdSchema = z.uuid();
@@ -45,25 +46,23 @@ const showAssignedBanner = Astro.url.searchParams.get("assigned") === "1";
 ---
 
 <Layout title={`${clientName} — Training plan`}>
-  <div class="bg-background min-h-screen p-4 md:p-8">
-    <div class="mx-auto max-w-6xl space-y-6">
-      <div>
+  <div class:list={[pageShellClass, "overflow-x-hidden"]}>
+    <div class="mx-auto max-w-6xl min-w-0 space-y-6">
+      <div class="min-w-0">
         <a href="/trainer/clients" class="text-muted-foreground hover:text-foreground text-sm transition-colors">
           ← Back to clients
         </a>
-        <h1 class="headline-lg text-foreground mt-3">
+        <h1 class="headline-lg text-foreground mt-3 text-balance">
           {clientName}
         </h1>
-        <p class="text-muted-foreground mt-1 text-sm">
+        <p class="text-muted-foreground mt-1 text-sm text-pretty">
           Assign and personalize workout sessions on the client calendar.
         </p>
       </div>
 
       {
         loadError ? (
-          <div class="border-destructive/30 bg-destructive/10 text-destructive rounded-lg border px-4 py-3 text-sm">
-            Failed to load plan: {loadError}
-          </div>
+          <div class:list={errorBannerClass}>Failed to load plan: {loadError}</div>
         ) : (
           <ClientPlanHub
             client:load

@@ -8,6 +8,7 @@ import { listExercises } from "@/lib/exercises/service";
 import { isSessionEditable } from "@/lib/workout-sessions/form-validation";
 import { getSessionDetailForTrainer, getSessionWithExercises } from "@/lib/workout-sessions/service";
 import { createClient } from "@/lib/supabase";
+import { errorBannerClass, pageShellClass, surfaceCardClass } from "@/lib/ui-classes";
 import { z } from "zod";
 
 const clientIdSchema = z.uuid();
@@ -83,7 +84,7 @@ const pageTitle = notFound
 ---
 
 <Layout title={pageTitle}>
-  <div class="bg-background min-h-screen p-4 md:p-8">
+  <div class:list={pageShellClass}>
     <div class="mx-auto max-w-4xl space-y-6">
       <div>
         <a
@@ -92,7 +93,7 @@ const pageTitle = notFound
         >
           ← Back to plan
         </a>
-        <h1 class="headline-lg text-foreground mt-3">
+        <h1 class="headline-lg text-foreground mt-3 text-balance">
           {notFound ? "Session not found" : editable ? "Edit session" : "Session review"}
         </h1>
         {
@@ -108,39 +109,37 @@ const pageTitle = notFound
 
       {
         notFound ? (
-          <div class="border-border bg-card text-muted-foreground rounded-2xl border p-8 text-center">
+          <div class:list={[surfaceCardClass, "border-dashed px-6 py-10 text-center"]}>
             <p class="text-foreground text-lg font-medium">This session could not be found</p>
-            <p class="mt-2 text-sm">It may have been deleted or does not belong to this client.</p>
+            <p class="text-muted-foreground mt-2 text-sm">
+              It may have been deleted or does not belong to this client.
+            </p>
             <a
               href={`/trainer/clients/${clientId}/plan`}
-              class="border-border hover:bg-accent mt-4 inline-block rounded-lg border px-4 py-2 text-sm transition-colors"
+              class="border-border hover:bg-accent mt-4 inline-flex min-h-11 items-center rounded-[var(--radius)] border px-4 text-sm transition-colors"
             >
               Back to plan
             </a>
           </div>
         ) : loadError ? (
-          <div class="border-destructive/30 bg-destructive/10 text-destructive rounded-lg border px-4 py-3 text-sm">
-            Failed to load session: {loadError}
-          </div>
+          <div class:list={errorBannerClass}>Failed to load session: {loadError}</div>
         ) : reviewSession ? (
           <SessionActualsReview client:load session={reviewSession} sessionId={sessionId} currentUserId={userId} />
         ) : session ? (
           <>
-            <div class="border-border bg-card rounded-2xl border p-6 backdrop-blur-xl">
-              <SessionForm
-                client:load
-                mode="edit"
-                clientId={clientId}
-                sessionId={sessionId}
-                exerciseSource="session"
-                initialScheduledDate={session.scheduled_date}
-                availableExercises={availableExercises}
-                initialSession={{
-                  name: session.name ?? "Workout",
-                  exercises: session.exercises,
-                }}
-              />
-            </div>
+            <SessionForm
+              client:load
+              mode="edit"
+              clientId={clientId}
+              sessionId={sessionId}
+              exerciseSource="session"
+              initialScheduledDate={session.scheduled_date}
+              availableExercises={availableExercises}
+              initialSession={{
+                name: session.name ?? "Workout",
+                exercises: session.exercises,
+              }}
+            />
             <SessionCommentsThread client:load sessionId={sessionId} currentUserId={userId} />
           </>
         ) : null

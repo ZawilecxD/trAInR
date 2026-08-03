@@ -1,7 +1,10 @@
 import SessionCommentsThread from "@/components/session-comments/SessionCommentsThread";
-import SessionExerciseSummary, { readoutBadgeClass } from "@/components/workout-sessions/SessionExerciseSummary";
+import { StatusBadge, type StatusBadgeStatus } from "@/components/StatusBadge";
+import SessionExerciseSummary from "@/components/workout-sessions/SessionExerciseSummary";
 import { formatSessionOverviewDate } from "@/lib/guided-workout/format-session-date";
+import type { ReadoutStatus } from "@/lib/trainer-dashboard/readout";
 import type { TrainerSessionDetail } from "@/lib/workout-sessions/service";
+import { surfaceCardClass } from "@/lib/ui-classes";
 import { cn } from "@/lib/utils";
 
 interface SessionActualsReviewProps {
@@ -10,13 +13,25 @@ interface SessionActualsReviewProps {
   currentUserId: string;
 }
 
+function readoutStatusBadge(status: ReadoutStatus): StatusBadgeStatus {
+  switch (status) {
+    case "fully_logged":
+      return "success";
+    case "in_progress":
+      return "warning";
+    case "not_logged":
+      return "muted";
+  }
+}
+
 export default function SessionActualsReview({ session, sessionId, currentUserId }: SessionActualsReviewProps) {
   const notesByExerciseId = new Map(session.exercises.map((exercise) => [exercise.id, exercise.notes]));
 
   return (
     <div className="space-y-6">
-      <section className="border-border bg-card rounded-2xl border p-5 backdrop-blur-xl">
-        <dl className="grid gap-3 text-sm sm:grid-cols-2">
+      <section className={cn(surfaceCardClass, "p-5")}>
+        <p className="text-text-soft label-caps mb-4">Session summary</p>
+        <dl className="grid gap-4 text-sm sm:grid-cols-2">
           <div>
             <dt className="text-muted-foreground">Client</dt>
             <dd className="text-foreground mt-0.5 font-medium">{session.client_display_name}</dd>
@@ -27,20 +42,15 @@ export default function SessionActualsReview({ session, sessionId, currentUserId
           </div>
           <div>
             <dt className="text-muted-foreground">Logging status</dt>
-            <dd className="mt-0.5">
-              <span
-                className={cn(
-                  "inline-flex rounded-full border px-2.5 py-0.5 text-xs font-medium",
-                  readoutBadgeClass(session.readout.status),
-                )}
-              >
+            <dd className="mt-1.5">
+              <StatusBadge status={readoutStatusBadge(session.readout.status)}>
                 {session.readout.statusLabel}
-              </span>
+              </StatusBadge>
             </dd>
           </div>
           <div>
             <dt className="text-muted-foreground">Sets logged</dt>
-            <dd className="text-foreground mt-0.5 font-medium">
+            <dd className="text-foreground data-mono mt-0.5 text-base font-medium">
               {session.readout.completedSets} of {session.readout.totalSets}
             </dd>
           </div>

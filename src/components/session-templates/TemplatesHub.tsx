@@ -277,7 +277,9 @@ export default function TemplatesHub({
               <li key={template.id} className="border-border bg-card rounded-2xl border p-4">
                 <div className="space-y-2">
                   <p className="text-foreground font-medium">{template.name}</p>
-                  <p className="text-muted-foreground line-clamp-2 text-sm">{template.description ?? "No description"}</p>
+                  <p className="text-muted-foreground line-clamp-2 text-sm">
+                    {template.description ?? "No description"}
+                  </p>
                   <p className="text-muted-foreground text-xs">
                     {template.exercise_count} exercise{template.exercise_count === 1 ? "" : "s"} · Updated{" "}
                     {formatUpdatedAt(template.updated_at)}

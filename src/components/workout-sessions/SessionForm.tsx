@@ -24,7 +24,13 @@ import {
 } from "@/lib/workout-sessions/form-validation";
 import type { TemplateExerciseWithName } from "@/lib/session-templates/service";
 import { cn } from "@/lib/utils";
-import { formInputClass, formInputClassWithError } from "@/lib/ui-classes";
+import {
+  errorBannerCompactClass,
+  formInputClass,
+  formInputClassWithError,
+  mobileStickyActionBarClass,
+  surfaceCardClass,
+} from "@/lib/ui-classes";
 import type { ExercisePhase } from "@/types";
 
 type SessionFormMode = "create" | "edit";
@@ -288,52 +294,55 @@ export default function SessionForm({
 
   return (
     <>
-      <form className="space-y-6" onSubmit={handleSubmit} noValidate>
-        <div className="grid gap-4 md:grid-cols-2">
-          <div>
-            <label htmlFor="session-name" className="text-muted-foreground mb-1 block text-sm">
-              Session name
-            </label>
-            <input
-              id="session-name"
-              value={name}
-              onChange={(event) => {
-                setName(event.target.value);
-                setErrors((prev) => ({ ...prev, name: undefined, form: undefined }));
-              }}
-              placeholder="e.g. Upper body"
-              className={formInputClassWithError(Boolean(errors.name))}
-            />
-            {errors.name ? (
-              <p className="text-destructive mt-1 flex items-center gap-1 text-xs">
-                <CircleAlert className="size-3" />
-                {errors.name}
-              </p>
-            ) : null}
-          </div>
+      <form className="space-y-6 pb-28 md:pb-0" onSubmit={handleSubmit} noValidate>
+        <section className={cn(surfaceCardClass, "space-y-4 p-5")}>
+          <p className="text-text-soft label-caps">Session details</p>
+          <div className="grid gap-4 md:grid-cols-2">
+            <div>
+              <label htmlFor="session-name" className="text-muted-foreground mb-1 block text-sm">
+                Session name
+              </label>
+              <input
+                id="session-name"
+                value={name}
+                onChange={(event) => {
+                  setName(event.target.value);
+                  setErrors((prev) => ({ ...prev, name: undefined, form: undefined }));
+                }}
+                placeholder="e.g. Upper body"
+                className={formInputClassWithError(Boolean(errors.name))}
+              />
+              {errors.name ? (
+                <p className="text-destructive mt-1 flex items-center gap-1 text-xs">
+                  <CircleAlert className="size-3" />
+                  {errors.name}
+                </p>
+              ) : null}
+            </div>
 
-          <div>
-            <label htmlFor="session-date" className="text-muted-foreground mb-1 block text-sm">
-              Scheduled date
-            </label>
-            <input
-              id="session-date"
-              type="date"
-              value={scheduledDate}
-              onChange={(event) => {
-                setScheduledDate(event.target.value);
-                setErrors((prev) => ({ ...prev, scheduledDate: undefined, form: undefined }));
-              }}
-              className={formInputClassWithError(Boolean(errors.scheduledDate))}
-            />
-            {errors.scheduledDate ? (
-              <p className="text-destructive mt-1 flex items-center gap-1 text-xs">
-                <CircleAlert className="size-3" />
-                {errors.scheduledDate}
-              </p>
-            ) : null}
+            <div>
+              <label htmlFor="session-date" className="text-muted-foreground mb-1 block text-sm">
+                Scheduled date
+              </label>
+              <input
+                id="session-date"
+                type="date"
+                value={scheduledDate}
+                onChange={(event) => {
+                  setScheduledDate(event.target.value);
+                  setErrors((prev) => ({ ...prev, scheduledDate: undefined, form: undefined }));
+                }}
+                className={formInputClassWithError(Boolean(errors.scheduledDate))}
+              />
+              {errors.scheduledDate ? (
+                <p className="text-destructive mt-1 flex items-center gap-1 text-xs">
+                  <CircleAlert className="size-3" />
+                  {errors.scheduledDate}
+                </p>
+              ) : null}
+            </div>
           </div>
-        </div>
+        </section>
 
         <div className="space-y-4">
           {PHASE_CONFIG.map(({ phase, label }) => {
@@ -341,18 +350,18 @@ export default function SessionForm({
             const isOpen = openPhases[phase];
 
             return (
-              <section key={phase} className="border-border bg-card rounded-xl border">
+              <section key={phase} className={surfaceCardClass}>
                 <button
                   type="button"
-                  className="flex w-full items-center justify-between px-4 py-3 text-left"
+                  className="flex min-h-11 w-full items-center justify-between px-4 py-3 text-left"
                   onClick={() => {
                     setOpenPhases((prev) => ({ ...prev, [phase]: !prev[phase] }));
                   }}
                   aria-expanded={isOpen}
                 >
-                  <span className="text-foreground font-medium">
-                    {label}
-                    <span className="text-muted-foreground ml-2 text-sm font-normal">({entries.length})</span>
+                  <span className="flex items-baseline gap-2">
+                    <span className="text-primary label-caps">{label}</span>
+                    <span className="text-muted-foreground data-mono text-sm">({entries.length})</span>
                   </span>
                   {isOpen ? (
                     <ChevronUp className="text-muted-foreground size-4" />
@@ -369,7 +378,7 @@ export default function SessionForm({
                       entries.map((entry, index) => (
                         <div
                           key={`${entry.exerciseId}-${index}`}
-                          className="border-border bg-card rounded-lg border p-4"
+                          className="border-border bg-popover/40 rounded-[var(--radius)] border p-4"
                         >
                           <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
                             <p className="text-foreground font-medium">{entry.exerciseName}</p>
@@ -421,7 +430,7 @@ export default function SessionForm({
                                 key={metricMode}
                                 type="button"
                                 className={cn(
-                                  "rounded-md px-3 py-1 text-xs font-medium transition-colors",
+                                  "min-h-9 rounded-[var(--radius)] px-3 py-1 text-xs font-medium transition-colors",
                                   entry.metricMode === metricMode
                                     ? "bg-primary text-primary-foreground"
                                     : "border-border text-muted-foreground hover:bg-accent border",
@@ -448,18 +457,14 @@ export default function SessionForm({
                               <div
                                 key={`${entry.exerciseId}-round-${roundIndex}`}
                                 className={cn(
-                                  "rounded-lg border p-3",
-                                  round.isWarmup ? "border-border bg-muted/30" : "border-border bg-card",
+                                  "rounded-[var(--radius)] border p-3",
+                                  round.isWarmup ? "border-border bg-muted/40" : "border-border bg-card",
                                 )}
                               >
                                 <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
-                                  <p
-                                    className={cn(
-                                      "text-xs font-medium",
-                                      round.isWarmup ? "text-muted-foreground" : "text-muted-foreground",
-                                    )}
-                                  >
+                                  <p className="text-text-soft label-caps">
                                     Round {roundIndex + 1}
+                                    {round.isWarmup ? " · Warm-up" : ""}
                                   </p>
                                   <div className="flex items-center gap-2">
                                     {showsWarmupWorkingToggle(phase) ? (
@@ -564,7 +569,7 @@ export default function SessionForm({
                               type="button"
                               variant="outline"
                               size="sm"
-                              className="border-border hover:bg-accent text-foreground bg-transparent"
+                              className="border-border hover:bg-accent text-foreground min-h-11 bg-transparent"
                               disabled={entry.rounds.length >= 20}
                               onClick={() => {
                                 updateExerciseEntry(phase, index, addRound(entry));
@@ -593,7 +598,7 @@ export default function SessionForm({
                     <Button
                       type="button"
                       variant="outline"
-                      className="border-border hover:bg-accent text-foreground bg-transparent"
+                      className="border-border hover:bg-accent text-foreground min-h-11 w-full bg-transparent sm:w-auto"
                       onClick={() => {
                         setPickerPhase(phase);
                       }}
@@ -609,17 +614,22 @@ export default function SessionForm({
         </div>
 
         {errors.form ? (
-          <p className="border-destructive/30 bg-destructive/10 text-destructive flex items-center gap-2 rounded-lg border px-3 py-2 text-sm">
+          <p className={errorBannerCompactClass}>
             <CircleAlert className="size-4 shrink-0" />
             {errors.form}
           </p>
         ) : null}
 
-        <div className="flex flex-wrap gap-3">
+        <div
+          className={cn(
+            mobileStickyActionBarClass,
+            "flex flex-wrap gap-3 md:static md:border-0 md:bg-transparent md:p-0 md:backdrop-blur-none",
+          )}
+        >
           <Button
             type="submit"
             disabled={submitting || deleting}
-            className="bg-primary hover:bg-primary/90 text-primary-foreground"
+            className="bg-primary hover:bg-primary/90 text-primary-foreground min-h-11 flex-1 md:flex-none"
           >
             {submitting ? <Loader2 className="size-4 animate-spin" /> : <Save className="size-4" />}
             {mode === "create" ? "Assign session" : "Save changes"}
@@ -628,7 +638,7 @@ export default function SessionForm({
           <Button
             type="button"
             variant="outline"
-            className="border-border hover:bg-accent text-foreground bg-transparent"
+            className="border-border hover:bg-accent text-foreground min-h-11 bg-transparent"
             onClick={() => {
               window.location.assign(`/trainer/clients/${clientId}/plan?date=${encodeURIComponent(scheduledDate)}`);
             }}
@@ -640,6 +650,7 @@ export default function SessionForm({
             <Button
               type="button"
               variant="destructive"
+              className="min-h-11"
               disabled={submitting || deleting}
               onClick={() => {
                 void handleDelete();

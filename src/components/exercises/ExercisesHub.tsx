@@ -23,10 +23,7 @@ interface ExercisesHubProps {
 
 type ModalMode = "create" | "edit" | null;
 
-function formatMuscleGroups(
-  exercise: ExerciseWithMuscleGroups,
-  muscleGroupNameById: Record<string, string>,
-): string {
+function formatMuscleGroups(exercise: ExerciseWithMuscleGroups, muscleGroupNameById: Record<string, string>): string {
   if (exercise.muscle_groups.length === 0) {
     return "—";
   }
@@ -77,10 +74,7 @@ export default function ExercisesHub({
   const [archiveError, setArchiveError] = useState<string | null>(null);
   const [flashMessage, setFlashMessage] = useState<string | null>(null);
 
-  const sortedExercises = useMemo(
-    () => [...exercises].sort((a, b) => a.name.localeCompare(b.name)),
-    [exercises],
-  );
+  const sortedExercises = useMemo(() => [...exercises].sort((a, b) => a.name.localeCompare(b.name)), [exercises]);
 
   async function refreshExercises(message?: string) {
     const next = await fetchExerciseList(window.location.search);
@@ -288,10 +282,7 @@ export default function ExercisesHub({
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0">
                     <div className="flex items-center gap-2">
-                      <ExerciseFavouriteButton
-                        exerciseId={exercise.id}
-                        initialIsFavourite={exercise.is_favourite}
-                      />
+                      <ExerciseFavouriteButton exerciseId={exercise.id} initialIsFavourite={exercise.is_favourite} />
                       <p className="text-foreground truncate font-medium">{exercise.name}</p>
                     </div>
                     <p className="text-muted-foreground mt-2 text-sm">
