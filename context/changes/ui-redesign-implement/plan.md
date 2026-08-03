@@ -439,13 +439,13 @@ Bottom nav and Topbar are light Astro components — avoid shipping heavy client
 
 #### Automated
 
-- [x] 5.1 `npm run lint` / `npm run check` / `npm run test` pass
-- [x] 5.2 Session form unit/validation tests still pass
+- [x] 5.1 `npm run lint` / `npm run check` / `npm run test` pass — 2b3b36a
+- [x] 5.2 Session form unit/validation tests still pass — 2b3b36a
 
 #### Manual
 
-- [x] 5.3 Authoring usable desktop + mobile vs `trainer_authoring.pen`
-- [x] 5.4 Save/assign/delete still succeed
+- [x] 5.3 Authoring usable desktop + mobile vs `trainer_authoring.pen` — 2b3b36a
+- [x] 5.4 Save/assign/delete still succeed — 2b3b36a
 
 ### Phase 6: Public & auth
 
