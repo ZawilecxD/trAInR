@@ -91,7 +91,7 @@ export default function TrainerDashboardOverview({ dashboard, trainerName, greet
   ];
 
   return (
-    <div className="space-y-8">
+    <div className="min-w-0 space-y-8">
       <header className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div className="min-w-0">
           <h1 className="headline-lg text-foreground">
@@ -108,9 +108,9 @@ export default function TrainerDashboardOverview({ dashboard, trainerName, greet
         </a>
       </header>
 
-      <section aria-label="Summary" className="grid gap-3 sm:grid-cols-3">
+      <section aria-label="Summary" className="grid min-w-0 gap-3 sm:grid-cols-3">
         {honestStats.map((stat) => (
-          <div key={stat.label} className={cn(surfaceCardClass, "p-5")}>
+          <div key={stat.label} className={cn(surfaceCardClass, "min-w-0 p-5")}>
             <p className="label-caps text-muted-foreground">{stat.label}</p>
             <p className="stat-readout text-foreground mt-2">{stat.value}</p>
           </div>
@@ -132,10 +132,10 @@ export default function TrainerDashboardOverview({ dashboard, trainerName, greet
         />
       ) : null}
 
-      <div className="grid gap-6 lg:grid-cols-3">
-        <div className="space-y-6 lg:col-span-2">
-          <section className={cn(surfaceCardClass, "p-5 md:p-6")} aria-label="Recent activity">
-            <div className="flex flex-wrap items-center justify-between gap-3">
+      <div className="grid min-w-0 gap-6 lg:grid-cols-3">
+        <div className="min-w-0 space-y-6 lg:col-span-2">
+          <section className={cn(surfaceCardClass, "min-w-0 overflow-hidden p-5 md:p-6")} aria-label="Recent activity">
+            <div className="flex min-w-0 flex-wrap items-center justify-between gap-3">
               <h2 className="text-foreground text-lg font-semibold">Recent activity</h2>
               {hasClients ? (
                 <a
@@ -159,20 +159,20 @@ export default function TrainerDashboardOverview({ dashboard, trainerName, greet
                 />
               </div>
             ) : (
-              <ul className="mt-4 space-y-3">
+              <ul className="mt-4 min-w-0 space-y-3">
                 {activityPreview.map((item: TrainerActivityItem) => (
-                  <li key={item.sessionId}>
-                    <div className="border-border bg-background/40 flex flex-col gap-3 rounded-xl border p-4 sm:flex-row sm:items-center sm:justify-between">
-                      <div className="min-w-0">
+                  <li key={item.sessionId} className="min-w-0">
+                    <div className="border-border bg-background/40 flex min-w-0 flex-col gap-3 rounded-xl border p-4 sm:flex-row sm:items-center sm:justify-between">
+                      <div className="min-w-0 flex-1 overflow-hidden">
                         <p className="text-foreground truncate text-sm font-medium">{item.clientDisplayName}</p>
-                        <p className="text-muted-foreground mt-0.5 truncate text-sm">
+                        <p className="text-muted-foreground mt-0.5 truncate text-sm" title={item.sessionName}>
                           {item.sessionName} · {formatRelativeActivity(item.lastActivityAt)}
                         </p>
                         <p className="text-muted-foreground mt-0.5 text-xs">
                           {formatSessionOverviewDate(item.scheduledDate)}
                         </p>
                       </div>
-                      <div className="flex shrink-0 flex-wrap items-center gap-2">
+                      <div className="flex flex-wrap items-center gap-2 sm:shrink-0">
                         <span
                           className={cn(
                             "label-caps inline-flex rounded-[var(--radius-pill)] border px-2.5 py-1",
@@ -196,7 +196,7 @@ export default function TrainerDashboardOverview({ dashboard, trainerName, greet
           </section>
         </div>
 
-        <aside className="space-y-6">
+        <aside className="min-w-0 space-y-6">
           {hasClients ? (
             <section className={cn(surfaceCardClass, "p-5")} aria-label="Clients">
               <div className="flex items-center justify-between gap-3">

@@ -1,18 +1,18 @@
 ---
 import Layout from "@/layouts/Layout.astro";
+import AuthPageShell from "@/components/auth/AuthPageShell.astro";
 import SignInForm from "@/components/auth/SignInForm";
 
 const error = Astro.url.searchParams.get("error");
 ---
 
 <Layout title="Sign in">
-  <div class="bg-background flex min-h-screen items-center justify-center p-4">
-    <div class="surface-card text-card-foreground w-full max-w-sm p-8">
-      <h1 class="headline-lg text-foreground mb-6 text-center text-2xl">Sign in</h1>
-      <SignInForm serverError={error} client:load />
-      <p class="text-muted-foreground mt-4 text-center text-sm">
-        Don't have an account? <a href="/auth/signup" class="text-text-lavender hover:underline">Sign up</a>
-      </p>
-    </div>
-  </div>
+  <AuthPageShell>
+    <h1 class="text-brand-gradient headline-lg mb-1 text-center text-2xl md:text-[26px]">Sign in</h1>
+    <SignInForm serverError={error} client:load />
+    <p class="text-muted-foreground mt-1 flex flex-wrap items-center justify-center gap-1.5 text-[13px]">
+      <span>Don't have an account?</span>
+      <a href="/auth/signup" class="text-text-lavender font-semibold hover:underline">Sign up</a>
+    </p>
+  </AuthPageShell>
 </Layout>

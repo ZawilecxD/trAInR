@@ -35,11 +35,13 @@ export function FormField({
 }: FormFieldProps) {
   return (
     <div>
-      <label htmlFor={id} className="text-muted-foreground mb-1 block text-sm">
+      <label htmlFor={id} className="text-text-lavender mb-1.5 block text-xs font-semibold">
         {label}
       </label>
       <div className="relative">
-        <span className="text-muted-foreground absolute top-1/2 left-3 size-4 -translate-y-1/2">{icon}</span>
+        <span className="text-muted-foreground pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2">
+          {icon}
+        </span>
         <input
           id={id}
           name={name ?? id}
@@ -50,7 +52,7 @@ export function FormField({
             onChange(e.target.value);
           }}
           placeholder={placeholder}
-          className={cn(formInputClassWithError(Boolean(error)), "pl-10")}
+          className={cn(formInputClassWithError(Boolean(error)), "pl-10", endContent && "pr-10")}
         />
         {endContent}
       </div>

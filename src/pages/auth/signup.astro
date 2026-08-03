@@ -1,5 +1,6 @@
 ---
 import Layout from "@/layouts/Layout.astro";
+import AuthPageShell from "@/components/auth/AuthPageShell.astro";
 import SignUpForm from "@/components/auth/SignUpForm";
 import { createClient } from "@/lib/supabase";
 import type { InviteValidation } from "@/types";
@@ -39,43 +40,46 @@ const pageTitle = isClientInvite ? "Join as client" : "Sign up";
 ---
 
 <Layout title={pageTitle}>
-  <div class="bg-background flex min-h-screen items-center justify-center p-4">
-    <div class="border-border bg-muted text-foreground w-full max-w-sm rounded-2xl border p-8 backdrop-blur-xl">
-      {
-        token && tokenInvalid ? (
-          <>
-            <h1 class="headline-lg text-foreground mb-4 text-center text-2xl">Invite link unavailable</h1>
-            <p class="text-muted-foreground text-center text-sm">
-              This invite link is invalid, expired, or has already been used. Ask your trainer to send you a new link.
-            </p>
-            <p class="text-muted-foreground mt-6 text-center text-sm">
-              <a href="/auth/signin" class="text-text-lavender hover:underline">
-                Sign in
-              </a>{" "}
-              if you already have an account.
-            </p>
-          </>
-        ) : (
-          <>
-            <h1 class="headline-lg text-foreground mb-6 text-center text-2xl">
-              {isClientInvite ? "Create your client account" : "Sign up"}
-            </h1>
-            {isClientInvite ? (
-              <p class="text-muted-foreground mb-4 text-center text-sm">
-                You've been invited by{" "}
-                <span class="text-foreground font-semibold">{trainerName ?? "your trainer"}</span>
-              </p>
-            ) : null}
-            <SignUpForm serverError={error} token={token ?? undefined} trainerName={trainerName} client:load />
-            <p class="text-muted-foreground mt-4 text-center text-sm">
-              Already have an account?{" "}
-              <a href="/auth/signin" class="text-text-lavender hover:underline">
-                Sign in
-              </a>
-            </p>
-          </>
-        )
-      }
-    </div>
-  </div>
+  <AuthPageShell centered={Boolean(token && tokenInvalid)}>
+    {
+      token && tokenInvalid ? (
+        <>
+          <h1 class="text-brand-gradient headline-lg text-2xl md:text-[26px]">Invite link unavailable</h1>
+          <p class="text-text-soft text-sm">
+            This invite link is invalid, expired, or has already been used. Ask your trainer to send you a new link.
+          </p>
+          <p class="text-muted-foreground mt-2 text-[13px]">
+            <a href="/auth/signin" class="text-text-lavender font-semibold hover:underline">
+              Sign in
+            </a>{" "}
+            if you already have an account.
+          </p>
+        </>
+      ) : (
+        <>
+          <h1
+            class:list={[
+              "text-brand-gradient headline-lg text-center",
+              isClientInvite ? "text-[21px] md:text-[23px]" : "text-2xl md:text-[26px]",
+            ]}
+          >
+            {isClientInvite ? "Create your client account" : "Sign up"}
+          </h1>
+          {isClientInvite ? (
+            <div class="bg-primary/10 flex items-center justify-center gap-1.5 rounded-[var(--radius)] px-3 py-2.5 text-[13px]">
+              <span class="text-text-soft">Invited by</span>
+              <span class="text-foreground font-bold">{trainerName ?? "your trainer"}</span>
+            </div>
+          ) : null}
+          <SignUpForm serverError={error} token={token ?? undefined} trainerName={trainerName} client:load />
+          <p class="text-muted-foreground flex flex-wrap items-center justify-center gap-1.5 text-[13px]">
+            <span>Already have an account?</span>
+            <a href="/auth/signin" class="text-text-lavender font-semibold hover:underline">
+              Sign in
+            </a>
+          </p>
+        </>
+      )
+    }
+  </AuthPageShell>
 </Layout>

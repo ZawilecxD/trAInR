@@ -394,8 +394,8 @@ Bottom nav and Topbar are light Astro components — avoid shipping heavy client
 
 #### Manual
 
-- [ ] 1.5 Spot-check `/`, `/auth/signin`, `/trainer/dashboard` still render with cosmic-navy + Geist
-- [ ] 1.6 Error banners still readable (destructive token contrast)
+- [x] 1.5 Spot-check `/`, `/auth/signin`, `/trainer/dashboard` still render with cosmic-navy + Geist
+- [x] 1.6 Error banners still readable (destructive token contrast)
 
 ### Phase 2: App shell (Topbar + mobile bottom navs)
 
@@ -451,11 +451,11 @@ Bottom nav and Topbar are light Astro components — avoid shipping heavy client
 
 #### Automated
 
-- [ ] 6.1 `npm run lint` / `npm run check` / `npm run build` pass
-- [ ] 6.2 Auth-related unit tests pass if present
+- [x] 6.1 `npm run lint` / `npm run check` / `npm run build` pass
+- [x] 6.2 Auth-related unit tests pass if present
 
 #### Manual
 
-- [ ] 6.3 Auth screens near-pixel vs `public_auth.pen` at ~1440 and ~390
-- [ ] 6.4 Landing polish + CTAs; no bottom nav on public pages
-- [ ] 6.5 Smoke: sign-in → trainer dashboard shell coherent with earlier phases
+- [x] 6.3 Auth screens near-pixel vs `public_auth.pen` at ~1440 and ~390
+- [x] 6.4 Landing polish + CTAs; no bottom nav on public pages
+- [x] 6.5 Smoke: sign-in → trainer dashboard shell coherent with earlier phases

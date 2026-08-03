@@ -2,13 +2,13 @@ import { cn } from "@/lib/utils";
 
 /** Shared form field styling aligned with DESIGN.md Input primitive */
 export const formInputClass =
-  "w-full rounded-[var(--radius)] border border-input bg-popover px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none";
+  "min-h-11 w-full rounded-[var(--radius)] border border-input bg-popover px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none";
 
 /** Raised card surface — DESIGN.md Card primitive */
 export const surfaceCardClass = "rounded-[var(--radius-lg)] border border-border bg-card";
 
-/** Auth / modal card shell */
-export const authCardClass = cn(surfaceCardClass, "p-8 text-card-foreground");
+/** Auth / modal card shell — padding applied by AuthPageShell / callers */
+export const authCardClass = cn(surfaceCardClass, "text-card-foreground");
 
 /** Page content shell with gym-safety side padding */
 export const pageShellClass = "bg-background min-h-screen p-5 md:p-8";

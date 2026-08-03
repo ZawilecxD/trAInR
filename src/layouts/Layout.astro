@@ -14,6 +14,8 @@ interface Props {
 const { title = "trAInR" } = Astro.props;
 const { user, role } = Astro.locals;
 const hasMobileBottomNav = Boolean(user && (role === "trainer" || role === "client"));
+/** Auth screens are full-bleed centered cards — hide app chrome to match public_auth.pen */
+const hideChrome = Astro.url.pathname.startsWith("/auth/");
 ---
 
 <!doctype html>
@@ -41,11 +43,11 @@ const hasMobileBottomNav = Boolean(user && (role === "trainer" || role === "clie
         </Banner>
       ))
     }
-    <Topbar />
-    <div class:list={cn(hasMobileBottomNav && "pb-20 md:pb-0")}>
+    {hideChrome ? null : <Topbar />}
+    <div class:list={cn(!hideChrome && hasMobileBottomNav && "pb-20 md:pb-0")}>
       <slot />
     </div>
-    <BottomNav />
+    {hideChrome ? null : <BottomNav />}
     <Toaster client:load />
   </body>
 </html>

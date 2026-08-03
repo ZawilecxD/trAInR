@@ -70,7 +70,7 @@ export default function SignUpForm({ serverError, token, trainerName }: Props) {
     ) : undefined;
 
   return (
-    <form method="POST" action="/api/auth/signup" className="space-y-4" onSubmit={handleSubmit} noValidate>
+    <form method="POST" action="/api/auth/signup" className="w-full space-y-4" onSubmit={handleSubmit} noValidate>
       {isClientInvite ? <input type="hidden" name="token" value={token} /> : null}
 
       {isClientInvite && trainerName ? <p className="sr-only">Invited by {trainerName}</p> : null}

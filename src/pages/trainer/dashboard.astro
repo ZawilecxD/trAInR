@@ -35,8 +35,8 @@ if (!supabase) {
 ---
 
 <Layout title="Dashboard">
-  <div class:list={pageShellClass}>
-    <div class="mx-auto max-w-6xl">
+  <div class:list={[pageShellClass, "overflow-x-hidden"]}>
+    <div class="mx-auto max-w-6xl min-w-0">
       {
         loadError ? (
           <div class:list={errorBannerClass}>Failed to load dashboard: {loadError}</div>

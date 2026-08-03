@@ -12,7 +12,13 @@ interface SubmitButtonProps {
 
 export function SubmitButton({ pending, pendingText, icon, children, testId }: SubmitButtonProps) {
   return (
-    <Button type="submit" disabled={pending} data-testid={testId} className="w-full" size="lg">
+    <Button
+      type="submit"
+      disabled={pending}
+      data-testid={testId}
+      className="min-h-11 w-full text-[15px] font-semibold"
+      size="lg"
+    >
       {pending ? (
         <span className="flex items-center gap-2">
           <span className="border-foreground/30 border-t-foreground size-4 animate-spin rounded-full border-2" />
