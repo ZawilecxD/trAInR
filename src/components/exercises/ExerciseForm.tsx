@@ -11,6 +11,7 @@ import {
 } from "@/lib/exercises/form-validation";
 import { EXERCISE_METRIC_LABELS, EXERCISE_TYPE_LABELS } from "@/lib/exercises/labels";
 import { cn } from "@/lib/utils";
+import { formInputClass, formInputClassWithError } from "@/lib/ui-classes";
 import type { ExerciseMetric, ExerciseType, MuscleGroup, MuscleRole } from "@/types";
 
 type ExerciseFormMode = "create" | "edit";
@@ -28,6 +29,9 @@ interface ExerciseFormProps {
     is_favourite?: boolean;
     muscle_groups: { muscle_group_id: string; role: MuscleRole }[];
   };
+  onSuccess?: () => void;
+  onCancel?: () => void;
+  onArchived?: () => void;
 }
 
 interface ApiValidationIssue {
@@ -47,9 +51,6 @@ async function safeJsonParse(response: Response): Promise<ApiErrorPayload> {
     return {};
   }
 }
-
-const inputClass =
-  "w-full rounded-lg border border-white/20 bg-white/10 px-3 py-2 text-sm text-white placeholder-white/40 focus:ring-2 focus:ring-purple-400 focus:outline-none";
 
 function mapApiIssues(issues: ApiValidationIssue[]): FormFieldErrors {
   const errors: FormFieldErrors = {};
@@ -71,7 +72,15 @@ function mapApiIssues(issues: ApiValidationIssue[]): FormFieldErrors {
   return errors;
 }
 
-export default function ExerciseForm({ mode, muscleGroups, exerciseId, initialExercise }: ExerciseFormProps) {
+export default function ExerciseForm({
+  mode,
+  muscleGroups,
+  exerciseId,
+  initialExercise,
+  onSuccess,
+  onCancel,
+  onArchived,
+}: ExerciseFormProps) {
   const initialValues = useMemo(
     () => (initialExercise ? exerciseToFormValues(initialExercise) : emptyExerciseFormValues()),
     [initialExercise],
@@ -138,7 +147,11 @@ export default function ExerciseForm({ mode, muscleGroups, exerciseId, initialEx
           return;
         }
 
-        window.location.assign("/trainer/exercises?created=1");
+        if (onSuccess) {
+          onSuccess();
+        } else {
+          window.location.assign("/trainer/exercises?created=1");
+        }
       } finally {
         setSubmitting(false);
       }
@@ -177,7 +190,11 @@ export default function ExerciseForm({ mode, muscleGroups, exerciseId, initialEx
         return;
       }
 
-      window.location.assign("/trainer/exercises?updated=1");
+      if (onSuccess) {
+        onSuccess();
+      } else {
+        window.location.assign("/trainer/exercises?updated=1");
+      }
     } finally {
       setSubmitting(false);
     }
@@ -205,7 +222,11 @@ export default function ExerciseForm({ mode, muscleGroups, exerciseId, initialEx
         return;
       }
 
-      window.location.assign("/trainer/exercises?archived=1");
+      if (onArchived) {
+        onArchived();
+      } else {
+        window.location.assign("/trainer/exercises?archived=1");
+      }
     } finally {
       setArchiving(false);
     }
@@ -215,7 +236,7 @@ export default function ExerciseForm({ mode, muscleGroups, exerciseId, initialEx
     <form className="space-y-6" onSubmit={handleSubmit} noValidate>
       <div className="grid gap-4 md:grid-cols-2">
         <div>
-          <label htmlFor="name" className="mb-1 block text-sm text-blue-100/80">
+          <label htmlFor="name" className="text-muted-foreground mb-1 block text-sm">
             Name
           </label>
           <input
@@ -225,10 +246,10 @@ export default function ExerciseForm({ mode, muscleGroups, exerciseId, initialEx
               updateField("name", event.target.value);
             }}
             placeholder="e.g. Bench Press"
-            className={cn(inputClass, errors.name && "border-red-400/60 focus:ring-red-400")}
+            className={formInputClassWithError(Boolean(errors.name))}
           />
           {errors.name ? (
-            <p className="mt-1 flex items-center gap-1 text-xs text-red-300">
+            <p className="text-destructive mt-1 flex items-center gap-1 text-xs">
               <CircleAlert className="size-3" />
               {errors.name}
             </p>
@@ -236,7 +257,7 @@ export default function ExerciseForm({ mode, muscleGroups, exerciseId, initialEx
         </div>
 
         <div>
-          <label htmlFor="exercise_type" className="mb-1 block text-sm text-blue-100/80">
+          <label htmlFor="exercise_type" className="text-muted-foreground mb-1 block text-sm">
             Type
           </label>
           <select
@@ -245,7 +266,7 @@ export default function ExerciseForm({ mode, muscleGroups, exerciseId, initialEx
             onChange={(event) => {
               updateField("exercise_type", event.target.value as ExerciseType);
             }}
-            className={inputClass}
+            className={formInputClass}
           >
             {(Object.keys(EXERCISE_TYPE_LABELS) as ExerciseType[]).map((type) => (
               <option key={type} value={type}>
@@ -256,7 +277,7 @@ export default function ExerciseForm({ mode, muscleGroups, exerciseId, initialEx
         </div>
 
         <div>
-          <label htmlFor="default_metric" className="mb-1 block text-sm text-blue-100/80">
+          <label htmlFor="default_metric" className="text-muted-foreground mb-1 block text-sm">
             Default metric
           </label>
           <select
@@ -265,7 +286,7 @@ export default function ExerciseForm({ mode, muscleGroups, exerciseId, initialEx
             onChange={(event) => {
               updateField("default_metric", event.target.value as ExerciseMetric);
             }}
-            className={inputClass}
+            className={formInputClass}
           >
             {(Object.keys(EXERCISE_METRIC_LABELS) as ExerciseMetric[]).map((metric) => (
               <option key={metric} value={metric}>
@@ -276,7 +297,7 @@ export default function ExerciseForm({ mode, muscleGroups, exerciseId, initialEx
         </div>
 
         <div>
-          <label htmlFor="video_url" className="mb-1 block text-sm text-blue-100/80">
+          <label htmlFor="video_url" className="text-muted-foreground mb-1 block text-sm">
             Video URL (optional)
           </label>
           <input
@@ -287,10 +308,10 @@ export default function ExerciseForm({ mode, muscleGroups, exerciseId, initialEx
               updateField("video_url", event.target.value);
             }}
             placeholder="https://..."
-            className={cn(inputClass, errors.video_url && "border-red-400/60 focus:ring-red-400")}
+            className={formInputClassWithError(Boolean(errors.video_url))}
           />
           {errors.video_url ? (
-            <p className="mt-1 flex items-center gap-1 text-xs text-red-300">
+            <p className="text-destructive mt-1 flex items-center gap-1 text-xs">
               <CircleAlert className="size-3" />
               {errors.video_url}
             </p>
@@ -299,7 +320,7 @@ export default function ExerciseForm({ mode, muscleGroups, exerciseId, initialEx
       </div>
 
       <div>
-        <label htmlFor="notes" className="mb-1 block text-sm text-blue-100/80">
+        <label htmlFor="notes" className="text-muted-foreground mb-1 block text-sm">
           Notes (optional)
         </label>
         <textarea
@@ -310,42 +331,42 @@ export default function ExerciseForm({ mode, muscleGroups, exerciseId, initialEx
             updateField("notes", event.target.value);
           }}
           placeholder="Coaching cues, setup notes..."
-          className={inputClass}
+          className={formInputClass}
         />
       </div>
 
       {mode === "edit" ? (
         <div>
-          <label className="flex items-center gap-2 text-sm text-white">
+          <label className="text-foreground flex items-center gap-2 text-sm">
             <input
               type="checkbox"
               checked={values.is_favourite}
               onChange={(event) => {
                 updateField("is_favourite", event.target.checked);
               }}
-              className="size-4 rounded border-white/20 bg-white/10"
+              className="border-border bg-muted size-4 rounded"
             />
             Mark as favourite
           </label>
-          <p className="mt-1 text-xs text-blue-100/60">Favourites appear when filtering exercise lists.</p>
+          <p className="text-muted-foreground mt-1 text-xs">Favourites appear when filtering exercise lists.</p>
         </div>
       ) : null}
 
       <div>
-        <p className="mb-2 text-sm text-blue-100/80">Muscle groups</p>
-        <div className="space-y-2 rounded-xl border border-white/10 bg-white/5 p-4">
+        <p className="text-muted-foreground mb-2 text-sm">Muscle groups</p>
+        <div className="border-border bg-card space-y-2 rounded-xl border p-4">
           {muscleGroups.map((group) => {
             const selected = values.muscle_groups.find((item) => item.muscle_group_id === group.id);
             return (
               <div key={group.id} className="flex flex-wrap items-center gap-3">
-                <label className="flex min-w-[160px] items-center gap-2 text-sm text-white">
+                <label className="text-foreground flex min-w-[160px] items-center gap-2 text-sm">
                   <input
                     type="checkbox"
                     checked={Boolean(selected)}
                     onChange={() => {
                       toggleMuscleGroup(group.id);
                     }}
-                    className="size-4 rounded border-white/20 bg-white/10"
+                    className="border-border bg-muted size-4 rounded"
                   />
                   {group.name}
                 </label>
@@ -355,7 +376,7 @@ export default function ExerciseForm({ mode, muscleGroups, exerciseId, initialEx
                     onChange={(event) => {
                       updateMuscleRole(group.id, event.target.value as MuscleRole);
                     }}
-                    className={cn(inputClass, "max-w-[160px]")}
+                    className={cn(formInputClass, "max-w-[160px]")}
                     aria-label={`Role for ${group.name}`}
                   >
                     <option value="primary">Primary</option>
@@ -367,7 +388,7 @@ export default function ExerciseForm({ mode, muscleGroups, exerciseId, initialEx
           })}
         </div>
         {errors.muscle_groups ? (
-          <p className="mt-1 flex items-center gap-1 text-xs text-red-300">
+          <p className="text-destructive mt-1 flex items-center gap-1 text-xs">
             <CircleAlert className="size-3" />
             {errors.muscle_groups}
           </p>
@@ -375,7 +396,7 @@ export default function ExerciseForm({ mode, muscleGroups, exerciseId, initialEx
       </div>
 
       {errors.form ? (
-        <p className="flex items-center gap-2 rounded-lg border border-red-400/30 bg-red-500/10 px-3 py-2 text-sm text-red-200">
+        <p className="border-destructive/30 bg-destructive/10 text-destructive flex items-center gap-2 rounded-lg border px-3 py-2 text-sm">
           <CircleAlert className="size-4 shrink-0" />
           {errors.form}
         </p>
@@ -385,7 +406,7 @@ export default function ExerciseForm({ mode, muscleGroups, exerciseId, initialEx
         <Button
           type="submit"
           disabled={submitting || archiving}
-          className="bg-purple-500 text-white hover:bg-purple-500/90"
+          className="bg-primary hover:bg-primary/90 text-primary-foreground"
         >
           {submitting ? <Loader2 className="size-4 animate-spin" /> : <Save className="size-4" />}
           {mode === "create" ? "Create exercise" : "Save changes"}
@@ -394,9 +415,13 @@ export default function ExerciseForm({ mode, muscleGroups, exerciseId, initialEx
         <Button
           type="button"
           variant="outline"
-          className="border-white/20 bg-transparent text-white hover:bg-white/10"
+          className="border-border hover:bg-accent text-foreground bg-transparent"
           onClick={() => {
-            window.location.assign("/trainer/exercises");
+            if (onCancel) {
+              onCancel();
+            } else {
+              window.location.assign("/trainer/exercises");
+            }
           }}
         >
           Cancel

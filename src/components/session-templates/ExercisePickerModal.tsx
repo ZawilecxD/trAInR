@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { filterExercises } from "@/lib/exercises/client-filter";
 import type { ExerciseWithMuscleGroups } from "@/lib/exercises/service";
 import { cn } from "@/lib/utils";
+import { formInputClass } from "@/lib/ui-classes";
 
 interface ExercisePickerModalProps {
   open: boolean;
@@ -11,9 +12,6 @@ interface ExercisePickerModalProps {
   onPick: (exercise: ExerciseWithMuscleGroups) => void;
   availableExercises: ExerciseWithMuscleGroups[];
 }
-
-const inputClass =
-  "w-full rounded-lg border border-white/20 bg-white/10 px-3 py-2 text-sm text-white placeholder-white/40 focus:ring-2 focus:ring-purple-400 focus:outline-none";
 
 export default function ExercisePickerModal({ open, onClose, onPick, availableExercises }: ExercisePickerModalProps) {
   const [query, setQuery] = useState("");
@@ -42,7 +40,7 @@ export default function ExercisePickerModal({ open, onClose, onPick, availableEx
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4" role="presentation">
       <button
         type="button"
-        className="absolute inset-0 bg-slate-950/70 backdrop-blur-sm"
+        className="bg-background/70 absolute inset-0 backdrop-blur-sm"
         aria-label="Close exercise picker"
         onClick={handleClose}
       />
@@ -50,17 +48,17 @@ export default function ExercisePickerModal({ open, onClose, onPick, availableEx
         role="dialog"
         aria-modal="true"
         aria-labelledby="exercise-picker-title"
-        className="relative z-10 flex max-h-[80vh] w-full max-w-lg flex-col overflow-hidden rounded-2xl border border-white/10 bg-slate-900 shadow-xl"
+        className="border-border bg-popover relative z-10 flex max-h-[80vh] w-full max-w-lg flex-col overflow-hidden rounded-2xl border shadow-xl"
       >
-        <div className="flex items-center justify-between border-b border-white/10 px-4 py-3">
-          <h2 id="exercise-picker-title" className="text-lg font-semibold text-white">
+        <div className="border-border flex items-center justify-between border-b px-4 py-3">
+          <h2 id="exercise-picker-title" className="text-foreground text-lg font-semibold">
             Add exercise
           </h2>
           <Button
             type="button"
             variant="outline"
             size="sm"
-            className="border-white/20 bg-transparent text-white hover:bg-white/10"
+            className="border-border hover:bg-accent text-foreground bg-transparent"
             onClick={handleClose}
             aria-label="Close"
           >
@@ -68,7 +66,7 @@ export default function ExercisePickerModal({ open, onClose, onPick, availableEx
           </Button>
         </div>
 
-        <div className="space-y-3 border-b border-white/10 px-4 py-3">
+        <div className="border-border space-y-3 border-b px-4 py-3">
           <button
             type="button"
             aria-pressed={favouritesOnly}
@@ -78,15 +76,15 @@ export default function ExercisePickerModal({ open, onClose, onPick, availableEx
             className={cn(
               "rounded-full border px-3 py-1 text-xs transition-colors",
               favouritesOnly
-                ? "border-amber-300/60 bg-amber-500/20 text-amber-100"
-                : "border-white/20 bg-white/5 text-blue-100/80 hover:bg-white/10",
+                ? "border-warning/60 bg-warning/20 text-warning"
+                : "border-border bg-card text-muted-foreground hover:bg-accent",
             )}
           >
             Favourites only
           </button>
 
           <div className="relative">
-            <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-blue-100/50" />
+            <Search className="text-muted-foreground pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2" />
             <input
               aria-label="Search exercises"
               type="search"
@@ -95,7 +93,7 @@ export default function ExercisePickerModal({ open, onClose, onPick, availableEx
                 setQuery(event.target.value);
               }}
               placeholder="Search exercises..."
-              className={cn(inputClass, "pl-9")}
+              className={cn(formInputClass, "pl-9")}
               autoFocus
             />
           </div>
@@ -103,13 +101,13 @@ export default function ExercisePickerModal({ open, onClose, onPick, availableEx
 
         <ul className="flex-1 overflow-y-auto p-2">
           {filteredExercises.length === 0 ? (
-            <li className="px-3 py-6 text-center text-sm text-blue-100/60">No exercises match your filters.</li>
+            <li className="text-muted-foreground px-3 py-6 text-center text-sm">No exercises match your filters.</li>
           ) : (
             filteredExercises.map((exercise) => (
               <li key={exercise.id}>
                 <button
                   type="button"
-                  className="w-full rounded-lg px-3 py-2 text-left text-sm text-white transition-colors hover:bg-white/10"
+                  className="hover:bg-accent text-foreground w-full rounded-lg px-3 py-2 text-left text-sm transition-colors"
                   onClick={() => {
                     onPick(exercise);
                     resetFilters();

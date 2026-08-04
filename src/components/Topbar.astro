@@ -18,8 +18,10 @@ function isActive(href: string): boolean {
 
 function navLinkClass(href: string): string {
   return cn(
-    "rounded-md px-3 py-1.5 text-sm transition-colors",
-    isActive(href) ? "bg-white/15 font-semibold text-white" : "text-blue-100/70 hover:bg-white/10 hover:text-white",
+    "rounded-[var(--radius)] px-3 py-1.5 text-sm transition-colors",
+    isActive(href)
+      ? "bg-accent font-semibold text-foreground shadow-sm"
+      : "text-muted-foreground hover:bg-accent/60 hover:text-foreground",
   );
 }
 
@@ -55,24 +57,24 @@ const homeHref =
       : user
         ? "/dashboard"
         : "/";
+
+/** Primary link row is desktop-only when role bottom nav owns mobile chrome. */
+const hidePrimaryNavOnMobile = Boolean(user && (role === "trainer" || role === "client"));
+
+const accountInitial = user?.email?.charAt(0)?.toUpperCase() ?? "?";
 ---
 
 <header
-  class="sticky top-0 z-50 border-b border-white/10 bg-slate-950/85 backdrop-blur-md"
+  class="border-border bg-background/90 sticky top-0 z-50 h-14 border-b backdrop-blur-md"
   aria-label="Main navigation"
 >
-  <div class="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 px-4 py-3 sm:px-6">
+  <div class="mx-auto flex h-full max-w-6xl items-center justify-between gap-3 px-4 sm:px-6">
     <div class="flex min-w-0 flex-1 items-center gap-4 sm:gap-6">
-      <a
-        href={homeHref}
-        class="shrink-0 bg-gradient-to-r from-blue-200 to-purple-200 bg-clip-text text-sm font-bold tracking-wide text-transparent sm:text-base"
-      >
-        trAInR
-      </a>
+      <a href={homeHref} class="text-primary shrink-0 text-sm font-bold tracking-wide sm:text-base"> trAInR </a>
 
       {
         navItems.length > 0 ? (
-          <nav class="flex flex-wrap items-center gap-1" aria-label="App">
+          <nav class:list={cn("flex items-center gap-1", hidePrimaryNavOnMobile && "hidden md:flex")} aria-label="App">
             {navItems.map((item) => (
               <a
                 href={item.href}
@@ -87,17 +89,23 @@ const homeHref =
       }
     </div>
 
-    <div class="flex shrink-0 items-center gap-3 text-sm">
+    <div class="flex shrink-0 items-center gap-2 text-sm sm:gap-3">
       {
         user ? (
           <>
-            <span class="max-w-[12rem] truncate text-blue-100/70 sm:max-w-xs" title={user.email}>
+            <span
+              class="bg-primary/20 text-primary flex size-8 items-center justify-center rounded-full text-xs font-semibold md:hidden"
+              aria-hidden="true"
+            >
+              {accountInitial}
+            </span>
+            <span class="text-muted-foreground hidden max-w-[12rem] truncate sm:max-w-xs md:inline" title={user.email}>
               {user.email}
             </span>
             <form method="POST" action="/api/auth/signout">
               <button
                 type="submit"
-                class="rounded-md px-3 py-1.5 text-blue-100/70 transition-colors hover:bg-white/10 hover:text-white"
+                class="text-muted-foreground hover:bg-accent hover:text-foreground min-h-9 rounded-[var(--radius)] px-3 py-1.5 transition-colors"
               >
                 Sign out
               </button>
@@ -111,10 +119,10 @@ const homeHref =
             <a
               href="/auth/signup"
               class:list={cn(
-                "rounded-md px-3 py-1.5 text-sm font-medium transition-colors",
+                "rounded-[var(--radius)] px-3 py-1.5 text-sm font-medium transition-colors",
                 isActive("/auth/signup")
-                  ? "bg-white/15 text-white"
-                  : "border border-white/20 bg-white/10 text-white hover:bg-white/20",
+                  ? "bg-accent text-foreground"
+                  : "border-border bg-muted text-foreground hover:bg-accent border",
               )}
             >
               Sign up

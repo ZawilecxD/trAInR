@@ -1,0 +1,26 @@
+---
+import { cn } from "@/lib/utils";
+import { authCardClass } from "@/lib/ui-classes";
+
+interface Props {
+  /** Extra classes on the auth card */
+  class?: string;
+  /** Center card content (confirm-email) */
+  centered?: boolean;
+}
+
+const { class: className, centered = false } = Astro.props;
+---
+
+<div class="bg-background flex min-h-screen items-center justify-center p-5 md:p-10">
+  <div
+    class:list={cn(
+      authCardClass,
+      "flex w-full max-w-[420px] flex-col gap-4 p-6 md:gap-[18px] md:p-9",
+      centered && "items-center text-center",
+      className,
+    )}
+  >
+    <slot />
+  </div>
+</div>

@@ -24,6 +24,13 @@ import {
 } from "@/lib/workout-sessions/form-validation";
 import type { TemplateExerciseWithName } from "@/lib/session-templates/service";
 import { cn } from "@/lib/utils";
+import {
+  errorBannerCompactClass,
+  formInputClass,
+  formInputClassWithError,
+  mobileStickyActionBarClass,
+  surfaceCardClass,
+} from "@/lib/ui-classes";
 import type { ExercisePhase } from "@/types";
 
 type SessionFormMode = "create" | "edit";
@@ -57,9 +64,6 @@ const PHASE_CONFIG: { phase: ExercisePhase; label: string }[] = [
   { phase: "main", label: "Main" },
   { phase: "cool_down", label: "Cool-down" },
 ];
-
-const inputClass =
-  "w-full rounded-lg border border-white/20 bg-white/10 px-3 py-2 text-sm text-white placeholder-white/40 focus:ring-2 focus:ring-purple-400 focus:outline-none";
 
 async function safeJsonParse(response: Response): Promise<ApiErrorPayload> {
   try {
@@ -290,52 +294,55 @@ export default function SessionForm({
 
   return (
     <>
-      <form className="space-y-6" onSubmit={handleSubmit} noValidate>
-        <div className="grid gap-4 md:grid-cols-2">
-          <div>
-            <label htmlFor="session-name" className="mb-1 block text-sm text-blue-100/80">
-              Session name
-            </label>
-            <input
-              id="session-name"
-              value={name}
-              onChange={(event) => {
-                setName(event.target.value);
-                setErrors((prev) => ({ ...prev, name: undefined, form: undefined }));
-              }}
-              placeholder="e.g. Upper body"
-              className={cn(inputClass, errors.name && "border-red-400/60 focus:ring-red-400")}
-            />
-            {errors.name ? (
-              <p className="mt-1 flex items-center gap-1 text-xs text-red-300">
-                <CircleAlert className="size-3" />
-                {errors.name}
-              </p>
-            ) : null}
-          </div>
+      <form className="space-y-6 pb-28 md:pb-0" onSubmit={handleSubmit} noValidate>
+        <section className={cn(surfaceCardClass, "space-y-4 p-5")}>
+          <p className="text-text-soft label-caps">Session details</p>
+          <div className="grid gap-4 md:grid-cols-2">
+            <div>
+              <label htmlFor="session-name" className="text-muted-foreground mb-1 block text-sm">
+                Session name
+              </label>
+              <input
+                id="session-name"
+                value={name}
+                onChange={(event) => {
+                  setName(event.target.value);
+                  setErrors((prev) => ({ ...prev, name: undefined, form: undefined }));
+                }}
+                placeholder="e.g. Upper body"
+                className={formInputClassWithError(Boolean(errors.name))}
+              />
+              {errors.name ? (
+                <p className="text-destructive mt-1 flex items-center gap-1 text-xs">
+                  <CircleAlert className="size-3" />
+                  {errors.name}
+                </p>
+              ) : null}
+            </div>
 
-          <div>
-            <label htmlFor="session-date" className="mb-1 block text-sm text-blue-100/80">
-              Scheduled date
-            </label>
-            <input
-              id="session-date"
-              type="date"
-              value={scheduledDate}
-              onChange={(event) => {
-                setScheduledDate(event.target.value);
-                setErrors((prev) => ({ ...prev, scheduledDate: undefined, form: undefined }));
-              }}
-              className={cn(inputClass, errors.scheduledDate && "border-red-400/60 focus:ring-red-400")}
-            />
-            {errors.scheduledDate ? (
-              <p className="mt-1 flex items-center gap-1 text-xs text-red-300">
-                <CircleAlert className="size-3" />
-                {errors.scheduledDate}
-              </p>
-            ) : null}
+            <div>
+              <label htmlFor="session-date" className="text-muted-foreground mb-1 block text-sm">
+                Scheduled date
+              </label>
+              <input
+                id="session-date"
+                type="date"
+                value={scheduledDate}
+                onChange={(event) => {
+                  setScheduledDate(event.target.value);
+                  setErrors((prev) => ({ ...prev, scheduledDate: undefined, form: undefined }));
+                }}
+                className={formInputClassWithError(Boolean(errors.scheduledDate))}
+              />
+              {errors.scheduledDate ? (
+                <p className="text-destructive mt-1 flex items-center gap-1 text-xs">
+                  <CircleAlert className="size-3" />
+                  {errors.scheduledDate}
+                </p>
+              ) : null}
+            </div>
           </div>
-        </div>
+        </section>
 
         <div className="space-y-4">
           {PHASE_CONFIG.map(({ phase, label }) => {
@@ -343,44 +350,44 @@ export default function SessionForm({
             const isOpen = openPhases[phase];
 
             return (
-              <section key={phase} className="rounded-xl border border-white/10 bg-white/5">
+              <section key={phase} className={surfaceCardClass}>
                 <button
                   type="button"
-                  className="flex w-full items-center justify-between px-4 py-3 text-left"
+                  className="flex min-h-11 w-full items-center justify-between px-4 py-3 text-left"
                   onClick={() => {
                     setOpenPhases((prev) => ({ ...prev, [phase]: !prev[phase] }));
                   }}
                   aria-expanded={isOpen}
                 >
-                  <span className="font-medium text-white">
-                    {label}
-                    <span className="ml-2 text-sm font-normal text-blue-100/60">({entries.length})</span>
+                  <span className="flex items-baseline gap-2">
+                    <span className="text-primary label-caps">{label}</span>
+                    <span className="text-muted-foreground data-mono text-sm">({entries.length})</span>
                   </span>
                   {isOpen ? (
-                    <ChevronUp className="size-4 text-blue-100/60" />
+                    <ChevronUp className="text-muted-foreground size-4" />
                   ) : (
-                    <ChevronDown className="size-4 text-blue-100/60" />
+                    <ChevronDown className="text-muted-foreground size-4" />
                   )}
                 </button>
 
                 {isOpen ? (
-                  <div className="space-y-3 border-t border-white/10 px-4 py-4">
+                  <div className="border-border space-y-3 border-t px-4 py-4">
                     {entries.length === 0 ? (
-                      <p className="text-sm text-blue-100/60">No exercises in this phase yet.</p>
+                      <p className="text-muted-foreground text-sm">No exercises in this phase yet.</p>
                     ) : (
                       entries.map((entry, index) => (
                         <div
                           key={`${entry.exerciseId}-${index}`}
-                          className="rounded-lg border border-white/10 bg-white/5 p-4"
+                          className="border-border bg-popover/40 rounded-[var(--radius)] border p-4"
                         >
                           <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
-                            <p className="font-medium text-white">{entry.exerciseName}</p>
+                            <p className="text-foreground font-medium">{entry.exerciseName}</p>
                             <div className="flex items-center gap-1">
                               <Button
                                 type="button"
                                 variant="outline"
                                 size="sm"
-                                className="border-white/20 bg-transparent text-white hover:bg-white/10"
+                                className="border-border hover:bg-accent text-foreground bg-transparent"
                                 disabled={index === 0}
                                 onClick={() => {
                                   updatePhaseEntries(phase, swapEntries(entries, index, "up"));
@@ -393,7 +400,7 @@ export default function SessionForm({
                                 type="button"
                                 variant="outline"
                                 size="sm"
-                                className="border-white/20 bg-transparent text-white hover:bg-white/10"
+                                className="border-border hover:bg-accent text-foreground bg-transparent"
                                 disabled={index === entries.length - 1}
                                 onClick={() => {
                                   updatePhaseEntries(phase, swapEntries(entries, index, "down"));
@@ -406,7 +413,7 @@ export default function SessionForm({
                                 type="button"
                                 variant="outline"
                                 size="sm"
-                                className="border-white/20 bg-transparent text-red-200 hover:bg-red-500/10"
+                                className="border-border text-destructive hover:bg-destructive/10 bg-transparent"
                                 onClick={() => {
                                   removeExerciseEntry(phase, index);
                                 }}
@@ -423,10 +430,10 @@ export default function SessionForm({
                                 key={metricMode}
                                 type="button"
                                 className={cn(
-                                  "rounded-md px-3 py-1 text-xs font-medium transition-colors",
+                                  "min-h-9 rounded-[var(--radius)] px-3 py-1 text-xs font-medium transition-colors",
                                   entry.metricMode === metricMode
-                                    ? "bg-purple-500 text-white"
-                                    : "border border-white/20 text-blue-100/80 hover:bg-white/10",
+                                    ? "bg-primary text-primary-foreground"
+                                    : "border-border text-muted-foreground hover:bg-accent border",
                                 )}
                                 onClick={() => {
                                   updateExerciseEntry(phase, index, {
@@ -450,18 +457,14 @@ export default function SessionForm({
                               <div
                                 key={`${entry.exerciseId}-round-${roundIndex}`}
                                 className={cn(
-                                  "rounded-lg border p-3",
-                                  round.isWarmup ? "border-white/10 bg-white/[0.03]" : "border-white/10 bg-white/5",
+                                  "rounded-[var(--radius)] border p-3",
+                                  round.isWarmup ? "border-border bg-muted/40" : "border-border bg-card",
                                 )}
                               >
                                 <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
-                                  <p
-                                    className={cn(
-                                      "text-xs font-medium",
-                                      round.isWarmup ? "text-blue-100/50" : "text-blue-100/80",
-                                    )}
-                                  >
+                                  <p className="text-text-soft label-caps">
                                     Round {roundIndex + 1}
+                                    {round.isWarmup ? " · Warm-up" : ""}
                                   </p>
                                   <div className="flex items-center gap-2">
                                     {showsWarmupWorkingToggle(phase) ? (
@@ -476,7 +479,7 @@ export default function SessionForm({
                                       type="button"
                                       variant="outline"
                                       size="sm"
-                                      className="border-white/20 bg-transparent text-red-200 hover:bg-red-500/10"
+                                      className="border-border text-destructive hover:bg-destructive/10 bg-transparent"
                                       disabled={entry.rounds.length <= 1}
                                       onClick={() => {
                                         updateExerciseEntry(phase, index, removeRound(entry, roundIndex));
@@ -491,7 +494,7 @@ export default function SessionForm({
                                 <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
                                   {entry.metricMode === "reps" ? (
                                     <div>
-                                      <label className="mb-1 block text-xs text-blue-100/70">Reps</label>
+                                      <label className="text-muted-foreground mb-1 block text-xs">Reps</label>
                                       <input
                                         type="number"
                                         min={1}
@@ -502,12 +505,12 @@ export default function SessionForm({
                                             prescribedReps: value === "" ? null : Number(value),
                                           });
                                         }}
-                                        className={inputClass}
+                                        className={formInputClass}
                                       />
                                     </div>
                                   ) : (
                                     <div>
-                                      <label className="mb-1 block text-xs text-blue-100/70">Duration (s)</label>
+                                      <label className="text-muted-foreground mb-1 block text-xs">Duration (s)</label>
                                       <input
                                         type="number"
                                         min={1}
@@ -518,13 +521,15 @@ export default function SessionForm({
                                             prescribedDuration: value === "" ? null : Number(value),
                                           });
                                         }}
-                                        className={inputClass}
+                                        className={formInputClass}
                                       />
                                     </div>
                                   )}
 
                                   <div>
-                                    <label className="mb-1 block text-xs text-blue-100/70">Load (kg, optional)</label>
+                                    <label className="text-muted-foreground mb-1 block text-xs">
+                                      Load (kg, optional)
+                                    </label>
                                     <input
                                       type="number"
                                       step="0.5"
@@ -535,12 +540,14 @@ export default function SessionForm({
                                           prescribedLoadKg: value === "" ? null : Number(value),
                                         });
                                       }}
-                                      className={inputClass}
+                                      className={formInputClass}
                                     />
                                   </div>
 
                                   <div>
-                                    <label className="mb-1 block text-xs text-blue-100/70">Rest (s, optional)</label>
+                                    <label className="text-muted-foreground mb-1 block text-xs">
+                                      Rest (s, optional)
+                                    </label>
                                     <input
                                       type="number"
                                       min={0}
@@ -551,7 +558,7 @@ export default function SessionForm({
                                           restAfterSeconds: value === "" ? null : Number(value),
                                         });
                                       }}
-                                      className={inputClass}
+                                      className={formInputClass}
                                     />
                                   </div>
                                 </div>
@@ -562,7 +569,7 @@ export default function SessionForm({
                               type="button"
                               variant="outline"
                               size="sm"
-                              className="border-white/20 bg-transparent text-white hover:bg-white/10"
+                              className="border-border hover:bg-accent text-foreground min-h-11 bg-transparent"
                               disabled={entry.rounds.length >= 20}
                               onClick={() => {
                                 updateExerciseEntry(phase, index, addRound(entry));
@@ -574,14 +581,14 @@ export default function SessionForm({
                           </div>
 
                           <div className="mt-3">
-                            <label className="mb-1 block text-xs text-blue-100/70">Notes (optional)</label>
+                            <label className="text-muted-foreground mb-1 block text-xs">Notes (optional)</label>
                             <input
                               type="text"
                               value={entry.notes}
                               onChange={(event) => {
                                 updateExerciseEntry(phase, index, { notes: event.target.value });
                               }}
-                              className={inputClass}
+                              className={formInputClass}
                             />
                           </div>
                         </div>
@@ -591,7 +598,7 @@ export default function SessionForm({
                     <Button
                       type="button"
                       variant="outline"
-                      className="border-white/20 bg-transparent text-white hover:bg-white/10"
+                      className="border-border hover:bg-accent text-foreground min-h-11 w-full bg-transparent sm:w-auto"
                       onClick={() => {
                         setPickerPhase(phase);
                       }}
@@ -607,17 +614,22 @@ export default function SessionForm({
         </div>
 
         {errors.form ? (
-          <p className="flex items-center gap-2 rounded-lg border border-red-400/30 bg-red-500/10 px-3 py-2 text-sm text-red-200">
+          <p className={errorBannerCompactClass}>
             <CircleAlert className="size-4 shrink-0" />
             {errors.form}
           </p>
         ) : null}
 
-        <div className="flex flex-wrap gap-3">
+        <div
+          className={cn(
+            mobileStickyActionBarClass,
+            "flex flex-wrap gap-3 md:static md:border-0 md:bg-transparent md:p-0 md:backdrop-blur-none",
+          )}
+        >
           <Button
             type="submit"
             disabled={submitting || deleting}
-            className="bg-purple-500 text-white hover:bg-purple-500/90"
+            className="bg-primary hover:bg-primary/90 text-primary-foreground min-h-11 flex-1 md:flex-none"
           >
             {submitting ? <Loader2 className="size-4 animate-spin" /> : <Save className="size-4" />}
             {mode === "create" ? "Assign session" : "Save changes"}
@@ -626,7 +638,7 @@ export default function SessionForm({
           <Button
             type="button"
             variant="outline"
-            className="border-white/20 bg-transparent text-white hover:bg-white/10"
+            className="border-border hover:bg-accent text-foreground min-h-11 bg-transparent"
             onClick={() => {
               window.location.assign(`/trainer/clients/${clientId}/plan?date=${encodeURIComponent(scheduledDate)}`);
             }}
@@ -638,6 +650,7 @@ export default function SessionForm({
             <Button
               type="button"
               variant="destructive"
+              className="min-h-11"
               disabled={submitting || deleting}
               onClick={() => {
                 void handleDelete();

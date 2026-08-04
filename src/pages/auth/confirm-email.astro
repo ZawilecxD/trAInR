@@ -1,36 +1,71 @@
 ---
 import Layout from "@/layouts/Layout.astro";
+import AuthPageShell from "@/components/auth/AuthPageShell.astro";
 
 const isAutoConfirmed = import.meta.env.DEV;
 
 const content = isAutoConfirmed
   ? {
-      emoji: "✅",
       heading: "Registration successful",
       description: "Your account has been created. You can now sign in.",
       linkText: "Go to sign in",
+      icon: "success" as const,
     }
   : {
-      emoji: "📧",
       heading: "Check your email",
       description: "We've sent a confirmation link to your email address. Click it to activate your account.",
       linkText: "Back to sign in",
+      icon: "mail" as const,
     };
 ---
 
 <Layout title={content.heading}>
-  <div class="bg-cosmic flex min-h-screen items-center justify-center p-4">
+  <AuthPageShell centered>
     <div
-      class="w-full max-w-sm rounded-2xl border border-white/10 bg-white/10 p-8 text-center text-white backdrop-blur-xl"
+      class:list={[
+        "mb-1 flex size-14 items-center justify-center rounded-[var(--radius-md)]",
+        content.icon === "success" ? "bg-success/15 text-success" : "bg-accent text-text-lavender",
+      ]}
+      aria-hidden="true"
     >
-      <div class="mb-4 text-5xl">{content.emoji}</div>
-      <h1 class="mb-3 bg-gradient-to-r from-blue-200 to-purple-200 bg-clip-text text-2xl font-bold text-transparent">
-        {content.heading}
-      </h1>
-      <p class="mb-6 text-blue-100/80">{content.description}</p>
-      <a href="/auth/signin" class="text-sm text-purple-300 hover:underline">
-        {content.linkText}
-      </a>
+      {
+        content.icon === "success" ? (
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <circle cx="12" cy="12" r="10" />
+            <path d="m9 12 2 2 4-4" />
+          </svg>
+        ) : (
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <rect width="20" height="16" x="2" y="4" rx="2" />
+            <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+          </svg>
+        )
+      }
     </div>
-  </div>
+    <h1 class="text-brand-gradient headline-lg text-2xl md:text-[26px]">{content.heading}</h1>
+    <p class="text-text-soft text-sm leading-relaxed">{content.description}</p>
+    <a href="/auth/signin" class="text-text-lavender mt-1 text-[13px] font-semibold hover:underline">
+      {content.linkText}
+    </a>
+  </AuthPageShell>
 </Layout>

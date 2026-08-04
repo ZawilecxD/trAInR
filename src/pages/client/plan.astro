@@ -4,6 +4,7 @@ import ClientCalendarHub from "@/components/plans/ClientCalendarHub";
 import { toLocalISODate, visibleMonthRange } from "@/lib/dates";
 import { listMySessionsAsClient } from "@/lib/workout-sessions/service";
 import { isoDateSchema } from "@/lib/workout-sessions/schemas";
+import { errorBannerClass, pageShellClass } from "@/lib/ui-classes";
 import { createClient } from "@/lib/supabase";
 
 const supabase = createClient(Astro.request.headers, Astro.cookies);
@@ -27,20 +28,16 @@ const { data: sessions, error: sessionsError } = await listMySessionsAsClient(
 ---
 
 <Layout title="My Plan">
-  <div class="bg-cosmic min-h-screen p-4 md:p-8">
+  <div class:list={pageShellClass}>
     <div class="mx-auto max-w-6xl space-y-6">
       <div>
-        <h1 class="bg-gradient-to-r from-blue-200 to-purple-200 bg-clip-text text-3xl font-bold text-transparent">
-          My Plan
-        </h1>
-        <p class="mt-1 text-sm text-blue-100/70">View your assigned workout sessions.</p>
+        <h1 class="headline-lg text-foreground">My Plan</h1>
+        <p class="text-muted-foreground mt-1 text-sm">View your assigned workout sessions.</p>
       </div>
 
       {
         sessionsError ? (
-          <div class="rounded-lg border border-red-400/30 bg-red-500/10 px-4 py-3 text-sm text-red-100">
-            Failed to load plan: {sessionsError}
-          </div>
+          <div class:list={errorBannerClass}>Failed to load plan: {sessionsError}</div>
         ) : (
           <ClientCalendarHub
             client:load

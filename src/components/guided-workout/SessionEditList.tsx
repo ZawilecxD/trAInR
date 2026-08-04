@@ -9,6 +9,8 @@ import { findFirstIncompleteExerciseIndex } from "@/lib/guided-workout/exercise-
 import { formatExercisePrescriptionDetail } from "@/lib/guided-workout/format-prescription";
 import { formatSessionOverviewDate } from "@/lib/guided-workout/format-session-date";
 import { phaseLabel } from "@/lib/guided-workout/phase-labels";
+import { errorBannerClass, mobileStickyActionBarClass, surfaceCardClass } from "@/lib/ui-classes";
+import { cn } from "@/lib/utils";
 import type { ClientSessionDetail, SessionExerciseDetail } from "@/lib/workout-sessions/service";
 import type { SetLog } from "@/types";
 
@@ -43,19 +45,19 @@ function ExerciseEditCard({
 }) {
   return (
     <section className="space-y-3">
-      <div className="rounded-2xl border border-white/10 bg-white/5 px-4 py-4 backdrop-blur-xl">
-        <p className="font-mono text-xs tracking-widest text-blue-200/80">{phaseLabel(exercise.phase)}</p>
+      <div className={cn(surfaceCardClass, "px-4 py-4")}>
+        <p className="text-primary label-caps">{phaseLabel(exercise.phase)}</p>
         <button
           type="button"
-          className="mt-2 text-left text-lg font-semibold text-white hover:text-blue-100"
+          className="hover:text-foreground text-foreground mt-2 min-h-11 text-left text-lg font-semibold"
           onClick={() => {
             onJumpToExercise(exerciseIndex);
           }}
         >
           {exercise.exercise_name || "Exercise"}
         </button>
-        {exercise.notes ? <p className="mt-1 text-sm text-blue-100/70">{exercise.notes}</p> : null}
-        <p className="mt-3 text-sm text-blue-100/90">
+        {exercise.notes ? <p className="text-muted-foreground mt-1 text-sm">{exercise.notes}</p> : null}
+        <p className="text-foreground/90 mt-3 text-sm">
           {formatExercisePrescriptionDetail(exercise.sets, exercise.exercise_default_metric)}
         </p>
       </div>
@@ -126,7 +128,7 @@ export default function SessionEditList({
         {isInProgress ? (
           <a
             href="/client/plan"
-            className="inline-flex min-h-11 items-center gap-2 text-sm text-blue-100/70 transition-colors hover:text-white"
+            className="text-muted-foreground hover:text-foreground inline-flex min-h-11 items-center gap-2 text-sm transition-colors"
           >
             <ArrowLeft className="size-4" aria-hidden="true" />
             Calendar
@@ -134,7 +136,7 @@ export default function SessionEditList({
         ) : (
           <button
             type="button"
-            className="inline-flex min-h-11 items-center gap-2 text-sm text-blue-100/70 transition-colors hover:text-white"
+            className="text-muted-foreground hover:text-foreground inline-flex min-h-11 items-center gap-2 text-sm transition-colors"
             onClick={onBackToSummary}
           >
             <ArrowLeft className="size-4" aria-hidden="true" />
@@ -143,13 +145,13 @@ export default function SessionEditList({
         )}
         <div className="mt-4 flex flex-wrap items-start justify-between gap-3">
           <div>
-            <h1 className="text-3xl font-bold text-white">{session.name ?? "Workout"}</h1>
-            <p className="mt-1 text-sm text-blue-100/70">{formatSessionOverviewDate(session.scheduled_date)}</p>
+            <h1 className="text-foreground text-3xl font-bold">{session.name ?? "Workout"}</h1>
+            <p className="text-muted-foreground mt-1 text-sm">{formatSessionOverviewDate(session.scheduled_date)}</p>
           </div>
           <Button
             type="button"
             variant="outline"
-            className="min-h-11 border-white/20 bg-white/5 text-white hover:bg-white/10"
+            className="border-border bg-card hover:bg-accent text-foreground min-h-11"
             disabled={readOnly || !isInProgress}
             onClick={() => {
               setRestartOpen(true);
@@ -169,14 +171,10 @@ export default function SessionEditList({
           />
         </div>
         <EditWindowBanner lockedAt={session.locked_at} hasLogs={hasLogs} />
-        {restartError ? (
-          <p className="mt-3 rounded-lg border border-red-400/30 bg-red-500/10 px-4 py-3 text-sm text-red-100">
-            {restartError}
-          </p>
-        ) : null}
+        {restartError ? <p className={cn(errorBannerClass, "mt-3")}>{restartError}</p> : null}
       </header>
 
-      <div className="space-y-4 pb-28">
+      <div className="space-y-4 pb-40 md:pb-32">
         {exercises.map((exercise, index) => (
           <ExerciseEditCard
             key={exercise.id}
@@ -192,18 +190,14 @@ export default function SessionEditList({
         <SessionCommentsThread sessionId={session.id} currentUserId={currentUserId} />
       </div>
 
-      <div className="fixed inset-x-0 bottom-0 border-t border-white/10 bg-slate-950/90 p-4 backdrop-blur-xl">
+      <div className={mobileStickyActionBarClass}>
         <div className="mx-auto max-w-2xl space-y-2">
-          {completeError ? (
-            <p className="rounded-lg border border-red-400/30 bg-red-500/10 px-4 py-2 text-sm text-red-100">
-              {completeError}
-            </p>
-          ) : null}
+          {completeError ? <p className={errorBannerClass}>{completeError}</p> : null}
           {isInProgress ? (
             <>
               <Button
                 type="button"
-                className="min-h-12 w-full text-base"
+                className="min-h-12 w-full text-base font-semibold"
                 onClick={() => {
                   onContinueWorkout(continueIndex);
                 }}
@@ -214,7 +208,7 @@ export default function SessionEditList({
                 <Button
                   type="button"
                   variant="outline"
-                  className="min-h-11 border-emerald-500/30 bg-emerald-500/10 text-emerald-200 hover:bg-emerald-500/20"
+                  className="border-success/30 bg-success/10 text-success hover:bg-success/20 min-h-11"
                   disabled={completePending}
                   onClick={() => {
                     void handleComplete("finished");
@@ -225,7 +219,7 @@ export default function SessionEditList({
                 <Button
                   type="button"
                   variant="outline"
-                  className="min-h-11 border-amber-500/30 bg-amber-500/10 text-amber-200 hover:bg-amber-500/20"
+                  className="border-warning/30 bg-warning/10 text-warning hover:bg-warning/20 min-h-11"
                   disabled={completePending}
                   onClick={() => {
                     void handleComplete("finished_partially");
@@ -236,7 +230,7 @@ export default function SessionEditList({
                 <Button
                   type="button"
                   variant="outline"
-                  className="min-h-11 border-slate-500/30 bg-slate-500/10 text-slate-300 hover:bg-slate-500/20"
+                  className="border-muted-foreground/30 bg-muted text-muted-foreground hover:bg-accent min-h-11"
                   disabled={completePending}
                   onClick={() => {
                     setCancelOpen(true);

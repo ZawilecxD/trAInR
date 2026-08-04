@@ -1,5 +1,6 @@
 ---
 import Layout from "@/layouts/Layout.astro";
+import AuthPageShell from "@/components/auth/AuthPageShell.astro";
 import SignUpForm from "@/components/auth/SignUpForm";
 import { createClient } from "@/lib/supabase";
 import type { InviteValidation } from "@/types";
@@ -39,44 +40,46 @@ const pageTitle = isClientInvite ? "Join as client" : "Sign up";
 ---
 
 <Layout title={pageTitle}>
-  <div class="bg-cosmic flex min-h-screen items-center justify-center p-4">
-    <div class="w-full max-w-sm rounded-2xl border border-white/10 bg-white/10 p-8 text-white backdrop-blur-xl">
-      {
-        token && tokenInvalid ? (
-          <>
-            <h1 class="mb-4 bg-gradient-to-r from-blue-200 to-purple-200 bg-clip-text text-center text-2xl font-bold text-transparent">
-              Invite link unavailable
-            </h1>
-            <p class="text-center text-sm text-blue-100/80">
-              This invite link is invalid, expired, or has already been used. Ask your trainer to send you a new link.
-            </p>
-            <p class="mt-6 text-center text-sm text-blue-100/60">
-              <a href="/auth/signin" class="text-purple-300 hover:underline">
-                Sign in
-              </a>{" "}
-              if you already have an account.
-            </p>
-          </>
-        ) : (
-          <>
-            <h1 class="mb-6 bg-gradient-to-r from-blue-200 to-purple-200 bg-clip-text text-center text-2xl font-bold text-transparent">
-              {isClientInvite ? "Create your client account" : "Sign up"}
-            </h1>
-            {isClientInvite ? (
-              <p class="mb-4 text-center text-sm text-blue-100/80">
-                You've been invited by <span class="font-semibold text-white">{trainerName ?? "your trainer"}</span>
-              </p>
-            ) : null}
-            <SignUpForm serverError={error} token={token ?? undefined} trainerName={trainerName} client:load />
-            <p class="mt-4 text-center text-sm text-blue-100/60">
-              Already have an account?{" "}
-              <a href="/auth/signin" class="text-purple-300 hover:underline">
-                Sign in
-              </a>
-            </p>
-          </>
-        )
-      }
-    </div>
-  </div>
+  <AuthPageShell centered={Boolean(token && tokenInvalid)}>
+    {
+      token && tokenInvalid ? (
+        <>
+          <h1 class="text-brand-gradient headline-lg text-2xl md:text-[26px]">Invite link unavailable</h1>
+          <p class="text-text-soft text-sm">
+            This invite link is invalid, expired, or has already been used. Ask your trainer to send you a new link.
+          </p>
+          <p class="text-muted-foreground mt-2 text-[13px]">
+            <a href="/auth/signin" class="text-text-lavender font-semibold hover:underline">
+              Sign in
+            </a>{" "}
+            if you already have an account.
+          </p>
+        </>
+      ) : (
+        <>
+          <h1
+            class:list={[
+              "text-brand-gradient headline-lg text-center",
+              isClientInvite ? "text-[21px] md:text-[23px]" : "text-2xl md:text-[26px]",
+            ]}
+          >
+            {isClientInvite ? "Create your client account" : "Sign up"}
+          </h1>
+          {isClientInvite ? (
+            <div class="bg-primary/10 flex items-center justify-center gap-1.5 rounded-[var(--radius)] px-3 py-2.5 text-[13px]">
+              <span class="text-text-soft">Invited by</span>
+              <span class="text-foreground font-bold">{trainerName ?? "your trainer"}</span>
+            </div>
+          ) : null}
+          <SignUpForm serverError={error} token={token ?? undefined} trainerName={trainerName} client:load />
+          <p class="text-muted-foreground flex flex-wrap items-center justify-center gap-1.5 text-[13px]">
+            <span>Already have an account?</span>
+            <a href="/auth/signin" class="text-text-lavender font-semibold hover:underline">
+              Sign in
+            </a>
+          </p>
+        </>
+      )
+    }
+  </AuthPageShell>
 </Layout>

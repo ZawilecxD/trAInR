@@ -70,8 +70,8 @@ function hasEnteredValues(values: SetLogValues): boolean {
 function SuffixInput({ suffix, className, ...props }: ComponentProps<typeof Input> & { suffix: string }) {
   return (
     <div className="relative">
-      <Input className={cn("min-h-11 border-white/15 bg-white/5 pr-10 text-base text-white", className)} {...props} />
-      <span className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-sm text-blue-100/50">
+      <Input className={cn("border-border bg-card text-foreground min-h-11 pr-10 text-base", className)} {...props} />
+      <span className="text-muted-foreground pointer-events-none absolute inset-y-0 right-3 flex items-center text-sm">
         {suffix}
       </span>
     </div>
@@ -164,13 +164,15 @@ export default function SetLogRow({
   return (
     <tr
       className={cn(
-        "border-b border-white/5 transition-colors",
-        values.is_warmup && "text-blue-100/60",
-        isActive && "bg-blue-500/10 ring-1 ring-blue-400/40 ring-inset",
+        "border-border/50 border-b transition-colors",
+        values.is_warmup && "text-muted-foreground",
+        isActive && "bg-primary/10 ring-primary/40 ring-1 ring-inset",
       )}
       onFocusCapture={onFocus}
     >
-      <td className={cn("px-3 py-3 text-sm font-medium", values.is_warmup ? "text-blue-100/60" : "text-white")}>
+      <td
+        className={cn("px-3 py-3 text-sm font-medium", values.is_warmup ? "text-muted-foreground" : "text-foreground")}
+      >
         Set {setNumber}
       </td>
 
@@ -270,7 +272,7 @@ export default function SetLogRow({
             <button
               type="button"
               aria-label={`Fill set ${setNumber} from prescription`}
-              className="flex size-11 items-center justify-center rounded-lg border border-blue-400/40 bg-blue-500/15 text-blue-100 transition-colors hover:border-blue-300/60 hover:bg-blue-500/25"
+              className="border-muted-foreground/40 bg-primary/10 text-foreground hover:border-primary/60 hover:bg-primary/25 flex size-11 items-center justify-center rounded-lg border transition-colors"
               onClick={handleFill}
             >
               <ClipboardPaste className="size-5" aria-hidden="true" />
@@ -283,7 +285,7 @@ export default function SetLogRow({
         <div className="flex min-h-11 items-center justify-center">
           <button
             type="button"
-            className="inline-flex size-9 items-center justify-center rounded-lg text-blue-100/40 hover:bg-white/5 hover:text-red-300 disabled:opacity-30"
+            className="text-foreground/40 hover:bg-card hover:text-destructive inline-flex size-9 items-center justify-center rounded-lg disabled:opacity-30"
             aria-label={`Remove set ${setNumber} log`}
             disabled={!canDelete || deletePending}
             onClick={() => {
@@ -302,12 +304,12 @@ export default function SetLogRow({
       <td className="w-10 px-2 py-2">
         <div className="flex min-h-11 items-center justify-center">
           {status === "saving" ? (
-            <Loader2 className="size-4 animate-spin text-blue-200/70" aria-label="Saving" />
+            <Loader2 className="text-text-soft/70 size-4 animate-spin" aria-label="Saving" />
           ) : null}
           {status === "error" ? (
             <button
               type="button"
-              className="inline-flex items-center gap-1 text-xs text-red-300 hover:text-red-200"
+              className="text-destructive hover:text-destructive inline-flex items-center gap-1 text-xs"
               aria-label={error ? `Retry save: ${error}` : "Retry save"}
               onClick={retry}
             >

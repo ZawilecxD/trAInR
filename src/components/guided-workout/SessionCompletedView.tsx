@@ -1,15 +1,16 @@
 import { useMemo } from "react";
 import { ArrowLeft } from "lucide-react";
 import EditWindowBanner from "@/components/guided-workout/EditWindowBanner";
+import { StatusBadge } from "@/components/StatusBadge";
 import SessionCommentsThread from "@/components/session-comments/SessionCommentsThread";
 import SessionExerciseSummary, { readoutBadgeClass } from "@/components/workout-sessions/SessionExerciseSummary";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { isEditWindowOpen } from "@/lib/guided-workout/edit-window";
 import { formatSessionOverviewDate } from "@/lib/guided-workout/format-session-date";
-import { sessionStatusBadgeClass, sessionStatusLabel } from "@/lib/session-status";
+import { sessionStatusLabel, sessionStatusToBadgeStatus } from "@/lib/session-status";
 import { deriveSessionReadout } from "@/lib/trainer-dashboard/readout";
 import { toExerciseReadoutInputs } from "@/lib/trainer-dashboard/to-exercise-readout-input";
+import { mobileStickyActionBarClass, surfaceCardClass } from "@/lib/ui-classes";
 import type { ClientSessionDetail } from "@/lib/workout-sessions/service";
 import { cn } from "@/lib/utils";
 
@@ -33,34 +34,34 @@ export default function SessionCompletedView({ session, currentUserId, onEdit }:
       <header className="mb-6">
         <a
           href="/client/plan"
-          className="inline-flex min-h-11 items-center gap-2 text-sm text-blue-100/70 transition-colors hover:text-white"
+          className="text-muted-foreground hover:text-foreground inline-flex min-h-11 items-center gap-2 text-sm transition-colors"
         >
           <ArrowLeft className="size-4" aria-hidden="true" />
           Calendar
         </a>
         <div className="mt-4 flex flex-wrap items-center gap-3">
-          <h1 className="text-3xl font-bold text-white">{session.name ?? "Workout"}</h1>
-          <Badge variant="outline" className={cn("text-xs", sessionStatusBadgeClass(session.status))}>
+          <h1 className="text-foreground text-3xl font-bold tracking-tight">{session.name ?? "Workout"}</h1>
+          <StatusBadge status={sessionStatusToBadgeStatus(session.status)}>
             {sessionStatusLabel(session.status)}
-          </Badge>
+          </StatusBadge>
         </div>
-        <p className="mt-1 text-sm text-blue-100/70">{formatSessionOverviewDate(session.scheduled_date)}</p>
+        <p className="text-muted-foreground mt-1 text-sm">{formatSessionOverviewDate(session.scheduled_date)}</p>
         <EditWindowBanner lockedAt={session.locked_at} hasLogs={hasLogs} />
       </header>
 
-      <div className="space-y-4 pb-28">
-        <section className="rounded-2xl border border-white/10 bg-white/5 p-5 backdrop-blur-xl">
+      <div className="space-y-4 pb-36 md:pb-28">
+        <section className={cn(surfaceCardClass, "p-5")}>
           <dl className="grid gap-3 text-sm sm:grid-cols-2">
             <div>
-              <dt className="text-blue-100/60">Trainer</dt>
-              <dd className="mt-0.5 font-medium text-white">{session.trainer_display_name || "Your trainer"}</dd>
+              <dt className="text-muted-foreground">Trainer</dt>
+              <dd className="text-foreground mt-0.5 font-medium">{session.trainer_display_name || "Your trainer"}</dd>
             </div>
             <div>
-              <dt className="text-blue-100/60">Status</dt>
-              <dd className="mt-0.5 font-medium text-white">{sessionStatusLabel(session.status)}</dd>
+              <dt className="text-muted-foreground">Status</dt>
+              <dd className="text-foreground mt-0.5 font-medium">{sessionStatusLabel(session.status)}</dd>
             </div>
             <div>
-              <dt className="text-blue-100/60">Logging status</dt>
+              <dt className="text-muted-foreground">Logging status</dt>
               <dd className="mt-0.5">
                 <span
                   className={cn(
@@ -73,8 +74,8 @@ export default function SessionCompletedView({ session, currentUserId, onEdit }:
               </dd>
             </div>
             <div>
-              <dt className="text-blue-100/60">Sets logged</dt>
-              <dd className="mt-0.5 font-medium text-white">
+              <dt className="text-muted-foreground">Sets logged</dt>
+              <dd className="text-foreground mt-0.5 font-medium">
                 {readout.completedSets} of {readout.totalSets}
               </dd>
             </div>
@@ -82,9 +83,11 @@ export default function SessionCompletedView({ session, currentUserId, onEdit }:
         </section>
 
         {session.status === "cancelled" ? (
-          <p className="text-sm text-blue-100/60">This session has been cancelled.</p>
+          <p className="text-muted-foreground text-sm">This session has been cancelled.</p>
         ) : (
-          <p className="text-sm text-blue-100/60">Your workout has been recorded. Your trainer can see the results.</p>
+          <p className="text-muted-foreground text-sm">
+            Your workout has been recorded. Your trainer can see the results.
+          </p>
         )}
 
         <SessionExerciseSummary readout={readout} notesByExerciseId={notesByExerciseId} />
@@ -93,9 +96,9 @@ export default function SessionCompletedView({ session, currentUserId, onEdit }:
       </div>
 
       {canEdit && onEdit ? (
-        <div className="fixed inset-x-0 bottom-0 border-t border-white/10 bg-slate-950/90 p-4 backdrop-blur-xl">
+        <div className={mobileStickyActionBarClass}>
           <div className="mx-auto max-w-2xl">
-            <Button type="button" className="min-h-12 w-full text-base" onClick={onEdit}>
+            <Button type="button" className="min-h-12 w-full text-base font-semibold" onClick={onEdit}>
               Edit
             </Button>
           </div>

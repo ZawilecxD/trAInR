@@ -1,14 +1,10 @@
 import { useMemo } from "react";
 import { Calendar } from "@/components/ui/calendar";
+import { type PlanCalendarSession } from "@/lib/plans/calendar-session";
 import { cn } from "@/lib/utils";
 import type { SessionStatus } from "@/types";
 
-export interface PlanCalendarSession {
-  id: string;
-  scheduled_date: string;
-  name: string;
-  status: SessionStatus;
-}
+export type { PlanCalendarSession };
 
 interface PlanCalendarProps {
   sessions: PlanCalendarSession[];
@@ -97,23 +93,24 @@ export default function PlanCalendar({
       onMonthChange={onMonthChange}
       modifiers={statusDates}
       modifiersClassNames={{
-        sessionNotStarted: cn(sessionDotBase, "after:bg-blue-400"),
-        sessionPartial: cn(sessionDotBase, "after:bg-amber-400"),
-        sessionFinished: cn(sessionDotBase, "after:bg-emerald-400"),
-        sessionCancelled: cn(sessionDotBase, "after:bg-red-400"),
+        sessionNotStarted: cn(sessionDotBase, "after:bg-primary"),
+        sessionPartial: cn(sessionDotBase, "after:bg-warning"),
+        sessionFinished: cn(sessionDotBase, "after:bg-success"),
+        sessionCancelled: cn(sessionDotBase, "after:bg-destructive"),
       }}
-      className="w-full max-w-full rounded-xl border border-white/10 bg-white/5 p-2 text-white [--cell-size:2.75rem]"
+      className="text-foreground w-full max-w-full min-w-0 bg-transparent p-1"
       classNames={{
-        caption_label: "text-base font-semibold text-white",
-        weekday: "w-11 shrink-0 text-xs text-blue-100/60",
+        caption_label: "truncate text-base font-semibold text-foreground",
+        weekday: "min-w-0 flex-1 basis-0 text-xs text-muted-foreground",
+        day: "min-w-0 flex-1 basis-0",
         day_button: cn(
-          "size-11 rounded-lg text-white hover:bg-white/10",
-          "aria-selected:bg-purple-500 aria-selected:text-white aria-selected:hover:bg-purple-500/90",
+          "mx-auto aspect-square h-auto w-full max-h-11 max-w-11 min-h-9 rounded-lg text-foreground hover:bg-accent",
+          "aria-selected:bg-primary aria-selected:text-primary-foreground aria-selected:hover:bg-primary/90",
         ),
-        today: "border border-purple-400/40 bg-purple-500/10 text-white",
-        outside: "text-blue-100/30",
-        button_previous: "border-white/20 bg-white/5 text-white hover:bg-white/10",
-        button_next: "border-white/20 bg-white/5 text-white hover:bg-white/10",
+        today: "border border-primary/40 bg-primary/10 text-primary-foreground",
+        outside: "text-foreground/30",
+        button_previous: "border-border bg-card text-foreground hover:bg-accent",
+        button_next: "border-border bg-card text-foreground hover:bg-accent",
       }}
     />
   );

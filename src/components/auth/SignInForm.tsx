@@ -44,7 +44,7 @@ export default function SignInForm({ serverError }: Props) {
   }
 
   return (
-    <form method="POST" action="/api/auth/signin" className="space-y-4" onSubmit={handleSubmit} noValidate>
+    <form method="POST" action="/api/auth/signin" className="w-full space-y-4" onSubmit={handleSubmit} noValidate>
       <FormField
         id="email"
         type="email"

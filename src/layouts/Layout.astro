@@ -1,19 +1,25 @@
 ---
 import "../styles/global.css";
 import Banner from "@/components/Banner.astro";
+import BottomNav from "@/components/BottomNav.astro";
 import Topbar from "@/components/Topbar.astro";
 import { Toaster } from "@/components/ui/sonner";
 import { missingConfigs } from "@/lib/config-status";
+import { cn } from "@/lib/utils";
 
 interface Props {
   title?: string;
 }
 
 const { title = "trAInR" } = Astro.props;
+const { user, role } = Astro.locals;
+const hasMobileBottomNav = Boolean(user && (role === "trainer" || role === "client"));
+/** Auth screens are full-bleed centered cards — hide app chrome to match public_auth.pen */
+const hideChrome = Astro.url.pathname.startsWith("/auth/");
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="en" class="dark">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
@@ -37,8 +43,11 @@ const { title = "trAInR" } = Astro.props;
         </Banner>
       ))
     }
-    <Topbar />
-    <slot />
+    {hideChrome ? null : <Topbar />}
+    <div class:list={cn(!hideChrome && hasMobileBottomNav && "pb-20 md:pb-0")}>
+      <slot />
+    </div>
+    {hideChrome ? null : <BottomNav />}
     <Toaster client:load />
   </body>
 </html>

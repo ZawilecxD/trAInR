@@ -32,8 +32,8 @@ export default function EditWindowBanner({ lockedAt, hasLogs }: EditWindowBanner
       className={cn(
         "mt-4 flex items-start gap-3 rounded-xl border px-4 py-3 text-sm",
         status === "sealed"
-          ? "border-slate-500/40 bg-slate-500/10 text-slate-200"
-          : "border-blue-400/30 bg-blue-500/10 text-blue-100",
+          ? "border-muted-foreground/40 bg-muted text-muted-foreground"
+          : "border-primary/30 bg-primary/10 text-foreground",
       )}
       role="status"
     >

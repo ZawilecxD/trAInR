@@ -5,6 +5,7 @@ import { isTrainerAssignedToClient } from "@/lib/client-plans/service";
 import { listExercises } from "@/lib/exercises/service";
 import { getTemplate, type TemplateWithExercises } from "@/lib/session-templates/service";
 import { createClient } from "@/lib/supabase";
+import { errorBannerClass, pageShellClass } from "@/lib/ui-classes";
 import { z } from "zod";
 
 const clientIdSchema = z.uuid();
@@ -59,19 +60,17 @@ const clientName = typeof profileResult.data?.display_name === "string" ? profil
 ---
 
 <Layout title={`New session — ${clientName}`}>
-  <div class="bg-cosmic min-h-screen p-4 md:p-8">
+  <div class:list={pageShellClass}>
     <div class="mx-auto max-w-4xl space-y-6">
       <div>
         <a
           href={`/trainer/clients/${clientId}/plan?date=${scheduledDate}`}
-          class="text-sm text-blue-100/70 transition-colors hover:text-white"
+          class="text-muted-foreground hover:text-foreground text-sm transition-colors"
         >
           ← Back to plan
         </a>
-        <h1 class="mt-3 bg-gradient-to-r from-blue-200 to-purple-200 bg-clip-text text-3xl font-bold text-transparent">
-          New session
-        </h1>
-        <p class="mt-1 text-sm text-blue-100/70">
+        <h1 class="headline-lg text-foreground mt-3 text-balance">New session</h1>
+        <p class="text-muted-foreground mt-1 text-sm">
           {
             initialSession
               ? `Personalize "${initialSession.name}" before assigning to ${clientName}.`
@@ -82,21 +81,17 @@ const clientName = typeof profileResult.data?.display_name === "string" ? profil
 
       {
         loadError ? (
-          <div class="rounded-lg border border-red-400/30 bg-red-500/10 px-4 py-3 text-sm text-red-100">
-            Failed to load editor: {loadError}
-          </div>
+          <div class:list={errorBannerClass}>Failed to load editor: {loadError}</div>
         ) : (
-          <div class="rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-xl">
-            <SessionForm
-              client:load
-              mode="create"
-              clientId={clientId}
-              initialScheduledDate={scheduledDate}
-              initialSourceTemplateId={sourceTemplateId}
-              availableExercises={availableExercises}
-              initialSession={initialSession}
-            />
-          </div>
+          <SessionForm
+            client:load
+            mode="create"
+            clientId={clientId}
+            initialScheduledDate={scheduledDate}
+            initialSourceTemplateId={sourceTemplateId}
+            availableExercises={availableExercises}
+            initialSession={initialSession}
+          />
         )
       }
     </div>

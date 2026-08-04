@@ -35,9 +35,9 @@ export default function RoundWarmupToggle({
             "min-w-[4.25rem] shrink-0 rounded-md px-2 py-1 text-[11px] leading-none font-medium whitespace-nowrap transition-colors",
             isWarmup === option.value
               ? option.value
-                ? "bg-white/15 text-blue-100/70"
-                : "bg-purple-500 text-white"
-              : "border border-white/20 text-blue-100/80 hover:bg-white/10",
+                ? "bg-accent text-muted-foreground"
+                : "bg-primary text-primary-foreground"
+              : "border-border text-muted-foreground hover:bg-accent border",
           )}
           onClick={() => {
             onChange(option.value);

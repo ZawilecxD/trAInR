@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { Loader2, Pencil, Plus, Trash2 } from "lucide-react";
 import DeleteConfirmDialog from "@/components/DeleteConfirmDialog";
+import { EmptyState } from "@/components/EmptyState";
 import TemplateFilters from "@/components/session-templates/TemplateFilters";
 import TemplateFormModal from "@/components/session-templates/TemplateFormModal";
 import { Button } from "@/components/ui/button";
@@ -8,6 +9,7 @@ import type { TemplateFilterState } from "@/lib/session-templates/filter-url";
 import { TEMPLATE_PHASE_LABELS } from "@/lib/session-templates/labels";
 import type { SessionTemplateSummary, TemplateWithExercises } from "@/lib/session-templates/service";
 import type { ExerciseWithMuscleGroups } from "@/lib/exercises/service";
+import { errorBannerClass, successBannerClass } from "@/lib/ui-classes";
 
 interface TemplatesHubProps {
   initialTemplates: SessionTemplateSummary[];
@@ -144,140 +146,193 @@ export default function TemplatesHub({
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-wrap items-center justify-between gap-4">
+      <div className="flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
         <div>
-          <h1 className="bg-gradient-to-r from-blue-200 to-purple-200 bg-clip-text text-3xl font-bold text-transparent">
-            Session templates
-          </h1>
-          <p className="mt-1 text-sm text-blue-100/70">
+          <h1 className="headline-lg text-foreground">Session templates</h1>
+          <p className="text-muted-foreground mt-1 text-sm">
             Build reusable session blueprints with warm-up, main, and cool-down phases.
           </p>
         </div>
-        <Button type="button" className="bg-purple-500 text-white hover:bg-purple-500/90" onClick={openCreateModal}>
+        <Button
+          type="button"
+          className="bg-primary hover:bg-primary/90 text-primary-foreground min-h-11 w-full sm:w-auto"
+          onClick={openCreateModal}
+        >
           <Plus className="size-4" />
           New template
         </Button>
       </div>
 
-      {flashMessage ? (
-        <div className="rounded-lg border border-green-400/30 bg-green-500/10 px-4 py-3 text-sm text-green-100">
-          {flashMessage}
-        </div>
-      ) : null}
+      {flashMessage ? <div className={successBannerClass}>{flashMessage}</div> : null}
 
-      {modalError ? (
-        <div className="rounded-lg border border-red-400/30 bg-red-500/10 px-4 py-3 text-sm text-red-100">
-          {modalError}
-        </div>
-      ) : null}
+      {modalError ? <div className={errorBannerClass}>{modalError}</div> : null}
 
-      {deleteError ? (
-        <div className="rounded-lg border border-red-400/30 bg-red-500/10 px-4 py-3 text-sm text-red-100">
-          {deleteError}
-        </div>
-      ) : null}
+      {deleteError ? <div className={errorBannerClass}>{deleteError}</div> : null}
 
       <TemplateFilters initialFilters={initialFilters} />
 
       {sortedTemplates.length === 0 ? (
-        <div className="rounded-2xl border border-white/10 bg-white/5 p-8 text-center text-blue-100/80">
-          {hasActiveFilters ? (
-            <>
-              <p className="text-lg font-medium text-white">No templates match your filters</p>
-              <p className="mt-2 text-sm">Try clearing filters or adjusting your search.</p>
-            </>
-          ) : (
-            <>
-              <p className="text-lg font-medium text-white">No templates yet</p>
-              <p className="mt-2 text-sm">Create your first template to reuse session structures across clients.</p>
+        hasActiveFilters ? (
+          <EmptyState
+            title="No templates match your filters"
+            description="Try clearing filters or adjusting your search."
+          />
+        ) : (
+          <EmptyState
+            title="No templates yet"
+            description="Create your first template to reuse session structures across clients."
+            action={
               <Button
                 type="button"
                 variant="outline"
-                className="mt-4 border-white/20 bg-transparent text-white hover:bg-white/10"
+                className="border-border hover:bg-accent bg-transparent"
                 onClick={openCreateModal}
               >
                 Create template
               </Button>
-            </>
-          )}
-        </div>
+            }
+          />
+        )
       ) : (
-        <div className="overflow-hidden rounded-2xl border border-white/10 bg-white/5">
-          <div className="overflow-x-auto">
-            <table className="min-w-full text-left text-sm text-blue-100/90">
-              <thead className="border-b border-white/10 bg-white/5 text-xs tracking-wide text-blue-100/60 uppercase">
-                <tr>
-                  <th className="px-4 py-3">Name</th>
-                  <th className="px-4 py-3">Description</th>
-                  <th className="px-4 py-3">Exercises</th>
-                  <th className="px-4 py-3">Phases</th>
-                  <th className="px-4 py-3">Updated</th>
-                  <th className="px-4 py-3">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {sortedTemplates.map((template) => (
-                  <tr key={template.id} className="border-b border-white/5 last:border-b-0">
-                    <td className="px-4 py-3 font-medium text-white">{template.name}</td>
-                    <td className="max-w-xs truncate px-4 py-3">{template.description ?? "—"}</td>
-                    <td className="px-4 py-3">{template.exercise_count}</td>
-                    <td className="px-4 py-3">
-                      {template.phases.length > 0 ? (
-                        <div className="flex flex-wrap gap-1">
-                          {template.phases.map((phase) => (
-                            <span
-                              key={phase}
-                              className="rounded-full border border-white/20 bg-white/5 px-2 py-0.5 text-xs text-blue-100/80"
-                            >
-                              {TEMPLATE_PHASE_LABELS[phase]}
-                            </span>
-                          ))}
-                        </div>
-                      ) : (
-                        "—"
-                      )}
-                    </td>
-                    <td className="px-4 py-3 whitespace-nowrap">{formatUpdatedAt(template.updated_at)}</td>
-                    <td className="px-4 py-3">
-                      <div className="flex items-center gap-2">
-                        <Button
-                          type="button"
-                          variant="outline"
-                          size="sm"
-                          className="border-white/20 bg-transparent text-white hover:bg-white/10"
-                          disabled={loadingEdit && editingTemplateId === template.id}
-                          onClick={() => {
-                            void openEditModal(template.id);
-                          }}
-                        >
-                          {loadingEdit && editingTemplateId === template.id ? (
-                            <Loader2 className="size-3.5 animate-spin" />
-                          ) : (
-                            <Pencil className="size-3.5" />
-                          )}
-                          Edit
-                        </Button>
-                        <Button
-                          type="button"
-                          variant="outline"
-                          size="sm"
-                          className="border-white/20 bg-transparent text-red-200 hover:bg-red-500/10"
-                          onClick={() => {
-                            setDeleteError(null);
-                            setDeleteTarget(template);
-                          }}
-                        >
-                          <Trash2 className="size-3.5" />
-                          Delete
-                        </Button>
-                      </div>
-                    </td>
+        <>
+          <div className="border-border bg-card hidden overflow-hidden rounded-2xl border md:block">
+            <div className="overflow-x-auto">
+              <table className="text-foreground/90 min-w-full text-left text-sm">
+                <thead className="border-border bg-card text-muted-foreground border-b text-xs tracking-wide uppercase">
+                  <tr>
+                    <th className="px-4 py-3">Name</th>
+                    <th className="px-4 py-3">Description</th>
+                    <th className="px-4 py-3">Exercises</th>
+                    <th className="px-4 py-3">Phases</th>
+                    <th className="px-4 py-3">Updated</th>
+                    <th className="px-4 py-3">Actions</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {sortedTemplates.map((template) => (
+                    <tr key={template.id} className="border-border/50 border-b last:border-b-0">
+                      <td className="text-foreground px-4 py-3 font-medium">{template.name}</td>
+                      <td className="max-w-xs truncate px-4 py-3">{template.description ?? "—"}</td>
+                      <td className="px-4 py-3">{template.exercise_count}</td>
+                      <td className="px-4 py-3">
+                        {template.phases.length > 0 ? (
+                          <div className="flex flex-wrap gap-1">
+                            {template.phases.map((phase) => (
+                              <span
+                                key={phase}
+                                className="border-border bg-card text-muted-foreground rounded-full border px-2 py-0.5 text-xs"
+                              >
+                                {TEMPLATE_PHASE_LABELS[phase]}
+                              </span>
+                            ))}
+                          </div>
+                        ) : (
+                          "—"
+                        )}
+                      </td>
+                      <td className="px-4 py-3 whitespace-nowrap">{formatUpdatedAt(template.updated_at)}</td>
+                      <td className="px-4 py-3">
+                        <div className="flex items-center gap-2">
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            className="border-border hover:bg-accent text-foreground bg-transparent"
+                            disabled={loadingEdit && editingTemplateId === template.id}
+                            onClick={() => {
+                              void openEditModal(template.id);
+                            }}
+                          >
+                            {loadingEdit && editingTemplateId === template.id ? (
+                              <Loader2 className="size-3.5 animate-spin" />
+                            ) : (
+                              <Pencil className="size-3.5" />
+                            )}
+                            Edit
+                          </Button>
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            className="border-border text-destructive hover:bg-destructive/10 bg-transparent"
+                            onClick={() => {
+                              setDeleteError(null);
+                              setDeleteTarget(template);
+                            }}
+                          >
+                            <Trash2 className="size-3.5" />
+                            Delete
+                          </Button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
-        </div>
+
+          <ul className="space-y-3 md:hidden">
+            {sortedTemplates.map((template) => (
+              <li key={template.id} className="border-border bg-card rounded-2xl border p-4">
+                <div className="space-y-2">
+                  <p className="text-foreground font-medium">{template.name}</p>
+                  <p className="text-muted-foreground line-clamp-2 text-sm">
+                    {template.description ?? "No description"}
+                  </p>
+                  <p className="text-muted-foreground text-xs">
+                    {template.exercise_count} exercise{template.exercise_count === 1 ? "" : "s"} · Updated{" "}
+                    {formatUpdatedAt(template.updated_at)}
+                  </p>
+                  {template.phases.length > 0 ? (
+                    <div className="flex flex-wrap gap-1">
+                      {template.phases.map((phase) => (
+                        <span
+                          key={phase}
+                          className="border-border bg-card text-muted-foreground rounded-full border px-2 py-0.5 text-xs"
+                        >
+                          {TEMPLATE_PHASE_LABELS[phase]}
+                        </span>
+                      ))}
+                    </div>
+                  ) : null}
+                </div>
+                <div className="mt-4 flex items-center gap-2">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    className="border-border hover:bg-accent text-foreground bg-transparent"
+                    disabled={loadingEdit && editingTemplateId === template.id}
+                    onClick={() => {
+                      void openEditModal(template.id);
+                    }}
+                  >
+                    {loadingEdit && editingTemplateId === template.id ? (
+                      <Loader2 className="size-3.5 animate-spin" />
+                    ) : (
+                      <Pencil className="size-3.5" />
+                    )}
+                    Edit
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    className="border-border text-destructive hover:bg-destructive/10 bg-transparent"
+                    onClick={() => {
+                      setDeleteError(null);
+                      setDeleteTarget(template);
+                    }}
+                  >
+                    <Trash2 className="size-3.5" />
+                    Delete
+                  </Button>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </>
       )}
 
       <TemplateFormModal
@@ -317,7 +372,7 @@ export default function TemplatesHub({
         description={
           deleteTarget ? (
             <>
-              <span className="font-medium text-white">{deleteTarget.name}</span> will be permanently removed. This
+              <span className="text-foreground font-medium">{deleteTarget.name}</span> will be permanently removed. This
               cannot be undone.
             </>
           ) : (

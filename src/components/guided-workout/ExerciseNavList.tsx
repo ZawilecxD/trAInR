@@ -38,9 +38,9 @@ function StatusDot({ isDone, isActive }: { isDone: boolean; isActive: boolean })
     <span
       className={cn(
         "mt-1.5 size-2.5 shrink-0 rounded-full border",
-        isDone && "border-emerald-400 bg-emerald-400",
-        isActive && !isDone && "border-blue-400 bg-blue-400",
-        !isDone && !isActive && "border-white/25 bg-transparent",
+        isDone && "border-success bg-success",
+        isActive && !isDone && "border-primary bg-primary",
+        !isDone && !isActive && "border-border bg-transparent",
       )}
       aria-hidden="true"
     />
@@ -58,9 +58,9 @@ export default function ExerciseNavList({
 
   return (
     <div className={cn("flex flex-col", className)}>
-      <header className="border-b border-white/10 pb-4">
-        <h2 className="text-lg font-semibold text-white">Exercises</h2>
-        <p className="mt-1 text-sm text-blue-100/60">
+      <header className="border-border border-b pb-4">
+        <h2 className="text-foreground text-lg font-semibold">Exercises</h2>
+        <p className="text-muted-foreground mt-1 text-sm">
           {summary.done} done · {summary.active} active · {summary.remaining} remaining
         </p>
       </header>
@@ -74,7 +74,7 @@ export default function ExerciseNavList({
 
           return (
             <section key={phase} className="mt-4 first:mt-0">
-              <h3 className="px-2 font-mono text-xs tracking-widest text-blue-200/80">{phaseLabel(phase)}</h3>
+              <h3 className="text-text-soft px-2 font-mono text-xs tracking-widest">{phaseLabel(phase)}</h3>
               <ul className="mt-2 space-y-1">
                 {items.map(({ exercise, globalIndex }) => {
                   const progress = getExerciseProgress(
@@ -89,8 +89,8 @@ export default function ExerciseNavList({
                       <button
                         type="button"
                         className={cn(
-                          "flex w-full items-start gap-3 rounded-xl px-3 py-3 text-left transition-colors hover:bg-white/5",
-                          globalIndex === exerciseIndex && "bg-blue-500/10 ring-1 ring-blue-400/30 ring-inset",
+                          "hover:bg-card flex w-full items-start gap-3 rounded-xl px-3 py-3 text-left transition-colors",
+                          globalIndex === exerciseIndex && "bg-primary/10 ring-primary/30 ring-1 ring-inset",
                         )}
                         onClick={() => {
                           onSelectExercise(globalIndex);
@@ -98,10 +98,10 @@ export default function ExerciseNavList({
                       >
                         <StatusDot isDone={progress.isDone} isActive={progress.isActive} />
                         <span className="min-w-0 flex-1">
-                          <span className="block text-sm font-medium text-white">
+                          <span className="text-foreground block text-sm font-medium">
                             {exercise.exercise_name || "Exercise"}
                           </span>
-                          <span className="mt-0.5 block text-xs text-blue-100/60">
+                          <span className="text-muted-foreground mt-0.5 block text-xs">
                             {progress.completedSets}/{progress.totalSets} sets
                           </span>
                         </span>

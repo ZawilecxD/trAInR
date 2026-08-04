@@ -63,14 +63,14 @@ export default function SignUpForm({ serverError, token, trainerName }: Props) {
 
   const passwordHint =
     !errors.password && password.length > 0 && password.length < MIN_PASSWORD_LENGTH ? (
-      <p className="mt-1 text-xs text-blue-100/50">
+      <p className="text-muted-foreground mt-1 text-xs">
         {MIN_PASSWORD_LENGTH - password.length} more character
         {MIN_PASSWORD_LENGTH - password.length !== 1 ? "s" : ""} needed
       </p>
     ) : undefined;
 
   return (
-    <form method="POST" action="/api/auth/signup" className="space-y-4" onSubmit={handleSubmit} noValidate>
+    <form method="POST" action="/api/auth/signup" className="w-full space-y-4" onSubmit={handleSubmit} noValidate>
       {isClientInvite ? <input type="hidden" name="token" value={token} /> : null}
 
       {isClientInvite && trainerName ? <p className="sr-only">Invited by {trainerName}</p> : null}

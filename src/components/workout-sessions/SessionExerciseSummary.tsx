@@ -1,4 +1,7 @@
 import { Check } from "lucide-react";
+
+import { EmptyState } from "@/components/EmptyState";
+import { StatusBadge, type StatusBadgeStatus } from "@/components/StatusBadge";
 import { PHASE_ORDER, phaseLabel } from "@/lib/guided-workout/phase-labels";
 import { formatPrescribedSetDetail, formatSetActual } from "@/lib/guided-workout/format-prescription";
 import {
@@ -7,17 +10,29 @@ import {
   type ReadoutStatus,
   type SessionReadoutSummary,
 } from "@/lib/trainer-dashboard/readout";
+import { surfaceCardClass } from "@/lib/ui-classes";
 import { cn } from "@/lib/utils";
 import type { ExercisePhase } from "@/types";
 
 export function readoutBadgeClass(status: ReadoutStatus): string {
   switch (status) {
     case "fully_logged":
-      return "border-emerald-400/40 bg-emerald-500/15 text-emerald-200";
+      return "border-success/40 bg-success/15 text-success";
     case "in_progress":
-      return "border-amber-400/40 bg-amber-500/15 text-amber-100";
+      return "border-warning/40 bg-warning/15 text-warning";
     case "not_logged":
-      return "border-white/15 bg-white/5 text-blue-100/70";
+      return "border-border bg-card text-muted-foreground";
+  }
+}
+
+function readoutStatusBadge(status: ReadoutStatus): StatusBadgeStatus {
+  switch (status) {
+    case "fully_logged":
+      return "success";
+    case "in_progress":
+      return "warning";
+    case "not_logged":
+      return "muted";
   }
 }
 
@@ -43,91 +58,143 @@ function ExerciseActualsCard({ exercise, notes }: { exercise: ExerciseReadout; n
   const showLoad = exercise.defaultMetric === "reps_weight";
 
   return (
-    <article className="rounded-xl border border-white/10 bg-white/5 p-4">
+    <article className="border-border bg-popover/40 rounded-[var(--radius)] border p-4">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h4 className="text-sm font-medium text-white">{exercise.exerciseName || "Exercise"}</h4>
-          <p className="mt-0.5 text-xs text-blue-100/60">
+          <h4 className="text-foreground text-sm font-medium">{exercise.exerciseName || "Exercise"}</h4>
+          <p className="text-muted-foreground mt-0.5 text-xs">
             {exercise.completedSets} of {exercise.totalSets} sets logged
           </p>
         </div>
-        <span
-          className={cn("rounded-full border px-2.5 py-0.5 text-xs font-medium", readoutBadgeClass(exercise.status))}
-        >
-          {readoutStatusLabel(exercise.status)}
-        </span>
+        <StatusBadge status={readoutStatusBadge(exercise.status)}>{readoutStatusLabel(exercise.status)}</StatusBadge>
       </div>
 
       {notes ? (
-        <p className="mt-3 rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-blue-100/80">{notes}</p>
+        <p className="border-border bg-card text-muted-foreground mt-3 rounded-[var(--radius)] border px-3 py-2 text-sm">
+          {notes}
+        </p>
       ) : null}
 
       {exercise.sets.length === 0 ? (
-        <p className="mt-3 text-sm text-blue-100/60">No sets prescribed</p>
+        <p className="text-muted-foreground mt-3 text-sm">No sets prescribed</p>
       ) : (
-        <div className="mt-3 overflow-x-auto">
-          <table className="w-full min-w-[28rem] border-collapse text-sm">
-            <thead>
-              <tr className="border-b border-white/10 text-left text-xs tracking-wide text-blue-100/60 uppercase">
-                <th className="px-2 py-2 font-medium">Set</th>
-                <th className="px-2 py-2 font-medium">Prescribed</th>
-                <th className="px-2 py-2 font-medium">Actual</th>
-                {showReps ? <th className="px-2 py-2 text-center font-medium">Reps</th> : null}
-                {showDuration ? <th className="px-2 py-2 text-center font-medium">Time</th> : null}
-                {showLoad ? <th className="px-2 py-2 text-center font-medium">Load</th> : null}
-                <th className="px-2 py-2 text-center font-mono text-xs font-medium tracking-wide">RPE</th>
-                <th className="px-2 py-2 text-center font-medium">Done</th>
-              </tr>
-            </thead>
-            <tbody>
-              {exercise.sets.map((setReadout) => {
-                const actualText = formatSetActual(setReadout.log, exercise.defaultMetric);
-                const isUnlogged = actualText === "Not logged";
+        <>
+          <ul className="mt-3 space-y-2 md:hidden">
+            {exercise.sets.map((setReadout) => {
+              const actualText = formatSetActual(setReadout.log, exercise.defaultMetric);
+              const isUnlogged = actualText === "Not logged";
 
-                return (
-                  <tr key={setReadout.setNumber} className="border-b border-white/5 last:border-b-0">
-                    <td className="px-2 py-2.5 font-medium text-white">Set {setReadout.setNumber}</td>
-                    <td className="px-2 py-2.5 text-blue-100/80">
-                      {formatPrescribedSetDetail(setReadout.prescribed, exercise.defaultMetric)}
-                    </td>
-                    <td className={cn("px-2 py-2.5", isUnlogged ? "text-blue-100/40 italic" : "text-white")}>
-                      {actualText}
-                    </td>
-                    {showReps ? (
-                      <td className="px-2 py-2.5 text-center text-blue-100/80">{setReadout.log?.reps ?? "—"}</td>
-                    ) : null}
+              return (
+                <li
+                  key={setReadout.setNumber}
+                  className="border-border bg-card space-y-2 rounded-[var(--radius)] border px-3 py-3"
+                >
+                  <div className="flex items-center justify-between gap-2">
+                    <p className="text-text-soft label-caps">Set {setReadout.setNumber}</p>
+                    <span
+                      className={cn(
+                        "inline-flex size-7 items-center justify-center rounded-md border",
+                        setReadout.isComplete
+                          ? "border-success/50 bg-success/20 text-success"
+                          : "border-border bg-card text-foreground/30",
+                      )}
+                      aria-label={setReadout.isComplete ? "Set complete" : "Set incomplete"}
+                    >
+                      {setReadout.isComplete ? <Check className="size-4" aria-hidden="true" /> : null}
+                    </span>
+                  </div>
+                  <p className="text-muted-foreground text-sm">
+                    Prescribed: {formatPrescribedSetDetail(setReadout.prescribed, exercise.defaultMetric)}
+                  </p>
+                  <p className={cn("text-sm", isUnlogged ? "text-foreground/40 italic" : "text-foreground")}>
+                    Actual: {actualText}
+                  </p>
+                  <div className="text-muted-foreground data-mono flex flex-wrap gap-x-4 gap-y-1 text-xs">
+                    {showReps ? <span>Reps {setReadout.log?.reps ?? "—"}</span> : null}
                     {showDuration ? (
-                      <td className="px-2 py-2.5 text-center text-blue-100/80">
+                      <span>
+                        Time{" "}
                         {setReadout.log?.duration_seconds !== null && setReadout.log?.duration_seconds !== undefined
                           ? `${setReadout.log.duration_seconds}s`
                           : "—"}
+                      </span>
+                    ) : null}
+                    {showLoad ? <span>Load {setReadout.log?.load_kg ?? "—"}</span> : null}
+                    <span>RPE {setReadout.log?.rpe ?? "—"}</span>
+                  </div>
+                </li>
+              );
+            })}
+          </ul>
+
+          <div className="mt-3 hidden overflow-x-auto md:block">
+            <table className="w-full min-w-[28rem] border-collapse text-sm">
+              <thead>
+                <tr className="border-border text-muted-foreground border-b text-left text-xs tracking-wide uppercase">
+                  <th className="px-2 py-2 font-medium">Set</th>
+                  <th className="px-2 py-2 font-medium">Prescribed</th>
+                  <th className="px-2 py-2 font-medium">Actual</th>
+                  {showReps ? <th className="px-2 py-2 text-center font-medium">Reps</th> : null}
+                  {showDuration ? <th className="px-2 py-2 text-center font-medium">Time</th> : null}
+                  {showLoad ? <th className="px-2 py-2 text-center font-medium">Load</th> : null}
+                  <th className="px-2 py-2 text-center font-mono text-xs font-medium tracking-wide">RPE</th>
+                  <th className="px-2 py-2 text-center font-medium">Done</th>
+                </tr>
+              </thead>
+              <tbody>
+                {exercise.sets.map((setReadout) => {
+                  const actualText = formatSetActual(setReadout.log, exercise.defaultMetric);
+                  const isUnlogged = actualText === "Not logged";
+
+                  return (
+                    <tr key={setReadout.setNumber} className="border-border/50 border-b last:border-b-0">
+                      <td className="text-foreground px-2 py-2.5 font-medium">Set {setReadout.setNumber}</td>
+                      <td className="text-muted-foreground px-2 py-2.5">
+                        {formatPrescribedSetDetail(setReadout.prescribed, exercise.defaultMetric)}
                       </td>
-                    ) : null}
-                    {showLoad ? (
-                      <td className="px-2 py-2.5 text-center text-blue-100/80">{setReadout.log?.load_kg ?? "—"}</td>
-                    ) : null}
-                    <td className="px-2 py-2.5 text-center font-mono text-blue-100/80">{setReadout.log?.rpe ?? "—"}</td>
-                    <td className="px-2 py-2.5">
-                      <div className="flex justify-center">
-                        <span
-                          className={cn(
-                            "inline-flex size-7 items-center justify-center rounded-md border",
-                            setReadout.isComplete
-                              ? "border-emerald-400/50 bg-emerald-500/20 text-emerald-200"
-                              : "border-white/10 bg-white/5 text-blue-100/30",
-                          )}
-                          aria-label={setReadout.isComplete ? "Set complete" : "Set incomplete"}
-                        >
-                          {setReadout.isComplete ? <Check className="size-4" aria-hidden="true" /> : null}
-                        </span>
-                      </div>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
+                      <td className={cn("px-2 py-2.5", isUnlogged ? "text-foreground/40 italic" : "text-foreground")}>
+                        {actualText}
+                      </td>
+                      {showReps ? (
+                        <td className="text-muted-foreground px-2 py-2.5 text-center">{setReadout.log?.reps ?? "—"}</td>
+                      ) : null}
+                      {showDuration ? (
+                        <td className="text-muted-foreground px-2 py-2.5 text-center">
+                          {setReadout.log?.duration_seconds !== null && setReadout.log?.duration_seconds !== undefined
+                            ? `${setReadout.log.duration_seconds}s`
+                            : "—"}
+                        </td>
+                      ) : null}
+                      {showLoad ? (
+                        <td className="text-muted-foreground px-2 py-2.5 text-center">
+                          {setReadout.log?.load_kg ?? "—"}
+                        </td>
+                      ) : null}
+                      <td className="text-muted-foreground px-2 py-2.5 text-center font-mono">
+                        {setReadout.log?.rpe ?? "—"}
+                      </td>
+                      <td className="px-2 py-2.5">
+                        <div className="flex justify-center">
+                          <span
+                            className={cn(
+                              "inline-flex size-7 items-center justify-center rounded-md border",
+                              setReadout.isComplete
+                                ? "border-success/50 bg-success/20 text-success"
+                                : "border-border bg-card text-foreground/30",
+                            )}
+                            aria-label={setReadout.isComplete ? "Set complete" : "Set incomplete"}
+                          >
+                            {setReadout.isComplete ? <Check className="size-4" aria-hidden="true" /> : null}
+                          </span>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </>
       )}
     </article>
   );
@@ -142,11 +209,7 @@ export default function SessionExerciseSummary({ readout, notesByExerciseId }: S
   const groups = groupExercisesByPhase(readout.exercises);
 
   if (readout.exercises.length === 0) {
-    return (
-      <div className="rounded-2xl border border-white/10 bg-white/5 p-8 text-center">
-        <p className="text-sm text-blue-100/70">No exercises in this session.</p>
-      </div>
-    );
+    return <EmptyState title="No exercises in this session" className="border-dashed" />;
   }
 
   return (
@@ -158,9 +221,9 @@ export default function SessionExerciseSummary({ readout, notesByExerciseId }: S
         }
 
         return (
-          <section key={phase} className="rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur-xl">
-            <h3 className="font-mono text-xs tracking-widest text-blue-200/80">{phaseLabel(phase)}</h3>
-            <p className="mt-1 text-sm text-blue-100/60">
+          <section key={phase} className={cn(surfaceCardClass, "p-4")}>
+            <h3 className="text-primary label-caps">{phaseLabel(phase)}</h3>
+            <p className="text-muted-foreground mt-1 text-sm">
               {phaseExercises.length} exercise{phaseExercises.length === 1 ? "" : "s"}
             </p>
             <div className="mt-4 space-y-3">

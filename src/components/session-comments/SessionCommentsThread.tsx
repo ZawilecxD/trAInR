@@ -1,6 +1,8 @@
 import { type SyntheticEvent, useEffect, useRef, useState } from "react";
+import { EmptyState } from "@/components/EmptyState";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { errorBannerClass, surfaceCardClass } from "@/lib/ui-classes";
 import { cn } from "@/lib/utils";
 import type { SessionCommentWithAuthor, UserRole } from "@/types";
 
@@ -22,7 +24,7 @@ function formatTimestamp(iso: string): string {
 function AuthorBadge({ role, isMe }: { role: UserRole; isMe: boolean }) {
   if (isMe) {
     return (
-      <span className="inline-flex items-center rounded-full border border-white/20 bg-white/10 px-2 py-0.5 text-xs font-medium text-white/80">
+      <span className="label-caps border-border bg-muted text-foreground/80 inline-flex items-center rounded-[var(--radius-pill)] border px-2 py-0.5">
         You
       </span>
     );
@@ -30,14 +32,14 @@ function AuthorBadge({ role, isMe }: { role: UserRole; isMe: boolean }) {
 
   if (role === "trainer") {
     return (
-      <span className="inline-flex items-center rounded-full border border-amber-400/30 bg-amber-500/10 px-2 py-0.5 text-xs font-medium text-amber-200">
+      <span className="label-caps border-warning/30 bg-warning/10 text-warning inline-flex items-center rounded-[var(--radius-pill)] border px-2 py-0.5">
         Trainer
       </span>
     );
   }
 
   return (
-    <span className="inline-flex items-center rounded-full border border-blue-400/30 bg-blue-500/10 px-2 py-0.5 text-xs font-medium text-blue-200">
+    <span className="label-caps border-primary/30 bg-primary/10 text-text-soft inline-flex items-center rounded-[var(--radius-pill)] border px-2 py-0.5">
       Client
     </span>
   );
@@ -54,9 +56,9 @@ function CommentItem({ comment, currentUserId }: CommentItemProps) {
   return (
     <article className={cn("flex flex-col gap-1", isMe ? "items-end" : "items-start")}>
       <div className="flex items-center gap-2">
-        <span className="text-sm font-medium text-white/90">{comment.author_display_name}</span>
+        <span className="text-foreground/90 text-sm font-medium">{comment.author_display_name}</span>
         <AuthorBadge role={comment.author_role} isMe={isMe} />
-        <time className="text-xs text-blue-100/50" dateTime={comment.created_at}>
+        <time className="text-muted-foreground text-xs" dateTime={comment.created_at}>
           {formatTimestamp(comment.created_at)}
         </time>
       </div>
@@ -64,8 +66,8 @@ function CommentItem({ comment, currentUserId }: CommentItemProps) {
         className={cn(
           "max-w-[80%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed",
           isMe
-            ? "rounded-tr-sm bg-blue-600/30 text-white"
-            : "rounded-tl-sm border border-white/10 bg-white/5 text-blue-100/90",
+            ? "bg-primary/30 text-foreground rounded-tr-sm"
+            : "border-border bg-card text-foreground/90 rounded-tl-sm border",
         )}
       >
         {comment.body}
@@ -148,17 +150,15 @@ export default function SessionCommentsThread({ sessionId, currentUserId }: Sess
   }
 
   return (
-    <section className="rounded-2xl border border-white/10 bg-white/5 p-5 backdrop-blur-xl">
-      <h2 className="mb-4 text-sm font-medium text-blue-100/80">Comments</h2>
+    <section className={cn(surfaceCardClass, "p-5")}>
+      <h2 className="text-text-soft label-caps mb-4">Comments</h2>
 
       {loading ? (
-        <div className="py-6 text-center text-sm text-blue-100/50">Loading…</div>
+        <div className="text-muted-foreground py-6 text-center text-sm">Loading…</div>
       ) : fetchError ? (
-        <div className="rounded-lg border border-red-400/30 bg-red-500/10 px-4 py-3 text-sm text-red-100">
-          {fetchError}
-        </div>
+        <div className={errorBannerClass}>{fetchError}</div>
       ) : comments.length === 0 ? (
-        <p className="py-4 text-center text-sm text-blue-100/50">No comments yet</p>
+        <EmptyState title="No comments yet" description="Start the thread below." className="mb-4 border-dashed" />
       ) : (
         <div className="mb-4 space-y-4">
           {comments.map((comment) => (
@@ -182,13 +182,17 @@ export default function SessionCommentsThread({ sessionId, currentUserId }: Sess
           placeholder="Write a comment…"
           rows={3}
           maxLength={2000}
-          className="resize-none border-white/20 bg-white/5 text-white placeholder:text-blue-100/40 focus-visible:ring-white/30"
+          className="border-input bg-popover placeholder:text-muted-foreground text-foreground focus-visible:ring-ring resize-none"
           disabled={submitting}
           aria-label="Comment text"
         />
-        {submitError ? <p className="text-sm text-red-300">{submitError}</p> : null}
+        {submitError ? <p className="text-destructive text-sm">{submitError}</p> : null}
         <div className="flex justify-end">
-          <Button type="submit" disabled={!draft.trim() || submitting} className="min-h-9">
+          <Button
+            type="submit"
+            disabled={!draft.trim() || submitting}
+            className="bg-primary hover:bg-primary/90 text-primary-foreground min-h-11"
+          >
             {submitting ? "Sending…" : "Send"}
           </Button>
         </div>

@@ -2,15 +2,13 @@ import { Search } from "lucide-react";
 import { buildExerciseListUrl, type ExerciseFilterState } from "@/lib/exercises/filter-url";
 import { EXERCISE_TYPE_LABELS } from "@/lib/exercises/labels";
 import { cn } from "@/lib/utils";
+import { formInputClass } from "@/lib/ui-classes";
 import type { ExerciseType, MuscleGroup } from "@/types";
 
 interface ExerciseFiltersProps {
   muscleGroups: MuscleGroup[];
   initialFilters: ExerciseFilterState;
 }
-
-const inputClass =
-  "w-full rounded-lg border border-white/20 bg-white/10 px-3 py-2 text-sm text-white placeholder-white/40 focus:ring-2 focus:ring-purple-400 focus:outline-none";
 
 function isExerciseType(value: string): value is ExerciseType {
   return value in EXERCISE_TYPE_LABELS;
@@ -72,10 +70,10 @@ export default function ExerciseFilters({ muscleGroups, initialFilters }: Exerci
     initialFilters.favouritesOnly === true;
 
   return (
-    <div className="space-y-4 rounded-xl border border-white/10 bg-white/5 p-4">
+    <div className="border-border bg-card space-y-4 rounded-xl border p-4">
       <div className="flex flex-wrap items-end gap-4">
         <div className="min-w-[180px] flex-1">
-          <label htmlFor="filter-type" className="mb-1 block text-sm text-blue-100/80">
+          <label htmlFor="filter-type" className="text-muted-foreground mb-1 block text-sm">
             Type
           </label>
           <select
@@ -84,7 +82,7 @@ export default function ExerciseFilters({ muscleGroups, initialFilters }: Exerci
             onChange={(event) => {
               handleTypeChange(event.target.value);
             }}
-            className={inputClass}
+            className={formInputClass}
           >
             <option value="">All types</option>
             {(Object.keys(EXERCISE_TYPE_LABELS) as ExerciseType[]).map((type) => (
@@ -96,17 +94,17 @@ export default function ExerciseFilters({ muscleGroups, initialFilters }: Exerci
         </div>
 
         <form className="min-w-[220px] flex-[2]" onSubmit={handleSearchSubmit} key={`search-${initialFilters.q ?? ""}`}>
-          <label htmlFor="filter-q" className="mb-1 block text-sm text-blue-100/80">
+          <label htmlFor="filter-q" className="text-muted-foreground mb-1 block text-sm">
             Search
           </label>
           <div className="relative">
-            <Search className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-white/40" />
+            <Search className="text-foreground/40 absolute top-1/2 left-3 size-4 -translate-y-1/2" />
             <input
               id="filter-q"
               name="q"
               defaultValue={initialFilters.q ?? ""}
               placeholder="Search by name..."
-              className={cn(inputClass, "pl-10")}
+              className={cn(formInputClass, "pl-10")}
             />
           </div>
         </form>
@@ -115,7 +113,7 @@ export default function ExerciseFilters({ muscleGroups, initialFilters }: Exerci
           <button
             type="button"
             onClick={clearFilters}
-            className="rounded-lg border border-white/20 px-3 py-2 text-sm text-blue-100/80 transition-colors hover:bg-white/10"
+            className="border-border text-muted-foreground hover:bg-accent rounded-lg border px-3 py-2 text-sm transition-colors"
           >
             Clear filters
           </button>
@@ -123,7 +121,7 @@ export default function ExerciseFilters({ muscleGroups, initialFilters }: Exerci
       </div>
 
       <div>
-        <p className="mb-2 text-sm text-blue-100/80">Quick filters</p>
+        <p className="text-muted-foreground mb-2 text-sm">Quick filters</p>
         <div className="flex flex-wrap gap-2">
           <button
             type="button"
@@ -132,8 +130,8 @@ export default function ExerciseFilters({ muscleGroups, initialFilters }: Exerci
             className={cn(
               "rounded-full border px-3 py-1 text-xs transition-colors",
               initialFilters.favouritesOnly
-                ? "border-amber-300/60 bg-amber-500/20 text-amber-100"
-                : "border-white/20 bg-white/5 text-blue-100/80 hover:bg-white/10",
+                ? "border-warning/60 bg-warning/20 text-warning"
+                : "border-border bg-card text-muted-foreground hover:bg-accent",
             )}
           >
             Favourites only
@@ -142,7 +140,7 @@ export default function ExerciseFilters({ muscleGroups, initialFilters }: Exerci
       </div>
 
       <div>
-        <p className="mb-2 text-sm text-blue-100/80">Muscle groups</p>
+        <p className="text-muted-foreground mb-2 text-sm">Muscle groups</p>
         <div className="flex flex-wrap gap-2">
           {muscleGroups.map((group) => {
             const selected = initialFilters.muscleGroupIds.includes(group.id);
@@ -157,8 +155,8 @@ export default function ExerciseFilters({ muscleGroups, initialFilters }: Exerci
                 className={cn(
                   "rounded-full border px-3 py-1 text-xs transition-colors",
                   selected
-                    ? "border-purple-300/60 bg-purple-500/30 text-white"
-                    : "border-white/20 bg-white/5 text-blue-100/80 hover:bg-white/10",
+                    ? "border-primary/60 bg-primary/30 text-primary-foreground"
+                    : "border-border bg-card text-muted-foreground hover:bg-accent",
                 )}
               >
                 {group.name}
