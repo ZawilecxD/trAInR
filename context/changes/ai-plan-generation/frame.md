@@ -71,6 +71,25 @@ assumption taken. None changes the reframe; each is cheap to overturn.
 - **Does AI write directly, or draft for approval?** Assumed _draft for
   approval_, consistent with the decision already recorded for ZAW-54.
 
+## Blocker Zero: the product gate
+
+Ahead of every technical dimension above sits a commitment this change
+contradicts outright. PRD Non-Goal #10 reads "No AI-powered plan generation or
+exercise suggestions — all plan creation is manual," and the roadmap parks the
+item for that exact reason (`context/foundation/roadmap.md:465`). Non-Goal #11
+(no audit logging) and the parked Q-05 observability item compound it: writing
+prescriptions into a health-adjacent product without an event trail is a release
+blocker, not a nice-to-have.
+
+This is not a technicality to note and move past. `/10x-plan` cannot legitimately
+scope work that a locked non-goal forbids, so the first phase has to be an
+explicit product decision narrowing #10 to trainer-reviewed drafts — which is
+also what the ZAW-54 research put in its Phase 0. Two smaller commitments bear
+on scoping too: Non-Goal #5 means a generated plan produces no notification and
+stays invisible until the client opens their calendar, and `PRODUCT.md:21`
+rules out generic AI UI patterns, so this has to look like coaching
+infrastructure rather than a chatbot bolted onto the plan page.
+
 ## Cross-System Convention
 
 This codebase has confronted "who is allowed to create a training object" once
@@ -87,9 +106,26 @@ not get direct write access until provenance, ownership, and review are
 modeled.** An AI generator is a new writer. The leading hypothesis matches the
 convention.
 
+Provenance specifically is now the third recurrence of the same unresolved gap.
+`workout_sessions` has no `created_by`, `origin`, or source column
+(`supabase/migrations/20260526120400_sessions_logging_comments.sql:41`), so the
+product cannot distinguish a trainer-authored session from a generated one —
+which the ad-hoc research already named verbatim as its blocker
+(`context/changes/ad-hoc-session-logging/research.md:14`). Any AI writer hits it
+again, and this time it is load-bearing for the accountability story.
+
 The LiftMate research reinforces it from the product side — prefer "explainable
 trainer attention cards" over "automatic AI decisions"
 (`context/changes/liftmate-research-zaw-48/research.md`).
+
+**Independent cross-check.** A separate investigation was run on the same
+codebase describing only the observation, never naming this hypothesis, and
+asked what would block the feature and in what order. It independently ranked
+the product non-goal first, trainer-only write authority second, absent AI
+infrastructure third, and the domain/UUID mismatch fourth — and concluded
+unprompted that "the obvious framing of this feature is likely wrong for this
+product." Convergence from a preconception-free pass raises confidence in the
+reframe rather than merely restating it.
 
 ## Reframed Problem Statement
 
@@ -140,11 +176,21 @@ today — which narrows the scope rather than weakening the reframe.
 
 ## What Changes for `/10x-plan`
 
-Plan the **plan-transfer format and exercise-resolution layer (ZAW-57/ZAW-58)
-first**, as a standalone shippable slice, then a **client training-profile**
-capture, and only then the model call as a third producer of the same validated
-format — emitting trainer-reviewable drafts, never direct assignment. Treat
-provider selection as a late, swappable decision behind one interface.
+Open with the **product decision** narrowing Non-Goal #10 to trainer-reviewed
+drafts; nothing below is legitimately scopable until that lands. Then plan the
+**plan-transfer format and exercise-resolution layer (ZAW-57/ZAW-58)** as a
+standalone shippable slice, then **client training-profile** capture, and only
+then the model call as a third producer of the same validated format — emitting
+trainer-reviewable drafts, never direct assignment. Add a **provenance column**
+alongside the first generated write, since the product must be able to tell a
+generated session from a hand-authored one. Treat provider selection as a late,
+swappable decision behind one interface.
+
+Two failure modes to design against: assigned sessions become uneditable once
+the client starts them, so a bad bulk generation is expensive to unwind and
+argues for review-before-write rather than write-then-fix; and templates are
+snapshots that do not flow forward, so a generated template changes nothing
+about sessions already on the calendar.
 
 Do **not** over-scope into a periodization schema. Dimension 4b matters here:
 a generated block can already be assigned as N dated sessions under the active
@@ -205,7 +251,8 @@ set run across candidates once the output schema is fixed.
 - Role guards: `src/lib/api/guards.ts:11`
 - Derived signals: `src/lib/exercise-stats/calculations.ts:56`
 - Prior AI research: `context/changes/ai-trainer-assistant/research.md` (ZAW-54)
-- Prior ownership precedent: `context/foundation/roadmap.md:344` (S-16 parked)
+- Prior ownership precedent: `context/foundation/roadmap.md:344` (S-16 parked); provenance gap named at `context/changes/ad-hoc-session-logging/research.md:14`
+- Roadmap parks AI plan generation: `context/foundation/roadmap.md:465`
 - Product commitments: `context/foundation/prd.md:184-199` (Non-Goals #3, #4, #10, #12 all bear on this change)
 - Distance logging actively rejected: `src/lib/set-logs/service.ts:51`
 - Linear: [ZAW-57](https://linear.app/zawilecxd/issue/ZAW-57/add-importexport-for-training-plans), [ZAW-58](https://linear.app/zawilecxd/issue/ZAW-58/add-importexport-for-exercise-library)
