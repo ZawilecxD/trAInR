@@ -1,6 +1,6 @@
 # Frame Brief: AI-generated training sessions and plans
 
-> Framing step before `/10x-plan`. This document captures what is *actually*
+> Framing step before `/10x-plan`. This document captures what is _actually_
 > at issue, separated from what was initially assumed.
 
 ## Reported Observation
@@ -21,7 +21,7 @@ multi-week plan — from a description of a client.
   import/export work as the common data format.
 - **Pre-dispatch narrowing**: not obtained. This frame ran as an autonomous
   cloud agent, so Step 1.5 could not be answered interactively. The scope
-  questions are recorded under *Narrowing Signals* below with the assumption
+  questions are recorded under _Narrowing Signals_ below with the assumption
   taken for each; each one is cheap to overturn and none changes the reframe.
 
 ## Dimension Map
@@ -30,7 +30,7 @@ The observation could originate at any of these dimensions:
 
 1. **Model capability / provider choice** — the model is not good enough at
    sport science, or the wrong provider is chosen, or the system prompt does not
-   establish coaching expertise.  ← initial framing
+   establish coaching expertise. ← initial framing
 2. **Grounding context availability** — trAInR does not store the client facts a
    coach programs against, so no prompt can produce individualized output.
 3. **Output-to-domain data contract** — model output cannot be turned into valid
@@ -42,31 +42,31 @@ The observation could originate at any of these dimensions:
 
 ## Hypothesis Investigation
 
-| Hypothesis | Evidence | Verdict |
-| --- | --- | --- |
-| **1. Model capability is the blocker** | Two blinded expert studies find input detail dominates model choice: 25 licensed professionals rated GPT-5.1 vs Gemini Flash 2.5 resistance programs with *no significant difference* on any of quality, clarity, relevance, safety, usefulness (all P>.05, [preprint](https://doi.org/10.2196/preprints.93865)); 12 coaching experts found detailed prompts beat sparse prompts on nearly every criterion (p=0.000–0.037, [Biol Sport 2025](https://doi.org/10.5114/biolsport.2025.145911)); a crossover study found detailed input raised expert ratings on Personality, Safety, Feasibility *and* lowered output variance ([Biol Sport 2026](https://doi.org/10.5114/biolsport.2026.154148)). Model spread exists but is second-order (FITT-VP: Claude 3.7 50.2 vs DeepSeek R1 40.3 of 60, [Front Physiol 2026](https://www.frontiersin.org/journals/physiology/articles/10.3389/fphys.2026.1846567/full)). All four candidate providers already support schema-constrained output. | **WEAK** |
-| **2. Grounding context is absent** | `profiles` has six columns — `id, role, display_name, avatar_url, created_at, updated_at` — and not one is coaching-relevant (`supabase/migrations/20260526120000_enums_profiles_helpers.sql:43`). No goal, target event, training age, equipment access, weekly availability, session time budget, injuries, bodyweight, age, sex, or tested max exists anywhere. PRD Non-Goal #3 parks client goals explicitly (`context/foundation/prd.md:188`); none of FR-001…FR-028 captures a client attribute. What *does* exist and is usable: per-set logs (reps, load, duration, RPE, warm-up flag), session status/adherence, free-text session comments, and derived Epley e1RM + tonnage (`src/lib/exercise-stats/calculations.ts:56,69`). | **STRONG** |
-| **3. No usable output-to-domain contract** | `create_workout_session` takes `p_exercises jsonb` where every element must carry an `exercise_id` UUID, and raises `exercise not found or not owned by trainer` for anything else (`supabase/migrations/20260608130000_workout_session_rpcs.sql:144`). `sessionExerciseInputSchema` enforces the same at the API edge (`src/lib/workout-sessions/schemas.ts:23`). A language model cannot emit those UUIDs. Resolving by name is not currently safe either: `exercises.name` has **no** unique constraint per trainer (`supabase/migrations/20260526120200_exercise_library.sql:19`). A new trainer's whole vocabulary is 20 seeded exercises, 19 strength and 1 cardio (`supabase/migrations/20260620140200_starter_exercise_seed.sql`). No export, import, or name-based serialization exists anywhere in `src/`. ZAW-57 and ZAW-58 specify exactly this missing format and both are in Backlog, unimplemented. | **STRONG** |
-| **4. Domain model cannot express a plan** | `client_plans` is `id, trainer_id, client_id, name, status, start_date` — no end date, no goal, no weeks, no blocks (`supabase/migrations/20260526120300_templates_and_plans.sql:166`). It is auto-created with the literal name `'Training plan'` on first session write (`20260608130000_workout_session_rpcs.sql:51`), so it is an implicit bucket, not a designed program. PRD Non-Goal #12 parks multi-week programs (`context/foundation/prd.md`). `exercise_phase` is `warm_up / main / cool_down` — within-session, not periodization (`20260526120000_enums_profiles_helpers.sql:27`). For endurance: `exercise_metric` includes `'distance'` (line 16) but `session_exercise_sets` has only `prescribed_reps`, `prescribed_duration_seconds`, `prescribed_load_kg`, `rest_after_seconds` (`20260608120000_session_exercise_sets.sql:8`) and `set_logs` only `reps, duration_seconds, load_kg` (`20260526120400_sessions_logging_comments.sql:97`). Distance, pace, HR zone, and interval structure are **not storable**. | **STRONG** |
-| **5. No bulk write path; assignment authority undecided** | `create_workout_session` creates exactly one session per call, `SECURITY DEFINER`, keyed on `auth.uid()` being the assigned trainer (`20260608130000_workout_session_rpcs.sql:95`). There is no multi-session or transactional path, so a 12-week plan is N independent calls with no atomicity — ZAW-57 flags the same gap. Sessions become uneditable once started (line 282). The only roles are `trainer` and `client` (`src/lib/api/guards.ts:11,23`), and prior research already concluded AI must not assign: "only a trainer can assign sessions to the calendar" (`context/changes/ai-trainer-assistant/research.md:530`). | **STRONG** |
+| Hypothesis                                                | Evidence                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           | Verdict    |
+| --------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------- |
+| **1. Model capability is the blocker**                    | Two blinded expert studies find input detail dominates model choice: 25 licensed professionals rated GPT-5.1 vs Gemini Flash 2.5 resistance programs with _no significant difference_ on any of quality, clarity, relevance, safety, usefulness (all P>.05, [preprint](https://doi.org/10.2196/preprints.93865)); 12 coaching experts found detailed prompts beat sparse prompts on nearly every criterion (p=0.000–0.037, [Biol Sport 2025](https://doi.org/10.5114/biolsport.2025.145911)); a crossover study found detailed input raised expert ratings on Personality, Safety, Feasibility _and_ lowered output variance ([Biol Sport 2026](https://doi.org/10.5114/biolsport.2026.154148)). Model spread exists but is second-order (FITT-VP: Claude 3.7 50.2 vs DeepSeek R1 40.3 of 60, [Front Physiol 2026](https://www.frontiersin.org/journals/physiology/articles/10.3389/fphys.2026.1846567/full)). All four candidate providers already support schema-constrained output.                                             | **WEAK**   |
+| **2. Grounding context is absent**                        | `profiles` has six columns — `id, role, display_name, avatar_url, created_at, updated_at` — and not one is coaching-relevant (`supabase/migrations/20260526120000_enums_profiles_helpers.sql:43`). No goal, target event, training age, equipment access, weekly availability, session time budget, injuries, bodyweight, age, sex, or tested max exists anywhere. PRD Non-Goal #3 parks client goals explicitly (`context/foundation/prd.md:188`); none of FR-001…FR-028 captures a client attribute. What _does_ exist and is usable: per-set logs (reps, load, duration, RPE, warm-up flag), session status/adherence, free-text session comments, and derived Epley e1RM + tonnage (`src/lib/exercise-stats/calculations.ts:56,69`).                                                                                                                                                                                                                                                                                           | **STRONG** |
+| **3. No usable output-to-domain contract**                | `create_workout_session` takes `p_exercises jsonb` where every element must carry an `exercise_id` UUID, and raises `exercise not found or not owned by trainer` for anything else (`supabase/migrations/20260608130000_workout_session_rpcs.sql:144`). `sessionExerciseInputSchema` enforces the same at the API edge (`src/lib/workout-sessions/schemas.ts:23`). A language model cannot emit those UUIDs. Resolving by name is not currently safe either: `exercises.name` has **no** unique constraint per trainer (`supabase/migrations/20260526120200_exercise_library.sql:19`). A new trainer's whole vocabulary is 20 seeded exercises, 19 strength and 1 cardio (`supabase/migrations/20260620140200_starter_exercise_seed.sql`). No export, import, or name-based serialization exists anywhere in `src/`. ZAW-57 and ZAW-58 specify exactly this missing format and both are in Backlog, unimplemented.                                                                                                                 | **STRONG** |
+| **4. Domain model cannot express a plan**                 | `client_plans` is `id, trainer_id, client_id, name, status, start_date` — no end date, no goal, no weeks, no blocks (`supabase/migrations/20260526120300_templates_and_plans.sql:166`). It is auto-created with the literal name `'Training plan'` on first session write (`20260608130000_workout_session_rpcs.sql:51`), so it is an implicit bucket, not a designed program. PRD Non-Goal #12 parks multi-week programs (`context/foundation/prd.md`). `exercise_phase` is `warm_up / main / cool_down` — within-session, not periodization (`20260526120000_enums_profiles_helpers.sql:27`). For endurance: `exercise_metric` includes `'distance'` (line 16) but `session_exercise_sets` has only `prescribed_reps`, `prescribed_duration_seconds`, `prescribed_load_kg`, `rest_after_seconds` (`20260608120000_session_exercise_sets.sql:8`) and `set_logs` only `reps, duration_seconds, load_kg` (`20260526120400_sessions_logging_comments.sql:97`). Distance, pace, HR zone, and interval structure are **not storable**. | **STRONG** |
+| **5. No bulk write path; assignment authority undecided** | `create_workout_session` creates exactly one session per call, `SECURITY DEFINER`, keyed on `auth.uid()` being the assigned trainer (`20260608130000_workout_session_rpcs.sql:95`). There is no multi-session or transactional path, so a 12-week plan is N independent calls with no atomicity — ZAW-57 flags the same gap. Sessions become uneditable once started (line 282). The only roles are `trainer` and `client` (`src/lib/api/guards.ts:11,23`), and prior research already concluded AI must not assign: "only a trainer can assign sessions to the calendar" (`context/changes/ai-trainer-assistant/research.md:530`).                                                                                                                                                                                                                                                                                                                                                                                                | **STRONG** |
 
 ## Narrowing Signals
 
 Scope questions that would normally be asked before dispatch, with the
 assumption taken. None changes the reframe; each is cheap to overturn.
 
-- **Who is "the user" that gets assigned to?** Assumed *the trainer's client*,
+- **Who is "the user" that gets assigned to?** Assumed _the trainer's client_,
   with the trainer approving. The codebase has exactly two roles and no
   self-coaching path; a client cannot own a plan. If you actually meant a
   self-serve solo athlete, that is a different product, not this change.
 - **Is "session plan" one session or a multi-week program?** Assumed
-  *multi-week*, since single-session generation is already covered by session
+  _multi-week_, since single-session generation is already covered by session
   templates. This is what makes Dimension 4 load-bearing.
-- **Is endurance in the first slice?** Assumed *deferred*. Strength is fully
+- **Is endurance in the first slice?** Assumed _deferred_. Strength is fully
   expressible today; endurance is not storable at all, so including it converts
   this from a feature into a schema project.
-- **Does AI write directly, or draft for approval?** Assumed *draft for
-  approval*, consistent with the decision already recorded for ZAW-54.
+- **Does AI write directly, or draft for approval?** Assumed _draft for
+  approval_, consistent with the decision already recorded for ZAW-54.
 
 ## Cross-System Convention
 
@@ -122,7 +122,7 @@ per muscle group, session count against stated availability — rather than as
 prompt text a model may quietly ignore. Guideline frameworks worth encoding as
 that validation layer, not as prose: FITT-VP, and the ACSM 2026 resistance
 training position stand ([overview of reviews](https://pmc.ncbi.nlm.nih.gov/articles/PMC12965823/)),
-which notably also finds complex periodization is *not* consistently superior
+which notably also finds complex periodization is _not_ consistently superior
 for general healthy adults — a caution against making periodization the
 headline feature.
 
@@ -148,13 +148,13 @@ questions to answer before scoping, not as prompt-engineering.
 Recorded because it was asked for; the choice belongs to `/10x-plan`, after the
 output schema exists and can be benchmarked. Priced per million tokens.
 
-| Model | In / Out | Notes for this use case |
-| --- | --- | --- |
-| Gemini 2.5 Flash | $0.30 / $2.50 | Native response-schema; strong cost/quality floor for drafting |
-| GPT-5 | $1.25 / $10.00 | Strict `json_schema` structured outputs, lowest schema-failure class |
-| Claude Sonnet 4.6 | $3.00 / $15.00 | Strict tool use; Claude scored highest on FITT-VP expert ratings |
-| DeepSeek V4 Flash | $0.14 / $0.28 | Cheapest by far, but weakest measured schema adherence and lowest FITT-VP score |
-| OpenRouter | pass-through | One interface across all of the above; requires `require_parameters: true` so requests only route to endpoints that genuinely support `json_schema`, otherwise it silently degrades to `json_object` |
+| Model             | In / Out       | Notes for this use case                                                                                                                                                                              |
+| ----------------- | -------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Gemini 2.5 Flash  | $0.30 / $2.50  | Native response-schema; strong cost/quality floor for drafting                                                                                                                                       |
+| GPT-5             | $1.25 / $10.00 | Strict `json_schema` structured outputs, lowest schema-failure class                                                                                                                                 |
+| Claude Sonnet 4.6 | $3.00 / $15.00 | Strict tool use; Claude scored highest on FITT-VP expert ratings                                                                                                                                     |
+| DeepSeek V4 Flash | $0.14 / $0.28  | Cheapest by far, but weakest measured schema adherence and lowest FITT-VP score                                                                                                                      |
+| OpenRouter        | pass-through   | One interface across all of the above; requires `require_parameters: true` so requests only route to endpoints that genuinely support `json_schema`, otherwise it silently degrades to `json_object` |
 
 Given plan generation is low-volume (a handful of calls per client per block)
 and quality is trainer-visible, token price is unlikely to be the deciding
