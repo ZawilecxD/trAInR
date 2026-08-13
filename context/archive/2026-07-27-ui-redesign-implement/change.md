@@ -1,9 +1,10 @@
 ---
 id: ui-redesign-implement
 title: UI Redesign — Code Implementation
-status: implemented
+status: archived
 created: 2026-07-27
-updated: 2026-08-03
+updated: 2026-08-13
+archived_at: 2026-08-13T13:08:15Z
 linear_issue: ZAW-56
 ---
 
