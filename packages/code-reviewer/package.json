@@ -7,9 +7,12 @@
     "node": ">=22.13.0"
   },
   "scripts": {
-    "test": "vitest run"
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit",
+    "review": "tsx src/cli.ts"
   },
   "dependencies": {
+    "@cursor/sdk": "^1.0.28",
     "zod": "^4.4.3"
   },
   "devDependencies": {

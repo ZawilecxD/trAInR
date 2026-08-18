@@ -1,0 +1,51 @@
+strict digraph "dependency-cruiser output"{
+    rankdir="TB" splines="true" overlap="false" nodesep="0.35" ranksep="0.45" fontname="Helvetica" fontsize="9" style="rounded,bold,filled" fillcolor="#ffffff" compound="true" bgcolor="white" label="Ukryty kontrakt sesji: kto zależy od workout-sessions/service.ts?" labelloc="t" fontsize="12" fontname="Helvetica-Bold"
+    node [shape="box" style="rounded, filled" height="0.2" color="black" fillcolor="#ffffcc" fontcolor="black" fontname="Helvetica" fontsize="9"]
+    edge [arrowhead="normal" arrowsize="0.6" penwidth="2.0" color="#00000033" fontname="Helvetica" fontsize="9"]
+    subgraph "cluster_src" {label="src" subgraph "cluster_src/components" {label="components" subgraph "cluster_src/components/guided-workout" {label="guided-workout" "src/components/guided-workout/ExerciseNavList.tsx" [label=<ExerciseNavList.tsx> tooltip="ExerciseNavList.tsx" URL="src/components/guided-workout/ExerciseNavList.tsx" fillcolor="#dcfce7" color="#166534"] } } }
+    "src/components/guided-workout/ExerciseNavList.tsx" -> "src/lib/workout-sessions/service.ts" [arrowhead="onormal" penwidth="1.0"]
+    "src/components/guided-workout/ExerciseNavList.tsx" -> "src/types.ts" [arrowhead="onormal" penwidth="1.0"]
+    subgraph "cluster_src" {label="src" subgraph "cluster_src/components" {label="components" subgraph "cluster_src/components/guided-workout" {label="guided-workout" "src/components/guided-workout/ExerciseNavMenu.tsx" [label=<ExerciseNavMenu.tsx> tooltip="ExerciseNavMenu.tsx" URL="src/components/guided-workout/ExerciseNavMenu.tsx" fillcolor="#dcfce7" color="#166534"] } } }
+    "src/components/guided-workout/ExerciseNavMenu.tsx" -> "src/components/guided-workout/ExerciseNavList.tsx"
+    "src/components/guided-workout/ExerciseNavMenu.tsx" -> "src/lib/workout-sessions/service.ts" [arrowhead="onormal" penwidth="1.0"]
+    subgraph "cluster_src" {label="src" subgraph "cluster_src/components" {label="components" subgraph "cluster_src/components/guided-workout" {label="guided-workout" "src/components/guided-workout/ExerciseSetLogTable.tsx" [label=<ExerciseSetLogTable.tsx> tooltip="ExerciseSetLogTable.tsx" URL="src/components/guided-workout/ExerciseSetLogTable.tsx" fillcolor="#dcfce7" color="#166534"] } } }
+    "src/components/guided-workout/ExerciseSetLogTable.tsx" -> "src/lib/workout-sessions/service.ts" [arrowhead="onormal" penwidth="1.0"]
+    "src/components/guided-workout/ExerciseSetLogTable.tsx" -> "src/types.ts" [arrowhead="onormal" penwidth="1.0"]
+    subgraph "cluster_src" {label="src" subgraph "cluster_src/components" {label="components" subgraph "cluster_src/components/guided-workout" {label="guided-workout" "src/components/guided-workout/GuidedExerciseView.tsx" [label=<GuidedExerciseView.tsx> tooltip="GuidedExerciseView.tsx" URL="src/components/guided-workout/GuidedExerciseView.tsx" fillcolor="#dcfce7" color="#166534"] } } }
+    "src/components/guided-workout/GuidedExerciseView.tsx" -> "src/components/guided-workout/ExerciseSetLogTable.tsx"
+    "src/components/guided-workout/GuidedExerciseView.tsx" -> "src/lib/workout-sessions/service.ts" [arrowhead="onormal" penwidth="1.0"]
+    "src/components/guided-workout/GuidedExerciseView.tsx" -> "src/types.ts" [arrowhead="onormal" penwidth="1.0"]
+    subgraph "cluster_src" {label="src" subgraph "cluster_src/components" {label="components" subgraph "cluster_src/components/guided-workout" {label="guided-workout" "src/components/guided-workout/GuidedWorkoutHub.tsx" [label=<GuidedWorkoutHub.tsx> tooltip="GuidedWorkoutHub.tsx" URL="src/components/guided-workout/GuidedWorkoutHub.tsx" fillcolor="#dcfce7" color="#166534"] } } }
+    "src/components/guided-workout/GuidedWorkoutHub.tsx" -> "src/components/guided-workout/ExerciseNavList.tsx"
+    "src/components/guided-workout/GuidedWorkoutHub.tsx" -> "src/components/guided-workout/ExerciseNavMenu.tsx"
+    "src/components/guided-workout/GuidedWorkoutHub.tsx" -> "src/components/guided-workout/GuidedExerciseView.tsx"
+    "src/components/guided-workout/GuidedWorkoutHub.tsx" -> "src/components/guided-workout/SessionCompletedView.tsx"
+    "src/components/guided-workout/GuidedWorkoutHub.tsx" -> "src/components/guided-workout/SessionEditList.tsx"
+    "src/components/guided-workout/GuidedWorkoutHub.tsx" -> "src/components/guided-workout/SessionOverview.tsx"
+    "src/components/guided-workout/GuidedWorkoutHub.tsx" -> "src/lib/workout-sessions/service.ts" [arrowhead="onormal" penwidth="1.0"]
+    "src/components/guided-workout/GuidedWorkoutHub.tsx" -> "src/types.ts" [arrowhead="onormal" penwidth="1.0"]
+    subgraph "cluster_src" {label="src" subgraph "cluster_src/components" {label="components" subgraph "cluster_src/components/guided-workout" {label="guided-workout" "src/components/guided-workout/PhaseBreakdown.tsx" [label=<PhaseBreakdown.tsx> tooltip="PhaseBreakdown.tsx" URL="src/components/guided-workout/PhaseBreakdown.tsx" fillcolor="#dcfce7" color="#166534"] } } }
+    "src/components/guided-workout/PhaseBreakdown.tsx" -> "src/lib/workout-sessions/service.ts" [arrowhead="onormal" penwidth="1.0"]
+    "src/components/guided-workout/PhaseBreakdown.tsx" -> "src/types.ts" [arrowhead="onormal" penwidth="1.0"]
+    subgraph "cluster_src" {label="src" subgraph "cluster_src/components" {label="components" subgraph "cluster_src/components/guided-workout" {label="guided-workout" "src/components/guided-workout/SessionCompletedView.tsx" [label=<SessionCompletedView.tsx> tooltip="SessionCompletedView.tsx" URL="src/components/guided-workout/SessionCompletedView.tsx" fillcolor="#dcfce7" color="#166534"] } } }
+    "src/components/guided-workout/SessionCompletedView.tsx" -> "src/lib/trainer-dashboard/readout.ts"
+    "src/components/guided-workout/SessionCompletedView.tsx" -> "src/lib/trainer-dashboard/to-exercise-readout-input.ts"
+    "src/components/guided-workout/SessionCompletedView.tsx" -> "src/lib/workout-sessions/service.ts" [arrowhead="onormal" penwidth="1.0"]
+    subgraph "cluster_src" {label="src" subgraph "cluster_src/components" {label="components" subgraph "cluster_src/components/guided-workout" {label="guided-workout" "src/components/guided-workout/SessionEditList.tsx" [label=<SessionEditList.tsx> tooltip="SessionEditList.tsx" URL="src/components/guided-workout/SessionEditList.tsx" fillcolor="#dcfce7" color="#166534"] } } }
+    "src/components/guided-workout/SessionEditList.tsx" -> "src/components/guided-workout/ExerciseSetLogTable.tsx"
+    "src/components/guided-workout/SessionEditList.tsx" -> "src/lib/workout-sessions/service.ts" [arrowhead="onormal" penwidth="1.0"]
+    "src/components/guided-workout/SessionEditList.tsx" -> "src/types.ts" [arrowhead="onormal" penwidth="1.0"]
+    subgraph "cluster_src" {label="src" subgraph "cluster_src/components" {label="components" subgraph "cluster_src/components/guided-workout" {label="guided-workout" "src/components/guided-workout/SessionOverview.tsx" [label=<SessionOverview.tsx> tooltip="SessionOverview.tsx" URL="src/components/guided-workout/SessionOverview.tsx" fillcolor="#dcfce7" color="#166534"] } } }
+    "src/components/guided-workout/SessionOverview.tsx" -> "src/components/guided-workout/PhaseBreakdown.tsx"
+    "src/components/guided-workout/SessionOverview.tsx" -> "src/lib/workout-sessions/service.ts" [arrowhead="onormal" penwidth="1.0"]
+    subgraph "cluster_src" {label="src" subgraph "cluster_src/lib" {label="lib" subgraph "cluster_src/lib/trainer-dashboard" {label="trainer-dashboard" "src/lib/trainer-dashboard/readout.ts" [label=<readout.ts> tooltip="readout.ts" URL="src/lib/trainer-dashboard/readout.ts" fillcolor="#fecaca" color="#b91c1c"] } } }
+    "src/lib/trainer-dashboard/readout.ts" -> "src/types.ts" [arrowhead="onormal" penwidth="1.0"]
+    subgraph "cluster_src" {label="src" subgraph "cluster_src/lib" {label="lib" subgraph "cluster_src/lib/trainer-dashboard" {label="trainer-dashboard" "src/lib/trainer-dashboard/to-exercise-readout-input.ts" [label=<to-exercise-readout-input.ts> tooltip="to-exercise-readout-input.ts" URL="src/lib/trainer-dashboard/to-exercise-readout-input.ts" fillcolor="#fecaca" color="#b91c1c"] } } }
+    "src/lib/trainer-dashboard/to-exercise-readout-input.ts" -> "src/lib/trainer-dashboard/readout.ts" [arrowhead="onormal" penwidth="1.0"]
+    "src/lib/trainer-dashboard/to-exercise-readout-input.ts" -> "src/lib/workout-sessions/service.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" penwidth="1.0" fontcolor="red" color="red"]
+    subgraph "cluster_src" {label="src" subgraph "cluster_src/lib" {label="lib" subgraph "cluster_src/lib/workout-sessions" {label="workout-sessions" "src/lib/workout-sessions/service.ts" [label=<service.ts> tooltip="service.ts" URL="src/lib/workout-sessions/service.ts" fillcolor="#fde68a" color="#b45309" penwidth="2" fontname="Helvetica-Bold"] } } }
+    "src/lib/workout-sessions/service.ts" -> "src/lib/trainer-dashboard/readout.ts"
+    "src/lib/workout-sessions/service.ts" -> "src/lib/trainer-dashboard/to-exercise-readout-input.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="red" color="red"]
+    "src/lib/workout-sessions/service.ts" -> "src/types.ts" [arrowhead="onormal" penwidth="1.0"]
+    subgraph "cluster_src" {label="src" "src/types.ts" [label=<types.ts> tooltip="types.ts" URL="src/types.ts" fillcolor="#dbeafe" color="#1d4ed8" penwidth="2"] }
+}

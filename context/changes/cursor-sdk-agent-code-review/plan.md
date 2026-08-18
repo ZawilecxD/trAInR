@@ -292,28 +292,28 @@ No data migration. Operators must create GitHub labels (workflow may create them
 
 #### Automated
 
-- [x] 1.1 `npm ci` and `npm test` succeed in `packages/code-reviewer` without `CURSOR_API_KEY`
-- [x] 1.2 Parser tests cover: raw JSON, fenced JSON, truncated/invalid JSON (throws)
-- [x] 1.3 Root `npm run lint` and `npm run check` still pass after the exclude
-- [x] 1.4 Product CI runs the nested package tests (or the change includes that job)
+- [x] 1.1 `npm ci` and `npm test` succeed in `packages/code-reviewer` without `CURSOR_API_KEY` — 7ade98d
+- [x] 1.2 Parser tests cover: raw JSON, fenced JSON, truncated/invalid JSON (throws) — 7ade98d
+- [x] 1.3 Root `npm run lint` and `npm run check` still pass after the exclude — 7ade98d
+- [x] 1.4 Product CI runs the nested package tests (or the change includes that job) — 7ade98d
 
 #### Manual
 
-- [x] 1.5 `requirements.md` in this change folder matches the six criteria and the advisory/title+diff decisions
-- [x] 1.6 `packages/code-reviewer/README.md` states the local command and that writes are forbidden once the SDK is wired
+- [x] 1.5 `requirements.md` in this change folder matches the six criteria and the advisory/title+diff decisions — 7ade98d
+- [x] 1.6 `packages/code-reviewer/README.md` states the local command and that writes are forbidden once the SDK is wired — 7ade98d
 
 ### Phase 2: Cursor SDK local run
 
 #### Automated
 
-- [ ] 2.1 `npm test` in `packages/code-reviewer` still passes with the SDK mocked
-- [ ] 2.2 CLI without `CURSOR_API_KEY` exits 1 with a clear message
-- [ ] 2.3 Package TypeScript compiles (`npx tsc --noEmit` in the package, or equivalent script)
+- [x] 2.1 `npm test` in `packages/code-reviewer` still passes with the SDK mocked
+- [x] 2.2 CLI without `CURSOR_API_KEY` exits 1 with a clear message
+- [x] 2.3 Package TypeScript compiles (`npx tsc --noEmit` in the package, or equivalent script)
 
 #### Manual
 
-- [ ] 2.4 With a real `CURSOR_API_KEY`, running the CLI on the fixture diff prints JSON that `parseReview` would accept (six scores, verdict, summary)
-- [ ] 2.5 `git status` is clean of agent file edits after that run
+- [x] 2.4 With a real `CURSOR_API_KEY`, running the CLI on the fixture diff prints JSON that `parseReview` would accept (six scores, verdict, summary)
+- [x] 2.5 `git status` is clean of agent file edits after that run
 - [ ] 2.6 Usage/cost is visible in the Cursor dashboard under the SDK tag (spot-check, not a gate)
 
 ### Phase 3: CI composite action and workflow

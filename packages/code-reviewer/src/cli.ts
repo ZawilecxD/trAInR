@@ -1,15 +1,17 @@
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { AgentRunFailedError, AgentStartupError, runReviewAgent, type ReviewRuntime } from "./agent.ts";
+import { parseReview, ReviewParseError } from "./parse-review.ts";
 import { buildReviewPrompt } from "./prompt.ts";
-import { parseReview } from "./parse-review.ts";
 import { emptyDiffReview, type Review } from "./schema.ts";
 
-const USAGE = `Usage: tsx src/cli.ts --title <title> [--diff-file <path>] [--fixture-assistant <path>]
+const USAGE = `Usage: tsx src/cli.ts --title <title> [--diff-file <path>] [--runtime local|cloud] [--fixture-assistant <path>]
 
 Reads a git diff from stdin when --diff-file is omitted.
 Empty diffs print a skip JSON object and exit 0.
-Until the SDK adapter is wired, pass --fixture-assistant or get "agent not wired".
+Live scoring requires CURSOR_API_KEY. --fixture-assistant stays available for offline tests.
+On this Linux host the local SDK runtime currently SIGSEGVs at send(); use --runtime cloud for live scoring.
 `;
 
 export class CliError extends Error {
@@ -26,12 +28,14 @@ export type CliArgs = {
   title: string;
   diffFile?: string;
   fixtureAssistant?: string;
+  runtime?: ReviewRuntime;
 };
 
 export function parseCliArgs(argv: string[]): CliArgs {
   let title: string | undefined;
   let diffFile: string | undefined;
   let fixtureAssistant: string | undefined;
+  let runtime: ReviewRuntime | undefined;
 
   for (let i = 0; i < argv.length; i += 1) {
     const arg = argv[i];
@@ -59,6 +63,15 @@ export function parseCliArgs(argv: string[]): CliArgs {
       continue;
     }
 
+    if (arg === "--runtime") {
+      if (next !== "local" && next !== "cloud") {
+        throw new CliError("--runtime must be local or cloud");
+      }
+      runtime = next;
+      i += 1;
+      continue;
+    }
+
     if (arg === "--fixture-assistant") {
       if (next === undefined || next.startsWith("--")) {
         throw new CliError("--fixture-assistant requires a path");
@@ -75,13 +88,21 @@ export function parseCliArgs(argv: string[]): CliArgs {
     throw new CliError("--title is required");
   }
 
-  return { title, diffFile, fixtureAssistant };
+  return { title, diffFile, fixtureAssistant, runtime };
 }
 
 export type RunCliResult = {
   exitCode: number;
   stdout: string;
   stderr: string;
+};
+
+export type RunCliOptions = {
+  stdinText?: string;
+  stdin?: NodeJS.ReadableStream;
+  apiKey?: string;
+  cwd?: string;
+  runAgent?: typeof runReviewAgent;
 };
 
 function formatReview(review: Review): string {
@@ -96,10 +117,27 @@ async function readStdin(stream: NodeJS.ReadableStream): Promise<string> {
   return Buffer.concat(chunks).toString("utf8");
 }
 
-export async function runCli(
-  argv: string[],
-  options: { stdinText?: string; stdin?: NodeJS.ReadableStream } = {},
-): Promise<RunCliResult> {
+function errorResult(error: unknown): RunCliResult {
+  if (error instanceof CliError) {
+    const text = `${error.message}\n`;
+    return error.exitCode === 0
+      ? { exitCode: 0, stdout: text, stderr: "" }
+      : { exitCode: error.exitCode, stdout: "", stderr: text };
+  }
+
+  if (error instanceof AgentStartupError) {
+    return { exitCode: 1, stdout: "", stderr: `${error.message}\n` };
+  }
+
+  if (error instanceof AgentRunFailedError || error instanceof ReviewParseError) {
+    return { exitCode: 2, stdout: "", stderr: `${error.message}\n` };
+  }
+
+  const message = error instanceof Error ? error.message : String(error);
+  return { exitCode: 1, stdout: "", stderr: `${message}\n` };
+}
+
+export async function runCli(argv: string[], options: RunCliOptions = {}): Promise<RunCliResult> {
   try {
     const args = parseCliArgs(argv);
     const diff =
@@ -111,48 +149,49 @@ export async function runCli(
       return { exitCode: 0, stdout: formatReview(emptyDiffReview), stderr: "" };
     }
 
-    buildReviewPrompt({ title: args.title, diff });
+    const prompt = buildReviewPrompt({ title: args.title, diff });
 
-    if (args.fixtureAssistant === undefined) {
-      return {
-        exitCode: 1,
-        stdout: "",
-        stderr: "agent not wired (phase 1); pass --fixture-assistant <file> or wait for the SDK adapter\n",
-      };
+    if (args.fixtureAssistant !== undefined) {
+      const assistantText = await readFile(args.fixtureAssistant, "utf8");
+      return { exitCode: 0, stdout: formatReview(parseReview(assistantText)), stderr: "" };
     }
 
-    const assistantText = await readFile(args.fixtureAssistant, "utf8");
-    const review = parseReview(assistantText);
-    return { exitCode: 0, stdout: formatReview(review), stderr: "" };
+    const runAgent = options.runAgent ?? runReviewAgent;
+    const { review, stderr } = await runAgent(prompt, {
+      apiKey: options.apiKey ?? process.env.CURSOR_API_KEY,
+      cwd: options.cwd ?? process.cwd(),
+      runtime: args.runtime,
+    });
+    return { exitCode: 0, stdout: formatReview(review), stderr };
   } catch (error) {
-    if (error instanceof CliError) {
-      const stream = error.exitCode === 0 ? "stdout" : "stderr";
-      const text = `${error.message}\n`;
-      return stream === "stdout"
-        ? { exitCode: 0, stdout: text, stderr: "" }
-        : { exitCode: error.exitCode, stdout: "", stderr: text };
-    }
-
-    const message = error instanceof Error ? error.message : String(error);
-    return { exitCode: 1, stdout: "", stderr: `${message}\n` };
+    return errorResult(error);
   }
 }
 
 async function main(): Promise<void> {
-  const stdinText = process.stdin.isTTY ? "" : await readStdin(process.stdin);
-  const result = await runCli(process.argv.slice(2), { stdinText });
+  const argv = process.argv.slice(2);
+  const hasDiffFile = argv.includes("--diff-file");
+  const stdinText = hasDiffFile || process.stdin.isTTY ? "" : await readStdin(process.stdin);
+  const result = await runCli(argv, { stdinText });
   if (result.stdout) {
     process.stdout.write(result.stdout);
   }
-  if (result.stderr) {
+  // Live agent runs already streamed progress to stderr. Re-emit only on failure.
+  if (result.stderr && result.exitCode !== 0) {
     process.stderr.write(result.stderr);
   }
   process.exitCode = result.exitCode;
 }
 
-const invokedDirectly =
-  process.argv[1] !== undefined && fileURLToPath(import.meta.url) === path.resolve(process.argv[1]);
+function isCliEntry(): boolean {
+  const self = fileURLToPath(import.meta.url);
+  return process.argv.some((arg) => path.resolve(arg) === self);
+}
 
-if (invokedDirectly) {
-  void main();
+if (isCliEntry()) {
+  void main().catch((error: unknown) => {
+    const message = error instanceof Error ? error.message : String(error);
+    process.stderr.write(`${message}\n`);
+    process.exitCode = 1;
+  });
 }

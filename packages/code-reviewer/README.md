@@ -9,17 +9,24 @@ Node 22.13+. From this directory:
 ```bash
 npm ci
 npm test
+npm run typecheck
 
-git diff | npx tsx src/cli.ts --title "PR title"
-npx tsx src/cli.ts --title "PR title" --diff-file /tmp/pr.diff
+# Live scoring (requires CURSOR_API_KEY; never commit the key)
+export CURSOR_API_KEY="cursor_..."
+
+# Cloud runtime (use this on Linux — local agent.send() currently SIGSEGVs, exit 139)
+npm run review -- --runtime cloud --title "PR title" --diff-file fixtures/intentional-flaw.diff
+
+# Local runtime (plan default; works as a unit-tested path, live send is broken on this host)
+npm run review -- --runtime local --title "PR title" --diff-file fixtures/intentional-flaw.diff
 ```
+
+`CURSOR_SDK_RUNTIME=cloud` is equivalent to `--runtime cloud`.
 
 Empty diffs print a skip object (`verdict: "pass"`, summary explaining no changes) and exit 0 without calling a model.
 
-Until the Cursor SDK adapter is wired, a non-empty diff without `--fixture-assistant` exits with `agent not wired`. Tests stay offline: no `CURSOR_API_KEY` is required for `npm test`.
-
-Live scoring (later) uses `CURSOR_API_KEY`. Never commit the key.
+`npm test` stays offline and does not need `CURSOR_API_KEY`. A live run without the key exits 1 with a clear message.
 
 ## Writes are forbidden
 
-Once `@cursor/sdk` is wired, the local agent is a scorer, not an implementer. Write, Shell, and any other mutating tool must be denied. `local.settingSources` stays empty so project skills cannot pull the agent into implementation mode. A dirty worktree after a run is a failed gate.
+The scorer must not edit the working tree. Local runs disallow Shell/Edit/Delete (and related tools) and keep `local.settingSources` empty. Cloud runs use a no-repo agent (`cloud: {}`); the diff is already in the prompt. A dirty local worktree after a run is a failed gate.
