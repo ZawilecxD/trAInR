@@ -1,7 +1,7 @@
 ---
 change_id: cursor-sdk-agent-code-review
 title: Cursor SDK CI agent code review
-status: planned
+status: implementing
 created: 2026-08-18
 updated: 2026-08-18
 archived_at: null

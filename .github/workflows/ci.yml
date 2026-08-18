@@ -19,6 +19,21 @@ jobs:
       - run: npx astro sync
       - run: npm run test
 
+  test-code-reviewer:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: packages/code-reviewer/package-lock.json
+      - name: Test code-reviewer package
+        working-directory: packages/code-reviewer
+        run: |
+          npm ci
+          npm test
+
   ci:
     needs: [test]
     runs-on: ubuntu-latest

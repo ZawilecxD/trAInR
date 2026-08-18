@@ -73,7 +73,7 @@ const astroConfig = {
 
 export default defineConfig(
   includeIgnoreFile(gitignorePath),
-  { ignores: [".agents/**", ".cursor/hooks/**", "scripts/**"] },
+  { ignores: [".agents/**", ".cursor/hooks/**", "scripts/**", "packages/**"] },
   baseConfig,
   reactConfig,
   eslintPluginAstro.configs["flat/recommended"],

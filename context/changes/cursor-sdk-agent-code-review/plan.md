@@ -292,15 +292,15 @@ No data migration. Operators must create GitHub labels (workflow may create them
 
 #### Automated
 
-- [ ] 1.1 `npm ci` and `npm test` succeed in `packages/code-reviewer` without `CURSOR_API_KEY`
-- [ ] 1.2 Parser tests cover: raw JSON, fenced JSON, truncated/invalid JSON (throws)
-- [ ] 1.3 Root `npm run lint` and `npm run check` still pass after the exclude
-- [ ] 1.4 Product CI runs the nested package tests (or the change includes that job)
+- [x] 1.1 `npm ci` and `npm test` succeed in `packages/code-reviewer` without `CURSOR_API_KEY`
+- [x] 1.2 Parser tests cover: raw JSON, fenced JSON, truncated/invalid JSON (throws)
+- [x] 1.3 Root `npm run lint` and `npm run check` still pass after the exclude
+- [x] 1.4 Product CI runs the nested package tests (or the change includes that job)
 
 #### Manual
 
-- [ ] 1.5 `requirements.md` in this change folder matches the six criteria and the advisory/title+diff decisions
-- [ ] 1.6 `packages/code-reviewer/README.md` states the local command and that writes are forbidden once the SDK is wired
+- [x] 1.5 `requirements.md` in this change folder matches the six criteria and the advisory/title+diff decisions
+- [x] 1.6 `packages/code-reviewer/README.md` states the local command and that writes are forbidden once the SDK is wired
 
 ### Phase 2: Cursor SDK local run
 
