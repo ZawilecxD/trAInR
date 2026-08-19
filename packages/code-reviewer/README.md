@@ -27,6 +27,8 @@ Empty diffs print a skip object (`verdict: "pass"`, summary explaining no change
 
 `npm test` stays offline and does not need `CURSOR_API_KEY`. A live run without the key exits 1 with a clear message.
 
+CI (`.github/workflows/ai-review.yml`) calls this package through `.github/actions/ai-reviewer` with `CURSOR_SDK_RUNTIME=cloud` on `ubuntu-latest` (local `agent.send()` SIGSEGVs on Linux). The workflow secret is `CURSOR_API_KEY`. Fork PRs are skipped.
+
 ## Writes are forbidden
 
 The scorer must not edit the working tree. Local runs disallow Shell/Edit/Delete (and related tools) and keep `local.settingSources` empty. Cloud runs use a no-repo agent (`cloud: {}`); the diff is already in the prompt. A dirty local worktree after a run is a failed gate.

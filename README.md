@@ -218,7 +218,7 @@ GitHub Actions (`.github/workflows/ci.yml`) runs lint and build on every push/PR
 - **PRs:** preview deployment via `vercel deploy --prebuilt`
 - **master:** production deployment via `vercel deploy --prebuilt --prod`
 
-Repository secrets: `SUPABASE_URL`, `SUPABASE_KEY`, `VERCEL_TOKEN`, `VERCEL_ORG_ID`, `VERCEL_PROJECT_ID`.
+Repository secrets: `SUPABASE_URL`, `SUPABASE_KEY`, `VERCEL_TOKEN`, `VERCEL_ORG_ID`, `VERCEL_PROJECT_ID`, and `CURSOR_API_KEY` for the advisory AI review workflow (`.github/workflows/ai-review.yml`; fork PRs are skipped).
 
 ## CI
 

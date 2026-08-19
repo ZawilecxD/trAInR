@@ -306,28 +306,28 @@ No data migration. Operators must create GitHub labels (workflow may create them
 
 #### Automated
 
-- [x] 2.1 `npm test` in `packages/code-reviewer` still passes with the SDK mocked
-- [x] 2.2 CLI without `CURSOR_API_KEY` exits 1 with a clear message
-- [x] 2.3 Package TypeScript compiles (`npx tsc --noEmit` in the package, or equivalent script)
+- [x] 2.1 `npm test` in `packages/code-reviewer` still passes with the SDK mocked — 78bc316
+- [x] 2.2 CLI without `CURSOR_API_KEY` exits 1 with a clear message — 78bc316
+- [x] 2.3 Package TypeScript compiles (`npx tsc --noEmit` in the package, or equivalent script) — 78bc316
 
 #### Manual
 
-- [x] 2.4 With a real `CURSOR_API_KEY`, running the CLI on the fixture diff prints JSON that `parseReview` would accept (six scores, verdict, summary)
-- [x] 2.5 `git status` is clean of agent file edits after that run
-- [ ] 2.6 Usage/cost is visible in the Cursor dashboard under the SDK tag (spot-check, not a gate)
+- [x] 2.4 With a real `CURSOR_API_KEY`, running the CLI on the fixture diff prints JSON that `parseReview` would accept (six scores, verdict, summary) — 78bc316
+- [x] 2.5 `git status` is clean of agent file edits after that run — 78bc316
+- [x] 2.6 Usage/cost is visible in the Cursor dashboard under the SDK tag (spot-check, not a gate)
 
 ### Phase 3: CI composite action and workflow
 
 #### Automated
 
-- [ ] 3.1 `.github/actions/ai-reviewer/action.yml` and `.github/workflows/ai-review.yml` exist and target `main`
-- [ ] 3.2 Product `ci.yml` still passes on a PR that only adds these files plus package tests (no Cursor key required for product CI)
-- [ ] 3.3 Nested package `npm test` still runs in product CI
+- [x] 3.1 `.github/actions/ai-reviewer/action.yml` and `.github/workflows/ai-review.yml` exist and target `main`
+- [x] 3.2 Product `ci.yml` still passes on a PR that only adds these files plus package tests (no Cursor key required for product CI)
+- [x] 3.3 Nested package `npm test` still runs in product CI
 
 #### Manual
 
-- [ ] 3.4 `CURSOR_API_KEY` is set as a GitHub Actions secret
-- [ ] 3.5 Open a PR to `main`: Actions shows the review workflow with job logs; the PR has a comment from the bot and exactly one of `ai-cr:passed` / `ai-cr:failed`
-- [ ] 3.6 Adding `ai-cr:review` retriggers review and replaces the previous marked comment
-- [ ] 3.7 A fail verdict leaves the workflow green
-- [ ] 3.8 10xChampion evidence: screenshot of the workflow run, job logs, and the LLM PR comment
+- [x] 3.4 `CURSOR_API_KEY` is set as a GitHub Actions secret
+- [x] 3.5 Open a PR to `main`: Actions shows the review workflow with job logs; the PR has a comment from the bot and exactly one of `ai-cr:passed` / `ai-cr:failed`
+- [x] 3.6 Adding `ai-cr:review` retriggers review and replaces the previous marked comment
+- [x] 3.7 A fail verdict leaves the workflow green
+- [x] 3.8 10xChampion evidence: screenshot of the workflow run, job logs, and the LLM PR comment

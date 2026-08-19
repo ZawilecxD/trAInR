@@ -59,7 +59,7 @@ Full SSR (`output: "server"` in astro.config.mjs). Auth uses `@supabase/ssr` wit
 
 ## CI Gate
 
-GitHub Actions (`.github/workflows/ci.yml`) runs `npm run lint` then `npm run build` on every push/PR to `master`. Both must pass. On success, deploys to Vercel: preview deploy on PRs, production deploy on master push. Requires `SUPABASE_URL`, `SUPABASE_KEY`, `VERCEL_TOKEN`, `VERCEL_ORG_ID`, and `VERCEL_PROJECT_ID` as repository secrets.
+GitHub Actions (`.github/workflows/ci.yml`) runs `npm run lint` then `npm run build` on every push/PR to `master`. Both must pass. On success, deploys to Vercel: preview deploy on PRs, production deploy on master push. Requires `SUPABASE_URL`, `SUPABASE_KEY`, `VERCEL_TOKEN`, `VERCEL_ORG_ID`, and `VERCEL_PROJECT_ID` as repository secrets. Advisory AI review on PRs to `main` (`.github/workflows/ai-review.yml`) also needs `CURSOR_API_KEY`; fork PRs are skipped.
 
 ## Commit Conventions
 
