@@ -284,6 +284,12 @@ No data migration. Operators must create GitHub labels (workflow may create them
 - Parked alternative: `.cursor/skills/10x-impl-review-ci/references/workflow-template.yml`
 - Opportunity map (do not enable plan-aware CI gate): `context/team/opportunity-map.md`
 
+## Implementation addenda
+
+### Cloud live path (phases 2–3)
+
+Local `agent.send()` SIGSEGVs on this Linux host (Node 22.13, `@cursor/sdk` 1.0.28, exit 139). Live scoring and `.github/workflows/ai-review.yml` use `--runtime cloud` / `CURSOR_SDK_RUNTIME=cloud` with `Agent.create({ cloud: {} })` (no-repo VM, `autoCreatePR` unset). Local remains the unit-tested default: `disallowedTools`, `local.settingSources: []`, `JsonlLocalAgentStore`, and `Agent.create`/`send` instead of `Agent.prompt` / `preToolUse`. The “not doing cloud” guardrail in this plan is superseded for the live/CI path only.
+
 ## Progress
 
 > Convention: `- [ ]` pending, `- [x]` done. Append ` — <commit sha>` when a step lands. Do not rename step titles. See `references/progress-format.md`.

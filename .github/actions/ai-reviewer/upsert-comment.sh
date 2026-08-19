@@ -7,10 +7,11 @@ set -euo pipefail
 
 comment_file="${GITHUB_WORKSPACE}/ai-review-comment.md"
 marker="<!-- ai-cr:review -->"
+bot_login="${BOT_LOGIN:-github-actions[bot]}"
 
 ids="$(
   gh api "repos/${GH_REPO}/issues/${PR_NUMBER}/comments" --paginate \
-    --jq ".[] | select(.body | contains(\"${marker}\")) | .id"
+    --jq ".[] | select(.user.login == \"${bot_login}\" and (.body | contains(\"${marker}\"))) | .id"
 )"
 
 payload="$(jq -n --rawfile body "$comment_file" '{body: $body}')"

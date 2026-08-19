@@ -37,21 +37,27 @@ jobs:
           set -euo pipefail
           git fetch origin "$BASE_REF"
           diff_file="${GITHUB_WORKSPACE}/pr.diff"
+          max_bytes=204800
+          tmp="$(mktemp)"
+          # pipefail off: git may SIGPIPE (141) when head closes after the cap.
+          set +o pipefail
           git diff "origin/${BASE_REF}...HEAD" -- . \
             ':(exclude)package-lock.json' \
             ':(exclude)packages/code-reviewer/package-lock.json' \
-            > "$diff_file"
-          max_bytes=204800
-          size="$(wc -c < "$diff_file" | tr -d ' ')"
+            | head -c $((max_bytes + 1)) > "$tmp"
+          set -o pipefail
+          size="$(wc -c < "$tmp" | tr -d ' ')"
           if (( size > max_bytes )); then
-            tmp="$(mktemp)"
             {
-              echo "# DIFF TRUNCATED to ${max_bytes} bytes for the reviewer prompt (was ${size} bytes)"
-              head -c "$max_bytes" "$diff_file"
-            } > "$tmp"
+              echo "# DIFF TRUNCATED to ${max_bytes} bytes for the reviewer prompt"
+              head -c "$max_bytes" "$tmp"
+            } > "$diff_file"
+          else
             mv "$tmp" "$diff_file"
+            tmp=""
           fi
-          echo "diff_bytes=$(wc -c < "$diff_file")" >> "$GITHUB_OUTPUT"
+          [[ -n "$tmp" && -f "$tmp" ]] && rm -f "$tmp"
+          echo "diff_bytes=$(wc -c < "$diff_file" | tr -d ' ')" >> "$GITHUB_OUTPUT"
         id: diff
 
       - name: Skip empty diff
