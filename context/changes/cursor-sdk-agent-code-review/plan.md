@@ -314,20 +314,20 @@ No data migration. Operators must create GitHub labels (workflow may create them
 
 - [x] 2.4 With a real `CURSOR_API_KEY`, running the CLI on the fixture diff prints JSON that `parseReview` would accept (six scores, verdict, summary) — 78bc316
 - [x] 2.5 `git status` is clean of agent file edits after that run — 78bc316
-- [x] 2.6 Usage/cost is visible in the Cursor dashboard under the SDK tag (spot-check, not a gate)
+- [x] 2.6 Usage/cost is visible in the Cursor dashboard under the SDK tag (spot-check, not a gate) — 028bc1b
 
 ### Phase 3: CI composite action and workflow
 
 #### Automated
 
-- [x] 3.1 `.github/actions/ai-reviewer/action.yml` and `.github/workflows/ai-review.yml` exist and target `main`
-- [x] 3.2 Product `ci.yml` still passes on a PR that only adds these files plus package tests (no Cursor key required for product CI)
-- [x] 3.3 Nested package `npm test` still runs in product CI
+- [x] 3.1 `.github/actions/ai-reviewer/action.yml` and `.github/workflows/ai-review.yml` exist and target `main` — 028bc1b
+- [x] 3.2 Product `ci.yml` still passes on a PR that only adds these files plus package tests (no Cursor key required for product CI) — 028bc1b
+- [x] 3.3 Nested package `npm test` still runs in product CI — 028bc1b
 
 #### Manual
 
-- [x] 3.4 `CURSOR_API_KEY` is set as a GitHub Actions secret
-- [x] 3.5 Open a PR to `main`: Actions shows the review workflow with job logs; the PR has a comment from the bot and exactly one of `ai-cr:passed` / `ai-cr:failed`
-- [x] 3.6 Adding `ai-cr:review` retriggers review and replaces the previous marked comment
-- [x] 3.7 A fail verdict leaves the workflow green
-- [x] 3.8 10xChampion evidence: screenshot of the workflow run, job logs, and the LLM PR comment
+- [x] 3.4 `CURSOR_API_KEY` is set as a GitHub Actions secret — 028bc1b
+- [x] 3.5 Open a PR to `main`: Actions shows the review workflow with job logs; the PR has a comment from the bot and exactly one of `ai-cr:passed` / `ai-cr:failed` — 028bc1b
+- [x] 3.6 Adding `ai-cr:review` retriggers review and replaces the previous marked comment — 028bc1b
+- [x] 3.7 A fail verdict leaves the workflow green — 028bc1b
+- [x] 3.8 10xChampion evidence: screenshot of the workflow run, job logs, and the LLM PR comment — 028bc1b
