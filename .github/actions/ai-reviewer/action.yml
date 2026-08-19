@@ -1,0 +1,59 @@
+name: AI Reviewer
+description: Run the nested code-reviewer package and expose the pass/fail verdict
+
+inputs:
+  api-key:
+    description: Cursor API key (CURSOR_API_KEY). Never commit this value.
+    required: true
+  pr-title:
+    description: Pull request title passed into the scorer prompt
+    required: true
+  diff-path:
+    description: Path to a git diff file already on disk (not the patch contents)
+    required: true
+  working-directory:
+    description: Nested reviewer package directory
+    required: false
+    default: packages/code-reviewer
+
+outputs:
+  verdict:
+    description: pass or fail from the parsed review JSON
+    value: ${{ steps.review.outputs.verdict }}
+
+runs:
+  using: composite
+  steps:
+    - name: Setup Node
+      uses: actions/setup-node@v4
+      with:
+        # Relative to GITHUB_WORKSPACE. An absolute ${{ github.workspace }}/.nvmrc
+        # is re-joined as workspace-relative and 404s (path doubled).
+        node-version-file: .nvmrc
+        cache: npm
+        cache-dependency-path: ${{ inputs.working-directory }}/package-lock.json
+
+    - name: Install reviewer
+      working-directory: ${{ inputs.working-directory }}
+      shell: bash
+      run: npm ci
+
+    - name: Run reviewer
+      id: review
+      working-directory: ${{ inputs.working-directory }}
+      shell: bash
+      env:
+        CURSOR_API_KEY: ${{ inputs.api-key }}
+        CURSOR_SDK_RUNTIME: cloud
+        PR_TITLE: ${{ inputs.pr-title }}
+        DIFF_PATH: ${{ inputs.diff-path }}
+      run: |
+        set -euo pipefail
+        out="${GITHUB_WORKSPACE}/ai-review.json"
+        npm run --silent review -- --runtime cloud --title "$PR_TITLE" --diff-file "$DIFF_PATH" > "$out"
+        verdict="$(jq -r '.verdict' "$out")"
+        if [[ "$verdict" != "pass" && "$verdict" != "fail" ]]; then
+          echo "Invalid verdict in $out: $verdict" >&2
+          exit 2
+        fi
+        echo "verdict=$verdict" >> "$GITHUB_OUTPUT"

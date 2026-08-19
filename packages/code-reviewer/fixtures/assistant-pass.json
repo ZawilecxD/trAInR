@@ -1,0 +1,10 @@
+{
+  "implementationCorrectness": 8,
+  "idiomaticity": 7,
+  "complexity": 8,
+  "testRiskCoverage": 6,
+  "documentation": 7,
+  "securitySafety": 9,
+  "verdict": "pass",
+  "summary": "Fixture assistant review for offline CLI tests."
+}

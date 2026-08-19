@@ -1,0 +1,24 @@
+{
+  "name": "code-reviewer",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22.13.0"
+  },
+  "scripts": {
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit",
+    "review": "tsx src/cli.ts"
+  },
+  "dependencies": {
+    "@cursor/sdk": "^1.0.28",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.0",
+    "tsx": "^4.20.0",
+    "typescript": "^5.9.3",
+    "vitest": "^4.1.7"
+  }
+}
