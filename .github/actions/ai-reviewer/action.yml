@@ -27,7 +27,9 @@ runs:
     - name: Setup Node
       uses: actions/setup-node@v4
       with:
-        node-version-file: ${{ github.workspace }}/.nvmrc
+        # Relative to GITHUB_WORKSPACE. An absolute ${{ github.workspace }}/.nvmrc
+        # is re-joined as workspace-relative and 404s (path doubled).
+        node-version-file: .nvmrc
         cache: npm
         cache-dependency-path: ${{ inputs.working-directory }}/package-lock.json
 
