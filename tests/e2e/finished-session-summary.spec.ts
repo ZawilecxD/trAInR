@@ -100,9 +100,8 @@ test.describe("S-20 — finished session exercise summary", () => {
 
       await expect(sessionMetadata.getByText("Sets logged", { exact: true })).toBeVisible();
       await expect(sessionMetadata.getByText("1 of 1", { exact: true })).toBeVisible();
-      await expect(benchPressSummary.getByRole("columnheader", { name: "Prescribed" })).toBeVisible();
-      await expect(benchPressSummary.getByRole("columnheader", { name: "Actual" })).toBeVisible();
-      await expect(benchPressSummary.getByText("9 reps @ 42.5 kg")).toBeVisible();
+      await expect(benchPressSummary.getByText(/Prescribed:/)).toBeVisible();
+      await expect(benchPressSummary.getByText("Actual: 9 reps @ 42.5 kg")).toBeVisible();
       await expect(benchPressSummary.getByText("E2E summary visibility check")).toBeVisible();
 
       const editButton = page.getByRole("button", { name: "Edit" });

@@ -51,12 +51,38 @@ test.describe("Risk #2 — multi-step exercise save integrity", () => {
     await page.getByRole("textbox", { name: "Name" }).fill(exerciseName);
 
     // Action: submit, and capture the created id from the API response (also a
-    // wait-for-state — we proceed only once the write is confirmed).
+    // wait-for-state — we proceed only once the write is confirmed). Read the
+    // body inside the predicate: the create form then navigates, which drops
+    // the buffered response body before a later `response.json()` can run.
     const [response] = await Promise.all([
-      page.waitForResponse((res) => res.url().includes("/api/exercises") && res.request().method() === "POST"),
+      page.waitForResponse(async (res) => {
+        if (!res.url().includes("/api/exercises") || res.request().method() !== "POST") {
+          return false;
+        }
+        if (res.status() === 201) {
+          try {
+            const body = (await res.json()) as { exercise?: { id?: string } };
+            createdExerciseId = body.exercise?.id ?? null;
+          } catch {
+            // Unique-name lookup after redirect is the fallback.
+          }
+        }
+        return true;
+      }),
       page.getByRole("button", { name: "Create exercise" }).click(),
     ]);
     expect(response.status()).toBe(201);
+
+    // The form redirects to the library on success.
+    await page.waitForURL("**/trainer/exercises**");
+
+    if (!createdExerciseId) {
+      const listResponse = await page.request.get("/api/exercises");
+      expect(listResponse.ok()).toBe(true);
+      const listBody = (await listResponse.json()) as { exercises?: { id: string; name: string }[] };
+      createdExerciseId = listBody.exercises?.find((exercise) => exercise.name === exerciseName)?.id ?? null;
+    }
+    expect(createdExerciseId).toBeTruthy();
 
     // The form redirects to the library on success.
     await page.waitForURL("**/trainer/exercises**");
@@ -66,10 +92,7 @@ test.describe("Risk #2 — multi-step exercise save integrity", () => {
     const row = page.getByRole("row", { name: exerciseName });
     await expect(row).toBeVisible();
     await expect(row.getByRole("cell", { name: "Chest (primary)" })).toBeVisible();
-    const editHref = await row.getByRole("link", { name: "Edit" }).getAttribute("href");
-    if (!editHref) throw new Error(`Created exercise row for ${exerciseName} has no edit link`);
-    createdExerciseId = editHref.split("/").pop() ?? null;
-    expect(createdExerciseId).toBeTruthy();
+    await expect(row.getByRole("button", { name: "Edit" })).toBeVisible();
 
     // The real check: survive an SSR reload (data is read back from the DB).
     await page.reload();

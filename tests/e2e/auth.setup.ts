@@ -36,8 +36,10 @@ setup("authenticate as trainer", async ({ page }) => {
   await signInThroughForm(page, trainerCredentials.email, trainerCredentials.password);
 
   // Wait for the post-login state, not a timeout: a trainer lands on their dashboard.
+  // Heading is a time-of-day greeting plus first name (e.g. "Good afternoon, Trainer"),
+  // not the word "Dashboard" — that label lives only in nav.
   await page.waitForURL("**/trainer/dashboard");
-  await expect(page.getByRole("heading", { name: "Dashboard" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: /^Good (morning|afternoon|evening), / })).toBeVisible();
 
   await page.context().storageState({ path: TRAINER_STORAGE_STATE });
 });
@@ -46,8 +48,9 @@ setup("authenticate as client", async ({ page }) => {
   await signInThroughForm(page, clientCredentials.email, clientCredentials.password);
 
   // Wait for the post-login state, not a timeout: a client lands on their dashboard.
+  // Heading is the seeded display name; "Welcome" is no longer rendered.
   await page.waitForURL("**/client/dashboard");
-  await expect(page.getByRole("heading", { name: "Welcome" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Client A" })).toBeVisible();
 
   await page.context().storageState({ path: CLIENT_STORAGE_STATE });
 });

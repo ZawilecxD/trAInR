@@ -76,7 +76,19 @@ test.describe("S-21 — optional RPE logging", () => {
       await expect(page.getByLabel("Set 1 reps")).toHaveValue("8");
 
       const rpeInput = page.getByLabel("Set 1 RPE");
+      const rpeSaved = page.waitForResponse((response) => {
+        if (!response.url().includes("/api/client/set-logs") || response.request().method() !== "PUT") {
+          return false;
+        }
+        try {
+          const body = response.request().postDataJSON() as { rpe?: number | null };
+          return body.rpe === 8;
+        } catch {
+          return false;
+        }
+      });
       await rpeInput.fill("8");
+      expect((await rpeSaved).ok()).toBe(true);
 
       await page.reload();
       await expect(page.getByLabel("Set 1 RPE")).toHaveValue("8");
@@ -94,9 +106,7 @@ test.describe("S-21 — optional RPE logging", () => {
         .getByRole("article")
         .filter({ has: page.getByRole("heading", { name: "Bench Press", level: 4 }) });
 
-      await expect(benchPressSummary.getByRole("columnheader", { name: "RPE" })).toBeVisible();
-      await expect(benchPressSummary.getByText("8 reps @ 40 kg · RPE 8")).toBeVisible();
-      await expect(benchPressSummary.getByRole("cell", { name: "8", exact: true })).toBeVisible();
+      await expect(benchPressSummary.getByText("Actual: 8 reps @ 40 kg · RPE 8")).toBeVisible();
     } finally {
       if (createdSessionId) {
         await trainerRequest.delete(`/api/workout-sessions/${createdSessionId}`);
