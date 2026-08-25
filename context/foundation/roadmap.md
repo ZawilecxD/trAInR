@@ -5,7 +5,7 @@
 version: 1
 status: draft
 created: 2026-05-25
-updated: 2026-07-29
+updated: 2026-08-25
 prd_version: 1
 main_goal: speed
 top_blocker: time
@@ -49,7 +49,7 @@ Independent personal trainers lose coaching time to admin — hunting across spr
 | S-15 | exercise-favourites        | mark exercises as favourites and filter exercise lists by favourites only | S-01          | FR-009                                            | done     |
 | S-16 | ad-hoc-session-logging     | log an unplanned workout not on the calendar                              | S-06          | FR-015, FR-016, FR-017 (extends)                  | parked   |
 | S-17 | starter-exercise-seed      | receive a curated starter exercise library on trainer signup              | S-01, S-03    | FR-007, FR-008 (extends; supersedes Non-Goal #14) | done     |
-| S-18 | ui-redesign                | use a unified premium dark UI per DESIGN.md with accessible touch targets and Pencil-aligned key flows | S-06          | NFR mobile usability                              | proposed |
+| S-18 | ui-redesign                | use a unified premium dark UI per DESIGN.md with accessible touch targets and Pencil-aligned key flows | S-06          | NFR mobile usability                              | done     |
 | S-19 | prescription-fill-logging  | one-click fill a round with prescribed reps and load; no per-set completed toggle | S-06          | FR-015, FR-017 (extends)                          | done     |
 | S-20 | finished-session-summary-for-client | see a read-only exercise summary before editing or after completion | S-06, S-08, S-13 | FR-015, FR-017, FR-021, FR-022 (extends)          | done |
 | S-21 | optional-rpe-logging       | optionally log RPE (1–10) for each exercise round when logging a session | S-06, S-13 | FR-015, FR-017 (extends)                          | done     |
@@ -366,7 +366,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Blockers:** —
 - **Unknowns:** Whether to adopt a trainer sidebar at `lg:` breakpoints; dark-only vs future light mode; whether amber achievement accent fits brand — see `context/changes/ui-redesign/research.md` Open Questions
 - **Risk:** Token injection alone changes ~20% of visible UI; the bulk of work is replacing hardcoded `purple-500` / `text-white` / `bg-white/10` classes across ~30 files. Trainer dashboard screen polish can proceed now that S-07 is done (`docs/pencil/trainer_dashboard.pen`).
-- **Status:** proposed
+- **Status:** done
 
 ### S-19: Prescription fill logging
 
@@ -494,4 +494,5 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **S-20: client opening a finished, partially finished, cancelled, or edit-window pre-edit session sees a useful read-only summary of all exercises, prescribed targets, and logged values before any optional Edit action** — Archived 2026-07-02 → `context/archive/2026-07-01-finished-session-summary-for-client/`. Lesson: —.
 - **S-21: client can optionally record RPE (Rate of Perceived Exertion, typically 1–10) for each exercise round when logging a session; trainer and client session readouts show RPE when present without requiring it for every set** — Archived 2026-07-17 → `context/archive/2026-07-02-optional-rpe-logging/`. Lesson: —.
 - **S-12: client can view a per-exercise history table showing past performances (weight, reps/time, sets), estimated 1RM (Epley), and volume/tonnage** — Archived 2026-07-29 → `context/archive/2026-07-18-exercise-statistics/`. Lesson: —.
+- **S-18: trainer and client use a unified premium dark interface per `DESIGN.md` — semantic design tokens replace hardcoded cosmic palette classes, Geist typography and WCAG 44px touch targets land globally, and key flows match Pencil mockups in `docs/pencil/` (guided workout logging and trainer dashboard)** — Archived 2026-08-25 → `context/archive/2026-06-12-ui-redesign/`. Lesson: —.
 
