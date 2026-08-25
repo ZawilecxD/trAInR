@@ -1,10 +1,10 @@
 ---
 change_id: cursor-sdk-agent-code-review
 title: Cursor SDK CI agent code review
-status: impl_reviewed
+status: archived
 created: 2026-08-18
-updated: 2026-08-19
-archived_at: null
+updated: 2026-08-25
+archived_at: 2026-08-25T06:17:34Z
 linear_issue: ZAW-59
 ---
 
