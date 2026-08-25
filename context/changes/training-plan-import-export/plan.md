@@ -413,8 +413,8 @@ Phase 1 unique index: suffixing changes display names of duplicate exercises. Pl
 
 #### Automated
 
-- [ ] 5.1 `npm run lint`; `npm test`; `npm run build`
-- [ ] 5.2 Hook in `src/components/hooks/`; mapping in `src/lib/session-templates/`
+- [x] 5.1 `npm run lint`; `npm test`; `npm run build` — 9413825
+- [x] 5.2 Hook in `src/components/hooks/`; mapping in `src/lib/session-templates/` — 9413825
 
 #### Manual
 
