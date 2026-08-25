@@ -52,6 +52,10 @@ describe("exercises unique name per trainer", () => {
 
     // Admin client + single<T> types error as null; still assert at runtime.
     expect(error).toBeNull();
+    if (data === null) {
+      throw new Error(`Failed to insert exercise ${name}: no data`);
+    }
+
     expect(data.id).toEqual(expect.any(String));
     expect(data.name).toBe(name);
 

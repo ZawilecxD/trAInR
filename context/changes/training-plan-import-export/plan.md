@@ -370,10 +370,10 @@ Phase 1 unique index: suffixing changes display names of duplicate exercises. Pl
 
 #### Automated
 
-- [x] 2.1 `npm test` — schema rejects UUID fields, >50 exercises, >20 sets, missing reps-and-duration
-- [x] 2.2 Resolver tests: match, case-insensitive match, missing name, archived name → specific fix-list error, metric mismatch, empty library
-- [x] 2.3 Clash helper tests: 0 / 1 / many
-- [x] 2.4 `npm run lint`
+- [x] 2.1 `npm test` — schema rejects UUID fields, >50 exercises, >20 sets, missing reps-and-duration — b4cc62f
+- [x] 2.2 Resolver tests: match, case-insensitive match, missing name, archived name → specific fix-list error, metric mismatch, empty library — b4cc62f
+- [x] 2.3 Clash helper tests: 0 / 1 / many — b4cc62f
+- [x] 2.4 `npm run lint` — b4cc62f
 
 #### Manual
 
@@ -383,10 +383,10 @@ Phase 1 unique index: suffixing changes display names of duplicate exercises. Pl
 
 #### Automated
 
-- [ ] 3.1 Unit tests for export DTO mapping (no `exercise_id` keys)
-- [ ] 3.2 `npm test`; `npm run lint`; `npm run check`
-- [ ] 3.3 Import commit branching unit tests (create/skip/overwrite)
-- [ ] 3.8 Export of >50 exercises returns 400 validation_error
+- [x] 3.1 Unit tests for export DTO mapping (no `exercise_id` keys)
+- [x] 3.2 `npm test`; `npm run lint`; `npm run check`
+- [x] 3.3 Import commit branching unit tests (create/skip/overwrite)
+- [x] 3.8 Export of >50 exercises returns 400 validation_error
 
 #### Manual
 
