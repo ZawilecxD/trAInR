@@ -356,10 +356,10 @@ Phase 1 unique index: suffixing changes display names of duplicate exercises. Pl
 
 #### Automated
 
-- [ ] 1.1 Unique index exists in the new migration file; `npm run lint` passes
-- [ ] 1.2 Integration test: case-duplicate backfill suffixes + unique index; two trainers may share a name
-- [ ] 1.3 `npm test` — any new unit tests pass
-- [ ] 1.4 `npm run test:integration` — unique-index + backfill test passes
+- [x] 1.1 Unique index exists in the new migration file; `npm run lint` passes
+- [x] 1.2 Integration test: case-duplicate backfill suffixes + unique index; two trainers may share a name
+- [x] 1.3 `npm test` — any new unit tests pass
+- [x] 1.4 `npm run test:integration` — unique-index + backfill test passes
 
 #### Manual
 

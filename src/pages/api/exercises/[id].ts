@@ -75,6 +75,9 @@ export const PATCH: APIRoute = async (context) => {
   const { data, error } = await updateExercise(supabase, parsedId.data, parsedBody.data);
 
   if (error) {
+    if (error === "duplicate_name") {
+      return jsonError("duplicate_name", 409);
+    }
     return jsonError("update_failed", 500, { message: error });
   }
 

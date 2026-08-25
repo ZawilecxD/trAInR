@@ -56,6 +56,9 @@ export const POST: APIRoute = async (context) => {
 
   const { data, error } = await createExercise(supabase, guard.userId, parsed.data);
   if (error) {
+    if (error === "duplicate_name") {
+      return jsonError("duplicate_name", 409);
+    }
     return jsonError("create_failed", 500, { message: error });
   }
 
