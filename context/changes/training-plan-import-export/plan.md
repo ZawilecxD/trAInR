@@ -399,9 +399,9 @@ Phase 1 unique index: suffixing changes display names of duplicate exercises. Pl
 
 #### Automated
 
-- [x] 4.1 DTO → buffer → DTO round-trip test
-- [x] 4.2 Bad xlsx / wrong version → issues, not throw
-- [x] 4.3 `npm test`; `npm run lint`
+- [x] 4.1 DTO → buffer → DTO round-trip test — 441d68f
+- [x] 4.2 Bad xlsx / wrong version → issues, not throw — 441d68f
+- [x] 4.3 `npm test`; `npm run lint` — 441d68f
 
 #### Manual
 

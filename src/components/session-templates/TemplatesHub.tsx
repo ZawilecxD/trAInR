@@ -1,7 +1,10 @@
 import { useMemo, useState } from "react";
-import { Loader2, Pencil, Plus, Trash2 } from "lucide-react";
+import { Download, Loader2, Pencil, Plus, Trash2, Upload } from "lucide-react";
 import DeleteConfirmDialog from "@/components/DeleteConfirmDialog";
 import { EmptyState } from "@/components/EmptyState";
+import { useTemplateTransfer } from "@/components/hooks/useTemplateTransfer";
+import TemplateImportDialog from "@/components/session-templates/TemplateImportDialog";
+import TemplateImportFileButton from "@/components/session-templates/TemplateImportFileButton";
 import TemplateFilters from "@/components/session-templates/TemplateFilters";
 import TemplateFormModal from "@/components/session-templates/TemplateFormModal";
 import { Button } from "@/components/ui/button";
@@ -78,6 +81,12 @@ export default function TemplatesHub({
     }
   }
 
+  const transfer = useTemplateTransfer({
+    onImported: async (message) => {
+      await refreshTemplates(message);
+    },
+  });
+
   function openCreateModal() {
     setModalError(null);
     setEditingTemplateId(null);
@@ -153,14 +162,26 @@ export default function TemplatesHub({
             Build reusable session blueprints with warm-up, main, and cool-down phases.
           </p>
         </div>
-        <Button
-          type="button"
-          className="bg-primary hover:bg-primary/90 text-primary-foreground min-h-11 w-full sm:w-auto"
-          onClick={openCreateModal}
-        >
-          <Plus className="size-4" />
-          New template
-        </Button>
+        <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row">
+          <TemplateImportFileButton
+            className="border-border hover:bg-accent min-h-11 w-full bg-transparent sm:w-auto"
+            disabled={transfer.importBusy}
+            onFileSelected={(file) => {
+              void transfer.handleFileSelected(file);
+            }}
+          >
+            {transfer.importBusy ? <Loader2 className="size-4 animate-spin" /> : <Upload className="size-4" />}
+            Import
+          </TemplateImportFileButton>
+          <Button
+            type="button"
+            className="bg-primary hover:bg-primary/90 text-primary-foreground min-h-11 w-full sm:w-auto"
+            onClick={openCreateModal}
+          >
+            <Plus className="size-4" />
+            New template
+          </Button>
+        </div>
       </div>
 
       {flashMessage ? <div className={successBannerClass}>{flashMessage}</div> : null}
@@ -168,6 +189,8 @@ export default function TemplatesHub({
       {modalError ? <div className={errorBannerClass}>{modalError}</div> : null}
 
       {deleteError ? <div className={errorBannerClass}>{deleteError}</div> : null}
+
+      {transfer.error ? <div className={errorBannerClass}>{transfer.error}</div> : null}
 
       <TemplateFilters initialFilters={initialFilters} />
 
@@ -180,16 +203,27 @@ export default function TemplatesHub({
         ) : (
           <EmptyState
             title="No templates yet"
-            description="Create your first template to reuse session structures across clients."
+            description="Create your first template or import a JSON/XLSX file to reuse session structures across clients."
             action={
-              <Button
-                type="button"
-                variant="outline"
-                className="border-border hover:bg-accent bg-transparent"
-                onClick={openCreateModal}
-              >
-                Create template
-              </Button>
+              <div className="flex flex-wrap justify-center gap-2">
+                <TemplateImportFileButton
+                  className="border-border hover:bg-accent bg-transparent"
+                  disabled={transfer.importBusy}
+                  onFileSelected={(file) => {
+                    void transfer.handleFileSelected(file);
+                  }}
+                >
+                  Import template
+                </TemplateImportFileButton>
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="border-border hover:bg-accent bg-transparent"
+                  onClick={openCreateModal}
+                >
+                  Create template
+                </Button>
+              </div>
             }
           />
         )
@@ -232,7 +266,41 @@ export default function TemplatesHub({
                       </td>
                       <td className="px-4 py-3 whitespace-nowrap">{formatUpdatedAt(template.updated_at)}</td>
                       <td className="px-4 py-3">
-                        <div className="flex items-center gap-2">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            className="border-border hover:bg-accent text-foreground bg-transparent"
+                            disabled={transfer.exportingId === `${template.id}:json`}
+                            onClick={() => {
+                              void transfer.exportTemplate(template.id, "json");
+                            }}
+                          >
+                            {transfer.exportingId === `${template.id}:json` ? (
+                              <Loader2 className="size-3.5 animate-spin" />
+                            ) : (
+                              <Download className="size-3.5" />
+                            )}
+                            JSON
+                          </Button>
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            className="border-border hover:bg-accent text-foreground bg-transparent"
+                            disabled={transfer.exportingId === `${template.id}:xlsx`}
+                            onClick={() => {
+                              void transfer.exportTemplate(template.id, "xlsx");
+                            }}
+                          >
+                            {transfer.exportingId === `${template.id}:xlsx` ? (
+                              <Loader2 className="size-3.5 animate-spin" />
+                            ) : (
+                              <Download className="size-3.5" />
+                            )}
+                            XLSX
+                          </Button>
                           <Button
                             type="button"
                             variant="outline"
@@ -297,7 +365,41 @@ export default function TemplatesHub({
                     </div>
                   ) : null}
                 </div>
-                <div className="mt-4 flex items-center gap-2">
+                <div className="mt-4 flex flex-wrap items-center gap-2">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    className="border-border hover:bg-accent text-foreground bg-transparent"
+                    disabled={transfer.exportingId === `${template.id}:json`}
+                    onClick={() => {
+                      void transfer.exportTemplate(template.id, "json");
+                    }}
+                  >
+                    {transfer.exportingId === `${template.id}:json` ? (
+                      <Loader2 className="size-3.5 animate-spin" />
+                    ) : (
+                      <Download className="size-3.5" />
+                    )}
+                    JSON
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    className="border-border hover:bg-accent text-foreground bg-transparent"
+                    disabled={transfer.exportingId === `${template.id}:xlsx`}
+                    onClick={() => {
+                      void transfer.exportTemplate(template.id, "xlsx");
+                    }}
+                  >
+                    {transfer.exportingId === `${template.id}:xlsx` ? (
+                      <Loader2 className="size-3.5 animate-spin" />
+                    ) : (
+                      <Download className="size-3.5" />
+                    )}
+                    XLSX
+                  </Button>
                   <Button
                     type="button"
                     variant="outline"
@@ -382,6 +484,16 @@ export default function TemplatesHub({
         confirmLabel="Delete template"
         loading={deleting}
         onConfirm={handleDeleteConfirm}
+      />
+
+      <TemplateImportDialog
+        preview={transfer.preview}
+        issues={transfer.issues}
+        busy={transfer.importBusy}
+        onClose={transfer.closePreview}
+        onCommit={(action) => {
+          void transfer.commitImport(action);
+        }}
       />
     </div>
   );
