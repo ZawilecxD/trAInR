@@ -32,6 +32,9 @@ export default defineConfig({
       // "Cannot read properties of null (reading 'useMemo')" from DayPicker).
       dedupe: ["react", "react-dom"],
     },
+    ssr: {
+      external: ["exceljs"],
+    },
     optimizeDeps: {
       // Prebundle React first, then calendar/icon/date peers that import it,
       // so DayPicker shares the same dispatcher as @astrojs/react islands.

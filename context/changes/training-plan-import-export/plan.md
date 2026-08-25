@@ -383,10 +383,10 @@ Phase 1 unique index: suffixing changes display names of duplicate exercises. Pl
 
 #### Automated
 
-- [x] 3.1 Unit tests for export DTO mapping (no `exercise_id` keys)
-- [x] 3.2 `npm test`; `npm run lint`; `npm run check`
-- [x] 3.3 Import commit branching unit tests (create/skip/overwrite)
-- [x] 3.8 Export of >50 exercises returns 400 validation_error
+- [x] 3.1 Unit tests for export DTO mapping (no `exercise_id` keys) — 22619c7
+- [x] 3.2 `npm test`; `npm run lint`; `npm run check` — 22619c7
+- [x] 3.3 Import commit branching unit tests (create/skip/overwrite) — 22619c7
+- [x] 3.8 Export of >50 exercises returns 400 validation_error — 22619c7
 
 #### Manual
 
@@ -399,9 +399,9 @@ Phase 1 unique index: suffixing changes display names of duplicate exercises. Pl
 
 #### Automated
 
-- [ ] 4.1 DTO → buffer → DTO round-trip test
-- [ ] 4.2 Bad xlsx / wrong version → issues, not throw
-- [ ] 4.3 `npm test`; `npm run lint`
+- [x] 4.1 DTO → buffer → DTO round-trip test
+- [x] 4.2 Bad xlsx / wrong version → issues, not throw
+- [x] 4.3 `npm test`; `npm run lint`
 
 #### Manual
 
