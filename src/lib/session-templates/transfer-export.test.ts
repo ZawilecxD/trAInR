@@ -108,4 +108,107 @@ describe("buildTransferDocument", () => {
     if (result.ok) return;
     expect(result.issues[0]?.path).toBe("exercises");
   });
+
+  it("sorts exercises by phase then sort_order when sort_order restarts per phase", () => {
+    const emptySet = {
+      prescribed_reps: 1,
+      prescribed_duration_seconds: null,
+      prescribed_load_kg: null,
+      rest_after_seconds: null,
+      is_warmup: false,
+    };
+
+    const exercises = [
+      {
+        id: "te-cool-0",
+        template_id: "t1",
+        exercise_id: "a1",
+        phase: "cool_down" as const,
+        sort_order: 0,
+        notes: null,
+        exercise_name: "Lat Pulldown",
+        exercise_default_metric: "reps_weight" as const,
+        sets: [{ id: "s1", template_exercise_id: "te-cool-0", set_number: 1, ...emptySet }],
+      },
+      {
+        id: "te-main-0",
+        template_id: "t1",
+        exercise_id: "a2",
+        phase: "main" as const,
+        sort_order: 0,
+        notes: null,
+        exercise_name: "Barbell Back Squat",
+        exercise_default_metric: "reps_weight" as const,
+        sets: [{ id: "s2", template_exercise_id: "te-main-0", set_number: 1, ...emptySet }],
+      },
+      {
+        id: "te-warm-0",
+        template_id: "t1",
+        exercise_id: "a3",
+        phase: "warm_up" as const,
+        sort_order: 0,
+        notes: null,
+        exercise_name: "Romanian Deadlift",
+        exercise_default_metric: "reps_weight" as const,
+        sets: [{ id: "s3", template_exercise_id: "te-warm-0", set_number: 1, ...emptySet }],
+      },
+      {
+        id: "te-main-1",
+        template_id: "t1",
+        exercise_id: "a4",
+        phase: "main" as const,
+        sort_order: 1,
+        notes: null,
+        exercise_name: "Leg Press",
+        exercise_default_metric: "reps_weight" as const,
+        sets: [{ id: "s4", template_exercise_id: "te-main-1", set_number: 1, ...emptySet }],
+      },
+      {
+        id: "te-cool-1",
+        template_id: "t1",
+        exercise_id: "a5",
+        phase: "cool_down" as const,
+        sort_order: 1,
+        notes: null,
+        exercise_name: "Hip Thrust",
+        exercise_default_metric: "reps_weight" as const,
+        sets: [{ id: "s5", template_exercise_id: "te-cool-1", set_number: 1, ...emptySet }],
+      },
+      {
+        id: "te-main-2",
+        template_id: "t1",
+        exercise_id: "a6",
+        phase: "main" as const,
+        sort_order: 2,
+        notes: null,
+        exercise_name: "Treadmill Run",
+        exercise_default_metric: "time" as const,
+        sets: [
+          {
+            id: "s6",
+            template_exercise_id: "te-main-2",
+            set_number: 1,
+            prescribed_reps: null,
+            prescribed_duration_seconds: 125,
+            prescribed_load_kg: null,
+            rest_after_seconds: null,
+            is_warmup: false,
+          },
+        ],
+      },
+    ];
+
+    const result = buildTransferDocument(makeTemplate({ exercises }));
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+
+    expect(result.document.exercises.map((e) => e.name)).toEqual([
+      "Romanian Deadlift",
+      "Barbell Back Squat",
+      "Leg Press",
+      "Treadmill Run",
+      "Lat Pulldown",
+      "Hip Thrust",
+    ]);
+  });
 });

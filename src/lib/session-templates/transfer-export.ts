@@ -1,4 +1,5 @@
 import type { TemplateWithExercises } from "@/lib/session-templates/service";
+import { comparePhaseThenSortOrder } from "@/lib/session-templates/transfer-order";
 import type { SessionTemplateTransfer, TransferIssue } from "@/lib/session-templates/transfer-schema";
 
 const MAX_TRANSFER_EXERCISES = 50;
@@ -38,7 +39,7 @@ export function buildTransferDocument(template: TemplateWithExercises): BuildTra
     description: template.description,
     exercises: template.exercises
       .slice()
-      .sort((a, b) => a.sort_order - b.sort_order)
+      .sort(comparePhaseThenSortOrder)
       .map((exercise) => ({
         name: exercise.exercise_name,
         default_metric: exercise.exercise_default_metric,
