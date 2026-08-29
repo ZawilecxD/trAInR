@@ -136,7 +136,38 @@ values
     'active'
   );
 
--- Sample exercises per trainer (muscle_groups from supabase/seed.sql)
+-- Sample exercises per trainer (muscle_groups from supabase/seed.sql).
+-- handle_new_user already cloned the starter catalog, which shares several of
+-- these names. Drop those rows so the pinned fixture UUIDs (used by E2E) can
+-- be inserted under exercises_trainer_id_name_ci_uidx. Junction rows cascade.
+delete from public.exercises
+where (trainer_id, lower(btrim(name))) in (
+  (
+    'c2000001-0000-4000-8000-000000000001'::uuid,
+    'bench press'
+  ),
+  (
+    'c2000001-0000-4000-8000-000000000001'::uuid,
+    'back squat'
+  ),
+  (
+    'c2000001-0000-4000-8000-000000000001'::uuid,
+    'plank'
+  ),
+  (
+    'c2000001-0000-4000-8000-000000000003'::uuid,
+    'barbell row'
+  ),
+  (
+    'c2000001-0000-4000-8000-000000000003'::uuid,
+    'romanian deadlift'
+  ),
+  (
+    'c2000001-0000-4000-8000-000000000003'::uuid,
+    'lat pulldown'
+  )
+);
+
 insert into public.exercises (id, trainer_id, name, exercise_type, default_metric, notes)
 values
   (
