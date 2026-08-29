@@ -3,10 +3,7 @@ import { resolve } from "node:path";
 
 import { describe, expect, it } from "vitest";
 
-const STARTER_MIGRATION = resolve(
-  process.cwd(),
-  "supabase/migrations/20260620140200_starter_exercise_seed.sql",
-);
+const STARTER_MIGRATION = resolve(process.cwd(), "supabase/migrations/20260620140200_starter_exercise_seed.sql");
 const DEV_SEED = resolve(process.cwd(), "scripts/seed-dev-users.sql");
 
 function starterCatalogNames(sql: string): string[] {
@@ -17,9 +14,7 @@ function starterCatalogNames(sql: string): string[] {
 }
 
 function fixtureExercises(sql: string): { trainerId: string; name: string }[] {
-  const values = sql.match(
-    /insert into public\.exercises \(id, trainer_id, name[\s\S]*?values([\s\S]*?);/,
-  )?.[1];
+  const values = /insert into public\.exercises \(id, trainer_id, name[\s\S]*?values([\s\S]*?);/.exec(sql)?.[1];
   if (!values) {
     throw new Error("Could not find fixture exercise insert in seed-dev-users.sql");
   }
@@ -47,7 +42,7 @@ describe("dev seed vs unique exercise names", () => {
       "Lat Pulldown",
     ]);
 
-    const deleteSql = seedSql.match(/delete from public\.exercises[\s\S]*?;/)?.[0] ?? "";
+    const deleteSql = /delete from public\.exercises[\s\S]*?;/.exec(seedSql)?.[0] ?? "";
     const insertIdx = seedSql.indexOf("insert into public.exercises (id, trainer_id, name");
     const deleteIdx = seedSql.indexOf("delete from public.exercises");
 

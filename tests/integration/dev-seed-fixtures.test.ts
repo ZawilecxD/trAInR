@@ -48,9 +48,7 @@ describe("dev seed fixtures", () => {
     expect(error).toBeNull();
     expect(data).toHaveLength(FIXTURE_EXERCISES.length);
 
-    const byId = new Map(
-      (data ?? []).map((row: { id: string; trainer_id: string; name: string }) => [row.id, row]),
-    );
+    const byId = new Map((data ?? []).map((row: { id: string; trainer_id: string; name: string }) => [row.id, row]));
 
     for (const fixture of FIXTURE_EXERCISES) {
       expect(byId.get(fixture.id)).toEqual({
