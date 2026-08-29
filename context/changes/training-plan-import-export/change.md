@@ -14,19 +14,17 @@ ZAW-57 originally specified JSON export/import of an assigned client’s active 
 
 ### Deferred manual verification (run at PR)
 
-Per implementer: skip per-phase manual gates; verify all of these once the PR exists. Leave Progress `#### Manual` rows unchecked until then.
+Verified 2026-08-29 against local Supabase + `http://127.0.0.1:4321`. XLSX 4.4–4.6 + hub file UX confirmed by Mateusz; remaining gates via SQL (1.6 rollback) and trainer/client API calls.
 
-- **1.5** Local Supabase: “Squat” then “squat” rejected; second trainer can create “Squat”
-- **1.6** Studio script with begin/set local role/JWT/rollback documents pass/fail per statement
-- **2.5** Optional fixture DTO spot-check (or skip if unit fixtures suffice)
-- **3.4** GET export JSON downloads without UUIDs
-- **3.5** Preview/commit create, overwrite, skip
-- **3.6** Unknown exercise name → 400, library unchanged
-- **3.7** Other trainer export id → 404
-- **4.4** Export opens in Excel/LibreOffice, one row per set
-- **4.5** Re-import after a cell edit
-- **4.6** Garbled file → fix-list, no write
-- **5.3** Hub: export JSON/XLSX, import create, clash overwrite/skip, unknown name fix-list
-- **5.4** Client calendar: add session from imported template
-- **5.5** Client user cannot call import/export APIs (403)
-- **5.6** Linear ZAW-57 description matches this plan
+- **1.5** PASS — trainer A `Squat` 201, `squat` 409 `duplicate_name`, trainer B `Squat` 201
+- **1.6** PASS — Studio-style `begin` / JWT / `auth.uid()` / rollback; CI unique + RLS documented
+- **2.5** SKIP — unit fixtures suffice
+- **3.4** PASS — export of “Import Export example” has no UUIDs / `exercise_id` / `set_logs`
+- **3.5** PASS — preview create → commit create / skip / overwrite (reps written to 99)
+- **3.6** PASS — unknown name 400 fix-list; template library unchanged
+- **3.7** PASS — trainer B export of trainer A id → 404
+- **4.4–4.6** PASS — Mateusz manual XLSX
+- **5.3** PASS — API covers create / clash / skip / overwrite / unknown; XLSX hub by Mateusz
+- **5.4** PASS — `POST /api/workout-sessions` from imported template (`source_template_id` set, 201)
+- **5.5** PASS — client export/preview/commit → 403
+- **5.6** PASS — Linear ZAW-57 description matches framed template JSON+XLSX scope

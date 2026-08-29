@@ -363,8 +363,8 @@ Phase 1 unique index: suffixing changes display names of duplicate exercises. Pl
 
 #### Manual
 
-- [ ] 1.5 Local Supabase: “Squat” then “squat” rejected; second trainer can create “Squat”
-- [ ] 1.6 Studio script with begin/set local role/JWT/rollback documents pass/fail per statement
+- [x] 1.5 Local Supabase: “Squat” then “squat” rejected; second trainer can create “Squat”
+- [x] 1.6 Studio script with begin/set local role/JWT/rollback documents pass/fail per statement
 
 ### Phase 2: Transfer schema + name-only resolver
 
@@ -377,7 +377,7 @@ Phase 1 unique index: suffixing changes display names of duplicate exercises. Pl
 
 #### Manual
 
-- [ ] 2.5 Optional fixture DTO spot-check (or skip if unit fixtures suffice)
+- [x] 2.5 Optional fixture DTO spot-check (or skip if unit fixtures suffice)
 
 ### Phase 3: JSON export + import preview/commit APIs
 
@@ -390,10 +390,10 @@ Phase 1 unique index: suffixing changes display names of duplicate exercises. Pl
 
 #### Manual
 
-- [ ] 3.4 GET export JSON downloads without UUIDs
-- [ ] 3.5 Preview/commit create, overwrite, skip
-- [ ] 3.6 Unknown exercise name → 400, library unchanged
-- [ ] 3.7 Other trainer export id → 404
+- [x] 3.4 GET export JSON downloads without UUIDs
+- [x] 3.5 Preview/commit create, overwrite, skip
+- [x] 3.6 Unknown exercise name → 400, library unchanged
+- [x] 3.7 Other trainer export id → 404
 
 ### Phase 4: XLSX encode/decode
 
@@ -405,9 +405,9 @@ Phase 1 unique index: suffixing changes display names of duplicate exercises. Pl
 
 #### Manual
 
-- [ ] 4.4 Export opens in Excel/LibreOffice, one row per set
-- [ ] 4.5 Re-import after a cell edit
-- [ ] 4.6 Garbled file → fix-list, no write
+- [x] 4.4 Export opens in Excel/LibreOffice, one row per set
+- [x] 4.5 Re-import after a cell edit
+- [x] 4.6 Garbled file → fix-list, no write
 
 ### Phase 5: TemplatesHub UI
 
@@ -418,7 +418,7 @@ Phase 1 unique index: suffixing changes display names of duplicate exercises. Pl
 
 #### Manual
 
-- [ ] 5.3 Hub: export JSON/XLSX, import create, clash overwrite/skip, unknown name fix-list
-- [ ] 5.4 Client calendar: add session from imported template
-- [ ] 5.5 Client user cannot call import/export APIs (403)
-- [ ] 5.6 Linear ZAW-57 description matches this plan
+- [x] 5.3 Hub: export JSON/XLSX, import create, clash overwrite/skip, unknown name fix-list
+- [x] 5.4 Client calendar: add session from imported template
+- [x] 5.5 Client user cannot call import/export APIs (403)
+- [x] 5.6 Linear ZAW-57 description matches this plan
