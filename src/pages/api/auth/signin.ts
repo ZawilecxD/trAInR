@@ -1,4 +1,5 @@
 import type { APIRoute } from "astro";
+import { roleHomePath } from "@/lib/auth/role-home";
 import { createClient } from "@/lib/supabase";
 
 export const prerender = false;
@@ -22,11 +23,9 @@ export const POST: APIRoute = async (context) => {
   if (userId) {
     const { data: profile } = await supabase.from("profiles").select("role").eq("id", userId).maybeSingle();
 
-    if (profile?.role === "trainer") {
-      return context.redirect("/trainer/dashboard");
-    }
-    if (profile?.role === "client") {
-      return context.redirect("/client/dashboard");
+    const homePath = roleHomePath(profile?.role);
+    if (homePath) {
+      return context.redirect(homePath);
     }
   }
 

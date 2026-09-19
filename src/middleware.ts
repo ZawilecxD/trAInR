@@ -1,4 +1,5 @@
 import { defineMiddleware } from "astro:middleware";
+import { signedInPathRedirect } from "@/lib/auth/role-home";
 import { createClient } from "@/lib/supabase";
 import type { UserRole } from "@/types";
 
@@ -34,6 +35,15 @@ export const onRequest = defineMiddleware(async (context, next) => {
     if (!context.locals.user) {
       return context.redirect("/auth/signin");
     }
+  }
+
+  const signedInRedirect = signedInPathRedirect(context.url.pathname, {
+    isSignedIn: Boolean(context.locals.user),
+    role: context.locals.role,
+  });
+
+  if (signedInRedirect) {
+    return context.redirect(signedInRedirect);
   }
 
   const matchedRoleRoute = ROLE_PROTECTED_PREFIXES.find(({ prefix }) => context.url.pathname.startsWith(prefix));

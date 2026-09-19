@@ -1,9 +1,10 @@
 ---
 import Layout from "@/layouts/Layout.astro";
+import { roleHomePath } from "@/lib/auth/role-home";
 
 const { user, role } = Astro.locals;
 
-const roleDashboard = role === "trainer" ? "/trainer/dashboard" : role === "client" ? "/client/dashboard" : null;
+const roleDashboard = roleHomePath(role);
 
 if (roleDashboard) {
   return Astro.redirect(roleDashboard);

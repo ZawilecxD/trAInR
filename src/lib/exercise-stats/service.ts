@@ -8,6 +8,14 @@ import {
   type SessionStatInput,
   type WorkingSetInput,
 } from "@/lib/exercise-stats/calculations";
+import {
+  primaryTrendForSessions,
+  weeklyVolumeBuckets,
+  type ExerciseTrend,
+  type WeekBucket,
+} from "@/lib/exercise-stats/chart-series";
+
+const WEEKLY_CHART_WEEKS = 8;
 
 /** One exercise the client has logged working sets for (list view). */
 export interface LoggedExerciseSummary {
@@ -17,6 +25,13 @@ export interface LoggedExerciseSummary {
   lastLoggedAt: string;
   sessionCount: number;
   loggedSetCount: number;
+  trend: ExerciseTrend;
+}
+
+/** List page payload: per-exercise rows plus a client-wide weekly volume chart. */
+export interface ClientLoggedExercises {
+  exercises: LoggedExerciseSummary[];
+  weekly: WeekBucket[];
 }
 
 /** Full per-exercise history for the stats detail page. */
@@ -59,6 +74,44 @@ interface ResolvedRow {
   scheduledDate: string;
 }
 
+type SessionAccumulator = SessionStatInput & { latestLoggedAt: string };
+
+function addSetToSession(bySession: Map<string, SessionAccumulator>, row: ResolvedRow): void {
+  const workingSet: WorkingSetInput = {
+    reps: row.reps,
+    loadKg: row.loadKg,
+    durationSeconds: row.durationSeconds,
+  };
+  const existing = bySession.get(row.sessionId);
+  if (existing) {
+    existing.sets.push(workingSet);
+    if (row.loggedAt > existing.latestLoggedAt) {
+      existing.latestLoggedAt = row.loggedAt;
+    }
+    return;
+  }
+
+  bySession.set(row.sessionId, {
+    sessionId: row.sessionId,
+    scheduledDate: row.scheduledDate,
+    loggedAt: row.loggedAt,
+    latestLoggedAt: row.loggedAt,
+    sets: [workingSet],
+  });
+}
+
+function sessionStatsFromAccumulator(
+  bySession: Map<string, SessionAccumulator>,
+  metric: ExerciseMetric,
+): SessionStat[] {
+  return Array.from(bySession.values())
+    .map((input) => aggregateSessionStats({ ...input, loggedAt: input.latestLoggedAt }, metric))
+    .sort((a, b) => {
+      const byDate = b.scheduledDate.localeCompare(a.scheduledDate);
+      return byDate !== 0 ? byDate : b.loggedAt.localeCompare(a.loggedAt);
+    });
+}
+
 function resolveRow(row: WorkingSetRow): ResolvedRow | null {
   const se = row.session_exercises;
   const exercise = se?.exercises;
@@ -89,7 +142,7 @@ function resolveRow(row: WorkingSetRow): ResolvedRow | null {
 export async function listLoggedExercisesForClient(
   supabase: SupabaseClient,
   clientId: string,
-): Promise<{ data: LoggedExerciseSummary[] | null; error: string | null }> {
+): Promise<{ data: ClientLoggedExercises | null; error: string | null }> {
   const result = await supabase
     .from("set_logs")
     .select(WORKING_SET_SELECT)
@@ -105,36 +158,59 @@ export async function listLoggedExercisesForClient(
     .map(resolveRow)
     .filter((row): row is ResolvedRow => row !== null && row.clientId === clientId);
 
-  const byExercise = new Map<string, { summary: LoggedExerciseSummary; sessionIds: Set<string> }>();
+  const byExercise = new Map<
+    string,
+    { name: string; metric: ExerciseMetric; lastLoggedAt: string; sessions: Map<string, SessionAccumulator> }
+  >();
 
   for (const row of rows) {
     const existing = byExercise.get(row.exerciseId);
     if (existing) {
-      existing.summary.loggedSetCount += 1;
-      existing.sessionIds.add(row.sessionId);
-      if (row.loggedAt > existing.summary.lastLoggedAt) {
-        existing.summary.lastLoggedAt = row.loggedAt;
+      addSetToSession(existing.sessions, row);
+      if (row.loggedAt > existing.lastLoggedAt) {
+        existing.lastLoggedAt = row.loggedAt;
       }
     } else {
+      const sessions = new Map<string, SessionAccumulator>();
+      addSetToSession(sessions, row);
       byExercise.set(row.exerciseId, {
-        summary: {
-          exerciseId: row.exerciseId,
-          name: row.exerciseName,
-          defaultMetric: row.defaultMetric,
-          lastLoggedAt: row.loggedAt,
-          sessionCount: 0,
-          loggedSetCount: 1,
-        },
-        sessionIds: new Set([row.sessionId]),
+        name: row.exerciseName,
+        metric: row.defaultMetric,
+        lastLoggedAt: row.loggedAt,
+        sessions,
       });
     }
   }
 
-  const summaries = Array.from(byExercise.values())
-    .map(({ summary, sessionIds }) => ({ ...summary, sessionCount: sessionIds.size }))
+  const allSessions: SessionStat[] = [];
+  const exercises: LoggedExerciseSummary[] = Array.from(byExercise.entries())
+    .map(([exerciseId, group]) => {
+      const sessions = sessionStatsFromAccumulator(group.sessions, group.metric);
+      allSessions.push(...sessions);
+      return {
+        exerciseId,
+        name: group.name,
+        defaultMetric: group.metric,
+        lastLoggedAt: group.lastLoggedAt,
+        sessionCount: sessions.length,
+        loggedSetCount: sessions.reduce((sum, session) => sum + session.workingSetCount, 0),
+        trend: primaryTrendForSessions(sessions, group.metric),
+      };
+    })
     .sort((a, b) => b.lastLoggedAt.localeCompare(a.lastLoggedAt));
 
-  return { data: summaries, error: null };
+  const latestDate = allSessions.reduce(
+    (latest, session) => (session.scheduledDate > latest ? session.scheduledDate : latest),
+    "",
+  );
+
+  return {
+    data: {
+      exercises,
+      weekly: latestDate ? weeklyVolumeBuckets(allSessions, WEEKLY_CHART_WEEKS, latestDate) : [],
+    },
+    error: null,
+  };
 }
 
 /**
@@ -171,37 +247,12 @@ export async function getExerciseHistoryForClient(
   const metric = rows[0].defaultMetric;
   const exercise = { id: exerciseId, name: rows[0].exerciseName, defaultMetric: metric };
 
-  const bySession = new Map<string, SessionStatInput & { latestLoggedAt: string }>();
-
+  const bySession = new Map<string, SessionAccumulator>();
   for (const row of rows) {
-    const workingSet: WorkingSetInput = {
-      reps: row.reps,
-      loadKg: row.loadKg,
-      durationSeconds: row.durationSeconds,
-    };
-    const existing = bySession.get(row.sessionId);
-    if (existing) {
-      existing.sets.push(workingSet);
-      if (row.loggedAt > existing.latestLoggedAt) {
-        existing.latestLoggedAt = row.loggedAt;
-      }
-    } else {
-      bySession.set(row.sessionId, {
-        sessionId: row.sessionId,
-        scheduledDate: row.scheduledDate,
-        loggedAt: row.loggedAt,
-        latestLoggedAt: row.loggedAt,
-        sets: [workingSet],
-      });
-    }
+    addSetToSession(bySession, row);
   }
 
-  const sessions: SessionStat[] = Array.from(bySession.values())
-    .map((input) => aggregateSessionStats({ ...input, loggedAt: input.latestLoggedAt }, metric))
-    .sort((a, b) => {
-      const byDate = b.scheduledDate.localeCompare(a.scheduledDate);
-      return byDate !== 0 ? byDate : b.loggedAt.localeCompare(a.loggedAt);
-    });
+  const sessions = sessionStatsFromAccumulator(bySession, metric);
 
   return {
     data: {

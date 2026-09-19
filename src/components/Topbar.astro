@@ -1,4 +1,5 @@
 ---
+import { roleHomePath } from "@/lib/auth/role-home";
 import { cn } from "@/lib/utils";
 
 const { user, role } = Astro.locals;
@@ -49,14 +50,7 @@ if (user) {
   }
 }
 
-const homeHref =
-  user && role === "trainer"
-    ? "/trainer/dashboard"
-    : user && role === "client"
-      ? "/client/dashboard"
-      : user
-        ? "/dashboard"
-        : "/";
+const homeHref = roleHomePath(role) ?? (user ? "/dashboard" : "/");
 
 /** Primary link row is desktop-only when role bottom nav owns mobile chrome. */
 const hidePrimaryNavOnMobile = Boolean(user && (role === "trainer" || role === "client"));

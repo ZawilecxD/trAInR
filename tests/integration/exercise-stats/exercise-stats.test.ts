@@ -114,11 +114,14 @@ describe("exercise statistics service", () => {
     const { data, error } = await listLoggedExercisesForClient(clientA.client, clientA.id);
 
     expect(error).toBeNull();
-    expect(data).toHaveLength(1);
-    expect(data?.[0].exerciseId).toBe(exerciseId);
-    expect(data?.[0].name).toBe("Back Squat");
-    expect(data?.[0].sessionCount).toBe(2);
-    expect(data?.[0].loggedSetCount).toBe(2); // warm-up set is not counted
+    expect(data?.exercises).toHaveLength(1);
+    expect(data?.exercises[0].exerciseId).toBe(exerciseId);
+    expect(data?.exercises[0].name).toBe("Back Squat");
+    expect(data?.exercises[0].sessionCount).toBe(2);
+    expect(data?.exercises[0].loggedSetCount).toBe(2); // warm-up set is not counted
+    expect(data?.exercises[0].trend.kind).toBe("one_rm");
+    expect(data?.exercises[0].trend.points).toHaveLength(2);
+    expect(data?.weekly.some((week) => week.sessionCount > 0)).toBe(true);
   });
 
   it("returns per-session history with Epley 1RM and tonnage, most recent first", async () => {
@@ -153,7 +156,7 @@ describe("exercise statistics service", () => {
   it("does not leak another client's history", async () => {
     const list = await listLoggedExercisesForClient(clientB.client, clientB.id);
     expect(list.error).toBeNull();
-    expect(list.data).toEqual([]);
+    expect(list.data?.exercises).toEqual([]);
 
     const history = await getExerciseHistoryForClient(clientB.client, clientB.id, exerciseId);
     expect(history.error).toBeNull();
