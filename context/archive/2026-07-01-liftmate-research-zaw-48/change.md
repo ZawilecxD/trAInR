@@ -1,9 +1,10 @@
 ---
 change_id: liftmate-research-zaw-48
-status: research-complete
+status: archived
 linear_issue: ZAW-48
 created: 2026-07-01
-updated: 2026-07-01
+updated: 2026-08-25
+archived_at: 2026-08-25T06:20:40Z
 branch: cursor/research-liftmate-zaw-48-e722
 ---
 

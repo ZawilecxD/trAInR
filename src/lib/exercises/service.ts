@@ -39,6 +39,10 @@ function mapExerciseRow(row: ExerciseRow): ExerciseWithMuscleGroups {
   };
 }
 
+function isUniqueViolation(error: { code?: string } | null | undefined): boolean {
+  return error?.code === "23505";
+}
+
 async function replaceMuscleGroups(
   supabase: SupabaseClient,
   exerciseId: string,
@@ -156,6 +160,9 @@ export async function createExercise(
     .single();
 
   if (createResult.error || !createResult.data) {
+    if (isUniqueViolation(createResult.error)) {
+      return { data: null, error: "duplicate_name" };
+    }
     return { data: null, error: createResult.error?.message ?? "Failed to create exercise" };
   }
 
@@ -190,6 +197,9 @@ export async function updateExercise(
     const { error: updateError } = await supabase.from("exercises").update(exercisePatch).eq("id", exerciseId);
 
     if (updateError) {
+      if (isUniqueViolation(updateError)) {
+        return { data: null, error: "duplicate_name" };
+      }
       return { data: null, error: updateError.message };
     }
   }

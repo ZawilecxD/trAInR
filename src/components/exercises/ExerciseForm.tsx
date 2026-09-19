@@ -138,6 +138,11 @@ export default function ExerciseForm({
         if (!response.ok) {
           const payload = await safeJsonParse(response);
 
+          if (payload.error === "duplicate_name") {
+            setErrors({ name: "An exercise with this name already exists" });
+            return;
+          }
+
           if (payload.error === "validation_error" && payload.details?.issues) {
             setErrors(mapApiIssues(payload.details.issues));
             return;
@@ -180,6 +185,11 @@ export default function ExerciseForm({
 
       if (!response.ok) {
         const payload = await safeJsonParse(response);
+
+        if (payload.error === "duplicate_name") {
+          setErrors({ name: "An exercise with this name already exists" });
+          return;
+        }
 
         if (payload.error === "validation_error" && payload.details?.issues) {
           setErrors(mapApiIssues(payload.details.issues));
