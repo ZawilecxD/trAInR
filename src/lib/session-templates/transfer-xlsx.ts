@@ -213,12 +213,19 @@ export async function encodeTransferXlsx(document: SessionTemplateTransfer): Pro
   return Buffer.from(buffer);
 }
 
+/** ExcelJS `load` is typed against ArrayBuffer, not Node's Buffer. */
+function toExcelJsBuffer(bytes: Uint8Array): ArrayBuffer {
+  const copy = new ArrayBuffer(bytes.byteLength);
+  new Uint8Array(copy).set(bytes);
+  return copy;
+}
+
 export async function decodeTransferXlsx(
-  input: Buffer,
+  input: Uint8Array,
 ): Promise<{ ok: true; data: SessionTemplateTransfer } | { ok: false; issues: TransferIssue[] }> {
   try {
     const workbook = new ExcelJS.Workbook();
-    await workbook.xlsx.load(input);
+    await workbook.xlsx.load(toExcelJsBuffer(input));
 
     const sheets = workbook.worksheets;
     const sheet = workbook.getWorksheet(SHEET_NAME) ?? (sheets.length > 0 ? sheets[0] : undefined);

@@ -84,9 +84,15 @@ function cellAsText(value: ExcelJS.CellValue): string {
   return "";
 }
 
-async function sheetCellTexts(buffer: Buffer): Promise<string[][]> {
+function toExcelJsBuffer(bytes: Uint8Array): ArrayBuffer {
+  const copy = new ArrayBuffer(bytes.byteLength);
+  new Uint8Array(copy).set(bytes);
+  return copy;
+}
+
+async function sheetCellTexts(buffer: Uint8Array): Promise<string[][]> {
   const workbook = new ExcelJS.Workbook();
-  await workbook.xlsx.load(buffer);
+  await workbook.xlsx.load(toExcelJsBuffer(buffer));
   const sheet = workbook.worksheets[0];
   const rows: string[][] = [];
   sheet.eachRow({ includeEmpty: true }, (row) => {
@@ -139,7 +145,7 @@ describe("transfer xlsx", () => {
   it("imports headers with mixed case and trailing spaces", async () => {
     const buffer = await encodeTransferXlsx(sample);
     const workbook = new ExcelJS.Workbook();
-    await workbook.xlsx.load(buffer);
+    await workbook.xlsx.load(toExcelJsBuffer(buffer));
     const sheet = workbook.worksheets[0];
 
     sheet.eachRow((row) => {
