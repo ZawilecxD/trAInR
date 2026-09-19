@@ -5,7 +5,7 @@
 version: 1
 status: draft
 created: 2026-05-25
-updated: 2026-08-25
+updated: 2026-09-19
 prd_version: 1
 main_goal: speed
 top_blocker: time
@@ -53,6 +53,7 @@ Independent personal trainers lose coaching time to admin — hunting across spr
 | S-19 | prescription-fill-logging  | one-click fill a round with prescribed reps and load; no per-set completed toggle | S-06          | FR-015, FR-017 (extends)                          | done     |
 | S-20 | finished-session-summary-for-client | see a read-only exercise summary before editing or after completion | S-06, S-08, S-13 | FR-015, FR-017, FR-021, FR-022 (extends)          | done |
 | S-21 | optional-rpe-logging       | optionally log RPE (1–10) for each exercise round when logging a session | S-06, S-13 | FR-015, FR-017 (extends)                          | done     |
+| S-22 | training-plan-import-export | export and import session templates as JSON and XLSX                    | S-02, S-14 | FR-010, FR-011 (extends)                          | done     |
 
 
 ### Quality & testing
@@ -76,7 +77,7 @@ Navigation aid — groups items that share a Prerequisites chain. Canonical orde
 | ------ | ------------------------------ | ------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | A      | Trainer authoring → north star | `F-01` → `S-01` → `S-02` → `S-04` → `S-06` → `S-07`                            | Critical path: every link is on the shortest route to validating the async training loop.                                                                                                                                                                                                                                                                                                                  |
 | B      | Client onboarding & calendar   | `S-03` → `S-05`                                                                | Joins Stream A at `S-04` (S-03 is a prerequisite for S-04); `S-05` branches off `S-04` parallel with `S-06`.                                                                                                                                                                                                                                                                                               |
-| C      | Enhancement & polish           | `S-08` / `S-09` / `S-10` / `S-11` / `S-12` / `S-13` / `S-14` / `S-15` / `S-17` / `S-18` / `S-19` / `S-20` / `S-21` | Tier 2+3 items; sequence after core loop completes or when capacity opens. `S-14` extends session template prescription (after S-02). `S-15` extends exercise library browse/filter (after S-01). `S-16` was parked for post-MVP after planning research showed it changes creation ownership, exercise-library access, and trainer dashboard semantics. `S-17` seeds starter exercises on trainer signup. `S-18` unifies the dual design-system debt (shadcn tokens vs cosmic palette) per `DESIGN.md`, `context/changes/ui-redesign/research.md`, and Pencil mockups in `docs/pencil/`. `S-19` replaces the per-set OK/completed toggle with one-click prescription fill and defers completion semantics to session level (S-08). `S-20` makes the terminal/client summary state useful by showing the same exercise/log data read-only before the user chooses Edit or after editing is sealed. `S-21` adds optional per-round RPE capture during client logging and surfaces it in trainer/client session readouts. |
+| C      | Enhancement & polish           | `S-08` / `S-09` / `S-10` / `S-11` / `S-12` / `S-13` / `S-14` / `S-15` / `S-17` / `S-18` / `S-19` / `S-20` / `S-21` / `S-22` | Tier 2+3 items; sequence after core loop completes or when capacity opens. `S-14` extends session template prescription (after S-02). `S-15` extends exercise library browse/filter (after S-01). `S-16` was parked for post-MVP after planning research showed it changes creation ownership, exercise-library access, and trainer dashboard semantics. `S-17` seeds starter exercises on trainer signup. `S-18` unifies the dual design-system debt (shadcn tokens vs cosmic palette) per `DESIGN.md`, `context/changes/ui-redesign/research.md`, and Pencil mockups in `docs/pencil/`. `S-19` replaces the per-set OK/completed toggle with one-click prescription fill and defers completion semantics to session level (S-08). `S-20` makes the terminal/client summary state useful by showing the same exercise/log data read-only before the user chooses Edit or after editing is sealed. `S-21` adds optional per-round RPE capture during client logging and surfaces it in trainer/client session readouts. `S-22` lets trainers export/import session templates as JSON or XLSX (name-only exercises; Linear ZAW-57). |
 | D      | Quality & testing              | `Q-01` / `Q-02` / `Q-03` / `Q-04` / `Q-05`                                     | Cross-cutting; selective mutation testing per `test-plan.md` after the integration harness lands. `Q-02`/`Q-03` close SECURITY DEFINER gaps documented by the harness (flip KNOWN GAP tests). `Q-04` promotes the existing local-only Playwright suite to a PR gate, reusing the `test-integration` Supabase-in-CI pattern. `Q-05` is parked until production debugging pain appears, then adds Sentry/Vercel log evidence sources and MCP access for agent-assisted triage.                                                                          |
 
 
@@ -406,6 +407,19 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Risk:** Adding a nullable column to `set_logs` is straightforward, but RPE input must stay optional and low-friction on mobile (one-handed gym use). Trainer/client summary components (`SessionExerciseSummary`, edit-list tables) must stay in sync so RPE does not drift between surfaces.
 - **Status:** done
 
+### S-22: Session template import/export
+
+- **Outcome:** trainer can export a session template as JSON or XLSX (prescription only, exercise identity by name) and import it via preview → create / skip / overwrite; unknown or archived names abort with a fix-list; assignment to a client calendar stays the existing day-by-day flow
+- **Change ID:** training-plan-import-export
+- **Linear:** ZAW-57
+- **PRD refs:** FR-010, FR-011 (extends session templates; dedicated transfer FR not yet in PRD)
+- **Prerequisites:** S-02, S-14
+- **Parallel with:** S-15, S-18
+- **Blockers:** —
+- **Unknowns:** —
+- **Risk:** Name-only identity requires unique exercise names per trainer (including archived); metric mismatches must abort so imports never silently remap exercises. Scope is templates only — no `set_logs`, no writing `workout_sessions`.
+- **Status:** done
+
 ## Backlog Handoff
 
 
@@ -433,6 +447,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 | S-19       | prescription-fill-logging             | Replace per-set OK toggle with one-click prescription fill                  | yes                   | Run `/10x-plan prescription-fill-logging`; removes `is_complete` UX from S-06; session status stays in S-08                    |
 | S-20       | finished-session-summary-for-client   | Show read-only exercise summary on finished client session pages            | yes                   | Linear ZAW-51; run `/10x-plan finished-session-summary-for-client`; depends on S-08/S-13 summary-mode contracts               |
 | S-21       | optional-rpe-logging                  | Add optional per-round RPE (1–10) to client set logging and session readouts | yes                   | Linear ZAW-53; run `/10x-plan optional-rpe-logging`; extends `set_logs`; depends on S-06/S-13                              |
+| S-22       | training-plan-import-export           | Export/import session templates as JSON and XLSX                            | —                     | done → `context/archive/2026-08-25-training-plan-import-export/`; Linear ZAW-57                                          |
 | Q-01       | add-stryker-mutation-testing          | Add Stryker mutation testing as a selective quality gate                    | yes                   | Run `/10x-research add-stryker-mutation-testing`; see `context/changes/add-stryker-mutation-testing/`                       |
 | Q-02       | harden-replace-exercise-muscle-groups | Add auth.uid() ownership check to replace_exercise_muscle_groups RPC        | —                     | done → `context/archive/2026-06-08-harden-replace-exercise-muscle-groups/`                                                  |
 | Q-03       | harden-complete-client-invite         | Harden complete_client_invite p_client_id binding for authenticated callers | no                    | Run `/10x-frame harden-complete-client-invite` first (anon vs authenticated design); then `/10x-plan`                       |
@@ -495,4 +510,5 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **S-21: client can optionally record RPE (Rate of Perceived Exertion, typically 1–10) for each exercise round when logging a session; trainer and client session readouts show RPE when present without requiring it for every set** — Archived 2026-07-17 → `context/archive/2026-07-02-optional-rpe-logging/`. Lesson: —.
 - **S-12: client can view a per-exercise history table showing past performances (weight, reps/time, sets), estimated 1RM (Epley), and volume/tonnage** — Archived 2026-07-29 → `context/archive/2026-07-18-exercise-statistics/`. Lesson: —.
 - **S-18: trainer and client use a unified premium dark interface per `DESIGN.md` — semantic design tokens replace hardcoded cosmic palette classes, Geist typography and WCAG 44px touch targets land globally, and key flows match Pencil mockups in `docs/pencil/` (guided workout logging and trainer dashboard)** — Archived 2026-08-25 → `context/archive/2026-06-12-ui-redesign/`. Lesson: —.
+- **S-22: trainer can export a session template as JSON or XLSX (prescription only, exercise identity by name) and import it via preview → create / skip / overwrite; unknown or archived names abort with a fix-list; assignment to a client calendar stays the existing day-by-day flow** — Archived 2026-09-19 → `context/archive/2026-08-25-training-plan-import-export/`. Lesson: —.
 

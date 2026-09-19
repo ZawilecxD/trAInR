@@ -1,10 +1,10 @@
 ---
 change_id: training-plan-import-export
 title: Trainer session-template import/export (JSON + XLSX)
-status: implementing
+status: archived
 created: 2026-08-25
-updated: 2026-08-25
-archived_at: null
+updated: 2026-09-19
+archived_at: 2026-09-19T10:44:54Z
 linear_issue: ZAW-57
 ---
 
